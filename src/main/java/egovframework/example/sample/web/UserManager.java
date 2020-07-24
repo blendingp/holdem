@@ -11,6 +11,16 @@ import org.springframework.web.socket.WebSocketSession;
 public class UserManager {
 	ArrayList<User> userlist = new ArrayList<User>();
 	
+	public User findFromUseridx(int useridx){			
+		for( User a : userlist){
+			if( a.uidx == useridx){				
+				return a;				
+			}
+		}
+		
+		return null;
+	}
+		
 	public User find(WebSocketSession session){
 		//세션에서 기록해둔 uidx를 가져옴.
 		//없다면 얜 아직 로긴한 애가 아니니까 스킵
@@ -20,7 +30,6 @@ public class UserManager {
     	
 		for( User a : userlist){
 			if( a.uidx == uidx){
-				System.out.println("a:"+a);
 				return a;				
 			}
 		}

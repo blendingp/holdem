@@ -90,4 +90,8 @@ public class Room {
 	public void checkStartGame(){
 		gameManager.checkStartGame();
 	}	
+	
+	public void checkTimerGame(){
+		gameManager.checkTimerGame();
+	}	
 }

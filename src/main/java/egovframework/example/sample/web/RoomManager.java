@@ -38,6 +38,12 @@ public class RoomManager {
 			r.checkStartGame();
 		}
 	}
+
+	void checkTimerGame(){
+		for( Room r : roomList){
+			r.checkTimerGame();
+		}
+	}
 	
 	public void onMessage( JSONObject obj){
 		

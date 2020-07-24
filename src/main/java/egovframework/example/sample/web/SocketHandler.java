@@ -99,7 +99,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         return super.supportsPartialMessages();
     }
  
-    public static int second = 0;
+    public static int second = 0;   
     @Override
     public void afterPropertiesSet() throws Exception {
     	
@@ -112,8 +112,9 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
                 while (true) {
                     try {
                         Thread.sleep(1000);
-                        second++;
+                        second++;                        
                         roommanager.checkStartGame();
+                        roommanager.checkTimerGame();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                         break;

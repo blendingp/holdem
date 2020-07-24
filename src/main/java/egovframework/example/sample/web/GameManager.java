@@ -21,6 +21,7 @@ public class GameManager {
 	int totalmoney = 0;
 	int callmoney = 0;
 	int startTime;
+	int timer = -1;
 	
 	Card card1;
 	Card card2;
@@ -71,7 +72,25 @@ public class GameManager {
 		}
 	}
 
-
+	void checkTimerGame(){
+		//배팅시간 지났음
+		if(timer!=-1 && SocketHandler.second-timer>3){	
+			for(User u : userlist){
+				if(u.uidx==whosturnUseridx){
+					JSONObject obj = new JSONObject();						
+					//방접속자에게 보냄
+					obj.put("cmd","timeOut");
+					try {
+						u.session.sendMessage(new TextMessage(obj.toJSONString()));
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}						
+					bet(room.ridx, u, 0);//시간초안에 배팅 안하면 자동 0번 배팅 처리
+				}
+			}										
+		}
+	}
 	
 	public void notifyGameStart() {
 		
@@ -127,56 +146,16 @@ public class GameManager {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+	}
 
-		}
-	}
-	/*	//함수 분할
-	int ct=0;
-	public void GiveTowCard(User u){
-		u.setGameStat("twoCard");
-		
-		if(ct==0){
-			for(User s:userlist)ct+=s.getGameStat("twoCard");			
-		}
-		
-		//6대신 함수명을써라
-		if(ct>=6){//여기서 6은 게임참여자수를 의미함
-			if(whosturn<6){
-				whosturn++;
-				shareCard();
-			}
-			else{
-				//배팅시작
-				PostbettingStart();
-			}
-		}
-		
-	}
-		
-	public void shareCard(){
-		for(User u : userlist){
-			Card card1 = cardManager.popCard();
-			Card card2 = cardManager.popCard();
-			u.setCard(card1, card2);
-		}
-
-		JSONObject obj = new JSONObject();						
-		//방접속자에게 보냄
-		obj.put("protocol","giveTowCardOK");
-		//0번쨰 카드 두장 담아서
-		try {
-			userlist.get(0).session.sendMessage(new TextMessage(obj.toJSONString()));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-	}
-	*/
 	public void showBetPan(){
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","bet");
 		obj.put("whosturn",userlist.get(whosturn).uidx);
 		try {
+			//여기서 타이머 설정
+			timer = SocketHandler.second;
 			userlist.get(whosturn).session.sendMessage(new TextMessage(obj.toJSONString()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -196,14 +175,16 @@ public class GameManager {
 			return 1;
 		
 	}
-	public void bet(int roomidx, User u, int betkind){	
+	
+	public void bet(int roomidx, User u, int betkind){			
 		System.out.println("whosturnUseridx:"+whosturnUseridx +" uidx:"+u.uidx);
 		if(whosturnUseridx != u.uidx)
 			return;
-		System.out.println("dbg BET1");
+		
 		whosturn++;//다음사람배팅		
 		System.out.println("dbg BET2 whosturn: "+whosturn+"Game:"+Game);
 		if(whosturn == userlist.size()){
+			timer = -1;
 			if(Game.compareTo("showBetPan")==0)			
 				showThreeCard();
 			else if(Game.compareTo("THEFLOP")==0)			
@@ -214,8 +195,7 @@ public class GameManager {
 				TheEnd();
 			return;
 		}
-
-		System.out.println("dbg BET3");
+		
 		whosturnUseridx = userlist.get(whosturn%userlist.size()).uidx;
 		u.betmoney +=  thisTurnMoneyCompute(betkind);//나의 배팅금액 현재돈+배팅금액
 		callmoney = u.betmoney; //이전 사람의 배팅금액 
@@ -230,6 +210,8 @@ public class GameManager {
 		obj.put("balance", u.balance);
 		obj.put("seat", u.seat);//금방배팅한 사람
 		obj.put("whosturnUseridx", whosturnUseridx);//이제 배팅할 사람의 인덱스
+		
+		timer = SocketHandler.second;
 		
 		for(User uu : userlist){
 			try {

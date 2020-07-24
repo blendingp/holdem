@@ -14,7 +14,7 @@ public class CardManager {
 		for(int i = 0;i < 52; ++i)
 			cardlist.add(new Card(i));
 		
-		Collections.shuffle(cardlist);
+		//Collections.shuffle(cardlist);
 		for(int i = 0;i < 52; ++i)
 		System.out.println("card:");
 	}
