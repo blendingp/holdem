@@ -33,6 +33,13 @@ public class RoomManager {
 		room.join(user, roomNum);
 	}
 	
+	void leaveRoom(int roomNum , User user){
+		Room room = find(roomNum);
+		
+		room.leave(user);
+		System.out.println("<< leave user >>");
+	}
+	
 	void checkStartGame(){
 		for( Room r : roomList){
 			r.checkStartGame();

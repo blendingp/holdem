@@ -6,7 +6,7 @@ import org.springframework.web.socket.WebSocketSession;
 
 public class User {
 	public int uidx;
-	public int seat;
+	public int seat = -1;
 	public int betmoney = 0;
 	public int balance = 0;
 	
@@ -43,5 +43,16 @@ public class User {
 	public void setCard(Card card1, Card card2){
 		this.card1.cardcode = card1.cardcode;
 		this.card2.cardcode =card2.cardcode;
+	}
+	
+	public void clear()
+	{
+		seat = -1;
+		betmoney = 0;
+		balance = 0;
+		gamestat="";
+		
+		card1.clear();
+		card2.clear();
 	}
 }

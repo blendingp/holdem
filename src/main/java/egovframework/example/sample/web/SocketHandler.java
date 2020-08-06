@@ -63,6 +63,14 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         System.out.println(obj.toJSONString());
         switch(""+ obj.get("protocol"))
 		{
+			case "leave":
+    		{
+    			User u = usermanager.find(session);
+    			int ss = u.seat;
+    			int roomidx = Integer.parseInt(""+obj.get("roomidx"));
+    			roommanager.leaveRoom(roomidx, u);
+    			roommanager.find(roomidx).notifyLeaveUser(ss);
+    		}
         	case "connect":
         	{
         		session.getAttributes().put("useridx", obj.get("useridx"));
@@ -83,6 +91,22 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
              	int betkind = Integer.parseInt(""+obj.get("betkind"));
              	int roomidx = Integer.parseInt(""+obj.get("roomidx"));             
              	roommanager.find(roomidx).gameManager.bet(roomidx , u1, betkind);
+        		break;
+        	}
+        	case "sbBet":
+        	{             	
+        		User u2 = usermanager.find(session);
+             	int betkind = Integer.parseInt(""+obj.get("betkind"));
+             	int roomidx = Integer.parseInt(""+obj.get("roomidx"));             
+             	roommanager.find(roomidx).gameManager.bet(roomidx , u2, betkind);
+        		break;
+        	}
+        	case "bbBet":
+        	{             	
+        		User u3 = usermanager.find(session);
+             	int betkind = Integer.parseInt(""+obj.get("betkind"));
+             	int roomidx = Integer.parseInt(""+obj.get("roomidx"));             
+             	roommanager.find(roomidx).gameManager.bet(roomidx , u3, betkind);
         		break;
         	}
 		}

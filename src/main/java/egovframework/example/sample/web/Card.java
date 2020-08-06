@@ -20,4 +20,9 @@ public class Card {
 	public int CardNum(int cardcode){
 		return 0;
 	}
+	
+	public void clear()
+	{
+		this.cardcode = -1;
+	}
 }
