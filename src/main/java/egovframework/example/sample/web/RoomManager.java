@@ -10,7 +10,7 @@ import org.springframework.web.socket.WebSocketSession;
 
 public class RoomManager {
 	ArrayList<Room> roomList = new ArrayList<Room>();
-	int roomcount = 2;
+	int roomcount = 20;
 	public  RoomManager(){
 		for(int k=0; k<roomcount; k++){
 			Room room = new Room(k, 1000);

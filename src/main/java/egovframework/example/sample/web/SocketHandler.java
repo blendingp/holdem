@@ -23,15 +23,19 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 	@Resource(name = "sampleDAO")
 	private SampleDAO sampleDAO;
 	
+	public static SocketHandler sk=null; 
+	
     private final Logger logger = LogManager.getLogger(getClass());
     private Set<WebSocketSession> sessionSet = new HashSet<WebSocketSession>();
 
     UserManager usermanager = new UserManager();
     RoomManager roommanager = new RoomManager();
     
+    public SocketHandler GetHandl(){return sk;}
     public SocketHandler() {
         super();
         this.logger.info("create SocketHandler instance!");
+        sk =this;
     }
  
     @Override
@@ -149,6 +153,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         thread.start();
     }
     
+   
     public synchronized void sendMessage(String message) {
     	 
         for (WebSocketSession session : this.sessionSet) {

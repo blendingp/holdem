@@ -2,10 +2,7 @@ package egovframework.example.sample.web;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.web.socket.TextMessage;
 
@@ -22,6 +19,7 @@ public class GameManager {
 	int whosturnUseridx;
 	int totalmoney = 0;
 	int callmoney = 0;
+	int prebetmoney =0 ;//이전 사람의 베팅머니
 	int startTime;
 	int timer = -1;
 	int dealerSeatNum = -1;
@@ -49,6 +47,18 @@ public class GameManager {
 		this.room = room;
 	}
 
+	void resetGuBetmoney(){
+		for(User u : userlist)
+			u.currentGuBetMoney = 0;
+	}
+	void sendRoom(JSONObject obj){
+		for(User u : userlist)
+			try {
+				u.session.sendMessage(new TextMessage(obj.toJSONString()));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}						
+	}
 
 	void startCheck(User user, ArrayList<User> userlist){
 		if (user != null)
@@ -140,8 +150,9 @@ public class GameManager {
 			if( isStartTime() ){
 				setRoomStartTime(SocketHandler.second);
 				drawCard();
-				whosturnUseridx = userlist.get(whosturn).uidx;
+				resetGuBetmoney();
 				changeGameMode("sbBet");
+				whosturn = getDealerSeat()+1; // 첫 베팅 하는 사람은 딜러 다음 사람
 			}
 
 		}
@@ -154,7 +165,7 @@ public class GameManager {
 		}
 		//===================
 		if(GameMode.compareTo("bbBet")==0){			
-			if(SocketHandler.second-startTime>4){
+			if(SocketHandler.second-startTime>3){
 				//changeGameMode("nmBet");
 				bbBet();
 			}
@@ -190,7 +201,7 @@ public class GameManager {
 	void checkTimerGame(){
 		//배팅시간 지났음
 		if(GameMode.compareTo("showBetPan")==0 || GameMode.compareTo("THEFLOP")==0 || GameMode.compareTo("THETURN")==0 || GameMode.compareTo("THERIVER")==0){
-			if(timer!=-1 && SocketHandler.second-timer>3){	
+			if(timer!=-1 && SocketHandler.second-timer>8){ // 자기턴 타임아웃 시간 8초로.	
 				for(User u : userlist){
 					if(u.uidx==whosturnUseridx){
 						JSONObject obj = new JSONObject();						
@@ -283,54 +294,37 @@ public class GameManager {
 		}
 	}
 
+	public int getWhoTurn(){
+		return whosturn%userlist.size();
+	}
 	public void sbBet(){
 		JSONObject obj = new JSONObject();
 		whosturn = getDealerSeat()+1;
-		if(whosturn == userlist.size()){
-			whosturn = 0;
-		}
 		whosturnUseridx = userlist.get(whosturn%userlist.size()).uidx;
-		//System.out.println("sbBet 메세지 (userlist.get(whosturn).uidx) :" + userlist.get(whosturn).uidx);
 		obj.put("cmd","sbBet");
-		obj.put("whosturn",userlist.get(whosturn).uidx);
-		try {
-			//여기서 타이머 설정
-			timer = SocketHandler.second;
-			userlist.get(whosturn).session.sendMessage(new TextMessage(obj.toJSONString()));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		changeGameMode("bbBet");
+		obj.put("whosturn", ""+getWhoTurn() );
+//		obj.put("whosturn",userlist.get(whosturn).uidx);
+		sendRoom(obj);
 	}
 
 	public void bbBet(){
 		JSONObject obj = new JSONObject();
-		//whosturn++;
-		//whosturnUseridx = userlist.get(whosturn%userlist.size()).uidx;
 		obj.put("cmd","bbBet");
-		obj.put("whosturn",userlist.get(whosturn).uidx);
-		try {
-			//여기서 타이머 설정
-			timer = SocketHandler.second;
-			userlist.get(whosturn).session.sendMessage(new TextMessage(obj.toJSONString()));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		changeGameMode("nmBet");
+		obj.put("whosturn", ""+getWhoTurn() );
+		sendRoom(obj);
+		timer = SocketHandler.second;
 	}
 
 	public void showBetPan(){
 
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","bet");
-		obj.put("whosturn",userlist.get(whosturn).uidx);
+		obj.put("whosturn", getWhoTurn() );
 //		System.out.println("=======================uidx:"+userlist.get(whosturn).uidx);
 		try {
 			//여기서 타이머 설정
 			timer = SocketHandler.second;
-			userlist.get(whosturn).session.sendMessage(new TextMessage(obj.toJSONString()));
+			userlist.get( getWhoTurn() ).session.sendMessage(new TextMessage(obj.toJSONString()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}		
@@ -338,33 +332,38 @@ public class GameManager {
 
 	public int thisTurnMoneyCompute(int kind){
 
-		if(kind==0)
+		if(kind==0) // 풀
 			return totalmoney;
-		else if(kind==1)
+		else if(kind==1) // 삥
 			return room.defaultmoney;
-		else if(kind==2)
-			return room.defaultmoney;
-		else if(kind==4)
-			return room.defaultmoney*2;
+		else if(kind==2)//하프
+			return totalmoney/2;
+		else if(kind==4)// 따당? 
+			return prebetmoney*2;
+		else if(kind==5)// 콜 
+			return callmoney;
 		else
 			return 1;
 
 	}
 
+	boolean isGuBetEnd(){
+		int money = -1;
+		for(User uu : userlist){
+			if( money != -1 && uu.betmoney != money)
+				return false;
+			money = uu.betmoney;
+		}
+		return true;
+	}
 	public void bet(int roomidx, User u, int betkind){			
 		//System.out.println("========= whosturnUseridx:"+whosturnUseridx +" uidx:"+u.uidx+" u seat:"+u.seat);
-		if(whosturnUseridx != u.uidx){
-			System.out.println("DBG 1 user seat :"+u.seat);
+		if( getWhoTurn() != u.seat ){
+			System.out.println(getWhoTurn()+" 잘못된 유저의 SBBET 차례 "+u.seat);
 			return;
 		}
 
-		if(GameMode.compareTo("THEEND")==0)	{
-			return;
-		}
-
-		whosturnUseridx = userlist.get(whosturn % userlist.size() ).uidx;
-
-		u.betmoney +=  thisTurnMoneyCompute(betkind);//나의 배팅금액 현재돈+배팅금액
+		u.betmoney += thisTurnMoneyCompute(betkind);//나의 배팅금액 현재돈+배팅금액
 		//System.out.println("dbg6 u.betmoney:"+u.betmoney);
 
 		callmoney = u.betmoney; //이전 사람의 배팅금액 
@@ -374,45 +373,46 @@ public class GameManager {
 		//배팅한 사람 돈 차감 시키기!!!
 		u.balance -= thisTurnMoneyCompute(betkind);
 //		System.out.println("잔액 u.balance:"+u.balance);
-		System.out.println("BET whosturn: "+whosturn+" Game:"+GameMode+" betkind:"+betkind+" totalmoney:"+totalmoney+" 잔액:"+u.balance );
+		System.out.println("BET whosturn: "+whosturn+"("+getWhoTurn()+") Game:"+GameMode+" betkind:"+betkind+" totalmoney:"+totalmoney+" 잔액:"+u.balance );
 
 		JSONObject obj = new JSONObject();
-		if(GameMode.compareTo("bbBet")==0)	{
+		if(GameMode.compareTo("sbBet")==0)	{
 			obj.put("cmd", "sbBetsuc");
 			//System.out.println("sb가 자동베팅했습니다.");
+			setRoomStartTime( SocketHandler.second );
+			changeGameMode("bbBet");
 		}
-		else if(GameMode.compareTo("nmBet")==0)	{
+		else if(GameMode.compareTo("bbBet")==0)	{
 			obj.put("cmd", "bbBetsuc");
 			//System.out.println("bb가 자동베팅했습니다.");
+			changeGameMode("nmBet");
 		}
 		else{
 			obj.put("cmd", "betsuc");
 			//System.out.println("<< 베팅 성공 >>");
 		}
+		whosturn++;//다음사람배팅
 		obj.put("totalmoney", totalmoney);
 		obj.put("callmoney", callmoney);
 		obj.put("myBetMoney", thisTurnMoneyCompute(betkind));
 		obj.put("balance", u.balance);
 		obj.put("seat", u.seat);//금방배팅한 사람
-		obj.put("whosturnUseridx", whosturnUseridx);//이제 배팅할 사람의 인덱스
+		obj.put("nextwho", getWhoTurn() );//이제 배팅할 사람의 번호
 
 		timer = SocketHandler.second;
 
+		//베팅 성공 정보를 전송
 		for(User uu : userlist){
 			try {
-
 				uu.session.sendMessage(new TextMessage(obj.toJSONString()));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		
-		whosturn++;//다음사람배팅
 		
-		if(turncnt == userlist.size()){
+		if( isGuBetEnd() ){
 			System.out.println("DBG 3 : 전원 베팅 끝");
-			//timer = -1;
 
 			if(GameMode.compareTo("showBetPan")==0)	{
 				showThreeCard();

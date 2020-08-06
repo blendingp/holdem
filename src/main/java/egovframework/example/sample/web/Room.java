@@ -18,11 +18,13 @@ public class Room {
 	GameManager gameManager;
 
 	int ridx;
-	int defaultmoney;
+	int defaultmoney;//삥머니
+	int maxmoney;//배팅 맥스 머니
 
 	public Room(int ridx, int defaultmoney){
 		this.ridx = ridx;
 		this.defaultmoney = defaultmoney;
+		this.maxmoney = defaultmoney * 10000;
 		Arrays.fill(seats, -1);		
 		gameManager = new GameManager(this);
 	}
@@ -40,6 +42,7 @@ public class Room {
 			myobj.put("roomidx",ridx);
 			myobj.put("useridx",u.uidx);//참여자인덱스
 			myobj.put("seat",u.seat);
+			
 			//방에 참여중인 모든 사람 불러오기
 			JSONArray j = new JSONArray();
 			for(int i=0; i<gameManager.userlist.size(); i++)
@@ -92,6 +95,7 @@ public class Room {
 			if(seats[k] == -1){
 				seats[k] = u.uidx;
 				u.seat = k;
+				System.out.println(u.uidx+" 유저의 자리번호:"+u.seat);
 				break;
 			}
 		}
