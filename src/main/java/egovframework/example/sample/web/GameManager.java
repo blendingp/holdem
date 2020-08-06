@@ -129,31 +129,26 @@ public class GameManager {
 
 	void checkStartGame(){
 		if(GameMode.compareTo("checkstart")==0){
-			//changeGameMode("twoCard");
-			System.out.println("checkstart");
 			startSetting();
-			notifyGameStart();
 			DealerSeatSetting();
+			notifyGameStart();
 			changeGameMode("twoCard");
-
 		}
+		
 		if(GameMode.compareTo("twoCard")==0)
 		{
 			if( isStartTime() ){
-				changeGameMode("sbBet");
 				setRoomStartTime(SocketHandler.second);
 				drawCard();
 				whosturnUseridx = userlist.get(whosturn).uidx;
-				System.out.println("whosturnUseridx : " + whosturnUseridx );
+				changeGameMode("sbBet");
 			}
 
 		}
 
 		if(GameMode.compareTo("sbBet")==0)
 		{
-			System.out.println("mode sbBet");
 			if(SocketHandler.second-startTime>3){
-				//changeGameMode("bbBet");
 				sbBet();
 			}
 		}
@@ -218,6 +213,7 @@ public class GameManager {
 
 	public void notifyGameStart() {
 
+		System.out.println("start dealerNum:"+getDealerSeat() );
 		for(User u : userlist){
 			JSONObject obj = new JSONObject();						
 			//방접속자에게 보냄
@@ -248,16 +244,16 @@ public class GameManager {
 			obj.put("card1", userlist.get(k).card1.cardcode);
 			obj.put("card2", userlist.get(k).card2.cardcode);
 			//j.add(item);
-			System.out.println("userlist.size() 의 값 : " + userlist.size());
-			System.out.println("userlist.get(k).uidx 의 값 : " + userlist.get(k).uidx);
-			System.out.println(k + "번 째 유저가 받은 2장의 카드");
-			System.out.println(userlist.get(k).card1.cardcode);
-			System.out.println(userlist.get(k).card2.cardcode);
+			//System.out.println("userlist.size() 의 값 : " + userlist.size());
+			//System.out.println("userlist.get(k).uidx 의 값 : " + userlist.get(k).uidx);
+			//System.out.println(k + "번 째 유저가 받은 2장의 카드");
+			//System.out.println(userlist.get(k).card1.cardcode);
+			//System.out.println(userlist.get(k).card2.cardcode);
 
 			cardarr[k][0] = userlist.get(k).card1.cardcode;
 			cardarr[k][1] =userlist.get(k).card2.cardcode;
-			System.out.println( k + "번 째 유저의 0 번 째 카드 : " + cardarr[k][0]);
-			System.out.println( k + "번 째 유저의 1 번 째 카드 : " + cardarr[k][1]);
+			//System.out.println( k + "번 째 유저의 0 번 째 카드 : " + cardarr[k][0]);
+			//System.out.println( k + "번 째 유저의 1 번 째 카드 : " + cardarr[k][1]);
 
 
 			try {
@@ -294,7 +290,7 @@ public class GameManager {
 			whosturn = 0;
 		}
 		whosturnUseridx = userlist.get(whosturn%userlist.size()).uidx;
-		System.out.println("sbBet 메세지 (userlist.get(whosturn).uidx) :" + userlist.get(whosturn).uidx);
+		//System.out.println("sbBet 메세지 (userlist.get(whosturn).uidx) :" + userlist.get(whosturn).uidx);
 		obj.put("cmd","sbBet");
 		obj.put("whosturn",userlist.get(whosturn).uidx);
 		try {
@@ -330,7 +326,7 @@ public class GameManager {
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","bet");
 		obj.put("whosturn",userlist.get(whosturn).uidx);
-		System.out.println("=======================uidx:"+userlist.get(whosturn).uidx);
+//		System.out.println("=======================uidx:"+userlist.get(whosturn).uidx);
 		try {
 			//여기서 타이머 설정
 			timer = SocketHandler.second;
@@ -356,7 +352,7 @@ public class GameManager {
 	}
 
 	public void bet(int roomidx, User u, int betkind){			
-		System.out.println("========= whosturnUseridx:"+whosturnUseridx +" uidx:"+u.uidx+" u seat:"+u.seat);
+		//System.out.println("========= whosturnUseridx:"+whosturnUseridx +" uidx:"+u.uidx+" u seat:"+u.seat);
 		if(whosturnUseridx != u.uidx){
 			System.out.println("DBG 1 user seat :"+u.seat);
 			return;
@@ -366,39 +362,32 @@ public class GameManager {
 			return;
 		}
 
-		System.out.println("dbg2 BET2 whosturn: "+whosturn+"Game:"+GameMode);
-		whosturn++;//다음사람배팅
-
-
-		if(whosturn == userlist.size()){ //딜러를 마지막에 베팅 시키기 위한 if문
-			whosturn = 0;
-		}
-
-		whosturnUseridx = userlist.get(whosturn%userlist.size()).uidx;
-		System.out.println("DBG 5 다음 베팅 차례 유저 인덱스:"+whosturnUseridx);
+		whosturnUseridx = userlist.get(whosturn % userlist.size() ).uidx;
 
 		u.betmoney +=  thisTurnMoneyCompute(betkind);//나의 배팅금액 현재돈+배팅금액
-		System.out.println("dbg6 u.betmoney:"+u.betmoney);
+		//System.out.println("dbg6 u.betmoney:"+u.betmoney);
 
 		callmoney = u.betmoney; //이전 사람의 배팅금액 
 
 		totalmoney += thisTurnMoneyCompute(betkind);
-		System.out.println("DBG 7 totalmoney:"+totalmoney);
+		//System.out.println("DBG 7 totalmoney:"+totalmoney);
 		//배팅한 사람 돈 차감 시키기!!!
 		u.balance -= thisTurnMoneyCompute(betkind);
-		System.out.println("잔액 u.balance:"+u.balance);
+//		System.out.println("잔액 u.balance:"+u.balance);
+		System.out.println("BET whosturn: "+whosturn+" Game:"+GameMode+" betkind:"+betkind+" totalmoney:"+totalmoney+" 잔액:"+u.balance );
+
 		JSONObject obj = new JSONObject();
 		if(GameMode.compareTo("bbBet")==0)	{
 			obj.put("cmd", "sbBetsuc");
-			System.out.println("sb가 자동베팅했습니다.");
+			//System.out.println("sb가 자동베팅했습니다.");
 		}
 		else if(GameMode.compareTo("nmBet")==0)	{
 			obj.put("cmd", "bbBetsuc");
-			System.out.println("bb가 자동베팅했습니다.");
+			//System.out.println("bb가 자동베팅했습니다.");
 		}
 		else{
 			obj.put("cmd", "betsuc");
-			System.out.println("<< 베팅 성공 >>");
+			//System.out.println("<< 베팅 성공 >>");
 		}
 		obj.put("totalmoney", totalmoney);
 		obj.put("callmoney", callmoney);
@@ -418,8 +407,9 @@ public class GameManager {
 				e.printStackTrace();
 			}
 		}
-		turncnt++;
-		System.out.println("turncnt:"+ turncnt+" userlist.size():"+userlist.size() );
+		
+		whosturn++;//다음사람배팅
+		
 		if(turncnt == userlist.size()){
 			System.out.println("DBG 3 : 전원 베팅 끝");
 			//timer = -1;
@@ -465,9 +455,9 @@ public class GameManager {
 			cardarr[k][2] = card1.cardcode;
 			cardarr[k][3] = card2.cardcode;
 			cardarr[k][4] = card3.cardcode;
-			System.out.println( k + "번 째 유저의 2 번 째 카드 : " + cardarr[k][2]);
-			System.out.println( k + "번 째 유저의 3 번 째 카드 : " + cardarr[k][3]);
-			System.out.println( k + "번 째 유저의 4 번 째 카드 : " + cardarr[k][4]);
+			//System.out.println( k + "번 째 유저의 2 번 째 카드 : " + cardarr[k][2]);
+			//System.out.println( k + "번 째 유저의 3 번 째 카드 : " + cardarr[k][3]);
+			//System.out.println( k + "번 째 유저의 4 번 째 카드 : " + cardarr[k][4]);
 		}
 		for(User u : userlist){		
 			try {
@@ -498,7 +488,7 @@ public class GameManager {
 
 		for(int k =0; k<userlist.size(); k++){
 			cardarr[k][5] = card4.cardcode;
-			System.out.println( k + "번 째 유저의 4 번 째 카드 : " + cardarr[k][5]);
+			//System.out.println( k + "번 째 유저의 4 번 째 카드 : " + cardarr[k][5]);
 		}
 
 		for(User u : userlist){		
@@ -514,7 +504,7 @@ public class GameManager {
 	public void TheRiver(){
 		timer = SocketHandler.second;
 		turncnt = 0;
-		System.out.println("theriver================ 마지막 카드 공개");
+		//System.out.println("theriver================ 마지막 카드 공개");
 		//timer=-1;
 		whosturn=getDealerSeat()+1;
 		whosturnUseridx = userlist.get(whosturn%userlist.size()).uidx;
@@ -529,7 +519,7 @@ public class GameManager {
 
 		for(int k =0; k<userlist.size(); k++){
 			cardarr[k][6] = card5.cardcode;
-			System.out.println( k + "번 째 유저의 6 번 째 카드 : " + cardarr[k][6]);
+			//System.out.println( k + "번 째 유저의 6 번 째 카드 : " + cardarr[k][6]);
 		}
 
 		for(User u : userlist){		
@@ -576,7 +566,7 @@ public class GameManager {
 			}
 			System.out.println();
 		}
-
+/*
 		// 카드 목록을 1차원 배열로 유저별로 변환
 		for(int i=0; i<cardarr.length; i++) {
 			for(int j=0; j<cardarr[i].length; j++) {
@@ -654,6 +644,7 @@ public class GameManager {
 
 
 
+*/
 		JSONObject obj = new JSONObject();
 		obj.put("protocol","showResult");
 		changeGameMode("showResult");

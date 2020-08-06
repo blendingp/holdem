@@ -53,14 +53,14 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
     
     	super.handleMessage(session, message);
-        this.logger.info("receive message:" + message.toString());
+//        this.logger.info("receive message:" + message.toString());
         
-        System.out.println("handleMessage test");
+//        System.out.println("handleMessage test");
         String msg = ""+message.getPayload();
         JSONParser p = new JSONParser();
         JSONObject obj = (JSONObject)p.parse(msg);
         
-        System.out.println(obj.toJSONString());
+        //System.out.println(obj.toJSONString());
         switch(""+ obj.get("protocol"))
 		{
 			case "leave":
