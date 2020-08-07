@@ -18,8 +18,8 @@ public class GameManager {
 	int turncnt = 0;
 	int whosturnUseridx;
 	int totalmoney = 0;
-	int callmoney = 0;
 	int prebetmoney =0 ;//이전 사람의 베팅머니
+	int preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.
 	int startTime;
 	int timer = -1;
 	int dealerSeatNum = -1;
@@ -71,9 +71,8 @@ public class GameManager {
 		}
 		if(cnt>=3) {			
 			startTime = SocketHandler.second;
-			GameMode="checkstart";
-			//쓰레드에서 삼초뒤에 시작
-			//notifyGameStart();
+//			GameMode="checkstart";
+			changeGameMode("대기");
 		}
 
 	}
@@ -103,7 +102,6 @@ public class GameManager {
 		whosturn = 0;
 		turncnt = 0;
 		totalmoney = 0;
-		callmoney = 0;
 		arr1 = new int[] {53,53,53,53,53,53,53};
 		arr2 = new int[] {53,53,53,53,53,53,53};
 		arr3 = new int[] {53,53,53,53,53,53,53};
@@ -133,8 +131,9 @@ public class GameManager {
 	void setRoomStartTime( int st){
 		startTime = st; 
 	}
-	void setRoomEndtTime( int et){
+	void setRoomEndTime( int et){
 		endtime = et; 
+		System.out.println("대기시간 추가");
 	}
 
 	void checkStartGame(){
@@ -178,20 +177,23 @@ public class GameManager {
 			}
 		}
 		if(GameMode.compareTo("THEEND")==0){
-			setRoomEndtTime(SocketHandler.second);
+			setRoomEndTime(SocketHandler.second);
 			showResult();
 		}
 
 		if(GameMode.compareTo("showResult")==0){
 			if( isEndGame() ){
 				changeGameMode("대기");
-				if (isPlayable())
-				{
-					startTime = SocketHandler.second;
-					GameMode="checkstart";
-				}
-				//changeGameMode("checkstart");
+				setRoomEndTime(SocketHandler.second);
 			}
+		}
+		if(GameMode.compareTo("대기")==0){
+			if (isPlayable() && SocketHandler.second-endtime>5 )
+			{
+				startTime = SocketHandler.second;
+				changeGameMode("checkstart");
+			}
+			
 		}
 
 
@@ -229,6 +231,7 @@ public class GameManager {
 			JSONObject obj = new JSONObject();						
 			//방접속자에게 보냄
 			obj.put("cmd","startGame");
+			obj.put("roompeople",""+ userlist.size() );
 			obj.put("dealer",""+ getDealerSeat() );
 			obj.put("smallblind",""+ getDealerSeat() + 1 );
 			obj.put("bigblind",""+ getDealerSeat() + 2 );
@@ -320,28 +323,26 @@ public class GameManager {
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","bet");
 		obj.put("whosturn", getWhoTurn() );
-//		System.out.println("=======================uidx:"+userlist.get(whosturn).uidx);
-		try {
-			//여기서 타이머 설정
-			timer = SocketHandler.second;
-			userlist.get( getWhoTurn() ).session.sendMessage(new TextMessage(obj.toJSONString()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}		
+		timer = SocketHandler.second;
+		sendRoom( obj);
 	}
 
-	public int thisTurnMoneyCompute(int kind){
+	public int thisTurnMoneyCompute(int kind,int mybetmoney){
 
-		if(kind==0) // 풀
-			return totalmoney;
+		if(kind==0) // 다이
+			return 0;
 		else if(kind==1) // 삥
 			return room.defaultmoney;
-		else if(kind==2)//하프
-			return totalmoney/2;
-		else if(kind==4)// 따당? 
+		else if(kind==2)// 콜
+			return preTotalBetmoney - mybetmoney;
+		else if(kind==3)// 따당? 
 			return prebetmoney*2;
-		else if(kind==5)// 콜 
-			return callmoney;
+		else if(kind==4)// 하프 
+			return totalmoney/2;
+		else if(kind==5)// 풀 
+			return totalmoney;
+		else if(kind==6)// 맥스
+			return room.maxmoney;
 		else
 			return 1;
 
@@ -363,16 +364,18 @@ public class GameManager {
 			return;
 		}
 
-		u.betmoney += thisTurnMoneyCompute(betkind);//나의 배팅금액 현재돈+배팅금액
+		int tmo = thisTurnMoneyCompute(betkind , u.betmoney);
+//		System.out.println("tmo:"+tmo +" u.betmoney:"+u.betmoney+" prebetmoney:"+prebetmoney+" preTotalBetmoney:"+preTotalBetmoney);
+		u.betmoney += tmo ;//나의 배팅금액 현재돈+배팅금액
+		prebetmoney = tmo;
+		preTotalBetmoney = u.betmoney;
 		//System.out.println("dbg6 u.betmoney:"+u.betmoney);
 
-		callmoney = u.betmoney; //이전 사람의 배팅금액 
-
-		totalmoney += thisTurnMoneyCompute(betkind);
-		//System.out.println("DBG 7 totalmoney:"+totalmoney);
+		totalmoney +=tmo;
+		
 		//배팅한 사람 돈 차감 시키기!!!
-		u.balance -= thisTurnMoneyCompute(betkind);
-//		System.out.println("잔액 u.balance:"+u.balance);
+		u.balance -= tmo;
+		
 		System.out.println("BET whosturn: "+whosturn+"("+getWhoTurn()+") Game:"+GameMode+" betkind:"+betkind+" totalmoney:"+totalmoney+" 잔액:"+u.balance );
 
 		JSONObject obj = new JSONObject();
@@ -392,12 +395,18 @@ public class GameManager {
 			//System.out.println("<< 베팅 성공 >>");
 		}
 		whosturn++;//다음사람배팅
+		boolean isBetEnd = isGuBetEnd();
+
 		obj.put("totalmoney", totalmoney);
-		obj.put("callmoney", callmoney);
-		obj.put("myBetMoney", thisTurnMoneyCompute(betkind));
+		obj.put("callmoney", "" + (preTotalBetmoney - u.betmoney) );
+		obj.put("myBetMoney", tmo );
 		obj.put("balance", u.balance);
 		obj.put("seat", u.seat);//금방배팅한 사람
 		obj.put("nextwho", getWhoTurn() );//이제 배팅할 사람의 번호
+		if( isBetEnd )
+			obj.put("betEnd", "1");//마지막 베팅인지 체크
+		else
+			obj.put("betEnd", "0");//마지막 베팅인지 체크
 
 		timer = SocketHandler.second;
 
@@ -411,7 +420,7 @@ public class GameManager {
 		}
 		
 		
-		if( isGuBetEnd() ){
+		if( isBetEnd ){
 			System.out.println("DBG 3 : 전원 베팅 끝");
 
 			if(GameMode.compareTo("showBetPan")==0)	{
@@ -434,13 +443,10 @@ public class GameManager {
 
 	public void showThreeCard(){	
 		timer = SocketHandler.second+2;
-		//timer=-1;
-		turncnt = 0;
 		whosturn=getDealerSeat()+1;
-		whosturnUseridx = userlist.get(whosturn%userlist.size()).uidx;
 		System.out.println("showThreeCard whosturn:"+whosturn);
 		JSONObject obj = new JSONObject();		
-		GameMode = "THEFLOP";		
+		changeGameMode("THEFLOP");
 		card1=cardManager.popCard();
 		card2=cardManager.popCard();
 		card3=cardManager.popCard();
@@ -449,7 +455,7 @@ public class GameManager {
 		obj.put("card1", card1.cardcode);
 		obj.put("card2", card2.cardcode);		
 		obj.put("card3", card3.cardcode);
-		obj.put("whosturn",userlist.get(whosturn).uidx);
+		obj.put("whosturn", getWhoTurn() );
 
 		for(int k =0; k<userlist.size(); k++){
 			cardarr[k][2] = card1.cardcode;
@@ -459,15 +465,7 @@ public class GameManager {
 			//System.out.println( k + "번 째 유저의 3 번 째 카드 : " + cardarr[k][3]);
 			//System.out.println( k + "번 째 유저의 4 번 째 카드 : " + cardarr[k][4]);
 		}
-		for(User u : userlist){		
-			try {
-				u.session.sendMessage(new TextMessage(obj.toJSONString()));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
+		sendRoom( obj);
 	}
 
 	public void TheTurn(){

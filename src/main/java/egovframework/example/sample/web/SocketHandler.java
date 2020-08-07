@@ -87,11 +87,14 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
              	User u = usermanager.find(session);
              	int roomidx = Integer.parseInt(""+obj.get("roomidx"));
              	roommanager.joinRoom(roomidx , u);
+             	Room r = roommanager.find(roomidx);
+             	r.gameManager.setRoomEndTime( SocketHandler.second );//새로 한명 들어올때마다 대기 시간을 증가시켜서 여러명이 들어올 여지를 둔다.
         		break;
         	}
         	case "bet":
         	{             	
         		User u1 = usermanager.find(session);
+        		System.out.println("nm bet "+u1.seat);
              	int betkind = Integer.parseInt(""+obj.get("betkind"));
              	int roomidx = Integer.parseInt(""+obj.get("roomidx"));             
              	roommanager.find(roomidx).gameManager.bet(roomidx , u1, betkind);
@@ -100,6 +103,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         	case "sbBet":
         	{             	
         		User u2 = usermanager.find(session);
+        		System.out.println("sb bet "+u2.seat);
              	int betkind = Integer.parseInt(""+obj.get("betkind"));
              	int roomidx = Integer.parseInt(""+obj.get("roomidx"));             
              	roommanager.find(roomidx).gameManager.bet(roomidx , u2, betkind);
@@ -108,6 +112,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         	case "bbBet":
         	{             	
         		User u3 = usermanager.find(session);
+        		System.out.println("bb bet "+u3.seat);
              	int betkind = Integer.parseInt(""+obj.get("betkind"));
              	int roomidx = Integer.parseInt(""+obj.get("roomidx"));             
              	roommanager.find(roomidx).gameManager.bet(roomidx , u3, betkind);
