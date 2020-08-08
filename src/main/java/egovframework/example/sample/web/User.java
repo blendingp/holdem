@@ -10,7 +10,7 @@ public class User {
 	public int betmoney = 0;
 	public int balance = 0;
 	public int currentGuBetMoney=0;//현재 구 에 베팅한 머니 / 모든 유저가  이 머니가 같아야 다음  단계로 넘어감.
-	
+	public boolean die = false;//true일떄 다이인 상태
 	public String img;
 	public WebSocketSession session;
 	String gamestat="";

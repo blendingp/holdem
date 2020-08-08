@@ -17,13 +17,36 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import egovframework.example.sample.service.impl.SampleDAO;
+import egovframework.rte.psl.dataaccess.util.EgovMap;
  
 public class SocketHandler extends TextWebSocketHandler implements InitializingBean {
 	
 	@Resource(name = "sampleDAO")
 	private SampleDAO sampleDAO;
 	
+	public static int gameidIdx = -1;
+	
 	public static SocketHandler sk=null; 
+	public static Object insertLog(int gameid,String gkind,int useridx, int value1, int value2, String value3, int value4,int value5){
+		Object rt=null;
+		EgovMap in=new EgovMap();
+		in.put("gameid", gameid);
+		in.put("gkind", gkind);
+		in.put("useridx", useridx);
+		in.put("value1", value1);
+		in.put("value2", value2);
+		in.put("value3", value3);
+		in.put("value4", value4);
+		in.put("value5", value5);
+		rt = SocketHandler.sk.sampleDAO.insert("insertLog",in);
+		return rt;
+		
+	}
+	
+	public static int GameIdxAdder(){
+		gameidIdx++;
+		return gameidIdx;
+	}
 	
     private final Logger logger = LogManager.getLogger(getClass());
     private Set<WebSocketSession> sessionSet = new HashSet<WebSocketSession>();
@@ -135,7 +158,10 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     public static int second = 0;   
     @Override
     public void afterPropertiesSet() throws Exception {
-    	
+    	gameidIdx = 0;
+    	EgovMap gameId = (EgovMap) sampleDAO.select("selectLastGameId");
+    	if(gameId!=null)
+    		gameidIdx = Integer.parseInt(""+gameId.get("gameid"));
     	
         Thread thread = new Thread() {
             int i = 0;

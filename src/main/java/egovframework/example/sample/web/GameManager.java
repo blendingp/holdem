@@ -10,20 +10,23 @@ public class GameManager {
 	public ArrayList<User> userlist = new ArrayList<User>();
 	public CardManager cardManager = new CardManager();
 	//public User reuser = new User();
-
-	String GameMode="대기";
+	int gameId;//게임로그에 저장되는 게임번호
+	int gu;//1구 2구 3구 4구
+	String GameMode="대기";	
 	//Calendar startTime;
 	long timerStartTime = 0;//객체로 만들면 좋다
-	int whosturn = 0;
-	int turncnt = 0;
-	int whosturnUseridx;
+	int whosturn = 0;//누구차례인지 
+	int turncnt = 0;//안쓰기로함
+	int whosturnUseridx;//안쓰기로함
+	
 	int totalmoney = 0;
 	int prebetmoney =0 ;//이전 사람의 베팅머니
 	int preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.
 	int startTime;
 	int timer = -1;
-	int dealerSeatNum = -1;
+	int dealerSeatNum = -1;//누가딜러인지 유저인덱스 저장
 	int endtime;
+	
 	int[][] cardarr;
 	int[] cardcopyarr;
 	int[] arr1;// 각 유저벌 카드 코드를 담기 위한 변수 1~9 최대유저 9명
@@ -47,6 +50,14 @@ public class GameManager {
 		this.room = room;
 	}
 
+	public int getGameId(){
+		return gameId;
+	}
+	
+	public void setGameId(int gameid){
+		this.gameId = gameid;
+	}
+	
 	void resetGuBetmoney(){
 		for(User u : userlist)
 			u.currentGuBetMoney = 0;
@@ -99,6 +110,13 @@ public class GameManager {
 		}
 	}
 	void startSetting(){
+		gu = 1;
+		setGameId(SocketHandler.GameIdxAdder());
+		
+		for(User u : userlist){
+			SocketHandler.insertLog(getGameId(), "join", u.uidx , u.balance , u.seat , "참가", -1, -1);
+		}
+		SocketHandler.insertLog(getGameId(), "gamestart", -1, -1, -1, "게임시작", -1, -1);
 		whosturn = 0;
 		turncnt = 0;
 		totalmoney = 0;
@@ -266,6 +284,7 @@ public class GameManager {
 
 			cardarr[k][0] = userlist.get(k).card1.cardcode;
 			cardarr[k][1] =userlist.get(k).card2.cardcode;
+			SocketHandler.insertLog(getGameId(), "twoCard", userlist.get(k).uidx, userlist.get(k).card1.cardcode, userlist.get(k).card2.cardcode, "", -1, -1);
 			//System.out.println( k + "번 째 유저의 0 번 째 카드 : " + cardarr[k][0]);
 			//System.out.println( k + "번 째 유저의 1 번 째 카드 : " + cardarr[k][1]);
 
@@ -348,14 +367,15 @@ public class GameManager {
 
 	}
 
-	boolean isGuBetEnd(){
+	boolean isGuBetEnd(){		
 		int money = -1;
 		for(User uu : userlist){
+			if(uu.die == true) continue;//밑에 실행하지않고 다음 for문 검사
 			if( money != -1 && uu.betmoney != money)
-				return false;
+				return false;//배팅금액이 다르다
 			money = uu.betmoney;
 		}
-		return true;
+		return true;//배팅금액이 똑같은경우 배팅끝
 	}
 	public void bet(int roomidx, User u, int betkind){			
 		//System.out.println("========= whosturnUseridx:"+whosturnUseridx +" uidx:"+u.uidx+" u seat:"+u.seat);
@@ -364,6 +384,7 @@ public class GameManager {
 			return;
 		}
 
+		if(betkind==0) u.die = true;
 		int tmo = thisTurnMoneyCompute(betkind , u.betmoney);
 //		System.out.println("tmo:"+tmo +" u.betmoney:"+u.betmoney+" prebetmoney:"+prebetmoney+" preTotalBetmoney:"+preTotalBetmoney);
 		u.betmoney += tmo ;//나의 배팅금액 현재돈+배팅금액
@@ -377,7 +398,7 @@ public class GameManager {
 		u.balance -= tmo;
 		
 		System.out.println("BET whosturn: "+whosturn+"("+getWhoTurn()+") Game:"+GameMode+" betkind:"+betkind+" totalmoney:"+totalmoney+" 잔액:"+u.balance );
-
+		SocketHandler.insertLog(getGameId(), "bet", u.uidx , u.betmoney , u.balance , "배팅액:"+tmo+", total:"+totalmoney , betkind, whosturn );
 		JSONObject obj = new JSONObject();
 		if(GameMode.compareTo("sbBet")==0)	{
 			obj.put("cmd", "sbBetsuc");
@@ -395,14 +416,26 @@ public class GameManager {
 			//System.out.println("<< 베팅 성공 >>");
 		}
 		whosturn++;//다음사람배팅
+		int k=0;
+		while( checkDieturn(getWhoTurn()) ){
+			k++;
+			if( k>10){//9명이상이니 여기에 들어오면 에러 무한루프 체크
+				SocketHandler.insertLog(getGameId(), "error", -1, -1, -1, "DieTurnCheckError", -1, -1);
+				break;
+			}
+			whosturn++;			
+		}
+		
 		boolean isBetEnd = isGuBetEnd();
 
 		obj.put("totalmoney", totalmoney);
 		obj.put("callmoney", "" + (preTotalBetmoney - u.betmoney) );
 		obj.put("myBetMoney", tmo );
 		obj.put("balance", u.balance);
+		obj.put("betkind", betkind);
 		obj.put("seat", u.seat);//금방배팅한 사람
 		obj.put("nextwho", getWhoTurn() );//이제 배팅할 사람의 번호
+		obj.put("gu", gu );
 		if( isBetEnd )
 			obj.put("betEnd", "1");//마지막 베팅인지 체크
 		else
@@ -411,25 +444,22 @@ public class GameManager {
 		timer = SocketHandler.second;
 
 		//베팅 성공 정보를 전송
-		for(User uu : userlist){
-			try {
-				uu.session.sendMessage(new TextMessage(obj.toJSONString()));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		sendRoom(obj);
 		
-		
+		//용우 : 아래 구조 이상함 배팅성공 패킷 보낸 후 아무 패킷을 받지않고 또 패킷을 보냄, 차라리 위에 첫번째 패킷 보낼때 다같이 보낼까? 
 		if( isBetEnd ){
 			System.out.println("DBG 3 : 전원 베팅 끝");
 
 			if(GameMode.compareTo("showBetPan")==0)	{
+				gu++;//2구
 				showThreeCard();
 			}
 			else if(GameMode.compareTo("THEFLOP")==0){			
+				gu++;//3구
 				TheTurn();
 			}
 			else if(GameMode.compareTo("THETURN")==0){
+				gu++;//4구
 				TheRiver();
 			}
 			else if(GameMode.compareTo("THERIVER")==0){
@@ -440,7 +470,14 @@ public class GameManager {
 
 
 	}
-
+	
+	public boolean checkDieturn(int who){
+		if(userlist.get(who).die == true)
+			return true;
+		else
+			return false;
+	}
+	
 	public void showThreeCard(){	
 		timer = SocketHandler.second+2;
 		whosturn=getDealerSeat()+1;
@@ -456,7 +493,7 @@ public class GameManager {
 		obj.put("card2", card2.cardcode);		
 		obj.put("card3", card3.cardcode);
 		obj.put("whosturn", getWhoTurn() );
-
+		SocketHandler.insertLog(getGameId(), "THEFLOP", -1, card1.cardcode, card2.cardcode, "", card3.cardcode, -1);
 		for(int k =0; k<userlist.size(); k++){
 			cardarr[k][2] = card1.cardcode;
 			cardarr[k][3] = card2.cardcode;
@@ -483,7 +520,7 @@ public class GameManager {
 		obj.put("cmd","THETURN");
 		obj.put("card4", card4.cardcode);
 		obj.put("whosturn",userlist.get(whosturn).uidx);
-
+		SocketHandler.insertLog(getGameId(), "THETURN", -1, card4.cardcode, -1, "", -1, -1);
 		for(int k =0; k<userlist.size(); k++){
 			cardarr[k][5] = card4.cardcode;
 			//System.out.println( k + "번 째 유저의 4 번 째 카드 : " + cardarr[k][5]);
@@ -514,7 +551,7 @@ public class GameManager {
 		obj.put("cmd","THERIVER");
 		obj.put("card5", card5.cardcode);
 		obj.put("whosturn",userlist.get(whosturn).uidx);
-
+		SocketHandler.insertLog(getGameId(), "THERIVER", -1, card5.cardcode, -1, "", -1, -1);
 		for(int k =0; k<userlist.size(); k++){
 			cardarr[k][6] = card5.cardcode;
 			//System.out.println( k + "번 째 유저의 6 번 째 카드 : " + cardarr[k][6]);
@@ -540,7 +577,7 @@ public class GameManager {
 		JSONObject obj = new JSONObject();
 		changeGameMode("THEEND");				
 		obj.put("cmd","THEEND");
-
+		SocketHandler.insertLog(getGameId(), "gameEnd", -1, totalmoney, -1, "게임 끝" , -1, -1);
 		for(User u : userlist){		
 			try { 
 				u.session.sendMessage(new TextMessage(obj.toJSONString()));

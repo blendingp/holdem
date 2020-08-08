@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Sample">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+	<typeAlias  alias="searchVO" type="egovframework.example.sample.service.SampleDefaultVO"/>
+
+	<resultMap id="sample" class="egovframework.example.sample.service.SampleVO">
+		<result property="id" column="id"/>
+		<result property="name" column="name"/>
+		<result property="description" column="description"/>
+		<result property="useYn" column="use_yn"/>
+		<result property="regUser" column="reg_user"/>
+	</resultMap>
+
+	<select id="selectLastGameId" resultClass="EgovMap">
+        <![CDATA[
+            SELECT *
+            FROM gamelog
+            order by gidx desc
+            limit 1
+        ]]>
+	</select>
+	    
+    <insert id="insertLog" parameterClass="egovMap">
+		<![CDATA[
+			INSERT INTO gamelog
+				( gkind
+				  , gameid
+				  , gvalue1
+				  , gvalue2
+				  , gvalue3
+				  , gvalue4
+				  , gvalue5
+				  , gdate
+				  , guseridx)
+			VALUES ( #gkind#
+				  , #gameid#
+				  , #value1#
+				  , #value2#
+				  , #value3#
+				  , #value4#
+				  , #value5#
+				  , now()
+				  , #useridx#)
+		]]>
+</insert>	
+</sqlMap>
