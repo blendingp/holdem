@@ -17,6 +17,16 @@
 		        	document.listForm.action = "<c:url value='/gameDetailLogp.do'/>";
 		           	document.listForm.submit();
 		        }
+		        function showCard( cd){
+		        	switch( parseInt(cd/13) ){
+		        		case 0: document.write("♣");break;
+		        		case 1: document.write("◆");break;
+		        		case 2: document.write("♥");break;
+		        		case 3: document.write("♠");break;
+		        	}
+		        	document.write(parseInt(cd) % 13 + 1);
+		        	
+		        }
 	</script>
 	
     <div id="wrapper">
@@ -61,7 +71,7 @@
                                 	소유 잔액:
                                 	</c:if>
                                 	<c:if test="${result.gkind eq 'twoCard'}">
-                                	카드1:
+                                	카드1: 
                                 	</c:if>
                                 	<c:if test="${result.gkind eq 'bet'}">
                                 	배팅금액:
@@ -78,8 +88,17 @@
                                 	<c:if test="${result.gkind eq 'gameEnd'}">
                                 	totalmoney:
                                 	</c:if>
+                                	
                                 	<c:if test="${result.gvalue1 ne -1}">
-                                	${result.gvalue1}                     
+                                		<c:if test="${result.gkind ne 'twoCard' && result.gkind ne 'THEFLOP' 
+                                	&& result.gkind ne 'THETURN' && result.gkind ne 'THERIVER'}">
+                                			${result.gvalue1}
+                                		</c:if>                     
+                                	</c:if>
+                                	
+                                	<c:if test="${result.gkind eq 'twoCard' || result.gkind eq 'THEFLOP' 
+                                	|| result.gkind eq 'THETURN' || result.gkind eq 'THERIVER'}">
+                                	<script>showCard( '${result.gvalue1}' );</script>
                                 	</c:if>           	
                                 </td>
                                 <td>
@@ -95,9 +114,17 @@
                                 	<c:if test="${result.gkind eq 'THEFLOP'}">
                                 	공개카드2:
                                 	</c:if>
+                                	
                                 	<c:if test="${result.gvalue2 ne -1}">
-                                	${result.gvalue2}
+                                		<c:if test="${result.gkind ne 'twoCard' && result.gkind ne 'THEFLOP' }">
+                                			${result.gvalue2}
+                                		</c:if>                     
                                 	</c:if>
+                                	
+                                	<c:if test="${result.gkind eq 'twoCard' || result.gkind eq 'THEFLOP'}">
+                                	<script>showCard( '${result.gvalue2}' );</script>
+                                	</c:if>
+                                	  
                                 </td>
                                 <td>
                                 	${result.gvalue3}
@@ -107,11 +134,14 @@
                                 	공개카드3:
                                 	</c:if>
                                 	<c:if test="${result.gvalue4 ne -1}">
-                                	<c:if test="${result.gkind ne 'bet'}">
+                                	<c:if test="${result.gkind ne 'bet' && result.gkind ne 'THEFLOP'}">
                                 		${result.gvalue4}
                                 	</c:if>
                                 	</c:if>
                                 	
+                                	<c:if test="${result.gkind eq 'THEFLOP' }">
+                                		<script>showCard( '${result.gvalue4}' );</script>
+                                	</c:if>
                                 	<c:if test="${result.gkind eq 'bet' }">
                                 		<c:if test="${result.gvalue4 eq 0 }">
                                 			다이
