@@ -9,17 +9,17 @@ import org.springframework.web.socket.WebSocketSession;
 public class CardManager {
 	ArrayList<Card> cardlist = new ArrayList<Card>();
 	int popcard = 0;
+	public void init(){
+		popcard= 0;
+	}
 	public CardManager(){				
 			
 		for(int i = 0;i < 52; ++i)
 			cardlist.add(new Card(i));
 	}
 	
-	public Card shuffleCard(){
+	public void shuffleCard(){
 		Collections.shuffle(cardlist);
-		
-		Card c = new Card(0);
-		return c;
 	}	
 	
 	public Card popCard(){

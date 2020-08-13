@@ -14,7 +14,8 @@ public class User {
 	public String img;
 	public WebSocketSession session;
 	String gamestat="";
-	
+	int level = 1000;
+	int topcard = -1;
 	Card card1=new Card(-1);//아직카드없음
 	Card card2=new Card(-1);
 	

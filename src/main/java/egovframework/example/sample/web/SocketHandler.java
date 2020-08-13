@@ -117,7 +117,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         	case "bet":
         	{             	
         		User u1 = usermanager.find(session);
-        		System.out.println("nm bet "+u1.seat);
              	int betkind = Integer.parseInt(""+obj.get("betkind"));
              	int roomidx = Integer.parseInt(""+obj.get("roomidx"));             
              	roommanager.find(roomidx).gameManager.bet(roomidx , u1, betkind);

@@ -27,18 +27,8 @@ public class GameManager {
 	int dealerSeatNum = -1;//누가딜러인지 유저인덱스 저장
 	int endtime;
 	
-	int[][] cardarr;
-	int[] cardcopyarr;
-	int[] arr1;// 각 유저벌 카드 코드를 담기 위한 변수 1~9 최대유저 9명
-	int[] arr2;
-	int[] arr3;
-	int[] arr4;
-	int[] arr5;
-	int[] arr6;
-	int[] arr7;
-	int[] arr8;
-	int[] arr9;
-
+	int[][] cardarr;// 사람별 카드 소유
+	
 	Card card1;
 	Card card2;
 	Card card3;
@@ -120,18 +110,8 @@ public class GameManager {
 		whosturn = 0;
 		turncnt = 0;
 		totalmoney = 0;
-		arr1 = new int[] {53,53,53,53,53,53,53};
-		arr2 = new int[] {53,53,53,53,53,53,53};
-		arr3 = new int[] {53,53,53,53,53,53,53};
-		arr4 = new int[] {53,53,53,53,53,53,53};
-		arr5 = new int[] {53,53,53,53,53,53,53};
-		arr6 = new int[] {53,53,53,53,53,53,53};
-		arr7 = new int[] {53,53,53,53,53,53,53};
-		arr8 = new int[] {53,53,53,53,53,53,53};
-		arr9 = new int[] {53,53,53,53,53,53,53};
 
 		cardarr = new int[userlist.size()][7];
-		cardcopyarr = new int [cardarr.length*cardarr[0].length];
 	}
 	int getDealerSeat(){
 		return  (dealerSeatNum % userlist.size() );
@@ -159,6 +139,7 @@ public class GameManager {
 			startSetting();
 			DealerSeatSetting();
 			notifyGameStart();
+			cardManager.init();
 			changeGameMode("twoCard");
 		}
 		
@@ -177,13 +158,14 @@ public class GameManager {
 		if(GameMode.compareTo("sbBet")==0)
 		{
 			if(SocketHandler.second-startTime>3){
+				changeGameMode("sbBeted");
 				sbBet();
 			}
 		}
 		//===================
 		if(GameMode.compareTo("bbBet")==0){			
 			if(SocketHandler.second-startTime>3){
-				//changeGameMode("nmBet");
+				changeGameMode("bbBeted");
 				bbBet();
 			}
 		}
@@ -223,7 +205,7 @@ public class GameManager {
 		if(GameMode.compareTo("showBetPan")==0 || GameMode.compareTo("THEFLOP")==0 || GameMode.compareTo("THETURN")==0 || GameMode.compareTo("THERIVER")==0){
 			if(timer!=-1 && SocketHandler.second-timer>8){ // 자기턴 타임아웃 시간 8초로.	
 				for(User u : userlist){
-					if(u.uidx==whosturnUseridx){
+					if(u.uidx==getWhoTurn() ){
 						JSONObject obj = new JSONObject();						
 						//방접속자에게 보냄
 						obj.put("cmd","timeOut");
@@ -327,6 +309,7 @@ public class GameManager {
 		obj.put("whosturn", ""+getWhoTurn() );
 //		obj.put("whosturn",userlist.get(whosturn).uidx);
 		sendRoom(obj);
+		System.out.println("sbBet하시오 :"+getWhoTurn() );
 	}
 
 	public void bbBet(){
@@ -335,6 +318,7 @@ public class GameManager {
 		obj.put("whosturn", ""+getWhoTurn() );
 		sendRoom(obj);
 		timer = SocketHandler.second;
+		System.out.println("bbBet하시오 :"+getWhoTurn() );
 	}
 
 	public void showBetPan(){
@@ -343,6 +327,7 @@ public class GameManager {
 		obj.put("cmd","bet");
 		obj.put("whosturn", getWhoTurn() );
 		timer = SocketHandler.second;
+		System.out.println("다음 사람 베팅 하시오:"+getWhoTurn() );
 		sendRoom( obj);
 	}
 
@@ -380,13 +365,13 @@ public class GameManager {
 	public void bet(int roomidx, User u, int betkind){			
 		//System.out.println("========= whosturnUseridx:"+whosturnUseridx +" uidx:"+u.uidx+" u seat:"+u.seat);
 		if( getWhoTurn() != u.seat ){
-			System.out.println(getWhoTurn()+" 잘못된 유저의 SBBET 차례 "+u.seat);
+			System.out.println(getWhoTurn()+" 잘못된 유저의 BET 차례 "+u.seat);
 			return;
 		}
 
 		if(betkind==0) u.die = true;
 		int tmo = thisTurnMoneyCompute(betkind , u.betmoney);
-//		System.out.println("tmo:"+tmo +" u.betmoney:"+u.betmoney+" prebetmoney:"+prebetmoney+" preTotalBetmoney:"+preTotalBetmoney);
+		System.out.println("{ tmo:"+tmo +" u.betmoney:"+u.betmoney+" prebetmoney:"+prebetmoney+" preTotalBetmoney:"+preTotalBetmoney);
 		u.betmoney += tmo ;//나의 배팅금액 현재돈+배팅금액
 		prebetmoney = tmo;
 		preTotalBetmoney = u.betmoney;
@@ -397,16 +382,16 @@ public class GameManager {
 		//배팅한 사람 돈 차감 시키기!!!
 		u.balance -= tmo;
 		
-		System.out.println("BET whosturn: "+whosturn+"("+getWhoTurn()+") Game:"+GameMode+" betkind:"+betkind+" totalmoney:"+totalmoney+" 잔액:"+u.balance );
+		System.out.println("BET whosturn: "+whosturn+"("+getWhoTurn()+") Game:"+GameMode+" betkind:"+betkind+" totalmoney:"+totalmoney+" 잔액:"+u.balance +"   :::" + "{ tmo:"+tmo +" u.betmoney:"+u.betmoney+" prebetmoney:"+prebetmoney+" preTotalBetmoney:"+preTotalBetmoney);
 		SocketHandler.insertLog(getGameId(), "bet", u.uidx , u.betmoney , u.balance , "배팅액:"+tmo+", total:"+totalmoney , betkind, whosturn );
 		JSONObject obj = new JSONObject();
-		if(GameMode.compareTo("sbBet")==0)	{
+		if(GameMode.compareTo("sbBeted")==0)	{
 			obj.put("cmd", "sbBetsuc");
 			//System.out.println("sb가 자동베팅했습니다.");
 			setRoomStartTime( SocketHandler.second );
 			changeGameMode("bbBet");
 		}
-		else if(GameMode.compareTo("bbBet")==0)	{
+		else if(GameMode.compareTo("bbBeted")==0)	{
 			obj.put("cmd", "bbBetsuc");
 			//System.out.println("bb가 자동베팅했습니다.");
 			changeGameMode("nmBet");
@@ -430,7 +415,7 @@ public class GameManager {
 
 		obj.put("totalmoney", totalmoney);
 		obj.put("callmoney", "" + (preTotalBetmoney - u.betmoney) );
-		obj.put("myBetMoney", tmo );
+		obj.put("myBetMoney", u.betmoney );
 		obj.put("balance", u.balance);
 		obj.put("betkind", betkind);
 		obj.put("seat", u.seat);//금방배팅한 사람
@@ -481,7 +466,7 @@ public class GameManager {
 	public void showThreeCard(){	
 		timer = SocketHandler.second+2;
 		whosturn=getDealerSeat()+1;
-		System.out.println("showThreeCard whosturn:"+whosturn);
+		System.out.println("showThreeCard SB:"+whosturn);
 		JSONObject obj = new JSONObject();		
 		changeGameMode("THEFLOP");
 		card1=cardManager.popCard();
@@ -510,7 +495,6 @@ public class GameManager {
 		turncnt = 0;
 		//timer=-1;
 		whosturn=getDealerSeat()+1;
-		whosturnUseridx = userlist.get(whosturn%userlist.size()).uidx;
 
 		JSONObject obj = new JSONObject();
 		GameMode = "THETURN";
@@ -519,7 +503,7 @@ public class GameManager {
 
 		obj.put("cmd","THETURN");
 		obj.put("card4", card4.cardcode);
-		obj.put("whosturn",userlist.get(whosturn).uidx);
+		obj.put("whosturn",getWhoTurn() );
 		SocketHandler.insertLog(getGameId(), "THETURN", -1, card4.cardcode, -1, "", -1, -1);
 		for(int k =0; k<userlist.size(); k++){
 			cardarr[k][5] = card4.cardcode;
@@ -542,7 +526,6 @@ public class GameManager {
 		//System.out.println("theriver================ 마지막 카드 공개");
 		//timer=-1;
 		whosturn=getDealerSeat()+1;
-		whosturnUseridx = userlist.get(whosturn%userlist.size()).uidx;
 
 		JSONObject obj = new JSONObject();
 		GameMode = "THERIVER";
@@ -550,7 +533,7 @@ public class GameManager {
 		card5=cardManager.popCard();		
 		obj.put("cmd","THERIVER");
 		obj.put("card5", card5.cardcode);
-		obj.put("whosturn",userlist.get(whosturn).uidx);
+		obj.put("whosturn",getWhoTurn() );
 		SocketHandler.insertLog(getGameId(), "THERIVER", -1, card5.cardcode, -1, "", -1, -1);
 		for(int k =0; k<userlist.size(); k++){
 			cardarr[k][6] = card5.cardcode;
@@ -589,99 +572,128 @@ public class GameManager {
 		//GameMode = "showResult";	
 
 	}	
+	
+
+	//true 이면 2 스트레이트 플러시 : 9 10 j q k 가  모두 하트 
+	public boolean checkStraightFlush(int arr[]){
+		if( checkStraight(arr) == true && checkFlush(arr) ==true)
+			return true;
+		else
+			return false;
+	}
+	
+	//4 풀하우스 트리플페어: 트리플+페어  777 22
+	public boolean checkFullHouse(int arr[]){
+		int []cNum = new int[13]; 
+		int triple = 0;
+		int pair = 0;
+		for(int i=0; i<7; i++){
+			cNum[ arr[i]%13 ]++;
+		}
+		
+		for(int i=0;i<13;i++){
+			if(cNum[i] == 3) triple = 1;
+			if(cNum[i] == 2) pair = 1; 				
+		}
+		
+		if(triple==1 && pair==1) return true;
+		else return false;
+	}
+	//9페어:동일한숫자 한쌍   8투페어:동일한숫자 두쌍  7트리플: 동일한세장      3포카드 : 동일한숫자 4장 
+	public int checkAllpair(int arr[]){
+		int level = -1;
+		int twopair = 0;
+		int []cNum = new int[13]; 
+		for(int i=0; i<7; i++){
+			cNum[ arr[i]%13 ]++;
+			if(cNum[ arr[i]%13 ] >= 4) level = 3;//포카드
+			else if(cNum[ arr[i]%13 ] >= 3) level = 7;//트리플
+			else if(cNum[ arr[i]%13 ] >= 2){//페어 , 투페어
+				twopair++;
+				if(twopair==2) level = 8; // 투페어
+				else level = 9; 
+			}
+			
+		}
+		return level;
+	}
+	
+	//true 이면  6 스트레이트 : 9 10 j q k
+	public boolean checkStraight(int arr[]){
+		int ct = 0;
+		int pre = 0;
+		for(int i=0; i<7; i++){
+			if(i!=0 && pre-1 != arr[i] )
+				ct=0;
+			else{
+				ct++;
+				if(ct>=5)	return true;				
+			}
+		}
+		return false;
+	}
+	//true 이면 5 플러시  : 하트5장
+	public boolean checkFlush(int arr[]){
+		int []shape = new int[4]; 
+		for(int k=0; k<7; k++){
+			shape[ (int)(arr[k]/13) ]++;
+			if( shape[ (int)(arr[k]/13) ] >= 5 ) return true;
+		}
+		return false;
+	}
+	
+	//10 탑카드  : 제일 큰숫자 한장 리턴
+	public int checkTopCard(int arr[]){		
+		int pre = -1;		
+		for(int i=0; i<7; i++){
+			if( pre < (arr[i]%13) )
+				pre = arr[i]%13;
+		}			
+		return pre;
+	}	
+	
+	
 	public void showResult(){
 		whosturn=0;
 
 		//결과 계산하기
 		// 유저들의 카드 목록 2차원 배열 출력
+		int winidx=-1,wlv=-1;
 		for(int k = 0; k<cardarr.length; k++){
+			int []card = new int[7]; 
 			System.out.println(k + "번째 유저의 카드 목록 2차원 배열");
-			for(int i = 0; i<cardarr[k].length; i++){
-				System.out.print("\t" + cardarr[k][i]);
+			for(int i = 0; i<cardarr[k].length; i++){				
+				card[i] = cardarr[k][i];				
 			}
-			System.out.println();
-		}
-/*
-		// 카드 목록을 1차원 배열로 유저별로 변환
-		for(int i=0; i<cardarr.length; i++) {
-			for(int j=0; j<cardarr[i].length; j++) {
-				//2차원 배열의 원소를 유저별 1차원 배열의 원소로 이동.
-				if( ( i * cardarr[i].length ) + j < 7){
-					arr1[ j ] = cardarr[i][j];
-				}
-				else if( ( i * cardarr[i].length ) + j < 14){
-					arr2[ j ] = cardarr[i][j];
-				}
-				else if( ( i * cardarr[i].length ) + j < 21){
-					arr3[ j ] = cardarr[i][j];
-				}
-				else if( ( i * cardarr[i].length ) + j < 28){
-					arr4[ j ] = cardarr[i][j];
-				}
-				else if( ( i * cardarr[i].length ) + j < 35){
-					arr5[ j ] = cardarr[i][j];
-				}
-				else if( ( i * cardarr[i].length ) + j < 42){
-					arr6[ j ] = cardarr[i][j];
-				}
-				else if( ( i * cardarr[i].length ) + j < 49){
-					arr7[ j ] = cardarr[i][j];
-				}
-				else if( ( i * cardarr[i].length ) + j < 56){
-					arr8[ j ] = cardarr[i][j];
-				}
-				else if( ( i * cardarr[i].length ) + j < 63){
-					arr9[ j ] = cardarr[i][j];
-				}
-
+			
+			//3포카드 7트리플 8투페어 9페어			
+			int lv = checkAllpair(card);
+			
+			//스트레이트 플러시 2
+			if(checkStraightFlush(card)==true){
+				if(lv>2) lv=2;
+			}else if(checkFullHouse(card)==true){
+				if(lv>4) lv=4;
+			}else if(checkFlush(card)==true){
+				if(lv>5) lv=5;
+			}else if(checkStraight(card)==true){
+				if(lv>6) lv=6;
+			}else if(checkStraight(card)==true){
+				if(lv>10) lv=10;
+				userlist.get(k).topcard = checkTopCard(card);
 			}
+			
+			if(wlv < lv ){
+				winidx = k;
+				wlv = lv;
+			}
+			userlist.get(k).level = lv;
 		}
-		// 1차원 배열 출력
-		System.out.println("==========================");
-		for(int i=0; i<5; i++) {
-			System.out.print("\t"+arr1[i]);  
-		}
-		System.out.println();
-		for(int i=0; i<5; i++) {
-			System.out.print("\t"+arr2[i]);  
-		}
-		System.out.println();
-		for(int i=0; i<5; i++) {
-			System.out.print("\t"+arr3[i]);  
-		}
-		System.out.println();
-		for(int i=0; i<5; i++) {
-			System.out.print("\t"+arr4[i]);  
-		}
-		System.out.println();
-		for(int i=0; i<5; i++) {
-			System.out.print("\t"+arr5[i]);  
-		}
-		System.out.println();
-		for(int i=0; i<5; i++) {
-			System.out.print("\t"+arr6[i]);  
-		}
-		System.out.println();
-		for(int i=0; i<5; i++) {
-			System.out.print("\t"+arr7[i]);  
-		}
-		System.out.println();
-		for(int i=0; i<5; i++) {
-			System.out.print("\t"+arr8[i]);  
-		}
-		System.out.println();
-		for(int i=0; i<5; i++) {
-			System.out.print("\t"+arr9[i]);  
-		}
-		System.out.println();
-		System.out.println("==========================");
 
-
-
-
-*/
 		JSONObject obj = new JSONObject();
 		obj.put("protocol","showResult");
+		obj.put("winmoney",""+this.totalmoney);
+		obj.put("winidx",""+winidx);
 		changeGameMode("showResult");
 	}
 }
