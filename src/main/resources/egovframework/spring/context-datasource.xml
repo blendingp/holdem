@@ -21,7 +21,7 @@
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="url" value="jdbc:mysql://127.0.0.1:3306/holdem" />
         <property name="username" value="holdem"/>
-        <property name="password" value="1234"/>
+        <property name="password" value="ghfeja!@34"/>
     </bean>
 
     
