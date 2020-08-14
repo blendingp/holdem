@@ -28,10 +28,19 @@ public class Room {
 		Arrays.fill(seats, -1);		
 		gameManager = new GameManager(this);
 	}
+	public void init(){
+		Arrays.fill(seats, -1);		
+		gameManager.init();
+	}
 
 	public boolean fullRoom(int ridx){
 		this.ridx = ridx;
 		return true;
+	}
+	public boolean emptyRoom(){
+		if( gameManager.userlist.size() == 0)
+			return true;
+		return false;
 	}
 
 	public void notifyJoinUser() {
@@ -91,6 +100,7 @@ public class Room {
 
 	public void join(User u, int ridx ) {
 		gameManager.userlist.add( u );
+		u.roomnum = ridx;
 		for(int k=0; k<seats.length; k++){
 			if(seats[k] == -1){
 				seats[k] = u.uidx;
@@ -110,6 +120,7 @@ public class Room {
 
 				seats[k] = -1;
 				u.seat = -1;
+				u.roomnum = -1;
 				break;
 			}
 		}

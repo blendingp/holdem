@@ -6,7 +6,9 @@ import org.springframework.web.socket.WebSocketSession;
 
 public class User {
 	public int uidx;
+	public String nickname;
 	public int seat = -1;
+	public int roomnum= -1;
 	public int betmoney = 0;
 	public int balance = 0;
 	public int currentGuBetMoney=0;//현재 구 에 베팅한 머니 / 모든 유저가  이 머니가 같아야 다음  단계로 넘어감.
@@ -18,9 +20,14 @@ public class User {
 	int topcard = -1;
 	Card card1=new Card(-1);//아직카드없음
 	Card card2=new Card(-1);
-	
+	public void init(){
+		betmoney = 0;
+		currentGuBetMoney=0;//현재 구 에 베팅한 머니 / 모든 유저가  이 머니가 같아야 다음  단계로 넘어감.
+		die = false;
+	}
 	public User(int uidx, WebSocketSession session){
 		this.uidx = uidx;
+		this.nickname = "신라의달밤"+uidx;
 		this.balance = 1000000;
 		this.session = session;
 		

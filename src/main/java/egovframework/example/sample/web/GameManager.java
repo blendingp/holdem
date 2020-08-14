@@ -36,6 +36,25 @@ public class GameManager {
 	Card card5;
 
 	Room room;
+	
+	public void init(){
+		cardManager.init();
+		gu=0;//1구 2구 3구 4구
+		GameMode="대기";	
+		timerStartTime = 0;//객체로 만들면 좋다
+		whosturn = 0;//누구차례인지 
+		turncnt = 0;//안쓰기로함
+		
+		totalmoney = 0;
+		prebetmoney =0 ;//이전 사람의 베팅머니
+		preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.
+		startTime=0;
+		timer = -1;
+		dealerSeatNum = -1;//누가딜러인지 유저인덱스 저장
+		endtime=0;
+		System.out.println("게임초기화");
+	}
+	
 	public GameManager(Room room){
 		this.room = room;
 	}
@@ -105,6 +124,7 @@ public class GameManager {
 		
 		for(User u : userlist){
 			SocketHandler.insertLog(getGameId(), "join", u.uidx , u.balance , u.seat , "참가", -1, -1);
+			u.init();
 		}
 		SocketHandler.insertLog(getGameId(), "gamestart", -1, -1, -1, "게임시작", -1, -1);
 		whosturn = 0;

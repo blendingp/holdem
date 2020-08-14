@@ -60,11 +60,30 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         this.logger.info("create SocketHandler instance!");
         sk =this;
     }
+    
+    void disconnect(WebSocketSession session){
+    	User u = usermanager.find(session);
+    	if( u == null)
+    		return;
+    	
+    	System.out.println("접속끊김 :"+u.seat );
+    	
+    	if( u.roomnum != -1){
+    		Room r = roommanager.find(u.roomnum);
+    		r.leave(u);
+    		if( r.emptyRoom() ){
+    			r.init();
+    		}
+    	}
+    	usermanager.userlist.remove(u);
+    }
  
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
     	super.afterConnectionClosed(session, status);
+    	disconnect(session);
         sessionSet.remove(session);
+        
         this.logger.info("remove session!");
     }
  
@@ -145,6 +164,8 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
  
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+    	System.out.println("접속에러" );
+    	disconnect(session);
         this.logger.error("web socket error!", exception);
     }
  
