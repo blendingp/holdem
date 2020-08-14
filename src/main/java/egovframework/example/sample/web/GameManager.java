@@ -225,7 +225,7 @@ public class GameManager {
 		if(GameMode.compareTo("showBetPan")==0 || GameMode.compareTo("THEFLOP")==0 || GameMode.compareTo("THETURN")==0 || GameMode.compareTo("THERIVER")==0){
 			if(timer!=-1 && SocketHandler.second-timer>8){ // 자기턴 타임아웃 시간 8초로.	
 				for(User u : userlist){
-					if(u.uidx==getWhoTurn() ){
+					if(u.seat==getWhoTurn() ){
 						JSONObject obj = new JSONObject();						
 						//방접속자에게 보냄
 						obj.put("cmd","timeOut");
@@ -274,7 +274,7 @@ public class GameManager {
 			userlist.get(k).setCard(cardManager.popCard(), cardManager.popCard());
 			//JSONObject item = new JSONObject();
 			obj.put("cmd", "giveTwoCard");
-			obj.put("useridx", userlist.get(k).uidx);
+			obj.put("seat", userlist.get(k).seat);
 			obj.put("card1", userlist.get(k).card1.cardcode);
 			obj.put("card2", userlist.get(k).card2.cardcode);
 			//j.add(item);
