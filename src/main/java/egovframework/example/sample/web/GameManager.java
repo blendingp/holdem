@@ -16,8 +16,7 @@ public class GameManager {
 	//Calendar startTime;
 	long timerStartTime = 0;//객체로 만들면 좋다
 	int whosturn = 0;//누구차례인지 
-	int turncnt = 0;//안쓰기로함
-	int whosturnUseridx;//안쓰기로함
+	int turncnt = 0;
 	
 	int totalmoney = 0;
 	int prebetmoney =0 ;//이전 사람의 베팅머니
@@ -197,6 +196,7 @@ public class GameManager {
 			}
 		}
 		if(GameMode.compareTo("THEEND")==0){
+			System.out.println("gameMode THEEND");
 			setRoomEndTime(SocketHandler.second);
 			showResult();
 		}
@@ -324,7 +324,6 @@ public class GameManager {
 	public void sbBet(){
 		JSONObject obj = new JSONObject();
 		whosturn = getDealerSeat()+1;
-		whosturnUseridx = userlist.get(whosturn%userlist.size()).uidx;
 		obj.put("cmd","sbBet");
 		obj.put("whosturn", ""+getWhoTurn() );
 //		obj.put("whosturn",userlist.get(whosturn).uidx);
@@ -345,6 +344,10 @@ public class GameManager {
 
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","bet");
+		if( turncnt == 0 )
+			obj.put("betenable", "1,1,1,0,0,1,1,1");//체크/폴드/삥/콜/따당/하프/풀/맥스
+		else
+			obj.put("betenable", "0,1,0,1,1,1,1,1");//체크/폴드/삥/콜/따당/하프/풀/맥스
 		obj.put("whosturn", getWhoTurn() );
 		timer = SocketHandler.second;
 		System.out.println("다음 사람 베팅 하시오:"+getWhoTurn() );
@@ -420,6 +423,7 @@ public class GameManager {
 			obj.put("cmd", "betsuc");
 			//System.out.println("<< 베팅 성공 >>");
 		}
+		turncnt++;
 		whosturn++;//다음사람배팅
 		int k=0;
 		while( checkDieturn(getWhoTurn()) ){
@@ -440,6 +444,7 @@ public class GameManager {
 		obj.put("betkind", betkind);
 		obj.put("seat", u.seat);//금방배팅한 사람
 		obj.put("nextwho", getWhoTurn() );//이제 배팅할 사람의 번호
+		obj.put("betenable", "0,1,0,1,1,1,1,1");//체크/폴드/삥/콜/따당/하프/풀/맥스
 		obj.put("gu", gu );
 		if( isBetEnd )
 			obj.put("betEnd", "1");//마지막 베팅인지 체크
@@ -486,6 +491,7 @@ public class GameManager {
 	public void showThreeCard(){	
 		timer = SocketHandler.second+2;
 		whosturn=getDealerSeat()+1;
+		turncnt=0;
 		System.out.println("showThreeCard SB:"+whosturn);
 		JSONObject obj = new JSONObject();		
 		changeGameMode("THEFLOP");
@@ -498,6 +504,7 @@ public class GameManager {
 		obj.put("card2", card2.cardcode);		
 		obj.put("card3", card3.cardcode);
 		obj.put("whosturn", getWhoTurn() );
+		obj.put("betenable", "1,1,1,0,0,1,1,1");//체크/폴드/삥/콜/따당/하프/풀/맥스
 		SocketHandler.insertLog(getGameId(), "THEFLOP", -1, card1.cardcode, card2.cardcode, "", card3.cardcode, -1);
 		for(int k =0; k<userlist.size(); k++){
 			cardarr[k][2] = card1.cardcode;
@@ -675,10 +682,10 @@ public class GameManager {
 	
 	public void showResult(){
 		whosturn=0;
-
+		System.out.println("SHOW RESULT ");
 		//결과 계산하기
 		// 유저들의 카드 목록 2차원 배열 출력
-		int winidx=-1,wlv=-1;
+		int winSeat=-1,wlv=10000;
 		for(int k = 0; k<cardarr.length; k++){
 			int []card = new int[7]; 
 			System.out.println(k + "번째 유저의 카드 목록 2차원 배열");
@@ -703,17 +710,21 @@ public class GameManager {
 				userlist.get(k).topcard = checkTopCard(card);
 			}
 			
-			if(wlv < lv ){
-				winidx = k;
+			if(wlv > lv ){
+				winSeat = k;
 				wlv = lv;
 			}
 			userlist.get(k).level = lv;
 		}
 
+		userlist.get(winSeat).balance+=totalmoney;
 		JSONObject obj = new JSONObject();
-		obj.put("protocol","showResult");
+		obj.put("cmd","showResult");
+		obj.put("winnerbalance",""+userlist.get(winSeat).balance);
 		obj.put("winmoney",""+this.totalmoney);
-		obj.put("winidx",""+winidx);
+		obj.put("winSeat",""+winSeat);
+		System.out.println("SHOW RESULT  SEND ");
+		sendRoom(obj);
 		changeGameMode("showResult");
 	}
 }
