@@ -3,6 +3,7 @@ package egovframework.example.sample.web;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.web.socket.TextMessage;
 
@@ -121,16 +122,22 @@ public class GameManager {
 		gu = 1;
 		setGameId(SocketHandler.GameIdxAdder());
 		
-		for(User u : userlist){
-			SocketHandler.insertLog(getGameId(), "join", u.uidx , u.balance , u.seat , "참가", -1, -1);
-			u.init();
-		}
 		SocketHandler.insertLog(getGameId(), "gamestart", -1, -1, -1, "게임시작", -1, -1);
 		whosturn = 0;
 		turncnt = 0;
 		totalmoney = 0;
 
 		cardarr = new int[userlist.size()][7];
+
+		for(User u : userlist){
+			SocketHandler.insertLog(getGameId(), "join", u.uidx , u.balance , u.seat , "참가머니", 1000, -1);
+			u.init();
+			
+			u.betmoney+=1000;
+			totalmoney+=1000;
+		}
+		
+		
 	}
 	int getDealerSeat(){
 		return  (dealerSeatNum % userlist.size() );
@@ -222,14 +229,14 @@ public class GameManager {
 
 	void checkTimerGame(){
 		//배팅시간 지났음
-		if(GameMode.compareTo("showBetPan")==0 || GameMode.compareTo("THEFLOP")==0 || GameMode.compareTo("THETURN")==0 || GameMode.compareTo("THERIVER")==0){
+		if( GameMode.compareTo("nmBet")==0 || GameMode.compareTo("showBetPan")==0 || GameMode.compareTo("THEFLOP")==0 || GameMode.compareTo("THETURN")==0 || GameMode.compareTo("THERIVER")==0){
 			if(timer!=-1 && SocketHandler.second-timer>8){ // 자기턴 타임아웃 시간 8초로.	
 				for(User u : userlist){
 					if(u.seat==getWhoTurn() ){
 						JSONObject obj = new JSONObject();						
 						//방접속자에게 보냄
 						obj.put("cmd","timeOut");
-
+						
 						try {
 							u.session.sendMessage(new TextMessage(obj.toJSONString()));
 							//bet(room.ridx, u, 1);//시간초안에 배팅 안하면 자동 1번 배팅 처리
@@ -251,6 +258,8 @@ public class GameManager {
 			JSONObject obj = new JSONObject();						
 			//방접속자에게 보냄
 			obj.put("cmd","startGame");
+			System.out.println("totalmoney:"+totalmoney);
+			obj.put("smoney",  ""+totalmoney);
 			obj.put("roompeople",""+ userlist.size() );
 			obj.put("dealer",""+ getDealerSeat() );
 			obj.put("smallblind",""+ getDealerSeat() + 1 );
@@ -716,6 +725,7 @@ public class GameManager {
 			}
 			userlist.get(k).level = lv;
 		}
+		
 
 		userlist.get(winSeat).balance+=totalmoney;
 		JSONObject obj = new JSONObject();
@@ -723,6 +733,17 @@ public class GameManager {
 		obj.put("winnerbalance",""+userlist.get(winSeat).balance);
 		obj.put("winmoney",""+this.totalmoney);
 		obj.put("winSeat",""+winSeat);
+		
+		JSONArray j = new JSONArray();
+		for(int i=0; i<userlist.size(); i++){
+			JSONObject item = new JSONObject();
+			item.put("seat",""+ userlist.get(i).seat);
+			item.put("card1",""+ userlist.get(i).card1);
+			item.put("card2",""+ userlist.get(i).card2);
+			item.put("die",""+ userlist.get(i).die);
+			j.add(item);
+		}
+		obj.put("cardlist", j);
 		System.out.println("SHOW RESULT  SEND ");
 		sendRoom(obj);
 		changeGameMode("showResult");
