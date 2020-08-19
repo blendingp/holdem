@@ -612,8 +612,9 @@ public class GameManager {
 
 	//true 이면 2 스트레이트 플러시 : 9 10 j q k 가  모두 하트 
 	public boolean checkStraightFlush(int arr[]){
-		if( checkStraight(arr) == true && checkFlush(arr) ==true)
+		if( checkStraight(arr) == true && checkFlush(arr) ==true){
 			return true;
+		}			
 		else
 			return false;
 	}
@@ -628,11 +629,20 @@ public class GameManager {
 		}
 		
 		for(int i=0;i<13;i++){
-			if(cNum[i] == 3) triple = 1;
-			if(cNum[i] == 2) pair = 1; 				
+			if(cNum[i] == 3){
+				triple = 1;
+				tempInfo1 = i;//트리플숫자 
+			}
+			if(cNum[i] == 2){
+				pair = 1;
+				tempInfo2 = i;//투페어숫자
+			}
 		}
 		
-		if(triple==1 && pair==1) return true;
+		if(triple==1 && pair==1){
+			
+			return true;
+		}
 		else return false;
 	}
 	//9페어:동일한숫자 한쌍   8투페어:동일한숫자 두쌍  7트리플: 동일한세장      3포카드 : 동일한숫자 4장 
@@ -642,12 +652,24 @@ public class GameManager {
 		int []cNum = new int[13]; 
 		for(int i=0; i<7; i++){
 			cNum[ arr[i]%13 ]++;
-			if(cNum[ arr[i]%13 ] >= 4) level = 3;//포카드
-			else if(cNum[ arr[i]%13 ] >= 3) level = 7;//트리플
+			if(cNum[ arr[i]%13 ] >= 4){
+				tempInfo1 = arr[i]%13;//숫자네개
+				level = 3;//포카드
+			}
+			else if(cNum[ arr[i]%13 ] >= 3){
+				tempInfo1 = arr[i]%13;
+				level = 7;//트리플 숫자세개
+			}
 			else if(cNum[ arr[i]%13 ] >= 2){//페어 , 투페어
-				twopair++;
-				if(twopair==2) level = 8; // 투페어
-				else level = 9; 
+				twopair++;				
+				if(twopair==2) {
+					tempInfo2 = arr[i]%13;//숫자
+					level = 8; // 투페어				
+				}
+				else {
+					tempInfo1 = arr[i]%13;//숫자
+					level = 9; 
+				}
 			}
 			
 		}
@@ -659,12 +681,14 @@ public class GameManager {
 		int ct = 0;
 		int pre = 0;
 		for(int i=0; i<7; i++){
-			if(i!=0 && pre-1 != arr[i] )
+			if(i!=0 && pre-1 != arr[i]%13 )
 				ct=0;
 			else{
 				ct++;
+				tempInfo1 = arr[i]%13;
 				if(ct>=5)	return true;				
 			}
+			pre= arr[i]%13;
 		}
 		return false;
 	}
@@ -673,7 +697,10 @@ public class GameManager {
 		int []shape = new int[4]; 
 		for(int k=0; k<7; k++){
 			shape[ (int)(arr[k]/13) ]++;
-			if( shape[ (int)(arr[k]/13) ] >= 5 ) return true;
+			if( shape[ (int)(arr[k]/13) ] >= 5 ) {
+				tempInfo2 = (int)(arr[k]/13); 
+				return true;
+			}
 		}
 		return false;
 	}
@@ -688,7 +715,8 @@ public class GameManager {
 		return pre;
 	}	
 	
-	
+	int cardInfo1,cardInfo2;//이긴사람 카드정보
+	int tempInfo1,tempInfo2;//임시 카드정보
 	public void showResult(){
 		whosturn=0;
 		System.out.println("SHOW RESULT ");
@@ -704,42 +732,50 @@ public class GameManager {
 			
 			//3포카드 7트리플 8투페어 9페어			
 			int lv = checkAllpair(card);
-			
 			//스트레이트 플러시 2
-			if(checkStraightFlush(card)==true){
+			if(checkStraightFlush(card)==true){//info1 스트레이트 숫자 , info2 플러시 모양
 				if(lv>2) lv=2;
-			}else if(checkFullHouse(card)==true){
+			}else if(checkFullHouse(card)==true){//info1트리플 숫자  info2 투페어숫자
 				if(lv>4) lv=4;
-			}else if(checkFlush(card)==true){
+			}else if(checkFlush(card)==true){//info2 플러시 모양
 				if(lv>5) lv=5;
-			}else if(checkStraight(card)==true){
+			}else if(checkStraight(card)==true){//info1 스트레이트숫자
 				if(lv>6) lv=6;
-			}else if(checkStraight(card)==true){
+			}else {//탑카드 
 				if(lv>10) lv=10;
 				userlist.get(k).topcard = checkTopCard(card);
+				cardInfo1 = userlist.get(k).topcard; 
 			}
 			
 			if(wlv > lv ){
 				winSeat = k;
 				wlv = lv;
+				cardInfo1 = tempInfo1;
+				cardInfo2 = tempInfo2;
 			}
 			userlist.get(k).level = lv;
 		}
+		
 		
 
 		userlist.get(winSeat).balance+=totalmoney;
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","showResult");
+		obj.put("wlv",""+wlv);
+		obj.put("cardInfo1",cardInfo1);
+		obj.put("cardInfo2",cardInfo2);
+		
 		obj.put("winnerbalance",""+userlist.get(winSeat).balance);
 		obj.put("winmoney",""+this.totalmoney);
-		obj.put("winSeat",""+winSeat);
+		obj.put("winSeat",""+winSeat);		
+		obj.put("usersize",""+userlist.size());		
 		
 		JSONArray j = new JSONArray();
 		for(int i=0; i<userlist.size(); i++){
 			JSONObject item = new JSONObject();
-			item.put("seat",""+ userlist.get(i).seat);
-			item.put("card1",""+ userlist.get(i).card1);
-			item.put("card2",""+ userlist.get(i).card2);
+			item.put("seat",""+ userlist.get(i).seat);			
+			item.put("card1",""+ userlist.get(i).card1.cardcode);
+			item.put("card2",""+ userlist.get(i).card2.cardcode);
 			item.put("die",""+ userlist.get(i).die);
 			j.add(item);
 		}
