@@ -2,6 +2,7 @@ package egovframework.example.sample.web;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -647,26 +648,27 @@ public class GameManager {
 	}
 	//9페어:동일한숫자 한쌍   8투페어:동일한숫자 두쌍  7트리플: 동일한세장      3포카드 : 동일한숫자 4장 
 	public int checkAllpair(int arr[]){
-		int level = -1;
+		int level = 100;
 		int twopair = 0;
 		int []cNum = new int[13]; 
 		for(int i=0; i<7; i++){
 			cNum[ arr[i]%13 ]++;
 			if(cNum[ arr[i]%13 ] >= 4){
 				tempInfo1 = arr[i]%13;//숫자네개
+				System.out.println("tempInfo1:"+tempInfo1);
 				level = 3;//포카드
 			}
-			else if(cNum[ arr[i]%13 ] >= 3){
+			else if(cNum[ arr[i]%13 ] == 3 && level >7){
 				tempInfo1 = arr[i]%13;
 				level = 7;//트리플 숫자세개
 			}
 			else if(cNum[ arr[i]%13 ] >= 2){//페어 , 투페어
 				twopair++;				
-				if(twopair==2) {
+				if(twopair==2  && level >8) {
 					tempInfo2 = arr[i]%13;//숫자
 					level = 8; // 투페어				
 				}
-				else {
+				else if(twopair==1){
 					tempInfo1 = arr[i]%13;//숫자
 					level = 9; 
 				}
@@ -677,18 +679,26 @@ public class GameManager {
 	}
 	
 	//true 이면  6 스트레이트 : 9 10 j q k
-	public boolean checkStraight(int arr[]){
+	public boolean checkStraight(int tarr[]){
+		int [] arr=tarr.clone();
+		Arrays.sort(arr);	//큰수가 앞으로 오게
 		int ct = 0;
-		int pre = 0;
+		int pre = 0;	
+		int ck = -1;
 		for(int i=0; i<7; i++){
-			if(i!=0 && pre-1 != arr[i]%13 )
+			if(i!=0 && pre+1 != arr[i]%13 )
 				ct=0;
 			else{
 				ct++;
-				tempInfo1 = arr[i]%13;
-				if(ct>=5)	return true;				
+				if(ct>=4){					
+					ck = arr[i]%13;;
+				}
 			}
 			pre= arr[i]%13;
+		}
+		if( ck != -1 ){
+			tempInfo1 = ck;
+			return true;
 		}
 		return false;
 	}
@@ -758,6 +768,7 @@ public class GameManager {
 				wlv = lv;
 				cardInfo1 = tempInfo1;
 				cardInfo2 = tempInfo2;
+				System.out.println("*********lv:"+lv+" cardInfo1:"+cardInfo1+" cardInfo2:"+cardInfo2);				
 			}
 			userlist.get(k).level = lv;
 		}
