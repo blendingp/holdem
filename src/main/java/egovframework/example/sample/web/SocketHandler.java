@@ -99,9 +99,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
     
     	super.handleMessage(session, message);
-//        this.logger.info("receive message:" + message.toString());
-        
-//        System.out.println("handleMessage test");
         String msg = ""+message.getPayload();
         JSONParser p = new JSONParser();
         JSONObject obj = (JSONObject)p.parse(msg);
@@ -118,9 +115,18 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     			roommanager.find(roomidx).notifyLeaveUser(ss);
     		}
         	case "connect":
-        	{
-        		session.getAttributes().put("useridx", obj.get("useridx"));
-        		User user = new User(Integer.parseInt(""+obj.get("useridx")), session);
+        	{        	
+        		EgovMap in = new EgovMap();
+        		in.put("muserid", obj.get("userid"));
+        		in.put("muserpw", obj.get("userpw"));
+    			System.out.println("login id:"+obj.get("userid")+" pw:"+obj.get("userpw"));
+        		EgovMap ed = (EgovMap)sampleDAO.select("Login", in);
+        		if(ed==null){
+        			System.out.println("로그인실패");
+        			break;
+        		}
+        		session.getAttributes().put("useridx", ed.get("midx"));
+        		User user = new User(Integer.parseInt(""+ed.get("midx")), session, ""+ed.get("muserid"));
         		usermanager.connect(session, user);
         		break;
         	}
@@ -130,7 +136,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
              	int roomidx = Integer.parseInt(""+obj.get("roomidx"));
              	roommanager.joinRoom(roomidx , u);
              	Room r = roommanager.find(roomidx);
-             	r.gameManager.setRoomEndTime( SocketHandler.second );//새로 한명 들어올때마다 대기 시간을 증가시켜서 여러명이 들어올 여지를 둔다.
+             	r.gameManager.setWorkTime( );//새로 한명 들어올때마다 대기 시간을 증가시켜서 여러명이 들어올 여지를 둔다.
         		break;
         	}
         	case "bet":
@@ -190,7 +196,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
             public void run() {
                 while (true) {
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(500);
                         second++;                        
                         roommanager.checkStartGame();
                         roommanager.checkTimerGame();
@@ -235,4 +241,5 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
                }
           }
     }
+    //=======================
 }

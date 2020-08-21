@@ -24,7 +24,7 @@ public class Room {
 	public Room(int ridx, int defaultmoney){
 		this.ridx = ridx;
 		this.defaultmoney = defaultmoney;
-		this.maxmoney = defaultmoney * 10000;
+		this.maxmoney = defaultmoney * 100;
 		Arrays.fill(seats, -1);		
 		gameManager = new GameManager(this);
 	}

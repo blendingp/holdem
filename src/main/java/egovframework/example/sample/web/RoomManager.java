@@ -13,7 +13,7 @@ public class RoomManager {
 	int roomcount = 20;
 	public  RoomManager(){
 		for(int k=0; k<roomcount; k++){
-			Room room = new Room(k, 1000);
+			Room room = new Room(k, 10);
 			roomList.add(room);
 		}
 	}

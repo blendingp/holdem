@@ -14,6 +14,14 @@
 		<result property="regUser" column="reg_user"/>
 	</resultMap>
 
+	<select id="Login" resultClass="EgovMap">
+        <![CDATA[
+            SELECT *
+            FROM member
+            where muserid=#muserid# and muserpw=#muserpw#
+        ]]>
+	</select>
+
 	<select id="selectLastGameId" resultClass="EgovMap">
         <![CDATA[
             SELECT *

@@ -22,10 +22,14 @@ public class GameManager {
 	int totalmoney = 0;
 	int prebetmoney =0 ;//이전 사람의 베팅머니
 	int preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.
-	int startTime;
+	
+//	int startTime;
+//	int endtime;
+	int workTime=0;
+	
 	int timer = -1;
 	int dealerSeatNum = -1;//누가딜러인지 유저인덱스 저장
-	int endtime;
+	int lastCmdSecond=1000000;//마지막 명령을 받은 시간, 1분  이상 누구도 명령을 내리지 않은 상태인데 방이 대기 상태가 아니라면 에러난 상태이므로 방을 강제 초기화 시켜야 함. 
 	
 	int[][] cardarr;// 사람별 카드 소유
 	
@@ -48,10 +52,9 @@ public class GameManager {
 		totalmoney = 0;
 		prebetmoney =0 ;//이전 사람의 베팅머니
 		preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.
-		startTime=0;
+		workTime = SocketHandler.second;
 		timer = -1;
 		dealerSeatNum = -1;//누가딜러인지 유저인덱스 저장
-		endtime=0;
 		System.out.println("게임초기화");
 	}
 	
@@ -72,7 +75,10 @@ public class GameManager {
 			u.currentGuBetMoney = 0;
 	}
 	void sendRoom(JSONObject obj){
-		for(User u : userlist)
+		sendList(obj,userlist);
+	}
+	void sendList(JSONObject obj, ArrayList<User> lst){
+		for(User u : lst)
 			try {
 				u.session.sendMessage(new TextMessage(obj.toJSONString()));
 			} catch (IOException e) {
@@ -90,15 +96,13 @@ public class GameManager {
 			}
 		}
 		if(cnt>=3) {			
-			startTime = SocketHandler.second;
-//			GameMode="checkstart";
+			setWorkTime( );
 			changeGameMode("대기");
 		}
 
 	}
 
-	boolean isPlayable()
-	{
+	boolean isPlayable(){
 		int cnt = 0;
 		for(User u : userlist){
 			if(u.getGameStat()=="OK"){
@@ -130,11 +134,11 @@ public class GameManager {
 		cardarr = new int[userlist.size()][7];
 
 		for(User u : userlist){
-			SocketHandler.insertLog(getGameId(), "join", u.uidx , u.balance , u.seat , "참가머니", 1000, -1);
+			SocketHandler.insertLog(getGameId(), "join", u.uidx , u.balance , u.seat , "참가머니", room.defaultmoney , -1);
 			u.init();
 			
-			u.betmoney+=1000;
-			totalmoney+=1000;
+			u.betmoney+=room.defaultmoney;
+			totalmoney+=room.defaultmoney;
 		}
 		
 		
@@ -142,22 +146,34 @@ public class GameManager {
 	int getDealerSeat(){
 		return  (dealerSeatNum % userlist.size() );
 	}
-	boolean isStartTime(){
-		return SocketHandler.second-startTime>3 ;
+/*	boolean isStartTime(){
+		return SocketHandler.second-startTime>2 ;
 	}
 	boolean isEndGame(){
-		return SocketHandler.second-endtime>10 ;
+		return SocketHandler.second-endtime>5 ;
 	}
+	*/
+	
+	
 	void changeGameMode(String mode){
 		System.out.println("GameMode:"+mode);
 		GameMode = mode;
 	}
-	void setRoomStartTime( int st){
+/*	void setRoomStartTime( int st){
 		startTime = st; 
 	}
 	void setRoomEndTime( int et){
 		endtime = et; 
 		System.out.println("대기시간 추가");
+	}
+	*/
+	void setWorkTime(){
+		workTime = SocketHandler.second; 
+	}
+	boolean checkCmdTime(int timecmp){
+		if(SocketHandler.second > workTime+timecmp)
+			return true;
+		return false;
 	}
 
 	void checkStartGame(){
@@ -171,8 +187,8 @@ public class GameManager {
 		
 		if(GameMode.compareTo("twoCard")==0)
 		{
-			if( isStartTime() ){
-				setRoomStartTime(SocketHandler.second);
+			if(  checkCmdTime(3)   ){
+				setWorkTime();
 				drawCard();
 				resetGuBetmoney();
 				changeGameMode("sbBet");
@@ -183,54 +199,76 @@ public class GameManager {
 
 		if(GameMode.compareTo("sbBet")==0)
 		{
-			if(SocketHandler.second-startTime>3){
+			if( checkCmdTime(1) ){
 				changeGameMode("sbBeted");
 				sbBet();
 			}
 		}
 		//===================
 		if(GameMode.compareTo("bbBet")==0){			
-			if(SocketHandler.second-startTime>3){
+			if( checkCmdTime(1) ){
 				changeGameMode("bbBeted");
 				bbBet();
 			}
 		}
 
 		if(GameMode.compareTo("nmBet")==0){	
-			if(SocketHandler.second-startTime>6){
+			if(  checkCmdTime(4)  ){
 				changeGameMode("showBetPan");
 				showBetPan();
 			}
 		}
 		if(GameMode.compareTo("THEEND")==0){
-			System.out.println("gameMode THEEND");
-			setRoomEndTime(SocketHandler.second);
+			setWorkTime();
 			showResult();
+			changeGameMode("showResult");
 		}
-
+		
 		if(GameMode.compareTo("showResult")==0){
-			if( isEndGame() ){
+			if( checkCmdTime(1) ){
 				changeGameMode("대기");
-				setRoomEndTime(SocketHandler.second);
+				checkOutUser();
+				setWorkTime(); 
 			}
 		}
+		
 		if(GameMode.compareTo("대기")==0){
-			if (isPlayable() && SocketHandler.second-endtime>5 )
-			{
-				startTime = SocketHandler.second;
+			if (isPlayable() && checkCmdTime(3) ){
+				setWorkTime();
 				changeGameMode("checkstart");
 			}
-			
 		}
-
-
-
+	}
+	
+	void checkOutUser(){
+		//돈이 없는 유저 내보내기
+		JSONObject obj = new JSONObject();
+		JSONArray j = new JSONArray();
+		boolean userfind = false;
+		ArrayList<User> rmlist=new ArrayList<User>();
+		for(User u : userlist){ 
+			if( u.balance != 0){
+				userfind = true;
+				JSONObject item = new JSONObject();
+				item.put("uidx", u.uidx);
+				item.put("seat", u.seat);
+				j.add(item);
+				rmlist.add(u);
+			}
+		}
+		obj.put("outlist", j);
+		userlist.removeAll(rmlist);
+		sendRoom(obj);//남은 유저에가는 내보낸사람 빼고 남은 리스트 보내주고
+		
+		JSONObject obj2 = new JSONObject();
+		obj2.put("cmd","roomout");
+		sendList(obj2,rmlist);//나간 유저에게는 당신 돈 없어서 나갔다는 패킷 보내줌
 	}
 
 	void checkTimerGame(){
 		//배팅시간 지났음
 		if( GameMode.compareTo("nmBet")==0 || GameMode.compareTo("showBetPan")==0 || GameMode.compareTo("THEFLOP")==0 || GameMode.compareTo("THETURN")==0 || GameMode.compareTo("THERIVER")==0){
-			if(timer!=-1 && SocketHandler.second-timer>8){ // 자기턴 타임아웃 시간 8초로.	
+			if(timer!=-1 && SocketHandler.second-timer>4){ // 자기턴 타임아웃 시간 8초로.	
 				for(User u : userlist){
 					if(u.seat==getWhoTurn() ){
 						JSONObject obj = new JSONObject();						
@@ -239,9 +277,7 @@ public class GameManager {
 						
 						try {
 							u.session.sendMessage(new TextMessage(obj.toJSONString()));
-							//bet(room.ridx, u, 1);//시간초안에 배팅 안하면 자동 1번 배팅 처리
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}						
 
@@ -251,26 +287,16 @@ public class GameManager {
 		}
 	}
 
-	public void notifyGameStart() {
-
-		System.out.println("start dealerNum:"+getDealerSeat() );
-		for(User u : userlist){
-			JSONObject obj = new JSONObject();						
-			//방접속자에게 보냄
-			obj.put("cmd","startGame");
-			System.out.println("totalmoney:"+totalmoney);
-			obj.put("smoney",  ""+totalmoney);
-			obj.put("roompeople",""+ userlist.size() );
-			obj.put("dealer",""+ getDealerSeat() );
-			obj.put("smallblind",""+ getDealerSeat() + 1 );
-			obj.put("bigblind",""+ getDealerSeat() + 2 );
-			try {
-				u.session.sendMessage(new TextMessage(obj.toJSONString()));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}		
-		}
+	public void notifyGameStart() {//게임 시작을 알림
+		JSONObject obj = new JSONObject();						
+		obj.put("cmd","startGame");
+		obj.put("smoney",  ""+totalmoney);
+		obj.put("maxmoney",  ""+room.maxmoney);
+		obj.put("roompeople",""+ userlist.size() );
+		obj.put("dealer",""+ getDealerSeat() );
+		obj.put("smallblind",""+ getDealerSeat() + 1 );
+		obj.put("bigblind",""+ getDealerSeat() + 2 );
+		sendRoom(obj);
 	}
 
 	public void drawCard(){
@@ -310,21 +336,6 @@ public class GameManager {
 		}
 		//obj.put("twocardlist", j);
 
-	}
-
-	public void giveTwoCard() {
-		for(User u : userlist){
-			JSONObject obj = new JSONObject();						
-			//방참여자에게 보냄
-			obj.put("useridx","참여자인덱스");
-			obj.put("protocol","RoomJoinOk");
-			try {
-				u.session.sendMessage(new TextMessage(obj.toJSONString()));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
 	}
 
 	public int getWhoTurn(){
@@ -371,7 +382,7 @@ public class GameManager {
 			return room.defaultmoney;
 		else if(kind==2)// 콜
 			return preTotalBetmoney - mybetmoney;
-		else if(kind==3)// 따당? 
+		else if(kind==3)// 따당 
 			return prebetmoney*2;
 		else if(kind==4)// 하프 
 			return totalmoney/2;
@@ -379,6 +390,12 @@ public class GameManager {
 			return totalmoney;
 		else if(kind==6)// 맥스
 			return room.maxmoney;
+		else if(kind==7)// 쿼터 
+			return totalmoney/4;
+		else if(kind==8)// 패스 ( 올인이나 맥스벳 상태에서는 자기 차례올시에 자동 패스 커맨드 함) 
+			return 0;
+		else if(kind==9)// 체크 
+			return 0;
 		else
 			return 1;
 
@@ -387,13 +404,29 @@ public class GameManager {
 	boolean isGuBetEnd(){		
 		int money = -1;
 		for(User uu : userlist){
-			if(uu.die == true) continue;//밑에 실행하지않고 다음 for문 검사
+			if(		uu.die == true	//죽었거나 
+				|| 	uu.balance == 0 //올인이거나
+				|| 	uu.betmoney == room.maxmoney //맥스 머니이거나
+					) continue;//밑에 실행하지않고 다음 for문 검사
 			if( money != -1 && uu.betmoney != money)
 				return false;//배팅금액이 다르다
 			money = uu.betmoney;
 		}
 		return true;//배팅금액이 똑같은경우 배팅끝
 	}
+	public void  nextTurn(){
+		whosturn++;//다음사람배팅
+		int k=0;
+		while( checkDieturn(getWhoTurn()) ){
+			k++;
+			if( k>10){//9명이상이니 여기에 들어오면 에러 무한루프 체크
+				SocketHandler.insertLog(getGameId(), "error", -1, -1, -1, "DieTurnCheckError", -1, -1);
+				break;
+			}
+			whosturn++;			
+		}
+	}
+
 	public void bet(int roomidx, User u, int betkind){			
 		//System.out.println("========= whosturnUseridx:"+whosturnUseridx +" uidx:"+u.uidx+" u seat:"+u.seat);
 		if( getWhoTurn() != u.seat ){
@@ -403,6 +436,13 @@ public class GameManager {
 
 		if(betkind==0) u.die = true;
 		int tmo = thisTurnMoneyCompute(betkind , u.betmoney);
+		if( u.balance <= tmo ){//올인인지 체크.
+			tmo = u.balance;//올인 머니 셋팅
+		}
+		if( u.betmoney+tmo >= room.maxmoney ){//맥스 베팅인지 체크
+			tmo = room.maxmoney - u.betmoney;
+		}
+		
 		System.out.println("{ tmo:"+tmo +" u.betmoney:"+u.betmoney+" prebetmoney:"+prebetmoney+" preTotalBetmoney:"+preTotalBetmoney);
 		u.betmoney += tmo ;//나의 배팅금액 현재돈+배팅금액
 		prebetmoney = tmo;
@@ -420,7 +460,7 @@ public class GameManager {
 		if(GameMode.compareTo("sbBeted")==0)	{
 			obj.put("cmd", "sbBetsuc");
 			//System.out.println("sb가 자동베팅했습니다.");
-			setRoomStartTime( SocketHandler.second );
+			setWorkTime( );
 			changeGameMode("bbBet");
 		}
 		else if(GameMode.compareTo("bbBeted")==0)	{
@@ -432,20 +472,13 @@ public class GameManager {
 			obj.put("cmd", "betsuc");
 			//System.out.println("<< 베팅 성공 >>");
 		}
+		
 		turncnt++;
-		whosturn++;//다음사람배팅
-		int k=0;
-		while( checkDieturn(getWhoTurn()) ){
-			k++;
-			if( k>10){//9명이상이니 여기에 들어오면 에러 무한루프 체크
-				SocketHandler.insertLog(getGameId(), "error", -1, -1, -1, "DieTurnCheckError", -1, -1);
-				break;
-			}
-			whosturn++;			
-		}
+		
+		nextTurn();
+		
 		
 		boolean isBetEnd = isGuBetEnd();
-
 		obj.put("totalmoney", totalmoney);
 		obj.put("callmoney", "" + (preTotalBetmoney - u.betmoney) );
 		obj.put("myBetMoney", u.betmoney );
@@ -461,9 +494,8 @@ public class GameManager {
 			obj.put("betEnd", "0");//마지막 베팅인지 체크
 
 		timer = SocketHandler.second;
-
-		//베팅 성공 정보를 전송
-		sendRoom(obj);
+		
+		sendRoom(obj);//베팅 성공 정보를 전송
 		
 		//용우 : 아래 구조 이상함 배팅성공 패킷 보낸 후 아무 패킷을 받지않고 또 패킷을 보냄, 차라리 위에 첫번째 패킷 보낼때 다같이 보낼까? 
 		if( isBetEnd ){
@@ -499,7 +531,8 @@ public class GameManager {
 	
 	public void showThreeCard(){	
 		timer = SocketHandler.second+2;
-		whosturn=getDealerSeat()+1;
+		whosturn=getDealerSeat();
+		nextTurn();//딜러 다음 할 차례
 		turncnt=0;
 		System.out.println("showThreeCard SB:"+whosturn);
 		JSONObject obj = new JSONObject();		
@@ -530,7 +563,8 @@ public class GameManager {
 		timer = SocketHandler.second;
 		turncnt = 0;
 		//timer=-1;
-		whosturn=getDealerSeat()+1;
+		whosturn=getDealerSeat();
+		nextTurn();
 
 		JSONObject obj = new JSONObject();
 		GameMode = "THETURN";
@@ -545,15 +579,7 @@ public class GameManager {
 			cardarr[k][5] = card4.cardcode;
 			//System.out.println( k + "번 째 유저의 4 번 째 카드 : " + cardarr[k][5]);
 		}
-
-		for(User u : userlist){		
-			try {
-				u.session.sendMessage(new TextMessage(obj.toJSONString()));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		sendRoom(obj);
 	}
 
 	public void TheRiver(){
@@ -561,7 +587,8 @@ public class GameManager {
 		turncnt = 0;
 		//System.out.println("theriver================ 마지막 카드 공개");
 		//timer=-1;
-		whosturn=getDealerSeat()+1;
+		whosturn=getDealerSeat();
+		nextTurn();
 
 		JSONObject obj = new JSONObject();
 		GameMode = "THERIVER";
@@ -575,38 +602,19 @@ public class GameManager {
 			cardarr[k][6] = card5.cardcode;
 			//System.out.println( k + "번 째 유저의 6 번 째 카드 : " + cardarr[k][6]);
 		}
-
-		for(User u : userlist){		
-			try {
-				u.session.sendMessage(new TextMessage(obj.toJSONString()));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
+		sendRoom(obj);
 	}
 
 	public void TheEnd(){
+		
+		timer = -1;//타임아웃되는거 방지.
 		System.out.println("TheEnd================ ");
-
-		/*whosturn=getDealerSeat();
-		whosturnUseridx = userlist.get(whosturn%userlist.size()).uidx;*/
 
 		JSONObject obj = new JSONObject();
 		changeGameMode("THEEND");				
 		obj.put("cmd","THEEND");
 		SocketHandler.insertLog(getGameId(), "gameEnd", -1, totalmoney, -1, "게임 끝" , -1, -1);
-		for(User u : userlist){		
-			try { 
-				u.session.sendMessage(new TextMessage(obj.toJSONString()));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		//GameMode = "showResult";	
-
+		sendRoom(obj);
 	}	
 	
 
@@ -724,6 +732,12 @@ public class GameManager {
 		// 유저들의 카드 목록 2차원 배열 출력
 		int winSeat=-1,wlv=10000;
 		for(int k = 0; k<cardarr.length; k++){
+			
+			//죽은 사람은 결과에서 제외
+			boolean userDie = userlist.get(k).die;
+			if( userDie == true){				
+				continue;
+			}
 			int []card = new int[7]; 
 			System.out.println(k + "번째 유저의 카드 목록 2차원 배열");
 			for(int i = 0; i<cardarr[k].length; i++){				
@@ -764,7 +778,6 @@ public class GameManager {
 		obj.put("wlv",""+wlv);
 		obj.put("cardInfo1",cardInfo1);
 		obj.put("cardInfo2",cardInfo2);
-		
 		obj.put("winnerbalance",""+userlist.get(winSeat).balance);
 		obj.put("winmoney",""+this.totalmoney);
 		obj.put("winSeat",""+winSeat);		
@@ -780,8 +793,6 @@ public class GameManager {
 			j.add(item);
 		}
 		obj.put("cardlist", j);
-		System.out.println("SHOW RESULT  SEND ");
 		sendRoom(obj);
-		changeGameMode("showResult");
 	}
 }

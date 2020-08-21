@@ -6,13 +6,14 @@ import org.springframework.web.socket.WebSocketSession;
 
 public class User {
 	public int uidx;
+	public boolean use=false;
 	public String nickname;
 	public int seat = -1;
 	public int roomnum= -1;
 	public int betmoney = 0;
 	public int balance = 0;
-	public int currentGuBetMoney=0;//현재 구 에 베팅한 머니 / 모든 유저가  이 머니가 같아야 다음  단계로 넘어감.
 	public boolean die = false;//true일떄 다이인 상태
+	public int currentGuBetMoney=0;//현재 구 에 베팅한 머니 / 모든 유저가  이 머니가 같아야 다음  단계로 넘어감.
 	public String img;
 	public WebSocketSession session;
 	String gamestat="";
@@ -25,12 +26,13 @@ public class User {
 		currentGuBetMoney=0;//현재 구 에 베팅한 머니 / 모든 유저가  이 머니가 같아야 다음  단계로 넘어감.
 		die = false;
 	}
-	public User(int uidx, WebSocketSession session){
+	public User(int uidx, WebSocketSession session, String userid){
+		System.out.println("user객체생성 dbg1");
 		this.uidx = uidx;
-		this.nickname = "신라의달밤"+uidx;
-		this.balance = 1000000;
+		this.nickname = userid;
+		this.balance = 2000;
 		this.session = session;
-		
+		System.out.println("user객체생성 dbg2");
 		Random random = new Random();		
 		this.img = "Character"+(random.nextInt(4)+1);
 	}
