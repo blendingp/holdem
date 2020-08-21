@@ -246,19 +246,11 @@ public class GameManager {
 		JSONArray j = new JSONArray();
 		boolean userfind = false;
 		ArrayList<User> rmlist=new ArrayList<User>();
-		for(User u : userlist){ 
-			if( u.balance != 0){
-				userfind = true;
-				JSONObject item = new JSONObject();
-				item.put("uidx", u.uidx);
-				item.put("seat", u.seat);
-				j.add(item);
+		for(User u : userlist) 
+			if( u.balance == 0)
 				rmlist.add(u);
-			}
-		}
-		obj.put("outlist", j);
 		userlist.removeAll(rmlist);
-		sendRoom(obj);//남은 유저에가는 내보낸사람 빼고 남은 리스트 보내주고
+		room.notifyRoomUsers();
 		
 		JSONObject obj2 = new JSONObject();
 		obj2.put("cmd","roomout");

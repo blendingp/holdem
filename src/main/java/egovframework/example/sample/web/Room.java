@@ -42,6 +42,25 @@ public class Room {
 			return true;
 		return false;
 	}
+	public void notifyRoomUsers() {//notifyJoinUser아래와 거의 같으나 내가 안만들어서 어디서 쓰이는지 불안해서 새로 만듬, 룸안의 유저가 변경되었을때 갱신하기 위해 쓰임.
+
+		JSONObject myobj = new JSONObject();						
+		myobj.put("cmd","RoomUsers");
+		//방에 참여중인 모든 사람 불러오기
+		JSONArray j = new JSONArray();
+		for(int i=0; i<gameManager.userlist.size(); i++)
+		{
+			JSONObject item = new JSONObject();
+			item.put("useridx",""+ gameManager.userlist.get(i).uidx);
+			item.put("seat",""+ gameManager.userlist.get(i).seat);
+			item.put("img",""+ gameManager.userlist.get(i).img);
+			item.put("balance",""+ gameManager.userlist.get(i).balance);
+			j.add(item);
+		}
+		myobj.put("userlist", j);
+
+		gameManager.sendRoom(myobj);
+	}
 
 	public void notifyJoinUser() {
 
@@ -68,7 +87,6 @@ public class Room {
 			try {
 				u.session.sendMessage(new TextMessage(myobj.toJSONString()));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block				
 				e.printStackTrace();
 			}
 
