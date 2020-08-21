@@ -225,7 +225,7 @@ public class GameManager {
 		}
 		
 		if(GameMode.compareTo("showResult")==0){
-			if( checkCmdTime(1) ){
+			if( checkCmdTime(5) ){
 				changeGameMode("대기");
 				checkOutUser();
 				setWorkTime(); 
