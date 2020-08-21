@@ -530,6 +530,11 @@ public class GameManager {
 		System.out.println("showThreeCard SB:"+whosturn);
 		JSONObject obj = new JSONObject();		
 		changeGameMode("THEFLOP");
+		
+	      /*카드변경******/
+	      /*card1=cardManager.popCard(36);
+	      card2=cardManager.popCard(37);
+	      card3=cardManager.popCard(12);*/
 		card1=cardManager.popCard();
 		card2=cardManager.popCard();
 		card3=cardManager.popCard();
@@ -561,7 +566,8 @@ public class GameManager {
 
 		JSONObject obj = new JSONObject();
 		GameMode = "THETURN";
-
+	      /*카드변경******/
+	      //card4=cardManager.popCard(30);
 		card4=cardManager.popCard();
 
 		obj.put("cmd","THETURN");
@@ -585,7 +591,8 @@ public class GameManager {
 
 		JSONObject obj = new JSONObject();
 		GameMode = "THERIVER";
-
+	    /*카드변경******/
+	    //card5=cardManager.popCard(34);   
 		card5=cardManager.popCard();		
 		obj.put("cmd","THERIVER");
 		obj.put("card5", card5.cardcode);
