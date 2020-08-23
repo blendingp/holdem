@@ -10,11 +10,6 @@ import org.json.simple.JSONObject;
 import org.springframework.web.socket.TextMessage;
 
 public class Room {
-	//ArrayList<User> userlist = new ArrayList<User>();
-	//0~8
-	public int[] seats = new int[9];
-
-
 	GameManager gameManager;
 
 	int ridx;
@@ -25,11 +20,9 @@ public class Room {
 		this.ridx = ridx;
 		this.defaultmoney = defaultmoney;
 		this.maxmoney = defaultmoney * 100;
-		Arrays.fill(seats, -1);		
 		gameManager = new GameManager(this);
 	}
 	public void init(){
-		Arrays.fill(seats, -1);		
 		gameManager.init();
 	}
 
