@@ -50,11 +50,12 @@ public class Room {
 		JSONArray j = new JSONArray();
 		for(int i=0; i<gameManager.userlist.size(); i++)
 		{
-			JSONObject item = new JSONObject();
+			JSONObject item = new JSONObject();			
 			item.put("useridx",""+ gameManager.userlist.get(i).uidx);
 			item.put("seat",""+ gameManager.userlist.get(i).seat);
 			item.put("img",""+ gameManager.userlist.get(i).img);
 			item.put("balance",""+ gameManager.userlist.get(i).balance);
+			item.put("nickname",""+ gameManager.userlist.get(i).nickname);
 			j.add(item);
 		}
 		myobj.put("userlist", j);
@@ -80,6 +81,7 @@ public class Room {
 				item.put("seat",""+ gameManager.userlist.get(i).seat);
 				item.put("img",""+ gameManager.userlist.get(i).img);
 				item.put("balance",""+ gameManager.userlist.get(i).balance);
+				item.put("nickname",""+ gameManager.userlist.get(i).nickname);
 				j.add(item);
 			}
 			myobj.put("userlist", j);

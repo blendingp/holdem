@@ -80,7 +80,7 @@ public class GameManager {
 	}
 	void sendList(JSONObject obj, ArrayList<User> lst){
 		for(User u : lst)
-			try {
+			try {				
 				u.session.sendMessage(new TextMessage(obj.toJSONString()));
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -235,6 +235,7 @@ public class GameManager {
 		}
 		
 		if(GameMode.compareTo("대기")==0){
+			//System.out.println("isPlayable():"+isPlayable()+" checkCmdTime(3):"+checkCmdTime(3));
 			if (isPlayable() && checkCmdTime(3) ){
 				setWorkTime();
 				changeGameMode("checkstart");
@@ -249,9 +250,13 @@ public class GameManager {
 		boolean userfind = false;
 		ArrayList<User> rmlist=new ArrayList<User>();
 		for(User u : userlist) 
-			if( u.balance == 0)
+			if( u.balance == 0){				
 				rmlist.add(u);
+			}
+		
+		System.out.println("퇴장전 userlist사이즈:"+ userlist.size());
 		userlist.removeAll(rmlist);
+		System.out.println("퇴장후 userlist사이즈:"+ userlist.size());
 		room.notifyRoomUsers();
 		
 		JSONObject obj2 = new JSONObject();
@@ -784,7 +789,7 @@ public class GameManager {
 		int winSeat=-1,wlv=10000;
 		
 		
-		
+		//기권승시 족보계산안함 ,이긴사람 돈줌 
 		if( this.checkAbstention() ){
 			int cnt=0;
 			for(User u : userlist){
