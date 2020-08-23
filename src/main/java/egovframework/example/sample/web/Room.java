@@ -115,35 +115,18 @@ public class Room {
 
 	}
 
-
-
-
 	public void join(User u, int ridx ) {
+		u.seat =gameManager.userlist.size(); 
 		gameManager.userlist.add( u );
 		u.roomnum = ridx;
-		for(int k=0; k<seats.length; k++){
-			if(seats[k] == -1){
-				seats[k] = u.uidx;
-				u.seat = k;
-				System.out.println(u.uidx+" 유저의 자리번호:"+u.seat);
-				break;
-			}
-		}
 		gameManager.startCheck(u, gameManager.userlist);
 		notifyJoinUser();
 	}
 
 	public void leave(User u) {
 		gameManager.userlist.remove(u);
-		for(int k=0; k<seats.length; k++){
-			if(seats[k] == u.uidx){
-
-				seats[k] = -1;
-				u.seat = -1;
-				u.roomnum = -1;
-				break;
-			}
-		}
+		for(int k=0; k<gameManager.userlist.size(); k++)
+			gameManager.userlist.get(k).seat = k;
 		u.clear();
 		System.out.println("<< Room . leave >>");
 	}

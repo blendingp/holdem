@@ -59,6 +59,7 @@ public class User {
 	public void clear()
 	{
 		seat = -1;
+		roomnum = -1;
 		betmoney = 0;
 		balance = 0;
 		gamestat="";
