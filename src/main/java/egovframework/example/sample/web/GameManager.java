@@ -245,20 +245,13 @@ public class GameManager {
 	
 	void checkOutUser(){
 		//돈이 없는 유저 내보내기
-		JSONObject obj = new JSONObject();
-		JSONArray j = new JSONArray();
-		boolean userfind = false;
 		ArrayList<User> rmlist=new ArrayList<User>();
 		for(User u : userlist) 
-			if( u.balance == 0){				
+			if( u.balance == 0)				
 				rmlist.add(u);
-			}
-		
-		System.out.println("퇴장전 userlist사이즈:"+ userlist.size());
-		userlist.removeAll(rmlist);
-		System.out.println("퇴장후 userlist사이즈:"+ userlist.size());
+		for(User u:rmlist)
+			room.leave(u);
 		room.notifyRoomUsers();
-		
 		JSONObject obj2 = new JSONObject();
 		obj2.put("cmd","roomout");
 		sendList(obj2,rmlist);//나간 유저에게는 당신 돈 없어서 나갔다는 패킷 보내줌
