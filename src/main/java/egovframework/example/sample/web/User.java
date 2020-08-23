@@ -30,7 +30,7 @@ public class User {
 		System.out.println("user객체생성 dbg1");
 		this.uidx = uidx;
 		this.nickname = userid;
-		this.balance = 2000;
+		this.balance = 1000;
 		this.session = session;
 		System.out.println("user객체생성 dbg2");
 		Random random = new Random();		
@@ -50,7 +50,7 @@ public class User {
 			return 1;
 		else return 0;
 	}
-	
+
 	public void setCard(Card card1, Card card2){
 		this.card1.cardcode = card1.cardcode;
 		this.card2.cardcode =card2.cardcode;

@@ -139,6 +139,7 @@ public class GameManager {
 			u.init();
 			
 			u.betmoney+=room.defaultmoney;
+			u.balance-=room.defaultmoney;
 			totalmoney+=room.defaultmoney;
 		}
 		
@@ -261,7 +262,7 @@ public class GameManager {
 	void checkTimerGame(){
 		//배팅시간 지났음
 		if( GameMode.compareTo("nmBet")==0 || GameMode.compareTo("showBetPan")==0 || GameMode.compareTo("THEFLOP")==0 || GameMode.compareTo("THETURN")==0 || GameMode.compareTo("THERIVER")==0){
-			if(timer!=-1 && SocketHandler.second-timer>4){ // 자기턴 타임아웃 시간 8초로.	
+			if(timer!=-1 && SocketHandler.second-timer>8){ // 자기턴 타임아웃 시간 8초로.	
 				for(User u : userlist){
 					if(u.seat==getWhoTurn() ){
 						JSONObject obj = new JSONObject();						
@@ -377,14 +378,20 @@ public class GameManager {
 			return preTotalBetmoney - mybetmoney;
 		else if(kind==3)// 따당 
 			return prebetmoney*2;
-		else if(kind==4)// 하프 
-			return totalmoney/2;
-		else if(kind==5)// 풀 
-			return totalmoney;
+		else if(kind==4){// 하프
+			int tc = preTotalBetmoney - mybetmoney;
+			return tc + (totalmoney + tc)/2;
+		}
+		else if(kind==5){// 풀
+			int tc = preTotalBetmoney - mybetmoney;
+			return tc + totalmoney + tc;
+		}
 		else if(kind==6)// 맥스
 			return room.maxmoney;
-		else if(kind==7)// 쿼터 
-			return totalmoney/4;
+		else if(kind==7){// 쿼터
+			int tc = preTotalBetmoney - mybetmoney;
+			return tc+(totalmoney+tc)/4;
+		}
 		else if(kind==8)// 패스 ( 올인이나 맥스벳 상태에서는 자기 차례올시에 자동 패스 커맨드 함) 
 			return 0;
 		else if(kind==9)// 체크 
@@ -396,14 +403,33 @@ public class GameManager {
 
 	boolean isGuBetEnd(){		
 		int money = -1;
+		int diecnt=0;
+		int extrap = 0;
+		User lastp = null;
+		for(User uu : userlist)
+			if(uu.die == true)
+				diecnt++;
+		if(userlist.size() >= turncnt -diecnt ){
+			return false;
+		}
 		for(User uu : userlist){
 			if(		uu.die == true	//죽었거나 
 				|| 	uu.balance == 0 //올인이거나
 				|| 	uu.betmoney == room.maxmoney //맥스 머니이거나
 					) continue;//밑에 실행하지않고 다음 for문 검사
+			extrap++;
+			lastp = uu;
 			if( money != -1 && uu.betmoney != money)
 				return false;//배팅금액이 다르다
 			money = uu.betmoney;
+		}
+		
+		if( extrap == 1){//다 올인이거나 맥스뱃이거나 인데 혼자만 아닌경우, 다른 사람보다 같거나 더 많이 걸어야 함.
+			for(User uu : userlist){
+				if(lastp.betmoney <= uu.betmoney)
+					return false;
+			}
+			
 		}
 		return true;//배팅금액이 똑같은경우 배팅끝
 	}
@@ -490,8 +516,12 @@ public class GameManager {
 		
 		sendRoom(obj);//베팅 성공 정보를 전송
 		
-		//용우 : 아래 구조 이상함 배팅성공 패킷 보낸 후 아무 패킷을 받지않고 또 패킷을 보냄, 차라리 위에 첫번째 패킷 보낼때 다같이 보낼까? 
-		if( isBetEnd ){
+		
+		
+		
+		if( checkAbstention() ){
+			TheEnd();
+		}else if( isBetEnd ){
 			System.out.println("DBG 3 : 전원 베팅 끝");
 
 			if(GameMode.compareTo("showBetPan")==0)	{
@@ -515,6 +545,17 @@ public class GameManager {
 
 	}
 	
+	
+	public boolean checkAbstention(){
+		int cnt=0;
+		for(User u : userlist){
+			if(u.die == true)
+				cnt++;
+		}
+		if(cnt == userlist.size()-1)
+			return true;
+		return false;
+	}
 	public boolean checkDieturn(int who){
 		if(userlist.get(who).die == true)
 			return true;
@@ -732,6 +773,7 @@ public class GameManager {
 		return pre;
 	}	
 	
+	
 	int cardInfo1,cardInfo2;//이긴사람 카드정보
 	int tempInfo1,tempInfo2;//임시 카드정보
 	public void showResult(){
@@ -740,49 +782,81 @@ public class GameManager {
 		//결과 계산하기
 		// 유저들의 카드 목록 2차원 배열 출력
 		int winSeat=-1,wlv=10000;
-		for(int k = 0; k<cardarr.length; k++){
-			
-			//죽은 사람은 결과에서 제외
-			boolean userDie = userlist.get(k).die;
-			if( userDie == true){				
-				continue;
+		
+		
+		
+		if( this.checkAbstention() ){
+			int cnt=0;
+			for(User u : userlist){
+				if(u.die == false){
+					winSeat = cnt;
+				}
+				cnt++;
 			}
-			int []card = new int[7]; 
-			System.out.println(k + "번째 유저의 카드 목록 2차원 배열");
-			for(int i = 0; i<cardarr[k].length; i++){				
-				card[i] = cardarr[k][i];				
+			wlv = 99;
+		}else {
+			for(int k = 0; k<cardarr.length; k++){
+				
+				//죽은 사람은 결과에서 제외
+				boolean userDie = userlist.get(k).die;
+				if( userDie == true){				
+					continue;
+				}
+				int []card = new int[7]; 
+				System.out.println(k + "번째 유저의 카드 목록 2차원 배열");
+				for(int i = 0; i<cardarr[k].length; i++){				
+					card[i] = cardarr[k][i];				
+				}
+				
+				//3포카드 7트리플 8투페어 9페어			
+				int lv = checkAllpair(card);
+				//스트레이트 플러시 2
+				if(checkStraightFlush(card)==true){//info1 스트레이트 숫자 , info2 플러시 모양
+					if(lv>2) lv=2;
+				}else if(checkFullHouse(card)==true){//info1트리플 숫자  info2 투페어숫자
+					if(lv>4) lv=4;
+				}else if(checkFlush(card)==true){//info2 플러시 모양
+					if(lv>5) lv=5;
+				}else if(checkStraight(card)==true){//info1 스트레이트숫자
+					if(lv>6) lv=6;
+				}else {//탑카드 
+					if(lv>10) lv=10;
+					userlist.get(k).topcard = checkTopCard(card);
+					cardInfo1 = userlist.get(k).topcard; 
+				}
+				
+				if(wlv > lv ){
+					winSeat = k;
+					wlv = lv;
+					cardInfo1 = tempInfo1;
+					cardInfo2 = tempInfo2;
+					System.out.println("*********lv:"+lv+" cardInfo1:"+cardInfo1+" cardInfo2:"+cardInfo2);				
+				}
+				userlist.get(k).level = lv;
 			}
-			
-			//3포카드 7트리플 8투페어 9페어			
-			int lv = checkAllpair(card);
-			//스트레이트 플러시 2
-			if(checkStraightFlush(card)==true){//info1 스트레이트 숫자 , info2 플러시 모양
-				if(lv>2) lv=2;
-			}else if(checkFullHouse(card)==true){//info1트리플 숫자  info2 투페어숫자
-				if(lv>4) lv=4;
-			}else if(checkFlush(card)==true){//info2 플러시 모양
-				if(lv>5) lv=5;
-			}else if(checkStraight(card)==true){//info1 스트레이트숫자
-				if(lv>6) lv=6;
-			}else {//탑카드 
-				if(lv>10) lv=10;
-				userlist.get(k).topcard = checkTopCard(card);
-				cardInfo1 = userlist.get(k).topcard; 
-			}
-			
-			if(wlv > lv ){
-				winSeat = k;
-				wlv = lv;
-				cardInfo1 = tempInfo1;
-				cardInfo2 = tempInfo2;
-				System.out.println("*********lv:"+lv+" cardInfo1:"+cardInfo1+" cardInfo2:"+cardInfo2);				
-			}
-			userlist.get(k).level = lv;
 		}
 		
-		
 
-		userlist.get(winSeat).balance+=totalmoney;
+		//userlist.get(winSeat).balance+=totalmoney;
+		int betMoney=0;
+		int cnt=0;
+		for(User u : userlist){
+			if(userlist.get(winSeat).betmoney > u.betmoney){
+				betMoney+=u.betmoney;
+			}
+			if(userlist.get(winSeat).betmoney <= u.betmoney)
+				cnt++;
+		}
+		for(User u : userlist){
+			if( u.seat == winSeat){
+				userlist.get(winSeat).balance+=betMoney + (cnt*userlist.get(winSeat).betmoney);
+			}else{
+				if(userlist.get(winSeat).betmoney < u.betmoney){
+					u.balance = u.betmoney - userlist.get(winSeat).betmoney;
+				}
+			}
+		}
+		
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","showResult");
 		obj.put("wlv",""+wlv);

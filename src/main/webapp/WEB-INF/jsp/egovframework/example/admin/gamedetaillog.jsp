@@ -164,6 +164,15 @@
                                 		<c:if test="${result.gvalue4 eq 6 }">
                                 			맥스
                                 		</c:if>	
+                                		<c:if test="${result.gvalue4 eq 7 }">
+                                			쿼터
+                                		</c:if>	
+                                		<c:if test="${result.gvalue4 eq 8 }">
+                                			패스
+                                		</c:if>	
+                                		<c:if test="${result.gvalue4 eq 9 }">
+                                			체크
+                                		</c:if>	
                                 	</c:if>
                                 </td>
                                 <td>
