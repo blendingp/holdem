@@ -41,6 +41,7 @@ public class Room {
 		myobj.put("cmd","RoomUsers");
 		//방에 참여중인 모든 사람 불러오기
 		JSONArray j = new JSONArray();
+		System.out.println("notifyRoomUsers");
 		for(int i=0; i<gameManager.userlist.size(); i++)
 		{
 			JSONObject item = new JSONObject();			
@@ -50,6 +51,7 @@ public class Room {
 			item.put("balance",""+ gameManager.userlist.get(i).balance);
 			item.put("nickname",""+ gameManager.userlist.get(i).nickname);
 			j.add(item);
+			System.out.println("uidx:"+gameManager.userlist.get(i).uidx +"  seat:"+gameManager.userlist.get(i).seat );
 		}
 		myobj.put("userlist", j);
 
