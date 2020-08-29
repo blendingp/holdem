@@ -25,7 +25,13 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 	private SampleDAO sampleDAO;
 	
 	public static int gameidIdx = -1;
-	
+    private final Logger logger = LogManager.getLogger(getClass());
+    private Set<WebSocketSession> sessionSet = new HashSet<WebSocketSession>();
+
+    UserManager usermanager = new UserManager();
+    RoomManager roommanager = new RoomManager();
+
+    
 	public static SocketHandler sk=null; 
 	public static Object insertLog(int gameid,String gkind,int useridx, int value1, int value2, String value3, int value4,int value5){
 		Object rt=null;
@@ -48,11 +54,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 		return gameidIdx;
 	}
 	
-    private final Logger logger = LogManager.getLogger(getClass());
-    private Set<WebSocketSession> sessionSet = new HashSet<WebSocketSession>();
-
-    UserManager usermanager = new UserManager();
-    RoomManager roommanager = new RoomManager();
     
     public SocketHandler GetHandl(){return sk;}
     public SocketHandler() {
