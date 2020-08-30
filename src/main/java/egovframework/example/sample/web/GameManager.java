@@ -236,7 +236,7 @@ public class GameManager {
 		
 		if(GameMode.compareTo("대기")==0){
 			//System.out.println("isPlayable():"+isPlayable()+" checkCmdTime(3):"+checkCmdTime(3));
-			if (isPlayable() && checkCmdTime(3) ){
+			if (isPlayable() && checkCmdTime(6) ){
 				setWorkTime();
 				changeGameMode("checkstart");
 			}
