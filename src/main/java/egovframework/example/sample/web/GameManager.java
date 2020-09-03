@@ -260,7 +260,7 @@ public class GameManager {
 	void checkTimerGame(){
 		//배팅시간 지났음
 		if( GameMode.compareTo("nmBet")==0 || GameMode.compareTo("showBetPan")==0 || GameMode.compareTo("THEFLOP")==0 || GameMode.compareTo("THETURN")==0 || GameMode.compareTo("THERIVER")==0){
-			if(timer!=-1 && SocketHandler.second-timer>8){ // 자기턴 타임아웃 시간 8초로.	
+			if(timer!=-1 && SocketHandler.second - timer > 8){ // 자기턴 타임아웃 시간 8초로.				
 				for(User u : userlist){
 					if(u.seat==getWhoTurn() ){
 						JSONObject obj = new JSONObject();						

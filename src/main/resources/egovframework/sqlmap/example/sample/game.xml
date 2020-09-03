@@ -30,6 +30,14 @@
             limit 1
         ]]>
 	</select>
+	
+	<select id="SelectUserItem" resultClass="EgovMap">
+        <![CDATA[
+            SELECT type, amount
+            FROM item
+            WHERE midx=#midx#
+        ]]>
+	</select>
 	    
     <insert id="insertLog" parameterClass="egovMap">
 		<![CDATA[
@@ -54,4 +62,13 @@
 				  , #useridx#)
 		]]>
 </insert>	
+
+	<update id="updateItemAmont" parameterClass="egovMap">
+		<![CDATA[
+			UPDATE item SET
+				amount=#amount#
+				WHERE midx=#midx# AND `type`=#type#				
+		]]>
+	</update>
+	
 </sqlMap>

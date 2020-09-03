@@ -21,8 +21,7 @@ import egovframework.rte.psl.dataaccess.util.EgovMap;
  
 public class SocketHandler extends TextWebSocketHandler implements InitializingBean {
 	
-	@Resource(name = "sampleDAO")
-	private SampleDAO sampleDAO;
+	@Resource(name = "sampleDAO") SampleDAO sampleDAO;
 	
 	public static int gameidIdx = -1;
     private final Logger logger = LogManager.getLogger(getClass());
@@ -106,7 +105,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         
         //System.out.println(obj.toJSONString());
         switch(""+ obj.get("protocol"))
-		{
+		{	        
 			case "leave":
     		{
     			User u = usermanager.find(session);
@@ -166,6 +165,17 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
              	roommanager.find(roomidx).gameManager.bet(roomidx , u3, betkind);
         		break;
         	}
+        	case "buy":{
+        		System.out.println(obj.toJSONString());	 
+        		//User user = usermanager.find(session);
+        		usermanager.buy(session, ""+obj.get("product"), ""+obj.get("recipt"));
+	        }break;
+        	case "deal":
+        	{
+        		System.out.println(obj.toJSONString());
+        		usermanager.Deal(session, Integer.parseInt(""+obj.get("itemtype")), Integer.parseInt(""+obj.get("actiontype")), Integer.parseInt(""+obj.get("amount")));
+        	}        	
+	        break;
 		}
     }
  

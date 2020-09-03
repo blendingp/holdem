@@ -5,8 +5,12 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+
+import egovframework.example.sample.service.impl.SampleDAO;
+import egovframework.rte.psl.dataaccess.util.EgovMap;
 
 public class UserManager {
 	ArrayList<User> userlist = new ArrayList<User>();
@@ -38,12 +42,18 @@ public class UserManager {
 	}
 	
 	public void connect(WebSocketSession session, User user){
-		userlist.add(user);
+		userlist.add(user);		
 		
 		JSONObject cobj = new JSONObject();
 		System.out.println("useridx: "+find(session).uidx);
 		cobj.put("cmd", "connectResult");
 		cobj.put("useridx", find(session).uidx);
+		cobj.put("balance", find(session).balance);
+		cobj.put("cash", find(session).cash);
+		cobj.put("budget", find(session).budget);
+		cobj.put("point", find(session).point);
+		cobj.put("safe_balance", find(session).safe_balance);
+		cobj.put("safe_point", find(session).safe_point);
 		
 		try {
 			session.sendMessage(new TextMessage(cobj.toJSONString()));
@@ -52,4 +62,44 @@ public class UserManager {
 			e.printStackTrace();
 		}
 	}	
+	
+	public void buy(WebSocketSession session, String product, String receipt){
+		
+		int rt = find(session).buyItem(product, receipt);
+		
+		JSONObject cobj = new JSONObject();
+		cobj.put("cmd", "buyresult");
+		cobj.put("result", rt);
+		cobj.put("balance", find(session).balance);
+		cobj.put("cash", find(session).cash);
+		cobj.put("budget", find(session).budget);
+		
+		System.out.println(rt);
+		
+		try {
+			session.sendMessage(new TextMessage(cobj.toJSONString()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void Deal(WebSocketSession session, int item, int action, int amount){
+		
+		int rt = find(session).Deal(item, action, amount);
+		JSONObject cobj = new JSONObject();
+		cobj.put("cmd", "dealresult");
+		cobj.put("result", rt);
+		cobj.put("balance", find(session).balance);
+		cobj.put("safe_balance", find(session).safe_balance);
+		cobj.put("point", find(session).point);
+		cobj.put("safe_point", find(session).safe_point);
+		
+		try {
+			session.sendMessage(new TextMessage(cobj.toJSONString()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
