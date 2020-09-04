@@ -10,6 +10,7 @@ import org.springframework.web.socket.TextMessage;
 
 public class GameManager {		
 	public ArrayList<User> userlist = new ArrayList<User>();
+	public int[] seats = {-1, -1, -1, -1, -1, -1, -1, -1, -1};
 	public CardManager cardManager = new CardManager();
 	//public User reuser = new User();
 	int gameId;//게임로그에 저장되는 게임번호
@@ -55,6 +56,7 @@ public class GameManager {
 		preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.
 		workTime = SocketHandler.second;
 		timer = -1;
+		seats = new int[] {-1, -1, -1, -1, -1, -1, -1, -1, -1};
 		dealerSeatNum = -1;//누가딜러인지 유저인덱스 저장
 		System.out.println("게임초기화");
 	}
@@ -69,6 +71,29 @@ public class GameManager {
 	
 	public void setGameId(int gameid){
 		this.gameId = gameid;
+	}
+	
+	public int GetEmptySeat()
+	{
+		for( int nCount = 0; nCount < seats.length; ++nCount)
+		{
+			if( seats[nCount] < 0 )
+			{
+				return nCount;			
+			}
+		}
+		
+		return -1;
+	}
+	
+	public void SetSeat(int seat)
+	{		
+		seats[seat] = 0;
+	}
+	
+	public void EmptySeat(int seat)
+	{		
+		seats[seat] = -1;
 	}
 	
 	void resetGuBetmoney(){
@@ -331,7 +356,22 @@ public class GameManager {
 	}
 
 	public int getWhoTurn(){
-		return whosturn%userlist.size();
+								
+		for( int nCount = 0; nCount < this.seats.length; ++nCount )
+		{						
+			if( this.seats[(whosturn + nCount)%this.seats.length] >= 0 )
+			{
+				whosturn = (whosturn + nCount)%this.seats.length;
+				if( checkDieturn(whosturn) == true )
+				{
+					continue;					
+				}
+				
+				return whosturn;
+			}			
+		}		
+
+		return -1;
 	}
 	public void sbBet(){
 		JSONObject obj = new JSONObject();
@@ -433,7 +473,12 @@ public class GameManager {
 	}
 	public void  nextTurn(){
 		whosturn++;//다음사람배팅
-		int k=0;
+		//int k=0;		
+		if( getWhoTurn() < 0 )
+		{			
+			SocketHandler.insertLog(getGameId(), "error", -1, -1, -1, "DieTurnCheckError", -1, -1);
+		}
+		/*
 		while( checkDieturn(getWhoTurn()) ){
 			k++;
 			if( k>10){//9명이상이니 여기에 들어오면 에러 무한루프 체크
@@ -441,7 +486,7 @@ public class GameManager {
 				break;
 			}
 			whosturn++;			
-		}
+		}*/
 	}
 
 	public void bet(int roomidx, User u, int betkind){			
@@ -459,11 +504,16 @@ public class GameManager {
 		if( u.betmoney+tmo >= room.maxmoney ){//맥스 베팅인지 체크
 			tmo = room.maxmoney - u.betmoney;
 		}
-		
-		System.out.println("{ tmo:"+tmo +" u.betmoney:"+u.betmoney+" prebetmoney:"+prebetmoney+" preTotalBetmoney:"+preTotalBetmoney);
+				
 		u.betmoney += tmo ;//나의 배팅금액 현재돈+배팅금액
 		prebetmoney = tmo;
-		preTotalBetmoney = u.betmoney;
+		
+		if( preTotalBetmoney < u.betmoney)
+		{
+			preTotalBetmoney = u.betmoney;	
+		}
+		
+		System.out.println("{ tmo:"+tmo +" u.betmoney:"+u.betmoney+" prebetmoney:"+prebetmoney+" preTotalBetmoney:"+preTotalBetmoney);
 		//System.out.println("dbg6 u.betmoney:"+u.betmoney);
 
 		totalmoney +=tmo;
@@ -539,8 +589,6 @@ public class GameManager {
 			}
 			return;
 		}
-
-
 	}
 	
 	

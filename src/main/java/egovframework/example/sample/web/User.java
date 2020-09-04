@@ -60,8 +60,7 @@ public class User {
 		else			
 		{						
 			for( int nCount =0; nCount < ed.size(); ++nCount )
-			{								
-				System.out.println(ed.get(nCount).get("type").toString());	
+			{												
 				if( ed.get(nCount).get("type").toString().equals("balance") == true )
 				{					
 					this.balance = (int)ed.get(nCount).get("amount");					
@@ -246,6 +245,12 @@ public class User {
 				
 		return rt[0]&rt[1];		
 	}
+	
+	public int Beg()
+	{
+		this.balance = 500;
+		return 1;
+	}
 
 	public int getGameStat(String stat){
 		if(getGameStat().compareTo(stat)==0)
@@ -262,8 +267,7 @@ public class User {
 	{
 		seat = -1;
 		roomnum = -1;
-		betmoney = 0;
-		balance = 0;
+		betmoney = 0;		
 		gamestat="";
 		
 		card1.clear();

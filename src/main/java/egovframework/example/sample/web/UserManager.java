@@ -102,4 +102,19 @@ public class UserManager {
 			e.printStackTrace();
 		}
 	}
+	public void Beg(WebSocketSession session){
+		
+		int rt = find(session).Beg();
+		JSONObject cobj = new JSONObject();
+		cobj.put("cmd", "begresult");
+		cobj.put("result", rt);
+		cobj.put("balance", find(session).balance);
+				
+		try {
+			session.sendMessage(new TextMessage(cobj.toJSONString()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

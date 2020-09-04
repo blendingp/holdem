@@ -66,11 +66,12 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     	if( u == null)
     		return;
     	
-    	System.out.println("접속끊김 :"+u.seat );
+    	System.out.println("접속끊김 :"+u.seat );    	    
     	
     	if( u.roomnum != -1){
     		Room r = roommanager.find(u.roomnum);
-    		r.leave(u);
+    		//roommanager.find(u.roomnum).notifyLeaveUser(u.seat);
+    		r.leave(u);    		
     		if( r.emptyRoom() ){
     			r.init();
     		}
@@ -107,7 +108,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         switch(""+ obj.get("protocol"))
 		{	        
 			case "leave":
-    		{
+    		{    			
     			User u = usermanager.find(session);
     			int ss = u.seat;
     			int roomidx = Integer.parseInt(""+obj.get("roomidx"));
@@ -165,15 +166,19 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
              	roommanager.find(roomidx).gameManager.bet(roomidx , u3, betkind);
         		break;
         	}
-        	case "buy":{
-        		System.out.println(obj.toJSONString());	 
+        	case "buy":{        		
         		//User user = usermanager.find(session);
         		usermanager.buy(session, ""+obj.get("product"), ""+obj.get("recipt"));
 	        }break;
         	case "deal":
-        	{
-        		System.out.println(obj.toJSONString());
+        	{        		
         		usermanager.Deal(session, Integer.parseInt(""+obj.get("itemtype")), Integer.parseInt(""+obj.get("actiontype")), Integer.parseInt(""+obj.get("amount")));
+        	}        	
+	        break;
+        	case "beg":
+        	{        		
+        		System.out.println(obj.toJSONString());
+        		usermanager.Beg(session);
         	}        	
 	        break;
 		}

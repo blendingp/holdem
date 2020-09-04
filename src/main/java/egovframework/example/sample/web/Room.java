@@ -111,17 +111,23 @@ public class Room {
 	}
 
 	public void join(User u, int ridx ) {
-		u.seat =gameManager.userlist.size(); 
+		u.seat = gameManager.GetEmptySeat();		
+		gameManager.SetSeat(u.seat);
+		
 		gameManager.userlist.add( u );
 		u.roomnum = ridx;
 		gameManager.startCheck(u, gameManager.userlist);
 		notifyJoinUser();
 	}
 
-	public void leave(User u) {
+	public void leave(User u) {		
+		System.out.println(u.seat);
+		gameManager.EmptySeat(u.seat);
 		gameManager.userlist.remove(u);
+		/*
 		for(int k=0; k<gameManager.userlist.size(); k++)
-			gameManager.userlist.get(k).seat = k;
+			gameManager.userlist.get(k).seat = k;*/		
+		
 		u.clear();
 		System.out.println("<< Room . leave >>");
 	}
