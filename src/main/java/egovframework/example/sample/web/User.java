@@ -28,6 +28,7 @@ public class User {
 	public int currentGuBetMoney=0;//현재 구 에 베팅한 머니 / 모든 유저가  이 머니가 같아야 다음  단계로 넘어감.
 	public String img;
 	public WebSocketSession session;
+	public ArrayList<JSONObject> wincard = new ArrayList<JSONObject>();
 	String gamestat="";
 	int level = 1000;
 	int topcard = -1;

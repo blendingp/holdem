@@ -8,10 +8,12 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.web.socket.TextMessage;
 
+import com.mysql.fabric.xmlrpc.base.Array;
+
 public class GameManager {		
 	public ArrayList<User> userlist = new ArrayList<User>();
-	public int[] seats = {-1, -1, -1, -1, -1, -1, -1, -1, -1};
-	public CardManager cardManager = new CardManager();
+	public int[] seats = {-1, -1, -1, -1, -1, -1, -1, -1, -1};	
+	public CardManager cardManager = new CardManager();	
 	//public User reuser = new User();
 	int gameId;//게임로그에 저장되는 게임번호
 	int gu;//1구 2구 3구 4구
@@ -42,6 +44,8 @@ public class GameManager {
 	Card card5;
 
 	Room room;
+	
+	User currentUser = null;
 	
 	public void init(){
 		cardManager.init();
@@ -156,6 +160,8 @@ public class GameManager {
 		whosturn = 0;
 		turncnt = 0;
 		totalmoney = 0;
+		prebetmoney =0 ;//이전 사람의 베팅머니
+		preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.		
 
 		cardarr = new int[userlist.size()][7];
 
@@ -226,7 +232,8 @@ public class GameManager {
 
 		if(GameMode.compareTo("sbBet")==0)
 		{
-			if( checkCmdTime(1) ){
+			// 2를 나중에 시스템 수치로 변경
+			if( checkCmdTime(userlist.size()*2) ){
 				changeGameMode("sbBeted");
 				sbBet();
 			}
@@ -305,8 +312,9 @@ public class GameManager {
 	}
 
 	public void notifyGameStart() {//게임 시작을 알림
-		JSONObject obj = new JSONObject();						
+		JSONObject obj = new JSONObject();					
 		obj.put("cmd","startGame");
+		obj.put("gameid", gameId);
 		obj.put("smoney",  ""+totalmoney);
 		obj.put("maxmoney",  ""+room.maxmoney);
 		obj.put("roompeople",""+ userlist.size() );
@@ -715,26 +723,33 @@ public class GameManager {
 	}
 	
 	//4 풀하우스 트리플페어: 트리플+페어  777 22
-	public boolean checkFullHouse(int arr[]){
-		int []cNum = new int[13]; 
+	public boolean checkFullHouse(int arr[]){		
+		ArrayList<Integer> cards = new ArrayList<>();
+		int []cNum = new int[13];
+		int []tempNum = new int[13];
 		int triple = 0;
 		int pair = 0;
 		for(int i=0; i<7; i++){
 			cNum[ arr[i]%13 ]++;
+			tempNum[i] = arr[i]%13;
 		}
 		
 		for(int i=0;i<13;i++){
 			if(cNum[i] == 3){
 				triple = 1;
+				cards.add(tempNum[i]);
 				tempInfo1 = i;//트리플숫자 
 			}
 			if(cNum[i] == 2){
 				pair = 1;
+				cards.add(tempNum[i]);
 				tempInfo2 = i;//투페어숫자
 			}
 		}
 		
 		if(triple==1 && pair==1){
+			JSONObject win = MakeWinCard(4, cards);
+			currentUser.wincard.add(win);
 			
 			return true;
 		}
@@ -742,6 +757,9 @@ public class GameManager {
 	}
 	//9페어:동일한숫자 한쌍   8투페어:동일한숫자 두쌍  7트리플: 동일한세장      3포카드 : 동일한숫자 4장 
 	public int checkAllpair(int arr[]){
+		
+		ArrayList<Integer> cards = new ArrayList<>();
+		
 		int level = 100;
 		int twopair = 0;
 		int []cNum = new int[13]; 
@@ -749,10 +767,12 @@ public class GameManager {
 			cNum[ arr[i]%13 ]++;
 			if(cNum[ arr[i]%13 ] >= 4){
 				tempInfo1 = arr[i]%13;//숫자네개
+				cards.add(arr[i]%13);
 				System.out.println("tempInfo1:"+tempInfo1);
 				level = 3;//포카드
 			}
 			else if(cNum[ arr[i]%13 ] == 3 && level >7){
+				cards.add(arr[i]%13);
 				tempInfo1 = arr[i]%13;
 				level = 7;//트리플 숫자세개
 			}
@@ -760,20 +780,30 @@ public class GameManager {
 				twopair++;				
 				if(twopair==2  && level >8) {
 					tempInfo2 = arr[i]%13;//숫자
+					cards.add(arr[i]%13);
 					level = 8; // 투페어				
 				}
 				else if(twopair==1){
 					tempInfo1 = arr[i]%13;//숫자
+					cards.add(arr[i]%13);
 					level = 9; 
 				}
 			}
 			
 		}
+		
+		if(level < 10 )
+		{
+			JSONObject win = MakeWinCard(level, cards);
+			currentUser.wincard.add(win);
+		}
+		
 		return level;
 	}
 	
 	//true 이면  6 스트레이트 : 9 10 j q k
 	public boolean checkStraight(int tarr[]){
+		ArrayList<Integer> cards = new ArrayList<>();
 		int [] arr=tarr.clone();
 		Arrays.sort(arr);	//큰수가 앞으로 오게
 		int ct = 0;
@@ -781,17 +811,25 @@ public class GameManager {
 		int ck = -1;
 		for(int i=0; i<7; i++){
 			if(i!=0 && pre+1 != arr[i]%13 )
+			{
 				ct=0;
+				cards.clear();
+			}
 			else{
 				ct++;
 				if(ct>=4){					
 					ck = arr[i]%13;;
+					cards.add(arr[i]%13);
 				}
 			}
 			pre= arr[i]%13;
 		}
 		if( ck != -1 ){
 			tempInfo1 = ck;
+			
+			JSONObject win = MakeWinCard(6, cards);
+			currentUser.wincard.add(win);
+			
 			return true;
 		}
 		return false;
@@ -799,10 +837,16 @@ public class GameManager {
 	//true 이면 5 플러시  : 하트5장
 	public boolean checkFlush(int arr[]){
 		int []shape = new int[4]; 
+		ArrayList<Integer> cards = new ArrayList<>();
 		for(int k=0; k<7; k++){
 			shape[ (int)(arr[k]/13) ]++;
 			if( shape[ (int)(arr[k]/13) ] >= 5 ) {
 				tempInfo2 = (int)(arr[k]/13); 
+				cards.add((int)(arr[k]/13));
+				
+				JSONObject win = MakeWinCard(5, cards);
+				currentUser.wincard.add(win);
+				
 				return true;
 			}
 		}
@@ -812,10 +856,17 @@ public class GameManager {
 	//10 탑카드  : 제일 큰숫자 한장 리턴
 	public int checkTopCard(int arr[]){		
 		int pre = -1;		
+		ArrayList<Integer> cards = new ArrayList<>();
 		for(int i=0; i<7; i++){
 			if( pre < (arr[i]%13) )
 				pre = arr[i]%13;
-		}			
+		}
+		/*
+		cards.add(pre);
+		
+		JSONObject win = MakeWinCard(10, cards);
+		wincard.add(win);
+		*/
 		return pre;
 	}	
 	
@@ -841,13 +892,17 @@ public class GameManager {
 			}
 			wlv = 99;
 		}else {
-			for(int k = 0; k<cardarr.length; k++){
+			for(int k = 0; k<cardarr.length; k++){						
+				
+				currentUser = userlist.get(k); 
+				currentUser.wincard.clear();
 				
 				//죽은 사람은 결과에서 제외
 				boolean userDie = userlist.get(k).die;
 				if( userDie == true){				
 					continue;
-				}
+				}					
+				
 				int []card = new int[7]; 
 				System.out.println(k + "번째 유저의 카드 목록 2차원 배열");
 				for(int i = 0; i<cardarr[k].length; i++){				
@@ -901,7 +956,7 @@ public class GameManager {
 					u.balance = u.betmoney - userlist.get(winSeat).betmoney;
 				}
 			}
-		}
+		}		
 		
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","showResult");
@@ -912,6 +967,7 @@ public class GameManager {
 		obj.put("winmoney",""+this.totalmoney);
 		obj.put("winSeat",""+winSeat);		
 		obj.put("usersize",""+userlist.size());		
+		obj.put("wincard", userlist.get(winSeat).wincard);
 		
 		JSONArray j = new JSONArray();
 		for(int i=0; i<userlist.size(); i++){
@@ -925,4 +981,26 @@ public class GameManager {
 		obj.put("cardlist", j);
 		sendRoom(obj);
 	}
+	
+	private JSONObject MakeWinCard(int lv, ArrayList<Integer> cards) {
+		
+		JSONObject win = new JSONObject();
+		win.put("lv", lv);
+		win.put("cards", cards);
+		
+		return win;
+	}
+	/*
+	private JSONObject PrizeWinCard()
+	{
+		int lv = 1;
+		for( int nCount = 0; nCount < wincard.size(); ++nCount )
+		{
+			//wincard.get(nCount)
+			
+		}
+		
+	}*/
+	
 }
+
