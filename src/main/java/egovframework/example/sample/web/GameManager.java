@@ -536,10 +536,10 @@ public class GameManager {
 			if(uu.PlayStatus == 1)
 			{
 				return false;
-			}
-				
+			}					
+			
 			if( uu.betmoney < money)
-			{									
+			{			
 				return false;//배팅금액이 다르다
 			}								
 				
@@ -548,14 +548,17 @@ public class GameManager {
 					
 		}
 		
-		if( extrap == 1){//다 올인이거나 맥스뱃이거나 인데 혼자만 아닌경우, 다른 사람보다 같거나 더 많이 걸어야 함.
-			for(User uu : userlist){
-				if(lastp.betmoney < uu.betmoney)
-				{
-					return false;
-				}
-			}		
-		}		
+		for(User uu : userlist){
+			if( uu.die == true || uu.balance <= 0 || uu.betmoney >= room.maxmoney )
+			{
+				continue;
+			}				
+			
+			if(uu.betmoney != preTotalBetmoney)
+			{
+				return false;
+			}
+		}	
 				
 				
 		return true;//배팅금액이 똑같은경우 배팅끝
