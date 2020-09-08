@@ -11,6 +11,7 @@ import org.springframework.web.socket.WebSocketSession;
 import egovframework.example.sample.service.impl.SampleDAO;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
+
 public class User {
 	public int uidx;
 	public boolean use=false;
@@ -29,6 +30,8 @@ public class User {
 	public String img;
 	public WebSocketSession session;
 	public ArrayList<JSONObject> wincard = new ArrayList<JSONObject>();
+	public int PlayStatus = 0;
+	public int Blind = 0;
 	String gamestat="";
 	int level = 1000;
 	int topcard = -1;
