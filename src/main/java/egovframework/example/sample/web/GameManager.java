@@ -11,8 +11,8 @@ import org.springframework.web.socket.TextMessage;
 import com.mysql.fabric.xmlrpc.base.Array;
 
 public class GameManager {		
-	public ArrayList<User> userlist = new ArrayList<User>();
-	public int[] seats = {-1, -1, -1, -1, -1, -1, -1, -1, -1};	
+	public ArrayList<User> userlist = new ArrayList<User>();	
+	public int[] seats = {-1, -1, -1, -1, -1, -1, -1, -1, -1};		
 	public CardManager cardManager = new CardManager();	
 	//public User reuser = new User();
 	int gameId;//게임로그에 저장되는 게임번호
@@ -50,6 +50,8 @@ public class GameManager {
 	int bbBetCount = 0;
 	int bbSeat = 0;
 	
+	ArrayList<Pot> gamePot = new ArrayList<>();
+	
 	public void init(){
 		cardManager.init();
 		gu=0;//1구 2구 3구 4구
@@ -66,6 +68,7 @@ public class GameManager {
 		seats = new int[] {-1, -1, -1, -1, -1, -1, -1, -1, -1};
 		bbBetCount = 0;
 		dealerSeatNum = 0;//누가딜러인지 유저인덱스 저장
+		gamePot.clear();
 		System.out.println("게임초기화");
 	}
 	
@@ -143,7 +146,7 @@ public class GameManager {
 				cnt++;
 			}
 		}
-		if(cnt>=3) {			
+		if(cnt>=2) {			
 			return true;
 		}
 		return false;
@@ -156,6 +159,8 @@ public class GameManager {
 	void startSetting(){
 		gu = 1;
 		setGameId(SocketHandler.GameIdxAdder());
+		gamePot.clear();
+		gamePot.add(new Pot());
 		
 		SocketHandler.insertLog(getGameId(), "gamestart", -1, -1, -1, "게임시작", -1, -1);
 		whosturn = 0;
@@ -458,6 +463,8 @@ public class GameManager {
 		whosturn = getDealerSeatOffset(1);
 		obj.put("cmd","sbBet");
 		obj.put("whosturn", ""+whosturn );
+		obj.put("prebetmoney", preTotalBetmoney );
+		obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
 //		obj.put("whosturn",userlist.get(whosturn).uidx);
 		sendRoom(obj);
 		System.out.println("sbBet하시오 :"+whosturn );
@@ -469,6 +476,8 @@ public class GameManager {
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","bbBet");
 		obj.put("whosturn", ""+whosturn );
+		obj.put("prebetmoney", preTotalBetmoney );
+		obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
 		sendRoom(obj);
 		timer = SocketHandler.second;		
 		System.out.println("bbBet하시오 :"+whosturn );
@@ -476,15 +485,17 @@ public class GameManager {
 
 	public void showBetPan(){
 
-		JSONObject obj = new JSONObject();
+		JSONObject obj = new JSONObject();		
 		obj.put("cmd","bet");
 		if( turncnt == 0 )
 			obj.put("betenable", "1,1,1,0,0,1,1,1");//체크/폴드/삥/콜/따당/하프/풀/맥스
 		else
 			obj.put("betenable", "0,1,0,1,1,1,1,1");//체크/폴드/삥/콜/따당/하프/풀/맥스
 		obj.put("whosturn", whosturn );
+		obj.put("prebetmoney", preTotalBetmoney );
+		obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
 		timer = SocketHandler.second;
-		System.out.println("다음 사람 베팅 하시오:"+whosturn );
+		System.out.println("다음 사람 베팅 하시오:"+whosturn );		
 		sendRoom( obj);
 	}
 
@@ -593,12 +604,27 @@ public class GameManager {
 			u.die = true;
 			u.PlayStatus = -1;
 		}
-		int tmo = thisTurnMoneyCompute(betkind , u.betmoney);
+		
+		Boolean isAllIn = false;
+		
+		int tmo = thisTurnMoneyCompute(betkind , u.betmoney);			
+		
 		if( u.balance <= tmo ){//올인인지 체크.
 			tmo = u.balance;//올인 머니 셋팅
+			isAllIn = true;
 		}
 		if( u.betmoney+tmo >= room.maxmoney ){//맥스 베팅인지 체크
 			tmo = room.maxmoney - u.betmoney;
+		}
+		
+		if( betkind != 0 )
+		{
+			gamePot.get(gamePot.size()-1).JoinPot(whosturn, tmo);	
+		}		
+		
+		if( isAllIn == true )
+		{			
+			gamePot.add(new Pot());
 		}
 				
 		u.betmoney += tmo ;//나의 배팅금액 현재돈+배팅금액
@@ -647,6 +673,7 @@ public class GameManager {
 		obj.put("totalmoney", totalmoney);
 		obj.put("prev", money);
 		obj.put("callmoney", "" + (preTotalBetmoney - u.betmoney) );
+		obj.put("prebetmoney", preTotalBetmoney );
 		obj.put("myBetMoney", u.betmoney );
 		obj.put("balance", u.balance);
 		obj.put("betkind", betkind);
