@@ -7,18 +7,18 @@ import org.springframework.web.socket.WebSocketSession;
 
 public class Card {	
 	
-	int cardcode = 0;
+	public int cardcode = 0;
 	
 	public  Card(int cardcode){
 		this.cardcode = cardcode;
 	}
 	
-	public String CardShape(int cardcode){
-		return "";
+	public int CardShape(){
+		return (int)(cardcode/13);
 	}
 	
-	public int CardNum(int cardcode){
-		return 0;
+	public int CardNum(){
+		return cardcode%13;
 	}
 	
 	public void clear()

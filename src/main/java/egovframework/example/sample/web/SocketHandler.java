@@ -29,7 +29,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 
     UserManager usermanager = new UserManager();
     RoomManager roommanager = new RoomManager();
-
+    static public int jokbotest = -1;
     
 	public static SocketHandler sk=null; 
 	public static Object insertLog(int gameid,String gkind,int useridx, int value1, int value2, String value3, int value4,int value5){
@@ -179,6 +179,14 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         	{        		
         		System.out.println(obj.toJSONString());
         		usermanager.Beg(session);
+        	}        	
+	        break;
+	        
+        	case "JokboTestPacket":
+        	{        		
+        		System.out.println("JokboTestPacket:"+ obj.toJSONString());
+        		jokbotest = Integer.parseInt(""+obj.get("jokbokind"));
+        		System.out.println("jokbotest:"+jokbotest);
         	}        	
 	        break;
 		}

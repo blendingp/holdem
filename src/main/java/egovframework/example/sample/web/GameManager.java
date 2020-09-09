@@ -1045,18 +1045,21 @@ public class GameManager {
 				int lv = checkAllpair(card);
 				//스트레이트 플러시 2
 				if(checkStraightFlush(card)==true){//info1 스트레이트 숫자 , info2 플러시 모양
-					if(lv>2) lv=2;
+					lv=9;
+				}else if(false){// 포카드
+					if(lv < 8 ) lv=8;
 				}else if(checkFullHouse(card)==true){//info1트리플 숫자  info2 투페어숫자
-					if(lv>4) lv=4;
+					if(lv < 7 ) lv=7;
 				}else if(checkFlush(card)==true){//info2 플러시 모양
-					if(lv>5) lv=5;
+					if(lv < 6 ) lv=6;
 				}else if(checkStraight(card)==true){//info1 스트레이트숫자
-					if(lv>6) lv=6;
+					if(lv < 5 ) lv=5;
 				}else {//탑카드 
-					if(lv>10) lv=10;
+					if(lv < 1) lv=1;
 					userlist.get(k).topcard = checkTopCard(card);
 					cardInfo1 = userlist.get(k).topcard; 
 				}
+				userlist.get(k).jokbocode = lv *10000000  ;
 				
 				if(wlv > lv ){
 					winSeat = k;
