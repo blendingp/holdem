@@ -1294,16 +1294,18 @@ public class GameManager {
 		
 		setDealerSeat();
 		
+		System.out.println("승자 족보레벨:"+ (sortRank.get(0).jokbocode/10000000) +" 승자id:"+sortRank.get(0).nickname + " card:"+sortRank.get(0).wincard.toString() );
+		
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","showResult");
-		obj.put("wlv",""+sortRank.get(0).jokbocode/10000000);
-		obj.put("cardInfo1",sortRank.get(0).card1);
-		obj.put("cardInfo2",sortRank.get(0).card2);
+		obj.put("wlv",""+sortRank.get(0).jokbocode/10000000);//레벨순서 변경됨.
+		obj.put("cardInfo1",sortRank.get(0).card1);//이제 안씀.
+		obj.put("cardInfo2",sortRank.get(0).card2);//이제 안씀.
 		obj.put("winnerbalance",""+sortRank.get(0).balance);
 		obj.put("winmoney",""+this.totalmoney);
 		obj.put("winSeat",""+winSeat);		
 		obj.put("usersize",""+userlist.size());		
-		obj.put("wincard", sortRank.get(0).wincard);
+		obj.put("wincard", sortRank.get(0).wincard);//
 		
 		JSONArray j = new JSONArray();
 		for(int i=0; i<userlist.size(); i++){
