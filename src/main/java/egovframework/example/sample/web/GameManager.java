@@ -845,11 +845,16 @@ public class GameManager {
 
 	public boolean checkStraightFlush(int tarr[]){
 		ArrayList<Integer> cards = new ArrayList<>();
-		int [] arr=cardsort(tarr);
-
+		
+		int [] arr;
 		int ct = 0;
 		int pre = 0;	
-		int preShape = 0;	
+		int preShape = -1;
+		
+		ct=0;
+		pre=0;
+		preShape=-1;
+		arr=cardsort(tarr,true);
 		for(int i=0; i<7; i++){
 			if(pre == arr[i]%13 && (preShape == arr[i]/13) )continue;//8 7 (7) 6 5 4 3 <==  같은수 걸러내기
 			if(i!=0 && (pre-1 != arr[i]%13 || preShape != arr[i]/13) )
@@ -857,20 +862,49 @@ public class GameManager {
 				ct=0;
 				cards.clear();
 			}
-			else{
-				ct++;
-				cards.add( arr[i] );
-				if( ct == 1 ){//스트레이트 탑카드
-					tempInfo1 = arr[i]%13;
-				}
-				if(ct>=4){					
-					break;
-				}
+			ct++;
+			cards.add( arr[i] );
+			if( ct == 1 ){//스트레이트 탑카드
+				tempInfo1 = arr[i]%13;
+			}
+			if(ct>=5){					
+				break;
 			}
 			pre= arr[i]%13;
 			preShape = arr[i]/13;
 		}
-		if( ct >= 4 ){
+		
+		if( ct< 5){//스트레이트를 못찾았다면
+			ct=0;
+			pre=0;
+			preShape=-1;
+			arr=cardsort(tarr);//위에는 에이스를 13으로 놓고 한것이고, 여기서 에이스를 0으로 놓고 다시한번 스트레이트 체크 시도
+			for(int i=0; i<7; i++){
+				if(pre == arr[i]%13 && (preShape == arr[i]/13) )continue;//8 7 (7) 6 5 4 3 <==  같은수 걸러내기
+				if(i!=0 && (pre-1 != arr[i]%13 || preShape != arr[i]/13) )
+				{
+					ct=0;
+					cards.clear();
+					cards.add( arr[i] );
+				}
+				else{
+					ct++;
+					cards.add( arr[i] );
+					if( ct == 1 ){//스트레이트 탑카드
+						tempInfo1 = arr[i]%13;
+					}
+					if(ct>=5){					
+						break;
+					}
+				}
+				pre= arr[i]%13;
+				preShape = arr[i]/13;
+			}
+		}
+		
+		if( ct >= 5 ){
+			if( tempInfo1%13 == 0)tempInfo1 = 14;//마운틴 스트레이트
+			if( tempInfo1%13 == 4)tempInfo1 = 13;//에이스 스트레이트
 			JSONObject win = MakeWinCard(9, cards);
 			currentUser.wincard.add(win);
 			return true;
@@ -880,7 +914,7 @@ public class GameManager {
 	
 	//4 풀하우스 트리플페어: 트리플+페어  777 22
 	public boolean checkFullHouse(int tarr[]){
-		int arr[]=cardsort(tarr);
+		int arr[]=cardsort(tarr,true);
 		ArrayList<Integer> cards = new ArrayList<>();
 		int []cNum = new int[13];
 		int []tempNum = new int[13];
@@ -916,6 +950,9 @@ public class GameManager {
 				if( arr[i]%13 == tempInfo1 ||arr[i]%13 == tempInfo2 )
 					cards.add(tempNum[i]);
 			}
+			//에이스일경우 높은값으로 적용.
+			if( tempInfo1 == 0)tempInfo1=13;
+			if( tempInfo2 == 0)tempInfo2=13;
 			JSONObject win = MakeWinCard(7, cards);
 			currentUser.wincard.add(win);
 			
@@ -923,11 +960,13 @@ public class GameManager {
 		}
 		else return false;
 	}
-	int[] cardsort(int tcl[]){
+	int cdval(int cd, boolean st){return st?(   cd%13==0?13:0  ): cd%13 ; }
+	int[] cardsort(int tcl[]){return cardsort(tcl,false);}
+	int[] cardsort(int tcl[],boolean ace){
 		int cl[]=tcl.clone();
 		for(int a=0;a<cl.length;a++){
 			for(int b=a+1;b<cl.length;b++){
-				if( cl[a]%13 < cl[b]%13 ){
+				if( cdval(cl[a],ace) < cdval(cl[b],ace) ){
 					int tmp=cl[a];
 					cl[a]=cl[b];
 					cl[b]=tmp;
@@ -939,7 +978,7 @@ public class GameManager {
 	
 	public boolean checkPair(int tarr[]){
 		ArrayList<Integer> cards = new ArrayList<>();
-		int [] arr=cardsort(tarr);
+		int [] arr=cardsort(tarr,true);
 		int level = -1;
 		int []cNum = new int[13]; 
 		for(int i=0; i<7; i++){
@@ -960,6 +999,7 @@ public class GameManager {
 			}
 			JSONObject win = MakeWinCard(level, cards);
 			currentUser.wincard.add(win);
+			if(tempInfo1 % 13 == 0)tempInfo1 = 13;
 			return true;
 		}
 		
@@ -968,7 +1008,7 @@ public class GameManager {
 	
 	public boolean checkTwoPair(int tarr[]){
 		ArrayList<Integer> cards = new ArrayList<>();
-		int [] arr=cardsort(tarr);
+		int [] arr=cardsort(tarr,true);
 		int level = -1;
 		int []cNum = new int[13];
 		tempInfo1=-1;
@@ -994,6 +1034,7 @@ public class GameManager {
 			}
 			JSONObject win = MakeWinCard(level, cards);
 			currentUser.wincard.add(win);
+			if( tempInfo1%13==0)tempInfo1=13;
 			return true;
 		}
 		
@@ -1002,7 +1043,7 @@ public class GameManager {
 
 	public boolean checkThree(int tarr[]){
 		ArrayList<Integer> cards = new ArrayList<>();
-		int [] arr=cardsort(tarr);
+		int [] arr=cardsort(tarr,true);
 		int level = -1;
 		int []cNum = new int[13]; 
 		for(int i=0; i<7; i++){
@@ -1022,6 +1063,7 @@ public class GameManager {
 			}
 			JSONObject win = MakeWinCard(level, cards);
 			currentUser.wincard.add(win);
+			if(tempInfo1%13==0)tempInfo1=13;
 			return true;
 		}
 		
@@ -1030,7 +1072,7 @@ public class GameManager {
 
 	public boolean checkFourCard(int tarr[]){
 		ArrayList<Integer> cards = new ArrayList<>();
-		int [] arr=cardsort(tarr);
+		int [] arr=cardsort(tarr,true);
 		int level = -1;
 		int []cNum = new int[13]; 
 		for(int i=0; i<7; i++){
@@ -1051,6 +1093,7 @@ public class GameManager {
 			
 			JSONObject win = MakeWinCard(level, cards);
 			currentUser.wincard.add(win);
+			if(tempInfo1 == 0)tempInfo1 = 13;
 			return true;
 		}
 		
@@ -1106,11 +1149,15 @@ public class GameManager {
 	//true 이면  6 스트레이트 : 9 10 j q k
 	public boolean checkStraight(int tarr[]){
 		ArrayList<Integer> cards = new ArrayList<>();
-		int [] arr=cardsort(tarr);
 
+		int arr[];
 		int ct = 0;
 		int pre = 0;	
-		int ck = -1;
+		
+		
+		ct=0;
+		pre=0;
+		arr=cardsort(tarr,true);//먼저 에이스를 13으로 놓고 스트레이트 체크
 		for(int i=0; i<7; i++){
 			if(pre == arr[i]%13 )continue;//8 7 (7) 6 5 4 3 <==  같은수 걸러내기
 			if(i!=0 && pre-1 != arr[i]%13 )
@@ -1118,19 +1165,44 @@ public class GameManager {
 				ct=0;
 				cards.clear();
 			}
-			else{
+			ct++;
+			cards.add( arr[i] );
+			if( ct == 1 ){//스트레이트 탑카드
+				tempInfo1 = arr[i]%13;
+			}
+			if(ct>=5){					
+				break;
+			}
+			pre= arr[i]%13;
+		}
+		if(ct <5){//스트레이트가 안되었다면 에이스를 0으로 놓고 다시 스트레이트 체크 한번더
+			ct=0;
+			pre=0;
+			arr=cardsort(tarr);//에이스를 0으로 놓고 스트레이트 체크
+			for(int i=0; i<7; i++){
+				if(pre == arr[i]%13 )continue;//8 7 (7) 6 5 4 3 <==  같은수 걸러내기
+				if(i!=0 && pre-1 != arr[i]%13 )
+				{
+					ct=0;
+					cards.clear();
+					cards.add( arr[i] );
+				}
 				ct++;
 				cards.add( arr[i] );
 				if( ct == 1 ){//스트레이트 탑카드
 					tempInfo1 = arr[i]%13;
 				}
-				if(ct>=4){					
+				if(ct>=5){					
 					break;
 				}
+				pre= arr[i]%13;
 			}
-			pre= arr[i]%13;
 		}
-		if( ct >= 4 ){
+		
+		
+		if( ct >= 5 ){
+			if( tempInfo1%13 == 0 ) tempInfo1 = 14;//마운틴 스트레이트
+			if( tempInfo1%13 == 4 ) tempInfo1 = 13;//에이스 스트레이트
 			JSONObject win = MakeWinCard(5, cards);
 			currentUser.wincard.add(win);
 			return true;
@@ -1139,7 +1211,7 @@ public class GameManager {
 	}
 	//true 이면 5 플러시  : 하트5장
 	public boolean checkFlush(int tarr[]){
-		int []arr=cardsort(tarr);
+		int []arr=cardsort(tarr,true);
 		int []shape = new int[4]; 
 		ArrayList<Integer> cards = new ArrayList<>();
 		tempInfo1 = -1;
@@ -1163,6 +1235,7 @@ public class GameManager {
 			}
 			JSONObject win = MakeWinCard(5, cards);
 			currentUser.wincard.add(win);
+			if( tempInfo1%13==0)tempInfo1=13;
 			return true;
 		}
 		return false;
@@ -1170,7 +1243,7 @@ public class GameManager {
 	
 	//10 탑카드  : 제일 큰숫자 한장 리턴
 	public int checkTopCard(int tarr[]){
-		int[] arr=cardsort(tarr);
+		int[] arr=cardsort(tarr,true);
 		int pre = -1;		
 		ArrayList<Integer> cards = new ArrayList<>();
 
@@ -1180,6 +1253,7 @@ public class GameManager {
 		
 		JSONObject win = MakeWinCard(1, cards);
 		currentUser.wincard.add(win);
+		if(tempInfo1%13 ==0)tempInfo1 = 13;
 		
 		return tempInfo1;
 	}	
