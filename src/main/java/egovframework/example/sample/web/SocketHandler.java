@@ -135,9 +135,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         	{
              	User u = usermanager.find(session);
              	int roomidx = Integer.parseInt(""+obj.get("roomidx"));
-             	roommanager.joinRoom(roomidx , u);
-             	Room r = roommanager.find(roomidx);
-             	r.gameManager.setWorkTime( );//새로 한명 들어올때마다 대기 시간을 증가시켜서 여러명이 들어올 여지를 둔다.
+             	roommanager.joinRoom(roomidx , u);             	
         		break;
         	}
         	case "bet":

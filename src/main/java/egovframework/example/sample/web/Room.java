@@ -121,6 +121,8 @@ public class Room {
 			u.roomnum = ridx;
 			gameManager.startCheck(u, gameManager.userlist);
 			notifyJoinUser();
+			
+			gameManager.setWorkTime( );//새로 한명 들어올때마다 대기 시간을 증가시켜서 여러명이 들어올 여지를 둔다.
 		}
 			
 	}
