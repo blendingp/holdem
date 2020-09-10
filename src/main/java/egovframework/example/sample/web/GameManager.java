@@ -1296,7 +1296,7 @@ public class GameManager {
 		
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","showResult");
-		obj.put("wlv",""+wlv);
+		obj.put("wlv",""+sortRank.get(0).jokbocode/10000000);
 		obj.put("cardInfo1",sortRank.get(0).card1);
 		obj.put("cardInfo2",sortRank.get(0).card2);
 		obj.put("winnerbalance",""+sortRank.get(0).balance);
