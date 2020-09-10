@@ -35,7 +35,7 @@ public class User {
 	String gamestat="";
 	int level = 1000;
 	int topcard = -1;
-	int jokbocode=0;
+	int jokbocode=0;//천만자리는 첫번째 족보레벨, 십만~백만 자리는 족보레벨 탑카드번호,만~천자리는 족베레벨 두번째 탑카드번호 , 백자리는 두번째 족보레벨 , 일~십자리는 두번째족보레벨의 탑카드번호
 	Card card1=new Card(-1);//아직카드없음
 	Card card2=new Card(-1);
 	

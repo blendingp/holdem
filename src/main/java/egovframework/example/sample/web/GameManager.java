@@ -2,13 +2,12 @@ package egovframework.example.sample.web;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.web.socket.TextMessage;
-
-import com.mysql.fabric.xmlrpc.base.Array;
 
 public class GameManager {		
 	public ArrayList<User> userlist = new ArrayList<User>();	
@@ -844,48 +843,220 @@ public class GameManager {
 	}	
 	
 
-	//true 이면 2 스트레이트 플러시 : 9 10 j q k 가  모두 하트 
-	public boolean checkStraightFlush(int arr[]){
-		if( checkStraight(arr) == true && checkFlush(arr) ==true){
+	public boolean checkStraightFlush(int tarr[]){
+		ArrayList<Integer> cards = new ArrayList<>();
+		int [] arr=cardsort(tarr);
+
+		int ct = 0;
+		int pre = 0;	
+		int preShape = 0;	
+		for(int i=0; i<7; i++){
+			if(pre == arr[i]%13 && (preShape == arr[i]/13) )continue;//8 7 (7) 6 5 4 3 <==  같은수 걸러내기
+			if(i!=0 && (pre-1 != arr[i]%13 || preShape != arr[i]/13) )
+			{
+				ct=0;
+				cards.clear();
+			}
+			else{
+				ct++;
+				cards.add( arr[i] );
+				if( ct == 1 ){//스트레이트 탑카드
+					tempInfo1 = arr[i]%13;
+				}
+				if(ct>=4){					
+					break;
+				}
+			}
+			pre= arr[i]%13;
+			preShape = arr[i]/13;
+		}
+		if( ct >= 4 ){
+			JSONObject win = MakeWinCard(9, cards);
+			currentUser.wincard.add(win);
 			return true;
-		}			
-		else
-			return false;
+		}
+		return false;
 	}
 	
 	//4 풀하우스 트리플페어: 트리플+페어  777 22
-	public boolean checkFullHouse(int arr[]){		
+	public boolean checkFullHouse(int tarr[]){
+		int arr[]=cardsort(tarr);
 		ArrayList<Integer> cards = new ArrayList<>();
 		int []cNum = new int[13];
 		int []tempNum = new int[13];
 		int triple = 0;
 		int pair = 0;
+		tempInfo1 = -1;
+		tempInfo2 = -1;
 		for(int i=0; i<7; i++){
 			cNum[ arr[i]%13 ]++;
 			tempNum[i] = arr[i]%13;
 		}
-		
-		for(int i=0;i<13;i++){
-			if(cNum[i] == 3){
+
+		for(int i=12;i>=0;i--){
+			if(cNum[i] == 3 && tempInfo1 == -1){
 				triple = 1;
-				cards.add(tempNum[i]);
 				tempInfo1 = i;//트리플숫자 
 			}
-			if(cNum[i] == 2){
+		}
+
+		
+		for(int i=12;i>=0;i--){
+			if(cNum[i] >= 2 && i != tempInfo1 ){
 				pair = 1;
-				cards.add(tempNum[i]);
 				tempInfo2 = i;//투페어숫자
+				break;
 			}
 		}
 		
+
+		
 		if(triple==1 && pair==1){
-			JSONObject win = MakeWinCard(4, cards);
+			for(int i=0;i<7;i++){
+				if( arr[i]%13 == tempInfo1 ||arr[i]%13 == tempInfo2 )
+					cards.add(tempNum[i]);
+			}
+			JSONObject win = MakeWinCard(7, cards);
 			currentUser.wincard.add(win);
 			
 			return true;
 		}
 		else return false;
 	}
+	int[] cardsort(int tcl[]){
+		int cl[]=tcl.clone();
+		for(int a=0;a<cl.length;a++){
+			for(int b=a+1;b<cl.length;b++){
+				if( cl[a]%13 < cl[b]%13 ){
+					int tmp=cl[a];
+					cl[a]=cl[b];
+					cl[b]=tmp;
+				}
+			}
+		}
+		return cl;
+	}
+	
+	public boolean checkPair(int tarr[]){
+		ArrayList<Integer> cards = new ArrayList<>();
+		int [] arr=cardsort(tarr);
+		int level = -1;
+		int []cNum = new int[13]; 
+		for(int i=0; i<7; i++){
+			cNum[ arr[i]%13 ]++;
+			if(cNum[ arr[i]%13 ] >= 2){
+				tempInfo1 = arr[i]%13;
+				level = 2;
+				break;
+			}
+		}
+		
+		if(level == 2 )
+		{
+			for(int i=0; i<7; i++){
+				if( arr[i]%13 == tempInfo1 ){
+					cards.add( arr[i] );
+				}
+			}
+			JSONObject win = MakeWinCard(level, cards);
+			currentUser.wincard.add(win);
+			return true;
+		}
+		
+		return false;
+	}
+	
+	public boolean checkTwoPair(int tarr[]){
+		ArrayList<Integer> cards = new ArrayList<>();
+		int [] arr=cardsort(tarr);
+		int level = -1;
+		int []cNum = new int[13];
+		tempInfo1=-1;
+		tempInfo2=-1;
+		for(int i=0; i<7; i++){
+			cNum[ arr[i]%13 ]++;
+			if(cNum[ arr[i]%13 ] >= 2){
+				if(tempInfo1 == -1)
+					tempInfo1 = arr[i]%13;
+				else if(tempInfo2 == -1)
+					tempInfo2 = arr[i]%13;
+				if( tempInfo1!= -1 && tempInfo2 != -1)
+					level = 3;
+			}
+		}
+		
+		if(level == 3 )
+		{
+			for(int i=0; i<7; i++){
+				if( arr[i]%13 == tempInfo1 || arr[i]%13 == tempInfo2  ){
+					cards.add( arr[i] );
+				}
+			}
+			JSONObject win = MakeWinCard(level, cards);
+			currentUser.wincard.add(win);
+			return true;
+		}
+		
+		return false;
+	}
+
+	public boolean checkThree(int tarr[]){
+		ArrayList<Integer> cards = new ArrayList<>();
+		int [] arr=cardsort(tarr);
+		int level = -1;
+		int []cNum = new int[13]; 
+		for(int i=0; i<7; i++){
+			cNum[ arr[i]%13 ]++;
+			if(cNum[ arr[i]%13 ] >= 3){
+				tempInfo1 = arr[i]%13;
+				level = 4;
+			}
+		}
+		
+		if(level == 4 )
+		{
+			for(int i=0; i<7; i++){
+				if( arr[i]%13 == tempInfo1 ){
+					cards.add( arr[i] );
+				}
+			}
+			JSONObject win = MakeWinCard(level, cards);
+			currentUser.wincard.add(win);
+			return true;
+		}
+		
+		return false;
+	}
+
+	public boolean checkFourCard(int tarr[]){
+		ArrayList<Integer> cards = new ArrayList<>();
+		int [] arr=cardsort(tarr);
+		int level = -1;
+		int []cNum = new int[13]; 
+		for(int i=0; i<7; i++){
+			cNum[ arr[i]%13 ]++;
+			if(cNum[ arr[i]%13 ] >= 4){
+				tempInfo1 = arr[i]%13;//숫자네개
+				level = 8;//포카드
+			}
+		}
+		
+		if(level == 8 )
+		{
+			for(int i=0; i<7; i++){
+				if( arr[i]%13 == tempInfo1 ){
+					cards.add( arr[i] );
+				}
+			}
+			
+			JSONObject win = MakeWinCard(level, cards);
+			currentUser.wincard.add(win);
+			return true;
+		}
+		
+		return false;
+	}
+	
 	//9페어:동일한숫자 한쌍   8투페어:동일한숫자 두쌍  7트리플: 동일한세장      3포카드 : 동일한숫자 4장 
 	public int checkAllpair(int arr[]){
 		
@@ -935,76 +1106,88 @@ public class GameManager {
 	//true 이면  6 스트레이트 : 9 10 j q k
 	public boolean checkStraight(int tarr[]){
 		ArrayList<Integer> cards = new ArrayList<>();
-		int [] arr=tarr.clone();
-		Arrays.sort(arr);	//큰수가 앞으로 오게
+		int [] arr=cardsort(tarr);
+
 		int ct = 0;
 		int pre = 0;	
 		int ck = -1;
 		for(int i=0; i<7; i++){
-			if(i!=0 && pre+1 != arr[i]%13 )
+			if(pre == arr[i]%13 )continue;//8 7 (7) 6 5 4 3 <==  같은수 걸러내기
+			if(i!=0 && pre-1 != arr[i]%13 )
 			{
 				ct=0;
 				cards.clear();
 			}
 			else{
 				ct++;
+				cards.add( arr[i] );
+				if( ct == 1 ){//스트레이트 탑카드
+					tempInfo1 = arr[i]%13;
+				}
 				if(ct>=4){					
-					ck = arr[i]%13;;
-					cards.add(arr[i]%13);
+					break;
 				}
 			}
 			pre= arr[i]%13;
 		}
-		if( ck != -1 ){
-			tempInfo1 = ck;
-			
-			JSONObject win = MakeWinCard(6, cards);
+		if( ct >= 4 ){
+			JSONObject win = MakeWinCard(5, cards);
 			currentUser.wincard.add(win);
-			
 			return true;
 		}
 		return false;
 	}
 	//true 이면 5 플러시  : 하트5장
-	public boolean checkFlush(int arr[]){
+	public boolean checkFlush(int tarr[]){
+		int []arr=cardsort(tarr);
 		int []shape = new int[4]; 
 		ArrayList<Integer> cards = new ArrayList<>();
+		tempInfo1 = -1;
+		int lv= -1;
 		for(int k=0; k<7; k++){
 			shape[ (int)(arr[k]/13) ]++;
 			if( shape[ (int)(arr[k]/13) ] >= 5 ) {
-				tempInfo2 = (int)(arr[k]/13); 
-				cards.add((int)(arr[k]/13));
-				
-				JSONObject win = MakeWinCard(5, cards);
-				currentUser.wincard.add(win);
-				
-				return true;
+				tempInfo2 = (int)(arr[k]/13);
+				lv = 6;
 			}
+		}
+		if( lv == 6 ){
+			int tmp5=0;
+			for(int k=0;k<7;k++){
+				if(  (int)(arr[k]/13) == tempInfo2 && tmp5<5 ){
+					if( tempInfo1 == -1)
+						tempInfo1 = arr[k];
+					cards.add( (arr[k]) );
+					tmp5++;
+				}
+			}
+			JSONObject win = MakeWinCard(5, cards);
+			currentUser.wincard.add(win);
+			return true;
 		}
 		return false;
 	}
 	
 	//10 탑카드  : 제일 큰숫자 한장 리턴
-	public int checkTopCard(int arr[]){		
+	public int checkTopCard(int tarr[]){
+		int[] arr=cardsort(tarr);
 		int pre = -1;		
 		ArrayList<Integer> cards = new ArrayList<>();
-		for(int i=0; i<7; i++){
-			if( pre < (arr[i]%13) )
-				pre = arr[i]%13;
-		}
-		/*
-		cards.add(pre);
+
+		tempInfo1 = arr[0];
+
+		cards.add(tempInfo1);
 		
-		JSONObject win = MakeWinCard(10, cards);
-		wincard.add(win);
-		*/
-		return pre;
+		JSONObject win = MakeWinCard(1, cards);
+		currentUser.wincard.add(win);
+		
+		return tempInfo1;
 	}	
 	
 	
-	int cardInfo1,cardInfo2;//이긴사람 카드정보
 	int tempInfo1,tempInfo2;//임시 카드정보
 	public void showResult(){
+		ArrayList<User> sortRank;
 		whosturn=0;
 		bbBetCount = 0;		
 		System.out.println("SHOW RESULT ");
@@ -1015,10 +1198,12 @@ public class GameManager {
 		
 		//기권승시 족보계산안함 ,이긴사람 돈줌 
 		if( this.checkAbstention() ){
+			sortRank=new ArrayList<User>();
 			int cnt=0;
 			for(User u : userlist){
 				if(u.die == false){
 					winSeat = cnt;
+					sortRank.add(u);
 				}
 				cnt++;
 			}
@@ -1042,34 +1227,46 @@ public class GameManager {
 				}
 				
 				//3포카드 7트리플 8투페어 9페어			
-				int lv = checkAllpair(card);
+				int lv =-1;// checkAllpair(card);
 				//스트레이트 플러시 2
-				if(checkStraightFlush(card)==true){//info1 스트레이트 숫자 , info2 플러시 모양
+				if(checkStraightFlush(card)==true){//
 					lv=9;
-				}else if(false){// 포카드
-					if(lv < 8 ) lv=8;
-				}else if(checkFullHouse(card)==true){//info1트리플 숫자  info2 투페어숫자
-					if(lv < 7 ) lv=7;
-				}else if(checkFlush(card)==true){//info2 플러시 모양
-					if(lv < 6 ) lv=6;
-				}else if(checkStraight(card)==true){//info1 스트레이트숫자
-					if(lv < 5 ) lv=5;
+					currentUser.jokbocode=90000000+tempInfo1*100000;
+				}else if(checkFourCard(card) == true ){// 포카드 *
+					lv=8;
+					currentUser.jokbocode=80000000+tempInfo1*100000;
+				}else if(checkFullHouse(card)==true){//풀하우스 *
+					lv=7;
+					currentUser.jokbocode=70000000+tempInfo1*100000+tempInfo2*1000;
+				}else if(checkFlush(card)==true){//플러시 모양 *
+					lv=6;
+					currentUser.jokbocode=60000000+tempInfo1*100000;
+				}else if(checkStraight(card)==true){//스트레이트숫자 *?
+					lv=5;
+					currentUser.jokbocode=50000000+tempInfo1*100000;
+				}else if(checkThree(card)==true){//트리플*
+					lv=4;
+					currentUser.jokbocode=40000000+tempInfo1*100000;
+				}else if(checkTwoPair(card)==true){//투페어*
+					lv=3;
+					currentUser.jokbocode=30000000+tempInfo1*100000+tempInfo2*1000;
+				}else if(checkPair(card)==true){//원페어 *
+					lv=2;
+					currentUser.jokbocode=20000000+tempInfo1*100000;
 				}else {//탑카드 
-					if(lv < 1) lv=1;
-					userlist.get(k).topcard = checkTopCard(card);
-					cardInfo1 = userlist.get(k).topcard; 
+					lv=1;
+					checkTopCard(card);
+					currentUser.jokbocode=10000000+tempInfo1*100000;
 				}
-				userlist.get(k).jokbocode = lv *10000000  ;
 				
-				if(wlv > lv ){
-					winSeat = k;
-					wlv = lv;
-					cardInfo1 = tempInfo1;
-					cardInfo2 = tempInfo2;
-					System.out.println("*********lv:"+lv+" cardInfo1:"+cardInfo1+" cardInfo2:"+cardInfo2);				
-				}
-				userlist.get(k).level = lv;
 			}
+			//유저별 순위 정렬
+			sortRank=(ArrayList<User>) userlist.clone();
+			Collections.sort(sortRank, new Comparator<User>() {
+	            @Override public int compare(User s1, User s2) {
+	            	return s1.jokbocode - s2.jokbocode;
+	            }
+	        });
 		}
 		
 
