@@ -422,7 +422,7 @@ public class GameManager {
 
 	public int getWhoTurn(){
 										
-		for( int nCount = 0; nCount < this.seats.length; ++nCount )
+		for( int nCount = 0; nCount < this.seats.length * 2; ++nCount )
 		{							
 			if( this.seats[(whosturn + nCount)%this.seats.length] >= 0 )
 			{				
@@ -433,7 +433,7 @@ public class GameManager {
 					SearchUserBySeat((whosturn + nCount)%this.seats.length).PlayStatus = -1;
 					continue;					
 				}
-				
+				/*
 				if( SearchUserBySeat((whosturn + nCount)%this.seats.length).balance <= 0 )
 				{
 					System.out.println("--balance--");
@@ -448,7 +448,7 @@ public class GameManager {
 					System.out.println((whosturn + nCount)%this.seats.length);
 					SearchUserBySeat((whosturn + nCount)%this.seats.length).PlayStatus = 0;
 					continue;
-				}
+				}*/
 					
 				whosturn = (whosturn + nCount)%this.seats.length;
 				return whosturn;
@@ -562,17 +562,24 @@ public class GameManager {
 		for(User uu : userlist){
 			
 			if(uu.die == true)
-			{
+			{				
 				continue;
 			}
 			
 			if(uu.PlayStatus == 1)
-			{
+			{				
 				return false;
 			}										
 			
 			if( uu.betmoney < money)
-			{							
+			{										
+				System.out.println("uu.betmoney < money");
+				System.out.println("seat");
+				System.out.println(uu.seat);
+				System.out.println(uu.betmoney);
+				System.out.println(money);
+				System.out.println(uu.PlayStatus);
+				System.out.println(uu.die);
 				return false;//배팅금액이 다르다
 			}								
 				
@@ -588,7 +595,8 @@ public class GameManager {
 			}				
 			
 			if(uu.betmoney != preTotalBetmoney)
-			{								
+			{			
+				System.out.println("uu.betmoney != preTotalBetmoney");
 				return false;
 			}
 		}	
@@ -625,6 +633,9 @@ public class GameManager {
 		{ 
 			u.die = true;
 			u.PlayStatus = -1;
+			
+			System.out.println("die seat");
+			System.out.println(u.seat);
 		}
 		
 		Boolean isAllIn = false;
@@ -645,8 +656,8 @@ public class GameManager {
 		}		
 		
 		if( isAllIn == true )
-		{			
-			gamePot.add(new Pot());
+		{									
+			gamePot.add(gamePot.get(gamePot.size()-1).PotSlit(u.betmoney));
 		}
 				
 		u.betmoney += tmo ;//나의 배팅금액 현재돈+배팅금액
@@ -1383,6 +1394,7 @@ public class GameManager {
 
 		winSeat=sortRank.get(0).seat;// 이게 유저 자리 번호 맞나? 확인하기 2020 09 10
 		
+		
 		//userlist.get(winSeat).balance+=totalmoney;
 		int betMoney=0;
 		int cnt=0;
@@ -1393,6 +1405,7 @@ public class GameManager {
 			if(userlist.get(winSeat).betmoney <= u.betmoney)
 				cnt++;
 		}
+		
 		for(User u : userlist){
 			if( u.seat == winSeat){
 				userlist.get(winSeat).balance+=betMoney + (cnt*userlist.get(winSeat).betmoney);
@@ -1401,7 +1414,8 @@ public class GameManager {
 					u.balance = u.betmoney - userlist.get(winSeat).betmoney;
 				}
 			}
-		}		
+			u.PlayStatus = 1;
+		}	
 		
 		setDealerSeat();
 		
