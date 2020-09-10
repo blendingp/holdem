@@ -111,13 +111,18 @@ public class Room {
 	}
 
 	public void join(User u, int ridx ) {
-		u.seat = gameManager.GetEmptySeat();		
-		gameManager.SetSeat(u.seat);
 		
-		gameManager.userlist.add( u );
-		u.roomnum = ridx;
-		gameManager.startCheck(u, gameManager.userlist);
-		notifyJoinUser();
+		if( gameManager.GameMode == "대기" )
+		{
+			u.seat = gameManager.GetEmptySeat();		
+			gameManager.SetSeat(u.seat);
+			
+			gameManager.userlist.add( u );
+			u.roomnum = ridx;
+			gameManager.startCheck(u, gameManager.userlist);
+			notifyJoinUser();
+		}
+			
 	}
 
 	public void leave(User u) {		
