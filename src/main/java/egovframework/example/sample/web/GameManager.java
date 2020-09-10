@@ -561,13 +561,18 @@ public class GameManager {
 						
 		for(User uu : userlist){
 			
+			if(uu.die == true)
+			{
+				continue;
+			}
+			
 			if(uu.PlayStatus == 1)
 			{
 				return false;
-			}					
+			}										
 			
 			if( uu.betmoney < money)
-			{			
+			{							
 				return false;//배팅금액이 다르다
 			}								
 				
@@ -583,7 +588,7 @@ public class GameManager {
 			}				
 			
 			if(uu.betmoney != preTotalBetmoney)
-			{
+			{								
 				return false;
 			}
 		}	
