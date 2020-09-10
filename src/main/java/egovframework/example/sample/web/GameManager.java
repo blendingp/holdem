@@ -487,9 +487,27 @@ public class GameManager {
 		JSONObject obj = new JSONObject();		
 		obj.put("cmd","bet");
 		if( turncnt == 0 )
-			obj.put("betenable", "1,1,1,0,0,1,1,1");//체크/폴드/삥/콜/따당/하프/풀/맥스
+		{
+			if( preTotalBetmoney >= room.maxmoney)
+			{
+				obj.put("betenable", "0,1,0,1,0,0,0,0");//체크/폴드/삥/콜/따당/하프/풀/맥스
+			}
+			else				
+			{
+				obj.put("betenable", "1,1,1,0,0,1,1,1");//체크/폴드/삥/콜/따당/하프/풀/맥스	
+			}			
+		}
 		else
-			obj.put("betenable", "0,1,0,1,1,1,1,1");//체크/폴드/삥/콜/따당/하프/풀/맥스
+		{
+			if( preTotalBetmoney >= room.maxmoney)
+			{
+				obj.put("betenable", "0,1,0,1,0,0,0,0");//체크/폴드/삥/콜/따당/하프/풀/맥스
+			}
+			else
+			{
+				obj.put("betenable", "0,1,0,1,1,1,1,1");//체크/폴드/삥/콜/따당/하프/풀/맥스	
+			}			
+		}
 		obj.put("whosturn", whosturn );
 		obj.put("prebetmoney", preTotalBetmoney );
 		obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
@@ -678,7 +696,14 @@ public class GameManager {
 		obj.put("betkind", betkind);
 		obj.put("seat", u.seat);//금방배팅한 사람
 		obj.put("nextwho", whosturn );//이제 배팅할 사람의 번호
-		obj.put("betenable", "0,1,0,1,1,1,1,1");//체크/폴드/삥/콜/따당/하프/풀/맥스
+		if( preTotalBetmoney >= room.maxmoney)
+		{
+			obj.put("betenable", "0,1,0,1,0,0,0,0");//체크/폴드/삥/콜/따당/하프/풀/맥스
+		}
+		else
+		{
+			obj.put("betenable", "0,1,0,1,1,1,1,1");//체크/폴드/삥/콜/따당/하프/풀/맥스	
+		}		
 		obj.put("gu", gu );
 		if( isBetEnd )
 			obj.put("betEnd", "1");//마지막 베팅인지 체크
@@ -769,7 +794,14 @@ public class GameManager {
 		obj.put("card2", card2.cardcode);		
 		obj.put("card3", card3.cardcode);
 		obj.put("whosturn", whosturn );
-		obj.put("betenable", "1,1,1,0,0,1,1,1");//체크/폴드/삥/콜/따당/하프/풀/맥스
+		if( preTotalBetmoney >= room.maxmoney)
+		{
+			obj.put("betenable", "0,1,0,1,0,0,0,0");//체크/폴드/삥/콜/따당/하프/풀/맥스
+		}
+		else
+		{
+			obj.put("betenable", "1,1,1,0,0,1,1,1");//체크/폴드/삥/콜/따당/하프/풀/맥스	
+		}		
 		SocketHandler.insertLog(getGameId(), "THEFLOP", -1, card1.cardcode, card2.cardcode, "", card3.cardcode, -1);
 		for(int k =0; k<userlist.size(); k++){
 			cardarr[k][2] = card1.cardcode;
