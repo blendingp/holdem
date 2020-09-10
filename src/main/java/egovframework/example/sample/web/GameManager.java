@@ -1260,7 +1260,8 @@ public class GameManager {
 				}
 				
 			}
-			//유저별 순위 정렬
+			
+			//유저  족보 순위 정렬
 			sortRank=(ArrayList<User>) userlist.clone();
 			Collections.sort(sortRank, new Comparator<User>() {
 	            @Override public int compare(User s1, User s2) {
@@ -1268,8 +1269,9 @@ public class GameManager {
 	            }
 	        });
 		}
-		
 
+		winSeat=sortRank.get(0).seat;// 이게 유저 자리 번호 맞나? 확인하기 2020 09 10
+		
 		//userlist.get(winSeat).balance+=totalmoney;
 		int betMoney=0;
 		int cnt=0;
@@ -1295,13 +1297,13 @@ public class GameManager {
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","showResult");
 		obj.put("wlv",""+wlv);
-		obj.put("cardInfo1",cardInfo1);
-		obj.put("cardInfo2",cardInfo2);
-		obj.put("winnerbalance",""+userlist.get(winSeat).balance);
+		obj.put("cardInfo1",sortRank.get(0).card1);
+		obj.put("cardInfo2",sortRank.get(0).card2);
+		obj.put("winnerbalance",""+sortRank.get(0).balance);
 		obj.put("winmoney",""+this.totalmoney);
 		obj.put("winSeat",""+winSeat);		
 		obj.put("usersize",""+userlist.size());		
-		obj.put("wincard", userlist.get(winSeat).wincard);
+		obj.put("wincard", sortRank.get(0).wincard);
 		
 		JSONArray j = new JSONArray();
 		for(int i=0; i<userlist.size(); i++){
