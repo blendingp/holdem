@@ -528,7 +528,7 @@ public class GameManager {
 			return prebetmoney*2;
 		else if(kind==4){// 하프
 			int tc = preTotalBetmoney - mybetmoney;
-			return (totalmoney + tc)/2;
+			return tc + ((totalmoney + tc)/2);
 		}
 		else if(kind==5){// 풀
 			int tc = preTotalBetmoney - mybetmoney;
@@ -538,7 +538,7 @@ public class GameManager {
 			return room.maxmoney;
 		else if(kind==7){// 쿼터
 			int tc = preTotalBetmoney - mybetmoney;
-			return (totalmoney+tc)/4;
+			return tc + ((totalmoney+tc)/4);
 		}
 		else if(kind==8)// 패스 ( 올인이나 맥스벳 상태에서는 자기 차례올시에 자동 패스 커맨드 함) 
 			return 0;
@@ -1399,19 +1399,19 @@ public class GameManager {
 		int betMoney=0;
 		int cnt=0;
 		for(User u : userlist){
-			if(userlist.get(winSeat).betmoney > u.betmoney){
+			if(SearchUserBySeat(winSeat).betmoney > u.betmoney){
 				betMoney+=u.betmoney;
 			}
-			if(userlist.get(winSeat).betmoney <= u.betmoney)
+			if(SearchUserBySeat(winSeat).betmoney <= u.betmoney)
 				cnt++;
 		}
 		
 		for(User u : userlist){
 			if( u.seat == winSeat){
-				userlist.get(winSeat).balance+=betMoney + (cnt*userlist.get(winSeat).betmoney);
+				SearchUserBySeat(winSeat).balance+=betMoney + (cnt*userlist.get(winSeat).betmoney);
 			}else{
-				if(userlist.get(winSeat).betmoney < u.betmoney){
-					u.balance = u.betmoney - userlist.get(winSeat).betmoney;
+				if(SearchUserBySeat(winSeat).betmoney < u.betmoney){
+					u.balance = u.betmoney - SearchUserBySeat(winSeat).betmoney;
 				}
 			}
 			u.PlayStatus = 1;
