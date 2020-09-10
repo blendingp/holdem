@@ -1265,7 +1265,7 @@ public class GameManager {
 			sortRank=(ArrayList<User>) userlist.clone();
 			Collections.sort(sortRank, new Comparator<User>() {
 	            @Override public int compare(User s1, User s2) {
-	            	return s1.jokbocode - s2.jokbocode;
+	            	return s2.jokbocode - s1.jokbocode;
 	            }
 	        });
 		}
