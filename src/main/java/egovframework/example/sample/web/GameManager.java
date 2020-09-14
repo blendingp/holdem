@@ -8,6 +8,7 @@ import java.util.Comparator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
 
 public class GameManager {		
 	public ArrayList<User> userlist = new ArrayList<User>();	
@@ -528,17 +529,17 @@ public class GameManager {
 			return prebetmoney*2;
 		else if(kind==4){// 하프
 			int tc = preTotalBetmoney - mybetmoney;
-			return tc + ((totalmoney + tc)/2);
+			return ((totalmoney + tc)/2);
 		}
 		else if(kind==5){// 풀
 			int tc = preTotalBetmoney - mybetmoney;
-			return totalmoney + tc;
+			return totalmoney;
 		}
 		else if(kind==6)// 맥스
 			return room.maxmoney;
 		else if(kind==7){// 쿼터
 			int tc = preTotalBetmoney - mybetmoney;
-			return tc + ((totalmoney+tc)/4);
+			return ((totalmoney+tc)/4);
 		}
 		else if(kind==8)// 패스 ( 올인이나 맥스벳 상태에서는 자기 차례올시에 자동 패스 커맨드 함) 
 			return 0;
@@ -1408,7 +1409,7 @@ public class GameManager {
 		
 		for(User u : userlist){
 			if( u.seat == winSeat){
-				SearchUserBySeat(winSeat).balance+=betMoney + (cnt*userlist.get(winSeat).betmoney);
+				SearchUserBySeat(winSeat).balance+=betMoney + (cnt*SearchUserBySeat(winSeat).betmoney);
 			}else{
 				if(SearchUserBySeat(winSeat).betmoney < u.betmoney){
 					u.balance = u.betmoney - SearchUserBySeat(winSeat).betmoney;
@@ -1465,6 +1466,19 @@ public class GameManager {
 		}
 		
 		return null;		
+	}
+
+	public void Chat(WebSocketSession session, User u, String chat) {
+		
+		System.out.println(" 메시지 전달 :" + u.seat);
+		JSONObject obj = new JSONObject();
+		obj.put("cmd", "chatresult");
+		obj.put("chat", chat);
+		obj.put("seat", u.seat);
+		
+		sendRoom(obj);
+		
+		
 	}
 	
 }
