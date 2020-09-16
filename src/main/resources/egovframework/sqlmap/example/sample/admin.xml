@@ -48,5 +48,33 @@
             WHERE gameid=#gameid#
         ]]>
     </select>  
+    
+    <select id="ChatPaging" resultClass="EgovMap">
+        <![CDATA[
+             SELECT 
+                *
+            FROM chat
+            order by cidx desc
+            limit $firstindex$, $recordperpage$
+        ]]>
+    </select>
+     <select id="ChatTotal" resultClass="EgovMap">
+        <![CDATA[
+            SELECT count(*) num
+            FROM chat
+        ]]>
+        
+    </select>
+    
+    <insert id="ChatInsert" >
+    	<![CDATA[
+			INSERT INTO chat
+				(  cmention
+				  , cuse)
+			VALUES ( #cmention#
+				  , 1)
+		]]>
+    
+    </insert>
   
 </sqlMap>

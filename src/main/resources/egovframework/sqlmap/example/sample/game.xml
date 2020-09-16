@@ -71,4 +71,10 @@
 		]]>
 	</update>
 	
+		<select id="ChatList" resultClass="EgovMap">
+        <![CDATA[
+            SELECT *
+            FROM chat
+        ]]>
+	</select>
 </sqlMap>

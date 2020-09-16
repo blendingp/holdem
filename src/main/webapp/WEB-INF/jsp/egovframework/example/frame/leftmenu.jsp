@@ -60,6 +60,9 @@
                         <li>
                             <a href="/holdem/gamelogp.do"><i class="fa fa-table fa-fw"></i>게임로그</a>
                         </li>                        
+                        <li>
+                            <a href="/holdem/chat.do"><i class="fa fa-table fa-fw"></i>채팅관리</a>
+                        </li>                        
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->

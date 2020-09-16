@@ -120,7 +120,8 @@ public class User {
 		System.out.println(receipt);
 		
 		EgovMap in = new EgovMap();
-		in.put("midx", uidx);		
+		in.put("midx", uidx);	
+		int lottery = 0;
 		
 		switch(product)
 		{
@@ -130,49 +131,91 @@ public class User {
 			in.put("type", "cash");
 			break;		
 		case "Gem1": 
-			this.cash += 220;
-			in.put("amount", this.cash);
-			in.put("type", "cash");
-			break;
-		case "Gem2": 
-			this.cash += 330;
-			in.put("amount", this.cash);
-			in.put("type", "cash");
-			break;
-		case "Gem3": 
-			this.cash += 440;
-			in.put("amount", this.cash);
-			in.put("type", "cash");
-			break;
-		case "Gem4": 
 			this.cash += 550;
 			in.put("amount", this.cash);
 			in.put("type", "cash");
 			break;
-		case "Gem5": 
-			this.cash += 660;
+		case "Gem2": 
+			this.cash += 1100;
 			in.put("amount", this.cash);
 			in.put("type", "cash");
 			break;
-		case "Gem6": 
-			this.cash += 770;
+		case "Gem3": 
+			this.cash += 5500;
 			in.put("amount", this.cash);
 			in.put("type", "cash");
+			break;	
+		case "Lottery0": 
+			if( this.cash >= 110 )
+			{
+				this.cash -= 110;
+				in.put("amount", this.cash);
+				in.put("type", "cash");	
+				lottery = 100 - (int)(Math.random() * 90);
+			}			
 			break;
-		case "Gem7": 
-			this.cash += 880;
-			in.put("amount", this.cash);
-			in.put("type", "cash");
+		case "Lottery1": 
+			if( this.cash >= 220 )
+			{
+				this.cash -= 220;
+				in.put("amount", this.cash);
+				in.put("type", "cash");	
+				lottery = 200 - (int)(Math.random() * 150);
+			}			
+			break;
+		case "Lottery2": 
+			if( this.cash >= 550 )
+			{
+				this.cash -= 550;
+				in.put("amount", this.cash);
+				in.put("type", "cash");	
+				lottery = 500 - (int)(Math.random() * 400);
+			}			
+			break;
+		case "Lottery3": 
+			if( this.cash >= 1100 )
+			{
+				this.cash -= 1100;
+				in.put("amount", this.cash);
+				in.put("type", "cash");	
+				lottery = 10000 - (int)(Math.random() * 9000);
+			}			
 			break;
 		default: 
 			this.cash += 0;
 			in.put("amount", this.cash);
 			in.put("type", "cash");
 			break;
-		}				
+		}						
+		
 		int rt = SocketHandler.sk.sampleDAO.update("updateItemAmont", in);		
 					
+		if( lottery > 0 )
+		{
+			this.balance += lottery;
+			
+			EgovMap balancein = new EgovMap();
+			balancein.put("midx", uidx);
+			balancein.put("amount", this.balance);
+			balancein.put("type", "balance");	
+			
+			SocketHandler.sk.sampleDAO.update("updateItemAmont", balancein);		
+			
+		}
+		
 		return rt;
+	}
+	
+	public int ApplyBalanace()
+	{
+		EgovMap in = new EgovMap();
+		in.put("midx", uidx);	
+		in.put("amount", this.balance);
+		in.put("type", "balance");
+		
+		int rt = SocketHandler.sk.sampleDAO.update("updateItemAmont", in);		
+		
+		return rt;		
 	}
 	
 	public int Deal(int item, int action, int amount)

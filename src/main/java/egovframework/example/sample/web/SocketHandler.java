@@ -29,6 +29,8 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 
     UserManager usermanager = new UserManager();
     RoomManager roommanager = new RoomManager();
+    ChatMention chatmention = new ChatMention();
+    
     static public int jokbotest = -1;
     
 	public static SocketHandler sk=null; 
@@ -92,7 +94,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     public void afterConnectionEstablished(WebSocketSession session)throws Exception {
     	super.afterConnectionEstablished(session);
         sessionSet.add(session);
-        
+  
         this.logger.info("add session! id: " + session.getId());
     }
  
@@ -128,7 +130,11 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         		}
         		session.getAttributes().put("useridx", ed.get("midx"));
         		User user = new User(Integer.parseInt(""+ed.get("midx")), session, ""+ed.get("muserid"));
-        		usermanager.connect(session, user);
+        		
+        		//구정연_멘션 보내도록 추가
+        		String chatMention = chatmention.getChatMentionString();
+        		
+        		usermanager.connect(session, user, chatMention);
         		break;
         	}
         	case "joinRoom":
@@ -187,6 +193,17 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         		System.out.println("jokbotest:"+jokbotest);
         	}        	
 	        break;
+	        
+	        //구정연_채팅메시지 패킷 추가
+        	case "chatmessage":
+        	{
+        		User u4 = usermanager.find(session);
+        		System.out.println("chatmessage:"+ obj.toJSONString());
+        		String chat = ""+obj.get("chat");
+        		int roomidx = Integer.parseInt(""+obj.get("roomidx"));  
+        		roommanager.find(roomidx).gameManager.Chat(session, u4, chat);
+        	}
+	        
 		}
     }
  
@@ -210,6 +227,9 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     	EgovMap gameId = (EgovMap) sampleDAO.select("selectLastGameId");
     	if(gameId!=null)
     		gameidIdx = Integer.parseInt(""+gameId.get("gameid"));
+    	
+    	chatmention.setDAO(sampleDAO);
+        chatmention.uploding();
     	
         Thread thread = new Thread() {
             int i = 0;

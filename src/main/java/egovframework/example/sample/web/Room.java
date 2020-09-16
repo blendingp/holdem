@@ -112,6 +112,11 @@ public class Room {
 
 	public void join(User u, int ridx ) {
 		
+		if( u.balance < 10 )
+		{
+			return ;
+		}
+		
 		if( gameManager.GameMode == "대기" )
 		{
 			u.seat = gameManager.GetEmptySeat();		
@@ -124,7 +129,7 @@ public class Room {
 			
 			gameManager.setWorkTime( );//새로 한명 들어올때마다 대기 시간을 증가시켜서 여러명이 들어올 여지를 둔다.
 		}
-			
+				
 	}
 
 	public void leave(User u) {		

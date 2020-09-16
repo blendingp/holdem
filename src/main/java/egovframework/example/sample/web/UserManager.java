@@ -41,7 +41,7 @@ public class UserManager {
 		return null;
 	}
 	
-	public void connect(WebSocketSession session, User user){
+	public void connect(WebSocketSession session, User user, String chatmention){
 		userlist.add(user);		
 		
 		JSONObject cobj = new JSONObject();
@@ -54,7 +54,9 @@ public class UserManager {
 		cobj.put("point", find(session).point);
 		cobj.put("safe_balance", find(session).safe_balance);
 		cobj.put("safe_point", find(session).safe_point);
-		
+		//구정연_멘션 스트링 리스트 전달
+		cobj.put("chatmention", chatmention);
+		System.out.println("chatmention :" + chatmention);
 		try {
 			session.sendMessage(new TextMessage(cobj.toJSONString()));
 		} catch (IOException e) {

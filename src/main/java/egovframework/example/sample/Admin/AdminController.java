@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import egovframework.example.sample.service.impl.SampleDAO;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
@@ -72,6 +73,45 @@ public class AdminController {
 		paginationInfo.setTotalRecordCount(Integer.parseInt(total));
 		model.addAttribute("paginationInfo", paginationInfo);		
 		return "admin/gamedetaillog";
+	}
+	
+	//구정연_상용문구페이지
+	@RequestMapping(value = "/chat.do")
+	public String chat(HttpServletRequest request, ModelMap model) throws Exception {
+		PaginationInfo paginationInfo = new PaginationInfo();
+		if (request.getParameter("pageIndex") == null) {
+			paginationInfo.setCurrentPageNo(1);
+		} else {
+			paginationInfo.setCurrentPageNo(Integer.parseInt("" + request.getParameter("pageIndex")));
+		}
+		paginationInfo.setRecordCountPerPage(10);
+		paginationInfo.setPageSize(7);
+		
+		//인자생성
+		EgovMap in = new EgovMap();
+		in.put("firstindex", "" + paginationInfo.getFirstRecordIndex());
+		in.put("recordperpage", "" + paginationInfo.getRecordCountPerPage());
+		List<?> list = (List<?>) sampleDAO.list("ChatPaging", in);
+		model.addAttribute("resultList", list);
+		EgovMap count = (EgovMap) sampleDAO.select("ChatTotal");
+		String total = "" + count.get("num");
+		paginationInfo.setTotalRecordCount(Integer.parseInt(total));
+		model.addAttribute("paginationInfo", paginationInfo);		
+		
+		return "admin/chat";
+	}
+	
+	//구정연_상용문구 등록
+	@RequestMapping(value = "/chatinsert.do", method=RequestMethod.GET)
+	public String chatinsert(HttpServletRequest request, ModelMap model) throws Exception {
+		
+		String mention = request.getParameter("mention");
+		EgovMap in = new EgovMap();
+		in.put("cmention", mention);
+		sampleDAO.insert("ChatInsert",in);
+		
+	
+		return "redirect:/chat.do";
 	}
 
 }

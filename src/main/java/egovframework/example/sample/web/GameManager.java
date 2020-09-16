@@ -533,7 +533,7 @@ public class GameManager {
 		}
 		else if(kind==5){// 풀
 			int tc = preTotalBetmoney - mybetmoney;
-			return totalmoney;
+			return tc + totalmoney;
 		}
 		else if(kind==6)// 맥스
 			return room.maxmoney;
@@ -677,7 +677,9 @@ public class GameManager {
 		totalmoney +=tmo;
 		
 		//배팅한 사람 돈 차감 시키기!!!
-		u.balance -= tmo;			
+		u.balance -= tmo;	
+		
+		u.ApplyBalanace();
 		
 		//System.out.println("BET whosturn: "+whosturn+"("+getWhoTurn()+") Game:"+GameMode+" betkind:"+betkind+" totalmoney:"+totalmoney+" 잔액:"+u.balance +"   :::" + "{ tmo:"+tmo +" u.betmoney:"+u.betmoney+" prebetmoney:"+prebetmoney+" preTotalBetmoney:"+preTotalBetmoney);
 		SocketHandler.insertLog(getGameId(), "bet", u.uidx , u.betmoney , u.balance , "배팅액:"+tmo+", total:"+totalmoney , betkind, whosturn );
@@ -1407,15 +1409,20 @@ public class GameManager {
 				cnt++;
 		}
 		
+		System.out.println("---balanace-----");
 		for(User u : userlist){
 			if( u.seat == winSeat){
-				SearchUserBySeat(winSeat).balance+=betMoney + (cnt*SearchUserBySeat(winSeat).betmoney);
+				SearchUserBySeat(winSeat).balance += betMoney + (cnt*SearchUserBySeat(winSeat).betmoney);
 			}else{
 				if(SearchUserBySeat(winSeat).betmoney < u.betmoney){
 					u.balance = u.betmoney - SearchUserBySeat(winSeat).betmoney;
 				}
 			}
+			
+			System.out.println(u.balance);
 			u.PlayStatus = 1;
+			
+			u.ApplyBalanace();
 		}	
 		
 		setDealerSeat();
@@ -1429,7 +1436,7 @@ public class GameManager {
 		obj.put("cardInfo2",sortRank.get(0).card2);//이제 안씀.
 		obj.put("winnerbalance",""+sortRank.get(0).balance);
 		obj.put("winmoney",""+this.totalmoney);
-		obj.put("winSeat",""+winSeat);		
+		obj.put("winSeat",""+winSeat);				
 		obj.put("usersize",""+userlist.size());		
 		obj.put("wincard", sortRank.get(0).wincard);//
 		
@@ -1439,6 +1446,7 @@ public class GameManager {
 			item.put("seat",""+ userlist.get(i).seat);			
 			item.put("card1",""+ userlist.get(i).card1.cardcode);
 			item.put("card2",""+ userlist.get(i).card2.cardcode);
+			item.put("balance",""+ userlist.get(i).balance);
 			item.put("die",""+ userlist.get(i).die);
 			j.add(item);
 		}
