@@ -1339,7 +1339,8 @@ public class GameManager {
 				
 				//죽은 사람은 결과에서 제외
 				boolean userDie = userlist.get(k).die;
-				if( userDie == true){				
+				if( userDie == true){		
+					currentUser.jokbocode = 0;
 					continue;
 				}					
 				
