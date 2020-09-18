@@ -605,6 +605,7 @@ public class GameManager {
 				
 		return true;//배팅금액이 똑같은경우 배팅끝
 	}
+	
 	public void  nextTurn(){
 		whosturn++;//다음사람배팅
 		//int k=0;		
@@ -703,7 +704,7 @@ public class GameManager {
 				
 		turncnt++;
 		
-		nextTurn();
+		nextTurn();					
 				
 		boolean isBetEnd = isGuBetEnd();
 		obj.put("totalmoney", totalmoney);
@@ -730,6 +731,21 @@ public class GameManager {
 			obj.put("betEnd", "0");//마지막 베팅인지 체크
 
 		timer = SocketHandler.second;
+		
+		if( GetAbleBettingUserCount() <= 0 )
+		{
+			JSONArray j = new JSONArray();
+			for(int i=0; i<userlist.size(); i++){
+				JSONObject item = new JSONObject();
+				item.put("seat",""+ userlist.get(i).seat);			
+				item.put("card1",""+ userlist.get(i).card1.cardcode);
+				item.put("card2",""+ userlist.get(i).card2.cardcode);
+				item.put("balance",""+ userlist.get(i).balance);
+				item.put("die",""+ userlist.get(i).die);
+				j.add(item);
+			}
+			obj.put("cardlist", j);	
+		}
 		
 		sendRoom(obj);//베팅 성공 정보를 전송					
 		
@@ -1475,6 +1491,33 @@ public class GameManager {
 		}
 		
 		return null;		
+	}
+	
+	private int GetAbleBettingUserCount()
+	{
+		int total = 0;
+		
+		for( User user : userlist )
+		{
+			if( user.die == true )
+			{
+				continue;
+			}
+			
+			if( user.betmoney >= room.maxmoney )
+			{
+				continue;
+			}
+			
+			if( user.balance <= 0 )
+			{
+				continue;
+			}
+				
+			total++;
+		}
+		
+		return total;
 	}
 
 	public void Chat(WebSocketSession session, User u, String chat) {
