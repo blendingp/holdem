@@ -113,9 +113,9 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     		{    			
     			User u = usermanager.find(session);
     			int ss = u.seat;
-    			int roomidx = Integer.parseInt(""+obj.get("roomidx"));
-    			roommanager.leaveRoom(roomidx, u);
-    			roommanager.find(roomidx).notifyLeaveUser(ss);
+				int roomidx = Integer.parseInt(""+obj.get("roomidx"));
+				roommanager.find(roomidx).notifyLeaveUser(ss);
+    			roommanager.leaveRoom(roomidx, u);    			
     		}
         	case "connect":
         	{        	

@@ -45,10 +45,10 @@ public class Room {
 		for(int i=0; i<gameManager.userlist.size(); i++)
 		{
 			JSONObject item = new JSONObject();			
-			item.put("useridx",""+ gameManager.userlist.get(i).uidx);
-			item.put("seat",""+ gameManager.userlist.get(i).seat);
+			item.put("useridx",gameManager.userlist.get(i).uidx);
+			item.put("seat",gameManager.userlist.get(i).seat);
 			item.put("img",""+ gameManager.userlist.get(i).img);
-			item.put("balance",""+ gameManager.userlist.get(i).balance);
+			item.put("balance",gameManager.userlist.get(i).balance);
 			item.put("nickname",""+ gameManager.userlist.get(i).nickname);
 			j.add(item);
 			System.out.println("uidx:"+gameManager.userlist.get(i).uidx +"  seat:"+gameManager.userlist.get(i).seat );
@@ -72,10 +72,10 @@ public class Room {
 			for(int i=0; i<gameManager.userlist.size(); i++)
 			{
 				JSONObject item = new JSONObject();
-				item.put("useridx",""+ gameManager.userlist.get(i).uidx);
-				item.put("seat",""+ gameManager.userlist.get(i).seat);
+				item.put("useridx",gameManager.userlist.get(i).uidx);
+				item.put("seat",gameManager.userlist.get(i).seat);
 				item.put("img",""+ gameManager.userlist.get(i).img);
-				item.put("balance",""+ gameManager.userlist.get(i).balance);
+				item.put("balance",gameManager.userlist.get(i).balance);
 				item.put("nickname",""+ gameManager.userlist.get(i).nickname);
 				j.add(item);
 			}
