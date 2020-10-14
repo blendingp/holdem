@@ -63,6 +63,22 @@
 		]]>
 </insert>	
 
+	<insert id="requestfriend" parameterClass="egovMap">
+			<![CDATA[
+				INSERT INTO member_friend
+					( uid
+					, midx
+					, friendidx
+					, status
+					, createdtime)
+				VALUES ( #uid#
+					, #midx#
+					, #friendidx#
+					, #status#
+					, now())
+			]]>
+	</insert>	
+
 	<update id="updateItemAmont" parameterClass="egovMap">
 		<![CDATA[
 			UPDATE item SET
@@ -71,10 +87,85 @@
 		]]>
 	</update>
 	
-		<select id="ChatList" resultClass="EgovMap">
+	<select id="ChatList" resultClass="EgovMap">
         <![CDATA[
             SELECT *
             FROM chat
         ]]>
 	</select>
+
+	<select id="GetFriends" resultClass="EgovMap">
+        <![CDATA[
+            SELECT uid, friendidx, status FROM member_friend
+            WHERE midx=#midx#
+        ]]>
+	</select>
+
+	<select id="GetRequestFriendList" resultClass="EgovMap">
+        <![CDATA[
+            SELECT uid, midx, status, createdtime, nextsendtime, nextsendtimefriend FROM member_friend
+            WHERE friendidx=#friendidx# AND `status`=#status#
+        ]]>
+	</select>
+
+	<select id="GetFriendList" resultClass="EgovMap">
+        <![CDATA[
+            SELECT uid, friendidx, status, createdtime, nextsendtime, nextsendtimefriend FROM member_friend
+            WHERE midx=#midx# AND `status`>0
+        ]]>
+	</select>
+
+	<select id="GetUserID" resultClass="EgovMap">
+        <![CDATA[
+            SELECT muserid FROM member
+            WHERE midx=#midx#
+        ]]>
+	</select>
+
+	<select id="GetUserBalance" resultClass="EgovMap">
+        <![CDATA[
+            SELECT amount
+            FROM item
+            WHERE midx=#midx# AND `type`='balance'
+        ]]>
+	</select>
+
+	<select id="SearchUser" resultClass="EgovMap">
+        <![CDATA[
+            SELECT midx FROM member
+            WHERE muserid=#muserid#
+        ]]>
+	</select>
+
+	<update id="UpdateFriendStatus" parameterClass="egovMap">
+		<![CDATA[
+			UPDATE member_friend SET
+				status=1
+				WHERE uid=#uid#
+		]]>
+	</update>
+
+	<update id="UpdateGiveGoldTime" parameterClass="egovMap">
+		<![CDATA[
+			UPDATE member_friend SET
+				nextsendtime=#nextsendtime#, nextsendtimefriend=#nextsendtimefriend#
+				WHERE uid=#uid#
+		]]>
+	</update>
+
+	<insert id="AddInbox" parameterClass="egovMap">
+			<![CDATA[
+				INSERT INTO inbox
+					( uid
+					, midx
+					, title
+					, body
+					, expire)
+				VALUES ( #uid#
+					, #midx#
+					, #title#
+					, #body#
+					, #expire#)
+			]]>
+	</insert>	
 </sqlMap>

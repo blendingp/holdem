@@ -106,7 +106,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         JSONParser p = new JSONParser();
         JSONObject obj = (JSONObject)p.parse(msg);
         
-        //System.out.println(obj.toJSONString());
+        System.out.println(obj.toJSONString());
         switch(""+ obj.get("protocol"))
 		{	        
 			case "leave":
@@ -116,7 +116,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 				int roomidx = Integer.parseInt(""+obj.get("roomidx"));
 				roommanager.find(roomidx).notifyLeaveUser(ss);
     			roommanager.leaveRoom(roomidx, u);    			
-    		}
+    		}break;
         	case "connect":
         	{        	
         		EgovMap in = new EgovMap();
@@ -202,8 +202,31 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         		String chat = ""+obj.get("chat");
         		int roomidx = Integer.parseInt(""+obj.get("roomidx"));  
         		roommanager.find(roomidx).gameManager.Chat(session, u4, chat);
-        	}
-	        
+			}break;			
+			case "searchuser":
+			{
+				usermanager.SearchUserByID(session, ""+obj.get("userid"));
+			}break;
+	        case "requestfriend":
+			{
+				usermanager.RequestFriend(session, ""+obj.get("userid"));
+			}break;
+			case "requestfriendlist":
+			{
+				usermanager.RequestFriendList(session);
+			}break;
+			case "acceptfriend":
+			{
+				usermanager.AcceptFriend(session, ""+obj.get("uid"));
+			}break;
+			case "friendlist":
+			{
+				usermanager.GetFriendList(session);
+			}break;
+			case "sendfriendgold":
+			{
+				usermanager.SendFriendGold(session, ""+obj.get("uid"));
+			}break;
 		}
     }
  

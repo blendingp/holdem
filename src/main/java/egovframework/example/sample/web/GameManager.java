@@ -175,6 +175,7 @@ public class GameManager {
 			SocketHandler.insertLog(getGameId(), "join", u.uidx , u.balance , u.seat , "참가머니", room.defaultmoney , -1);
 			u.init();
 			u.PlayStatus = 1;
+			u.jokbocode = 0;
 			money = 0;
 			u.betmoney = 0;
 			u.balance -= room.defaultmoney;
@@ -745,7 +746,7 @@ public class GameManager {
 
 		timer = SocketHandler.second;
 		
-		if( GetAbleBettingUserCount() <= 1 && isBetEnd)
+		if( GetAbleBettingUserCount() <= 0)
 		{
 			JSONArray j = new JSONArray();
 			for(int i=0; i<userlist.size(); i++){
