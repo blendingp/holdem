@@ -1,16 +1,21 @@
 package egovframework.example.sample.web;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mysql.fabric.xmlrpc.base.Array;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -213,6 +218,7 @@ public class UserManager {
 		JSONArray list = new JSONArray();
 		for(int nCount = 0; nCount < requestlist.size(); ++nCount)
 		{
+			System.out.println(requestlist.get(nCount).Midx);
 			requestlist.get(nCount).IsConnected = findFromUseridx(requestlist.get(nCount).Midx) != null;
 
 			JSONObject item = new JSONObject();
@@ -228,8 +234,8 @@ public class UserManager {
 		}
 
 		for(int nCount = 0; nCount < friendlist.size(); ++nCount)
-		{
-			requestlist.get(nCount).IsConnected = findFromUseridx(requestlist.get(nCount).Friendidx) != null;
+		{			
+			requestlist.get(nCount).IsConnected = findFromUseridx(friendlist.get(nCount).Friendidx) != null;
 
 			JSONObject item = new JSONObject();
 			item.put("uid", friendlist.get(nCount).UID);			
@@ -257,8 +263,6 @@ public class UserManager {
 	{		
 		ArrayList<FriendModel> requestlist = Friend.GetRequestFriendList(find(session), 1);
 		ArrayList<FriendModel> friendlist = Friend.GetFriendList(find(session));		
-
-		System.out.println(requestlist.size() + friendlist.size());
 
 		for( FriendModel friend : requestlist )
 		{
@@ -311,6 +315,68 @@ public class UserManager {
 			e.printStackTrace();
 		}
 
+	}
+
+	public void DeleteFriend(WebSocketSession session, String uid)
+	{
+		ArrayList<FriendModel> requestlist = Friend.GetRequestFriendList(find(session), 1);
+		ArrayList<FriendModel> friendlist = Friend.GetFriendList(find(session));		
+		
+		JSONObject cobj = new JSONObject();
+		cobj.put("cmd", "deletefriend");		
+		boolean result = false;				
+				
+		for(int nCount = 0; nCount < requestlist.size(); ++nCount)
+		{			
+			if(requestlist.get(nCount).UID.equals(uid) == true)
+			{
+				requestlist.get(nCount).Delete(uid);
+				result = true;
+			}
+		}
+
+		for(int nCount = 0; nCount < friendlist.size(); ++nCount)
+		{			
+			if(friendlist.get(nCount).UID.equals(uid) == true)
+			{
+				friendlist.get(nCount).Delete(uid);
+				result = true;
+			}
+		}		
+
+		cobj.put("result", result);
+
+		try {
+			session.sendMessage(new TextMessage(cobj.toJSONString()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public void CheckAttendance(WebSocketSession session) throws JsonProcessingException
+	{	
+		JSONObject cobj = new JSONObject();
+		cobj.put("cmd", "checkattandance");		
+		cobj.put("prev", find(session).attendance.Count);
+		cobj.put("count", find(session).attendance.CheckAttendance());
+			
+		ClassPathResource resource = new ClassPathResource("json/attendance.json");
+
+		try {
+			Path path = Paths.get(resource.getURI());
+			String content = Files.readString(path);	
+
+			ObjectMapper mapper = new ObjectMapper();
+			ArrayList<AttendanceItem> itemlist = mapper.readValue(content, new ArrayList<AttendanceItem>().getClass());
+
+			cobj.put("attandance", itemlist);		
+
+			session.sendMessage(new TextMessage(cobj.toJSONString()));
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

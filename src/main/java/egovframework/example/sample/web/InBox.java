@@ -13,15 +13,17 @@ public class InBox
 {
     public String UID;
     public int Midx;
+    public int Type;
     public String Title;    
     public long Expire;
 
     public ArrayList<Item> ItemList = new ArrayList<Item>();     
 
-    public InBox(String uid, int idx, String title)
+    public InBox(String uid, int idx, int type, String title)
     {
         this.UID = uid;
         this.Midx = idx;
+        this.Type = type;
         this.Title = title;
     }
 
@@ -44,7 +46,7 @@ public class InBox
         return builder.toString();
     }
 
-    public static InBox MakeInBox(String uid, int idx, String title)
+    public static InBox MakeInBox(String uid, int idx, int type, String title)
     {        
         String inboxuid = uid;
         try {
@@ -54,7 +56,7 @@ public class InBox
             e.printStackTrace();        
         }      
 
-        InBox inbox = new InBox(inboxuid, idx, title);
+        InBox inbox = new InBox(inboxuid, idx, type, title);
 
         return inbox;
     }

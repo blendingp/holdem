@@ -227,6 +227,14 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			{
 				usermanager.SendFriendGold(session, ""+obj.get("uid"));
 			}break;
+			case "deletefriend":
+			{
+				usermanager.DeleteFriend(session, ""+obj.get("uid"));
+			}break;
+			case "checkattandance":
+			{
+				usermanager.CheckAttendance(session);
+			}break;
 		}
     }
  

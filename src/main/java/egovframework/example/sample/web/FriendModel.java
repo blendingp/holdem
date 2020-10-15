@@ -62,6 +62,16 @@ public class FriendModel {
         return (int)ed.get("amount");
     }
 
+    public boolean Delete(String uid)
+    {
+        EgovMap deletein = new EgovMap();
+        deletein.put("uid", uid);
+
+        int rt = SocketHandler.sk.sampleDAO.delete("DeleteFriend", deletein);
+
+        return true;
+    }
+
     public boolean SendGold(int idx, String uid) throws JsonProcessingException
     {
         if( this.UID == uid)
@@ -80,7 +90,7 @@ public class FriendModel {
         ObjectMapper mapper = new ObjectMapper();
 
         String name = this.GetUserID(idx);
-        InBox inbox = InBox.MakeInBox(this.UID, idx, name);
+        InBox inbox = InBox.MakeInBox(this.UID, idx, 10, name);
         Item item = new Item("balance", 100);
         inbox.ItemList.add(item);
         inbox.Expire = System.currentTimeMillis() + 259200000;
@@ -119,6 +129,7 @@ public class FriendModel {
         EgovMap inboxin = new EgovMap();
         inboxin.put("uid", inbox.UID);
         inboxin.put("midx", inbox.Midx);
+        inboxin.put("type", inbox.Type);
         inboxin.put("title", inbox.Title);
         inboxin.put("body", mapper.writeValueAsString(inbox.ItemList));
         inboxin.put("expire", inbox.Expire);

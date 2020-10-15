@@ -101,6 +101,13 @@
         ]]>
 	</select>
 
+	<select id="GetRequestFriend" resultClass="EgovMap">
+        <![CDATA[
+            SELECT uid, midx, status FROM member_friend
+            WHERE friendidx=#friendidx#
+        ]]>
+	</select>
+
 	<select id="GetRequestFriendList" resultClass="EgovMap">
         <![CDATA[
             SELECT uid, midx, status, createdtime, nextsendtime, nextsendtimefriend FROM member_friend
@@ -153,19 +160,48 @@
 		]]>
 	</update>
 
+	<delete id="DeleteFriend" parameterClass="egovMap">
+		<![CDATA[
+			DELETE FROM member_friend 
+				WHERE uid=#uid#
+		]]>
+	</delete>
+
 	<insert id="AddInbox" parameterClass="egovMap">
 			<![CDATA[
 				INSERT INTO inbox
 					( uid
 					, midx
+					, type
 					, title
 					, body
 					, expire)
 				VALUES ( #uid#
 					, #midx#
+					, #type#
 					, #title#
 					, #body#
 					, #expire#)
 			]]>
 	</insert>	
+	<select id="GetAttendance" resultClass="EgovMap">
+        <![CDATA[
+            SELECT count, nexttick FROM attendance
+            WHERE midx=#midx#
+        ]]>
+	</select>
+	<insert id="InsertAttendance" parameterClass="egovMap">
+        <![CDATA[
+				INSERT INTO attendance
+					( midx )
+				VALUES ( #midx# )
+			]]>
+	</insert>
+	<update id="UpdateAttendance" parameterClass="egovMap">
+		<![CDATA[
+			UPDATE attendance SET
+				count = #count#, nexttick = #nexttick#
+				WHERE midx=#midx#
+		]]>
+	</update>
 </sqlMap>

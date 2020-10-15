@@ -87,6 +87,22 @@ public class Friend {
                 }
             }   
         }
+
+        EgovMap requestfriendsin = new EgovMap();
+        requestfriendsin.put("friendidx", user.uidx);
+
+        ArrayList<EgovMap> requestfriended = (ArrayList<EgovMap>) SocketHandler.sk.sampleDAO.list("GetRequestFriend", requestfriendsin);        
+
+        if (requestfriended != null) {
+            for (int nCount = 0; nCount < requestfriended.size(); ++nCount) {
+                if (requestfriended.get(nCount).get("midx") != null) {
+                    if ((int) requestfriended.get(nCount).get("midx") == Integer.parseInt("" + usered.get("midx"))) {
+                        result.put("result", false);
+                        return result;
+                    }
+                }
+            }   
+        }
         
         String uid = "";
         try {
