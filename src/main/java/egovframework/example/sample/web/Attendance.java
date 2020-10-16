@@ -80,7 +80,10 @@ public class Attendance {
                     for( int nCount = 0; nCount < item.reward.size(); ++nCount )
                     {
                         AttendanceReward reward = item.reward.get(nCount);
-                        Item rewarditem = new Item(reward.type, reward.amount);
+                        Item rewarditem = new Item();
+                        rewarditem.Amount = reward.amount;
+                        rewarditem.Type = reward.type;
+                        
                         inbox.ItemList.add(rewarditem);
                     }                    
                 }

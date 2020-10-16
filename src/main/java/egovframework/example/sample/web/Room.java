@@ -92,13 +92,11 @@ public class Room {
 
 	public void notifyLeaveUser(int seat) {
 
-
 		JSONObject myobj = new JSONObject();						
 		myobj.put("cmd","RoomLeaveOk");
 		myobj.put("seat",seat);
 		//방에 참여중인 모든 사람 불러오기
 		for(int i = 0; i<gameManager.userlist.size(); i++){
-
 
 			try {
 				gameManager.userlist.get(i).session.sendMessage(new TextMessage(myobj.toJSONString()));

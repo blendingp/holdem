@@ -324,4 +324,30 @@ public class User {
 		card1.clear();
 		card2.clear();
 	}
+
+	public void InsertItem(Item item)
+	{
+		if( item.Type.equals("point") == true)
+		{
+			this.point += item.Amount;			
+
+			EgovMap in = new EgovMap();
+			in.put("midx", this.uidx);	
+			in.put("amount", this.point);
+			in.put("type", "point");
+			
+			int rt = SocketHandler.sk.sampleDAO.update("updateItemAmont", in);		
+		}
+		else if( item.Type.equals("balance") == true)
+		{
+			this.balance += item.Amount;
+
+			EgovMap in = new EgovMap();
+			in.put("midx", this.uidx);	
+			in.put("amount", this.balance);
+			in.put("type", "balance");
+			
+			int rt = SocketHandler.sk.sampleDAO.update("updateItemAmont", in);		
+		}
+	}
 }

@@ -111,10 +111,8 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 		{	        
 			case "leave":
     		{    			
-    			User u = usermanager.find(session);
-    			int ss = u.seat;
-				int roomidx = Integer.parseInt(""+obj.get("roomidx"));
-				roommanager.find(roomidx).notifyLeaveUser(ss);
+    			User u = usermanager.find(session);    			
+				int roomidx = Integer.parseInt(""+obj.get("roomidx"));				
     			roommanager.leaveRoom(roomidx, u);    			
     		}break;
         	case "connect":
@@ -234,6 +232,14 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			case "checkattandance":
 			{
 				usermanager.CheckAttendance(session);
+			}break;
+			case "getinbox":
+			{				
+				usermanager.GetInbox(session, Integer.parseInt(""+obj.get("type")));
+			}break;
+			case "getinboxreward":
+			{				
+				usermanager.GetInBoxReward(session, ""+obj.get("uid"));
 			}break;
 		}
     }

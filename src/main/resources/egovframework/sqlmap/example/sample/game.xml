@@ -159,14 +159,12 @@
 				WHERE uid=#uid#
 		]]>
 	</update>
-
 	<delete id="DeleteFriend" parameterClass="egovMap">
 		<![CDATA[
 			DELETE FROM member_friend 
 				WHERE uid=#uid#
 		]]>
 	</delete>
-
 	<insert id="AddInbox" parameterClass="egovMap">
 			<![CDATA[
 				INSERT INTO inbox
@@ -204,4 +202,28 @@
 				WHERE midx=#midx#
 		]]>
 	</update>
+	<select id="GetInboxList" resultClass="EgovMap">
+        <![CDATA[
+            SELECT uid, title, body, expire FROM inbox
+            WHERE midx=#midx# AND type=#type#
+        ]]>
+	</select>
+	<select id="GetInbox" resultClass="EgovMap">
+        <![CDATA[
+            SELECT body, expire FROM inbox
+            WHERE uid=#uid#
+        ]]>
+	</select>
+	<delete id="DeleteExpire" parameterClass="egovMap">
+		<![CDATA[
+			DELETE FROM inbox 
+				WHERE midx=#midx# AND expire < #now#
+		]]>
+	</delete>
+	<delete id="DeleteInBox" parameterClass="egovMap">
+		<![CDATA[
+			DELETE FROM inbox 
+				WHERE uid=#uid#
+		]]>
+	</delete>
 </sqlMap>

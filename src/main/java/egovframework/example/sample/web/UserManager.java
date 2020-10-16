@@ -217,8 +217,7 @@ public class UserManager {
 		
 		JSONArray list = new JSONArray();
 		for(int nCount = 0; nCount < requestlist.size(); ++nCount)
-		{
-			System.out.println(requestlist.get(nCount).Midx);
+		{			
 			requestlist.get(nCount).IsConnected = findFromUseridx(requestlist.get(nCount).Midx) != null;
 
 			JSONObject item = new JSONObject();
@@ -234,8 +233,8 @@ public class UserManager {
 		}
 
 		for(int nCount = 0; nCount < friendlist.size(); ++nCount)
-		{			
-			requestlist.get(nCount).IsConnected = findFromUseridx(friendlist.get(nCount).Friendidx) != null;
+		{						
+			friendlist.get(nCount).IsConnected = findFromUseridx(friendlist.get(nCount).Friendidx) != null;
 
 			JSONObject item = new JSONObject();
 			item.put("uid", friendlist.get(nCount).UID);			
@@ -244,7 +243,7 @@ public class UserManager {
 			item.put("createdtime", friendlist.get(nCount).Createtime);			
 			item.put("status", friendlist.get(nCount).Status);			
 			item.put("nextsendtime", friendlist.get(nCount).Nextsendtime);						
-			item.put("isconnected", requestlist.get(nCount).IsConnected);	
+			item.put("isconnected", friendlist.get(nCount).IsConnected);	
 			
 			list.add(item);
 		}
@@ -377,6 +376,58 @@ public class UserManager {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void GetInbox(WebSocketSession session, int type) throws JsonProcessingException
+	{		
+		ArrayList<InBox> list = InBox.GetUserInbox(find(session).uidx, type);		
+		ObjectMapper mapper = new ObjectMapper();
+
+		JSONObject cobj = new JSONObject();
+		cobj.put("cmd", "getinbox");
+		cobj.put("list", list);
+
+		try {
+			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void GetInBoxReward(WebSocketSession session, String uid) throws JsonProcessingException
+	{				
+		InBox inbox = InBox.GetInbox(find(session).uidx, uid);
+		if( inbox != null )
+		{
+			inbox.DeleteInBox();
+		}
+		
+		for( Item item : inbox.ItemList )
+		{
+			find(session).InsertItem(item);
+		}		
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		JSONObject cobj = new JSONObject();
+		cobj.put("cmd", "getinboxreward");
+		cobj.put("uid", uid);
+		if( inbox != null)
+		{
+			cobj.put("reward", inbox.ItemList);			
+		}					
+
+		System.out.println(mapper.writeValueAsString(cobj));
+
+		try {
+			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 	
 }

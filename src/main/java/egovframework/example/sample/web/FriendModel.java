@@ -91,7 +91,9 @@ public class FriendModel {
 
         String name = this.GetUserID(idx);
         InBox inbox = InBox.MakeInBox(this.UID, idx, 10, name);
-        Item item = new Item("balance", 100);
+        Item item = new Item();
+        item.Type = "balance";
+        item.Amount = 100;
         inbox.ItemList.add(item);
         inbox.Expire = System.currentTimeMillis() + 259200000;
 
