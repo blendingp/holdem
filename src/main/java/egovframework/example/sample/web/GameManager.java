@@ -132,7 +132,7 @@ public class GameManager {
 				cnt++;
 			}
 		}
-		if(cnt>=3) {			
+		if(cnt>=2) {			
 			setWorkTime( );
 			changeGameMode("대기");
 		}
@@ -178,7 +178,13 @@ public class GameManager {
 			u.jokbocode = 0;
 			money = 0;
 			u.betmoney = 0;
-			u.balance -= room.defaultmoney;
+			if( room.UsedItem.equals("balance") == true){
+				u.balance -= room.defaultmoney;
+			}			
+			else if( room.UsedItem.equals("point") == true){
+				u.point -= room.defaultmoney;
+			}	
+			
 			totalmoney = 0;
 		}				
 	}
@@ -190,10 +196,18 @@ public class GameManager {
 		{						
 			if( this.seats[(seat + nCount)%this.seats.length] >= 0 )
 			{
-				if( SearchUserBySeat((seat + nCount)%this.seats.length).balance <= 0 )
-				{
-					continue;					
+				if( room.UsedItem.equals("balance") == true){
+					if( SearchUserBySeat((seat + nCount)%this.seats.length).balance <= 0 )
+					{
+						continue;					
+					}
 				}
+				else if( room.UsedItem.equals("point") == true){
+					if( SearchUserBySeat((seat + nCount)%this.seats.length).point <= 0 )
+					{
+						continue;					
+					}
+				}					
 				
 				dealerSeatNum = (seat + nCount)%this.seats.length;				
 				return ;
@@ -338,8 +352,18 @@ public class GameManager {
 		//돈이 없는 유저 내보내기
 		ArrayList<User> rmlist=new ArrayList<User>();
 		for(User u : userlist) 
-			if( u.balance == 0)				
-				rmlist.add(u);
+		{
+			if( room.UsedItem.equals("balance") == true){
+				if( u.balance == 0){
+					rmlist.add(u);
+				}
+			}			
+			else if( room.UsedItem.equals("point") == true){
+				if( u.point == 0){
+					rmlist.add(u);
+				}
+			}				
+		}
 		/*for(User u:rmlist)
 			room.leave(u);*/
 		//room.notifyRoomUsers();
@@ -563,19 +587,41 @@ public class GameManager {
 
 		int betablecount = userlist.size();
 		for(User uu : userlist){
-			if( uu.die == true || uu.balance <= 0)
+			if( uu.die == true)
 			{
-				betablecount--;						
-			}	
+				if( room.UsedItem.equals("balance") == true){
+					if( uu.balance <= 0)
+					{
+						betablecount--;						
+					}	
+				}
+				else if( room.UsedItem.equals("point") == true){
+					if( uu.point <= 0)
+					{
+						betablecount--;						
+					}	
+				}
+			}									
 		}
 						
 		for(User uu : userlist){
 			
-			if( uu.die == true || uu.balance <= 0 || uu.betmoney >= room.maxmoney )
+			if( uu.die == true)
 			{
-				continue;
-			}
-			
+				if( room.UsedItem.equals("balance") == true){
+					if( uu.balance <= 0 || uu.betmoney >= room.maxmoney)
+					{
+						continue;			
+					}	
+				}
+				else if( room.UsedItem.equals("point") == true){
+					if( uu.point <= 0 || uu.betmoney >= room.maxmoney)
+					{
+						continue;				
+					}	
+				}
+			}	
+
 			if(uu.PlayStatus == 1 && betablecount > 1)
 			{					
 				System.out.println("uu.PlayStatus == 1");			
@@ -600,19 +646,29 @@ public class GameManager {
 		}
 		
 		for(User uu : userlist){
-			if( uu.die == true || uu.balance <= 0 || uu.betmoney >= room.maxmoney )
+			if( uu.die == true)
 			{
-				continue;
-			}				
-			
+				if( room.UsedItem.equals("balance") == true){
+					if( uu.balance <= 0 || uu.betmoney >= room.maxmoney)
+					{
+						continue;			
+					}	
+				}
+				else if( room.UsedItem.equals("point") == true){
+					if( uu.point <= 0 || uu.betmoney >= room.maxmoney)
+					{
+						continue;				
+					}	
+				}
+			}	
+
 			if(uu.betmoney != preTotalBetmoney)
 			{			
 				System.out.println("uu.betmoney != preTotalBetmoney");
 				return false;
 			}
 		}	
-				
-				
+								
 		return true;//배팅금액이 똑같은경우 배팅끝
 	}
 	
@@ -652,12 +708,22 @@ public class GameManager {
 		
 		Boolean isAllIn = false;
 		
-		int tmo = thisTurnMoneyCompute(betkind , u.betmoney);			
+		int tmo = thisTurnMoneyCompute(betkind , u.betmoney);		
 		
-		if( u.balance <= tmo ){//올인인지 체크.
-			tmo = u.balance;//올인 머니 셋팅
-			isAllIn = true;
+		if( room.UsedItem.equals("balance") == true){
+			if( u.balance <= tmo ){//올인인지 체크.
+				tmo = u.balance;//올인 머니 셋팅
+				isAllIn = true;
+			}
 		}
+		else if( room.UsedItem.equals("point") == true){
+			if( u.point <= tmo ){//올인인지 체크.
+				tmo = u.point;//올인 머니 셋팅
+				isAllIn = true;
+			}
+		}
+		
+		
 		if( u.betmoney+tmo >= room.maxmoney ){//맥스 베팅인지 체크
 			tmo = room.maxmoney - u.betmoney;
 		}
@@ -688,12 +754,23 @@ public class GameManager {
 		totalmoney +=tmo;
 		
 		//배팅한 사람 돈 차감 시키기!!!
-		u.balance -= tmo;	
-		
-		u.ApplyBalanace();
+		if( room.UsedItem.equals("balance") == true){
+			u.balance -= tmo;	
+		}
+		else if( room.UsedItem.equals("point") == true){
+			u.point -= tmo;	
+		}
+				
+		u.ApplyBalanace(room.UsedItem);
 		
 		//System.out.println("BET whosturn: "+whosturn+"("+getWhoTurn()+") Game:"+GameMode+" betkind:"+betkind+" totalmoney:"+totalmoney+" 잔액:"+u.balance +"   :::" + "{ tmo:"+tmo +" u.betmoney:"+u.betmoney+" prebetmoney:"+prebetmoney+" preTotalBetmoney:"+preTotalBetmoney);
-		SocketHandler.insertLog(getGameId(), "bet", u.uidx , u.betmoney , u.balance , "배팅액:"+tmo+", total:"+totalmoney , betkind, whosturn );
+		if( room.UsedItem.equals("balance") == true){
+			SocketHandler.insertLog(getGameId(), "bet", u.uidx , u.betmoney , u.balance , "배팅액:"+tmo+", total:"+totalmoney , betkind, whosturn );
+		}
+		else if( room.UsedItem.equals("point") == true){
+			SocketHandler.insertLog(getGameId(), "bet", u.uidx , u.betmoney , u.point , "배팅액:"+tmo+", total:"+totalmoney , betkind, whosturn );
+		}		
+
 		JSONObject obj = new JSONObject();
 		if(GameMode.compareTo("sbBeted")==0)	{
 			obj.put("cmd", "sbBetsuc");			
@@ -726,7 +803,14 @@ public class GameManager {
 		obj.put("callmoney", "" + (preTotalBetmoney - u.betmoney) );
 		obj.put("prebetmoney", preTotalBetmoney );
 		obj.put("myBetMoney", u.betmoney );
-		obj.put("balance", u.balance);
+		
+		if( room.UsedItem.equals("balance") == true){
+			obj.put("balance", u.balance);
+		}
+		else if( room.UsedItem.equals("point") == true){
+			obj.put("balance", u.point);
+		}
+		
 		obj.put("betkind", betkind);
 		obj.put("seat", u.seat);//금방배팅한 사람
 		obj.put("nextwho", whosturn );//이제 배팅할 사람의 번호
@@ -754,7 +838,12 @@ public class GameManager {
 				item.put("seat",userlist.get(i).seat);			
 				item.put("card1",userlist.get(i).card1.cardcode);
 				item.put("card2",userlist.get(i).card2.cardcode);
-				item.put("balance",userlist.get(i).balance);
+				if( room.UsedItem.equals("balance") == true){
+					obj.put("balance", userlist.get(i).balance);
+				}
+				else if( room.UsedItem.equals("point") == true){
+					obj.put("balance", userlist.get(i).point);
+				}				
 				item.put("die",userlist.get(i).die);
 				j.add(item);
 			}
@@ -1453,17 +1542,27 @@ public class GameManager {
 		System.out.println("---balanace-----");
 		for(User u : userlist){
 			if( u.seat == winSeat){
-				SearchUserBySeat(winSeat).balance += betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney);
+				if( room.UsedItem.equals("balance") == true){
+					SearchUserBySeat(winSeat).balance += betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney);
+				}
+				else if( room.UsedItem.equals("point") == true){
+					SearchUserBySeat(winSeat).point += betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney);
+				}	
+				
 			}else{
 				if(SearchUserBySeat(winSeat).betmoney < u.betmoney){
-					u.balance = u.betmoney - SearchUserBySeat(winSeat).betmoney;
+					if( room.UsedItem.equals("balance") == true){
+						u.balance = u.betmoney - SearchUserBySeat(winSeat).betmoney;
+					}
+					else if( room.UsedItem.equals("point") == true){
+						u.point = u.betmoney - SearchUserBySeat(winSeat).betmoney;
+					}					
 				}
 			}
 			
-			System.out.println(u.balance);
 			u.PlayStatus = 1;
 			
-			u.ApplyBalanace();
+			u.ApplyBalanace(room.UsedItem);
 		}	
 		
 		setDealerSeat();
@@ -1472,8 +1571,13 @@ public class GameManager {
 		
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","showResult");
-		obj.put("wlv", sortRank.get(0).jokbocode/10000000);//레벨순서 변경됨.
-		obj.put("winnerbalance", sortRank.get(0).balance);
+		obj.put("wlv", sortRank.get(0).jokbocode/10000000);//레벨순서 변경됨.		
+		if( room.UsedItem.equals("balance") == true){
+			obj.put("winnerbalance", sortRank.get(0).balance);
+		}
+		else if( room.UsedItem.equals("point") == true){
+			obj.put("winnerbalance", sortRank.get(0).point);
+		}	
 		obj.put("winmoney", this.totalmoney);
 		obj.put("winSeat", winSeat);				
 		obj.put("usersize", userlist.size());		
@@ -1485,7 +1589,12 @@ public class GameManager {
 			item.put("seat", userlist.get(i).seat);			
 			item.put("card1", userlist.get(i).card1.cardcode);
 			item.put("card2", userlist.get(i).card2.cardcode);
-			item.put("balance", userlist.get(i).balance);
+			if( room.UsedItem.equals("balance") == true){
+				item.put("balance", userlist.get(i).balance);
+			}
+			else if( room.UsedItem.equals("point") == true){
+				item.put("balance", userlist.get(i).point);
+			}				
 			item.put("die", userlist.get(i).die);
 			j.add(item);
 		}
@@ -1531,10 +1640,16 @@ public class GameManager {
 				continue;
 			}
 			
-			if( user.balance <= 0 )
-			{
-				continue;
-			}
+			if( room.UsedItem.equals("balance") == true){
+				if( user.balance <= 0 ){
+					continue;
+				}
+			}			
+			else if( room.UsedItem.equals("point") == true){
+				if( user.point <= 0 ){
+					continue;
+				}
+			}			
 
 			total++;
 		}
@@ -1557,11 +1672,18 @@ public class GameManager {
 			{
 				continue;
 			}
+
+			if( room.UsedItem.equals("balance") == true){
+				if( user.balance <= 0 ){
+					continue;
+				}
+			}			
 			
-			if( user.balance <= 0 )
-			{
-				continue;
-			}
+			if( room.UsedItem.equals("point") == true){
+				if( user.point <= 0 ){
+					continue;
+				}
+			}			
 
 			if( user.PlayStatus == 0 )
 			{

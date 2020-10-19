@@ -209,12 +209,18 @@ public class User {
 		return rt;
 	}
 	
-	public int ApplyBalanace()
+	public int ApplyBalanace(String useitem)
 	{
 		EgovMap in = new EgovMap();
-		in.put("midx", uidx);	
-		in.put("amount", this.balance);
-		in.put("type", "balance");
+		in.put("midx", uidx);			
+		
+		if( useitem.equals("point") == true){
+			in.put("amount", this.point);
+		}
+		else if( useitem.equals("balance") == true){
+			in.put("amount", this.balance);
+		}
+		in.put("type", useitem);
 		
 		int rt = SocketHandler.sk.sampleDAO.update("updateItemAmont", in);		
 		

@@ -42,6 +42,7 @@ public class InBox
         EgovMap delin = new EgovMap();
         delin.put("midx", idx);
         delin.put("now", System.currentTimeMillis());
+        System.out.println(System.currentTimeMillis());
         SocketHandler.sk.sampleDAO.delete("DeleteExpire", delin);
 
         EgovMap in = new EgovMap();

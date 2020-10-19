@@ -54,7 +54,7 @@ public class Attendance {
     public int CheckAttendance()
     {
         if( this.NextTick > System.currentTimeMillis() )
-        {
+        {            
             return this.Count;
         }
 
@@ -108,7 +108,9 @@ public class Attendance {
 
             SocketHandler.sk.sampleDAO.update("UpdateAttendance", searchin);
 
-            count = (this.Count + 1) % itemlist.size();
+            this.Count = (this.Count + 1) % itemlist.size();            
+
+            count = this.Count;
 
         }
         catch (IOException e) {

@@ -18,29 +18,46 @@ public class RoomManager {
 		}*/
 	}
 		
-	public Room find(int ridx){		
+	public Room findbykey(String roomkey){		
 		for( Room r : roomList){
-			if( r.ridx ==ridx)
+			if( r.GetRoomByKey(roomkey) != null)
+			{
 				return r;
+			}				
 		}
 		return null;
 	}	
 
-	void joinRoom(int roomNum , User user){
-		Room room = find(roomNum);
+	public Room find(int roomnumber){		
+		System.out.println( "size : " + roomList.size());
+
+		for( Room r : roomList){
+			if( r.GetRoomByNumber(roomnumber) != null)
+			{
+				return r;
+			}				
+		}
+		return null;
+	}	
+
+	void joinRoom(User user, String roomkey){
+		Room room = findbykey(roomkey);
 		if( room == null )
 		{
-			room = new Room(roomNum, 10);
+			++roomcount;
+			room = new Room(roomcount, roomkey);			
 		}
-		room.join(user, roomNum);
+		System.out.println(roomcount);
+
+		room.join(user, roomcount);
 		roomList.add(room);
 	}
 	
-	void leaveRoom(int roomNum , User user){	
-		Room room = find(roomNum);		
-
+	void leaveRoom(int roomNum , User user){			
+		Room room = find(user.roomnum);	
+	
 		room.notifyLeaveUser(user.seat);
-		room.leave(user);
+		room.leave(user);		
 		if( room.gameManager.userlist.size() <= 0 )
 		{
 			roomList.remove(room);

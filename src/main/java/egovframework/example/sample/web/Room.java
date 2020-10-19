@@ -1,12 +1,18 @@
 package egovframework.example.sample.web;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.socket.TextMessage;
 
 public class Room {
@@ -15,11 +21,17 @@ public class Room {
 	int ridx;
 	int defaultmoney;//삥머니
 	int maxmoney;//배팅 맥스 머니
+	int maxusersize = 9;
 
-	public Room(int ridx, int defaultmoney){
-		this.ridx = ridx;
-		this.defaultmoney = defaultmoney;
-		this.maxmoney = defaultmoney * 100;
+	public String UsedItem = "balance";
+	private String _roomKey = "";
+	private boolean _isPrivate = false;
+
+	public Room(int ridx, String roomkey){
+		this.ridx = ridx;		
+		_roomKey = roomkey;	
+		
+		SetRoomInfo(roomkey);
 		gameManager = new GameManager(this);
 	}
 	public void init(){
@@ -48,7 +60,12 @@ public class Room {
 			item.put("useridx",gameManager.userlist.get(i).uidx);
 			item.put("seat",gameManager.userlist.get(i).seat);
 			item.put("img",""+ gameManager.userlist.get(i).img);
-			item.put("balance",gameManager.userlist.get(i).balance);
+			if( this.UsedItem.equals("balance") == true){
+				item.put("balance",gameManager.userlist.get(i).balance);
+			}			
+			else if( this.UsedItem.equals("point") == true){
+				item.put("balance",gameManager.userlist.get(i).point);
+			}			
 			item.put("nickname",""+ gameManager.userlist.get(i).nickname);
 			j.add(item);
 			System.out.println("uidx:"+gameManager.userlist.get(i).uidx +"  seat:"+gameManager.userlist.get(i).seat );
@@ -74,8 +91,13 @@ public class Room {
 				JSONObject item = new JSONObject();
 				item.put("useridx",gameManager.userlist.get(i).uidx);
 				item.put("seat",gameManager.userlist.get(i).seat);
-				item.put("img",""+ gameManager.userlist.get(i).img);
-				item.put("balance",gameManager.userlist.get(i).balance);
+				item.put("img",""+ gameManager.userlist.get(i).img);				
+				if( this.UsedItem.equals("balance") == true){
+					item.put("balance",gameManager.userlist.get(i).balance);
+				}			
+				else if( this.UsedItem.equals("point") == true){
+					item.put("balance",gameManager.userlist.get(i).point);
+				}
 				item.put("nickname",""+ gameManager.userlist.get(i).nickname);
 				j.add(item);
 			}
@@ -101,7 +123,8 @@ public class Room {
 			try {
 				gameManager.userlist.get(i).session.sendMessage(new TextMessage(myobj.toJSONString()));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block				
+				// TODO Auto-generated catch block								
+				System.out.println(e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -110,10 +133,18 @@ public class Room {
 
 	public void join(User u, int ridx ) {
 		
-		if( u.balance < 10 )
-		{
-			return ;
+		if( this.UsedItem.equals("balance") == true){
+			if( u.balance < defaultmoney ){
+				return ;
+			}
 		}
+		else if( this.UsedItem.equals("point") == true){
+			if( u.point < defaultmoney ){
+				return ;
+			}
+		}
+
+		System.out.println(gameManager.GameMode);
 		
 		if( gameManager.GameMode == "대기" )
 		{
@@ -151,8 +182,6 @@ public class Room {
 		//gameManager.GiveTowCard(u);
 	}	
 
-
-
 	public void checkStartGame(){
 		gameManager.checkStartGame();
 	}	
@@ -160,4 +189,42 @@ public class Room {
 	public void checkTimerGame(){
 		gameManager.checkTimerGame();
 	}	
+
+	public Room GetRoomByKey(String key)
+	{
+		if( _roomKey.equals(key) == true && _isPrivate == false)
+		{
+			return this;
+		}
+
+		return null;
+	}
+
+	public Room GetRoomByNumber(int number)
+	{
+		if( ridx == number)
+		{			
+			return this;
+		}
+
+		return null;
+	}
+
+	private void SetRoomInfo(String key)
+	{
+		ClassPathResource resource = new ClassPathResource("json/roomsetting/" + key + ".json");
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+            Path path = Paths.get(resource.getURI());
+			String content = Files.readString(path);	 
+			RoomSetting setting = mapper.readValue(content, RoomSetting.class);
+			this.defaultmoney = setting.ante;
+			this.maxmoney = setting.max;
+			this.maxusersize = setting.maxplayer;
+			this.UsedItem = setting.useitem;
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}        
+	}	 
 }

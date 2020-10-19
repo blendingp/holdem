@@ -68,16 +68,18 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     	if( u == null)
     		return;
     	
-    	System.out.println("접속끊김 :"+u.seat );    	    
+		System.out.println("접속끊김 :"+u.seat );    	    		
     	
     	if( u.roomnum != -1){
-    		Room r = roommanager.find(u.roomnum);
-    		//roommanager.find(u.roomnum).notifyLeaveUser(u.seat);
-    		r.leave(u);    		
-    		if( r.emptyRoom() ){
-    			r.init();
-    		}
-    	}
+			Room room = roommanager.find(u.roomnum);	
+				
+			room.leave(u);			
+			if( room.gameManager.userlist.size() <= 0 )
+			{
+				roommanager.roomList.remove(room);
+			}		    		
+		}
+		
     	usermanager.userlist.remove(u);
     }
  
@@ -113,7 +115,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     		{    			
     			User u = usermanager.find(session);    			
 				int roomidx = Integer.parseInt(""+obj.get("roomidx"));				
-    			roommanager.leaveRoom(roomidx, u);    			
+    			roommanager.leaveRoom(u.roomnum, u);    			
     		}break;
         	case "connect":
         	{        	
@@ -138,8 +140,8 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         	case "joinRoom":
         	{
              	User u = usermanager.find(session);
-             	int roomidx = Integer.parseInt(""+obj.get("roomidx"));
-             	roommanager.joinRoom(roomidx , u);             	
+             	//int roomidx = Integer.parseInt(""+obj.get("roomidx"));
+             	roommanager.joinRoom(u, ""+obj.get("roomkey"));             	
         		break;
         	}
         	case "bet":
