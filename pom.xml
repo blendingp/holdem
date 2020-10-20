@@ -13,6 +13,7 @@
 	    <spring.maven.artifact.version>4.1.2.RELEASE</spring.maven.artifact.version>
 		<egovframework.rte.version>3.6.0</egovframework.rte.version>
 		<org.springframework-version>4.1.7.RELEASE</org.springframework-version>
+        <jackson.version>2.11.2</jackson.version> 
 	</properties>
 
 	<repositories>
@@ -117,6 +118,12 @@
 			<artifactId>hsqldb</artifactId>
 			<version>2.3.2</version>
 		</dependency>
+        <dependency>
+			<groupId>com.sun.xml.ws</groupId>
+			<artifactId>jaxws-ri</artifactId>
+			<version>2.3.0</version>
+			<type>pom</type>
+		  </dependency>
         
         <!-- mysql이나 oracle 필요시 사용 -->
         
@@ -152,6 +159,13 @@
             <systemPath>${basedir}/src/main/webapp/WEB-INF/lib/ojdbc-14.jar</systemPath>
         </dependency>
         -->
+
+        <dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -244,6 +258,14 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>2.9.1</version>
             </plugin>
+            <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+				<warName>holdem</warName>
+				</configuration>
+			</plugin>
         </plugins>
     </build>
     <reporting>
