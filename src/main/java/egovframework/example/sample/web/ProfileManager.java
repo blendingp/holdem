@@ -9,13 +9,25 @@ public class ProfileManager {
 	{
 		JSONObject obj=new JSONObject();
 		EgovMap rt = (EgovMap)SocketHandler.sk.sampleDAO.select( "profileGet" , "" + u.uidx );
+		obj.put("cmd", "profile" );
+		obj.put("point", ""+rt.get("point")  );
+		obj.put("balance", ""+rt.get("balance")  );
+		obj.put("members", ""+rt.get("members")  );
+		obj.put("expire", ""+rt.get("expire")  );
+		obj.put("totalgame", ""+rt.get("totalgame")  );
+		obj.put("totalwin", ""+rt.get("totalwin")  );
+		obj.put("totallose", ""+rt.get("totallose")  );
+		obj.put("putallin", ""+rt.get("allin")  );
+		obj.put("todaygame", ""+rt.get("todaygame")  );
+		obj.put("todaywin", ""+rt.get("todaywin")  );
+		obj.put("todaylose", ""+rt.get("todaylose")  );
+		obj.put("chiprefillcount", ""+rt.get("chiprefillcount")  );
+		obj.put("goldrefillcount", ""+rt.get("goldrefillcount")  );
 		
 		String mtype = ""+rt.get("members");
 		String mchiprefillcount = ""+rt.get("chiprefillcount");
-		
 		int imchiprefillcount = 3;
 		int imtype =0;
-		
 		try
 		{
 			imtype=Integer.parseInt(mtype);
@@ -45,21 +57,6 @@ public class ProfileManager {
 			obj.put("limitbalance","300조");
 			obj.put("limitpoint", "500만");
 		}
-		
-		obj.put("cmd", "profile" );
-		obj.put("point", ""+rt.get("point")  );
-		obj.put("balance", ""+rt.get("balance")  );
-		obj.put("members", ""+rt.get("members")  );
-		obj.put("expire", ""+rt.get("expire")  );
-		obj.put("totalgame", ""+rt.get("totalgame")  );
-		obj.put("totalwin", ""+rt.get("totalwin")  );
-		obj.put("totallose", ""+rt.get("totallose")  );
-		obj.put("putallin", ""+rt.get("allin")  );
-		obj.put("todaygame", ""+rt.get("todaygame")  );
-		obj.put("todaywin", ""+rt.get("todaywin")  );
-		obj.put("todaylose", ""+rt.get("todaylose")  );
-		obj.put("chiprefillcount", ""+rt.get("chiprefillcount")  );
-		obj.put("goldrefillcount", ""+rt.get("goldrefillcount")  );
 		
 		return obj;
 	}
