@@ -8,7 +8,9 @@ public class ProfileManager {
 	static JSONObject getInfo(User u)
 	{
 		JSONObject obj=new JSONObject();
-		EgovMap rt = (EgovMap)SocketHandler.sk.sampleDAO.select( "profileGet" , "" + u.uidx );
+		EgovMap in=new EgovMap();
+		in.put("idx", ""+u.uidx );
+		EgovMap rt = (EgovMap)SocketHandler.sk.sampleDAO.select( "profileGet" , in );
 		obj.put("cmd", "profile" );
 		obj.put("point", ""+rt.get("point")  );
 		obj.put("balance", ""+rt.get("balance")  );
