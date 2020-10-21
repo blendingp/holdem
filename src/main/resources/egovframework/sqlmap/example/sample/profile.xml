@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Sample">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+	<select id="profileGet" resultClass="EgovMap" parameterClass="String">
+        <![CDATA[
+		select 
+			( select amount from item where type = 'point' and midx = m.midx limit 1  )    point
+		       ,( select amount from item where type = 'balance' and midx = m.midx limit 1  )   balance
+		from 
+			member   m
+		where
+		  m.midx = #value#
+        ]]>
+	</select>
+	
+</sqlMap>
