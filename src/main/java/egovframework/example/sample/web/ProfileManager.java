@@ -7,38 +7,43 @@ import egovframework.rte.psl.dataaccess.util.EgovMap;
 public class ProfileManager {
 	static JSONObject getInfo(User u)
 	{
-		JSONObject obj=new JSONObject();
-		EgovMap in=new EgovMap();
-		in.put("idx", ""+u.uidx );
-		EgovMap rt = (EgovMap)SocketHandler.sk.sampleDAO.select( "profileGet" , in );
-		obj.put("cmd", "profile" );
-		obj.put("point", ""+rt.get("point")  );
-		obj.put("balance", ""+rt.get("balance")  );
-		obj.put("members", ""+rt.get("members")  );
-		obj.put("expire", ""+rt.get("expire")  );
-		obj.put("totalgame", ""+rt.get("totalgame")  );
-		obj.put("totalwin", ""+rt.get("totalwin")  );
-		obj.put("totallose", ""+rt.get("totallose")  );
-		obj.put("putallin", ""+rt.get("allin")  );
-		obj.put("todaygame", ""+rt.get("todaygame")  );
-		obj.put("todaywin", ""+rt.get("todaywin")  );
-		obj.put("todaylose", ""+rt.get("todaylose")  );
-		obj.put("chiprefillcount", ""+rt.get("chiprefillcount")  );
-		obj.put("goldrefillcount", ""+rt.get("goldrefillcount")  );
-		
-		String mtype = ""+rt.get("members");
-		String mchiprefillcount = ""+rt.get("chiprefillcount");
-		int imchiprefillcount = 3;
-		int imtype =0;
-		try
+		try {
+			EgovMap in=new EgovMap();
+			in.put("idx", ""+u.uidx );
+			EgovMap rt = (EgovMap)SocketHandler.sk.sampleDAO.select( "profileGet" , in );
+			
+			u.profile.members = Integer.parseInt(""+ rt.get("members") );
+			u.profile.expire.setTime( Integer.parseInt(""+rt.get("expire"))  );
+			u.profile.totalgame= Integer.parseInt(""+rt.get("totalgame")  );
+			u.profile.totalwin= Integer.parseInt(""+rt.get("totalwin")  );
+			u.profile.totallose= Integer.parseInt(""+rt.get("totallose")  );
+			u.profile.putallin= Integer.parseInt(""+rt.get("allin")  );
+			u.profile.todaygame=Integer.parseInt( ""+rt.get("todaygame")  );
+			u.profile.todaywin=Integer.parseInt( ""+rt.get("todaywin")  );
+			u.profile.todaylose= Integer.parseInt(""+rt.get("todaylose")  );
+			u.profile.chiprefillcount= Integer.parseInt(""+rt.get("chiprefillcount")  );
+			u.profile.goldrefillcount= Integer.parseInt(""+rt.get("goldrefillcount")  );
+		}catch(Exception e)
 		{
-			imtype=Integer.parseInt(mtype);
-			imchiprefillcount = Integer.parseInt(mchiprefillcount);
-		}catch(Exception e) 
-		{
-			System.out.println("ProfileManager getInfo error - type");
+			System.out.println("ProfileManager getInfo error"+e.toString() );
 		}
-		switch(imtype) {
+		
+		JSONObject obj=new JSONObject();
+		obj.put("cmd", "profile" );
+		obj.put("point", ""+u.point); // ""+rt.get("point")  );
+		obj.put("balance", ""+u.balance); // +rt.get("balance")  );
+		obj.put("members", ""+u.profile.members  );
+		obj.put("expire", ""+u.profile.expire.getTime() );
+		obj.put("totalgame", ""+u.profile.totalwin  );
+		obj.put("totalwin", ""+u.profile.totallose  );
+		obj.put("totallose", ""+u.profile.putallin  );
+		obj.put("putallin", ""+u.profile.putallin  );
+		obj.put("todaygame", ""+u.profile.todaygame  );
+		obj.put("todaywin", ""+u.profile.todaylose );
+		obj.put("todaylose", ""+u.profile.todaylose  );
+		obj.put("chiprefillcount", ""+u.profile.chiprefillcount );
+		obj.put("goldrefillcount", ""+u.profile.goldrefillcount );		
+		switch(u.profile.members) {
 		case 0:		
 			obj.put("limitbalance","300조");
 			obj.put("limitpoint", "500만");
@@ -59,7 +64,6 @@ public class ProfileManager {
 			obj.put("limitbalance","300조");
 			obj.put("limitpoint", "500만");
 		}
-		
 		return obj;
 	}
 }

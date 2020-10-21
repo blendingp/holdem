@@ -33,6 +33,7 @@ public class User {
 	public int PlayStatus = 0;
 	public int Blind = 0;
 	public Attendance attendance;
+	public Profile profile=new Profile();//개인 프로필정보
 	String gamestat="";
 	int level = 1000;
 	int topcard = -1;
