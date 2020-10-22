@@ -247,4 +247,22 @@
 				ON DUPLICATE KEY UPDATE type = #type#, expire = #expire#
 			]]>
 	</insert>
+
+	<update id="UpdateProfileData" parameterClass="egovMap">	
+        <![CDATA[
+            INSERT INTO profile_holdem
+					( midx, totalgame, win, lose, highgaingold, putallin )
+				VALUES ( #midx#, #totalgame#, #win#, #lose#, #highgaingold#, #putallin# )
+				ON DUPLICATE KEY UPDATE totalgame=#totalgame#, win=#win#, lose=#lose#, highgaingold=#highgaingold#, putallin=#putallin#
+        ]]>
+	</update>
+
+	<update id="UpdateTodayProfileData" parameterClass="egovMap">	
+        <![CDATA[
+            INSERT INTO profile_holdem_today
+					( midx, totalgame, win, lose, gaingold, putallin, goldrefillcount, chiprefillcount, expire )
+				VALUES ( #midx#, #totalgame#, #win#, #lose#, #gaingold#, #putallin#, #goldrefillcount#, #chiprefillcount#, #expire# )
+				ON DUPLICATE KEY UPDATE totalgame=#totalgame#, win=#win#, lose=#lose#, gaingold=#gaingold#, putallin=#putallin#, goldrefillcount=#goldrefillcount#, chiprefillcount=#chiprefillcount#, expire=#expire#
+        ]]>
+	</update>
 </sqlMap>

@@ -113,7 +113,11 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         
         System.out.println(obj.toJSONString());
         switch(""+ obj.get("protocol"))
-		{	        
+		{
+        	case "requestprofile"://클라이언트가 자신의 프로필 정보를 요청한 것에 대한 응답.
+        	{
+        		
+        	}break;
 			case "leave":
     		{    			
     			User u = usermanager.find(session);    			

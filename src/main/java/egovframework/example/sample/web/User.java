@@ -14,6 +14,7 @@ import org.springframework.web.socket.WebSocketSession;
 import egovframework.example.sample.service.impl.SampleDAO;
 import egovframework.example.sample.web.model.MembersInfo;
 import egovframework.example.sample.web.model.MembersShopInfo;
+import egovframework.example.sample.web.model.ProfileModel;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
 
@@ -39,6 +40,8 @@ public class User {
 	public int PlayStatus = 0;
 	public int Blind = 0;
 	public Attendance attendance;
+	public ProfileModel totalprofile;
+	public ProfileModel todayprofile;
 	public MembersInfo memberInfo;
 	String gamestat="";
 	int level = 1000;
@@ -109,7 +112,10 @@ public class User {
 		this.img = "Character"+(random.nextInt(4)+1);
 
 		attendance = Attendance.MakeAttendance(this.uidx);
-		memberInfo = Members.GetUserMembersInfo(this);
+		memberInfo = Members.GetUserMembersInfo(this);		
+		
+		totalprofile = ProfileManager.GetTotalInfo(uidx);
+		todayprofile = ProfileManager.GetTodayInfo(uidx);
 	}
 	
 	private Object find(WebSocketSession session2) {
@@ -393,6 +399,14 @@ public class User {
 		card2.clear();
 	}
 
+	public void CheckExpireTodayRecord()
+	{
+		if(todayprofile.CheckExpire() == true)
+		{
+			todayprofile = new ProfileModel();	
+		}
+	}
+
 	public UserInfo MakeUserInfo()
 	{
 		UserInfo info = new UserInfo();
@@ -402,7 +416,9 @@ public class User {
 		info.safe_balance = safe_balance;
 		info.cash = cash;
 		info.attendance = attendance;
-		info.membersinfo = memberInfo;
+		info.membersinfo = memberInfo;		
+		info.todayprofile = todayprofile;
+		info.totalprofile = totalprofile;
 
 		return info;
 	}

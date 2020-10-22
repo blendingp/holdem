@@ -439,6 +439,9 @@ public class UserManager {
 	}
 
 	public void GetUserInfo(WebSocketSession session) {
+
+		find(session).CheckExpireTodayRecord();
+
 		JSONObject cobj = new JSONObject();
 		cobj.put("cmd", "userinfo");							
 		cobj.put("info", find(session).MakeUserInfo());

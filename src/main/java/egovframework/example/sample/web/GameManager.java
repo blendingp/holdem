@@ -49,6 +49,8 @@ public class GameManager {
 	
 	int bbBetCount = 0;
 	int bbSeat = 0;
+
+	private int allincount = 0;
 	
 	ArrayList<Pot> gamePot = new ArrayList<>();
 	
@@ -187,11 +189,16 @@ public class GameManager {
 
 			if( u.memberInfo.expire < System.currentTimeMillis() )
 			{
-				u.ExpireMembers();;
+				u.ExpireMembers();				
 			}
 			
+			u.CheckExpireTodayRecord();
+			u.totalprofile.totalgame++;
+			u.todayprofile.totalgame++;
 			totalmoney = 0;
-		}				
+		}			
+		
+		allincount = 0;
 	}
 	
 	void setDealerSeat()
@@ -723,12 +730,14 @@ public class GameManager {
 			if( u.balance <= tmo ){//올인인지 체크.
 				tmo = u.balance;//올인 머니 셋팅
 				isAllIn = true;
+				allincount++;
 			}
 		}
 		else if( room.UsedItem.equals("point") == true){
 			if( u.point <= tmo ){//올인인지 체크.
 				tmo = u.point;//올인 머니 셋팅
 				isAllIn = true;
+				allincount++;
 			}
 		}
 		
@@ -764,6 +773,7 @@ public class GameManager {
 		
 		//배팅한 사람 돈 차감 시키기!!!
 		if( room.UsedItem.equals("balance") == true){
+			u.todayprofile.gaingold -= tmo;
 			u.balance -= tmo;	
 			long amount = (long)(tmo * u.memberInfo.gold_cashback);
 			u.bank += amount;
@@ -1563,12 +1573,25 @@ public class GameManager {
 		System.out.println("---balanace-----");
 		for(User u : userlist){
 			if( u.seat == winSeat){
-				if( room.UsedItem.equals("balance") == true){
-					SearchUserBySeat(winSeat).balance += (betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney)) * ( 1 - u.memberInfo.commission);
+				u.totalprofile.win++;
+				u.todayprofile.win++;
+
+				u.totalprofile.putallin += allincount;
+				u.todayprofile.putallin += allincount;
+
+				if( room.UsedItem.equals("balance") == true){	
+					long getamount = (long)((betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney)) * ( 1 - u.memberInfo.commission));
+					SearchUserBySeat(winSeat).balance += getamount;
 					if( SearchUserBySeat(winSeat).balance > SearchUserBySeat(winSeat).memberInfo.limit_gold )
 					{
-						SearchUserBySeat(winSeat).balance = SearchUserBySeat(winSeat).memberInfo.limit_gold;
+						SearchUserBySeat(winSeat).balance = SearchUserBySeat(winSeat).memberInfo.limit_gold;						
 					}
+					if( u.totalprofile.highgaingold < getamount )
+					{
+						u.totalprofile.highgaingold = getamount;
+					}
+
+					u.todayprofile.gaingold += getamount;
 				}
 				else if( room.UsedItem.equals("point") == true){
 					SearchUserBySeat(winSeat).point += (betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney)) * ( 1 - u.memberInfo.commission);
@@ -1579,6 +1602,9 @@ public class GameManager {
 				}					
 				
 			}else{
+				u.totalprofile.lose++;
+				u.todayprofile.lose++;
+
 				if(SearchUserBySeat(winSeat).betmoney < u.betmoney){
 					if( room.UsedItem.equals("balance") == true){
 						u.balance = u.betmoney - SearchUserBySeat(winSeat).betmoney;
@@ -1592,6 +1618,8 @@ public class GameManager {
 			u.PlayStatus = 1;
 			
 			u.ApplyBalanace(room.UsedItem);
+			ProfileManager.UpdateProfile(u.totalprofile);
+			ProfileManager.UpdateTodayProfile(u.todayprofile);
 		}	
 		
 		setDealerSeat();

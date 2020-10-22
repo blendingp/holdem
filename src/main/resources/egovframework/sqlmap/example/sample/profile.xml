@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Sample">
+
+	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
+
+
+	<select id="profileGet" resultClass="EgovMap" parameterClass="egovMap">
+        <![CDATA[
+		select 
+			 ( select amount from item i where type = 'point' and i.midx = m.midx limit 1  )    point
+		    ,( select amount from item i where type = 'balance' and i.midx = m.midx limit 1  )   balance
+			,( select type from members_effect e where e.midx = m.midx  limit 1)  members
+			,( select expire from members_effect e where e.midx = m.midx  limit 1)  expire
+			,(select totalgame from profile_holdem p where p.midx = m.midx  limit 1)  totalgame
+			,(select win from profile_holdem p  where p.midx = m.midx  limit 1)  totalwin
+			,(select lose from profile_holdem p where p.midx = m.midx  limit 1) totallose
+			,(select putallin from profile_holdem p where p.midx = m.midx  limit 1) allin
+			,(select totalgame from profile_holdem_today pt where pt.midx = m.midx limit 1) todaygame
+			,(select win from profile_holdem_today pt where pt.midx = m.midx limit 1) todaywin
+			,(select lose from profile_holdem_today pt where pt.midx = m.midx limit 1) todaylose
+		 	,(select chiprefillcount from profile_holdem_today pt where pt.midx = m.midx limit 1) chipfillcount
+		 	,(select goldrefillcount from profile_holdem_today pt where pt.midx = m.midx limit 1) goldfillcount
+		from 
+			member   m
+		where
+		  m.midx = #idx#
+        ]]>
+	</select>
+
+	<select id="GetProfileData" resultClass="EgovMap">
+        <![CDATA[
+            SELECT totalgame, win, lose, highgaingold, putallin
+            FROM profile_holdem
+            WHERE midx=#midx#
+        ]]>
+	</select>
+
+	<select id="GetTodayProfileData" resultClass="EgovMap">
+        <![CDATA[
+            SELECT totalgame, win, lose, gaingold, putallin, goldrefillcount, chiprefillcount, expire
+            FROM profile_holdem_today
+            WHERE midx=#midx#
+        ]]>
+	</select>	
+	
+</sqlMap>
