@@ -7,9 +7,11 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Random;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.commons.lang3.RandomUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.core.io.ClassPathResource;
@@ -22,6 +24,7 @@ public class Room {
 	int defaultmoney;//삥머니
 	int maxmoney;//배팅 맥스 머니
 	int maxusersize = 9;
+	int title = 0;
 
 	public String UsedItem = "balance";
 	private String _roomKey = "";
@@ -33,14 +36,23 @@ public class Room {
 		
 		SetRoomInfo(roomkey);
 		gameManager = new GameManager(this);
+		
+		Random random = new Random();		
+		title = random.nextInt(4);		
 	}
 	public void init(){
 		gameManager.init();
 	}
 
-	public boolean fullRoom(int ridx){
-		this.ridx = ridx;
-		return true;
+	public boolean fullRoom(){
+		
+		if( gameManager.userlist.size() >= maxusersize)
+		{
+			return true;
+		}
+
+		return false;
+
 	}
 	public boolean emptyRoom(){
 		if( gameManager.userlist.size() == 0)
@@ -83,6 +95,8 @@ public class Room {
 			myobj.put("roomidx",ridx);
 			myobj.put("useridx",u.uidx);//참여자인덱스
 			myobj.put("seat",u.seat);
+			myobj.put("ante",defaultmoney);
+			myobj.put("max",maxmoney);
 			
 			//방에 참여중인 모든 사람 불러오기
 			JSONArray j = new JSONArray();
@@ -131,16 +145,16 @@ public class Room {
 
 	}
 
-	public void join(User u, int ridx ) {
+	public boolean join(User u, int ridx ) {
 		
 		if( this.UsedItem.equals("balance") == true){
-			if( u.balance < defaultmoney ){
-				return ;
+			if( u.balance < defaultmoney * 3 ){
+				return false;
 			}
 		}
 		else if( this.UsedItem.equals("point") == true){
-			if( u.point < defaultmoney ){
-				return ;
+			if( u.point < defaultmoney * 3 ){
+				return false;
 			}
 		}
 
@@ -157,7 +171,11 @@ public class Room {
 			notifyJoinUser();
 			
 			gameManager.setWorkTime( );//새로 한명 들어올때마다 대기 시간을 증가시켜서 여러명이 들어올 여지를 둔다.
+
+			return true;
 		}
+
+		return false;
 				
 	}
 
@@ -192,9 +210,31 @@ public class Room {
 
 	public Room GetRoomByKey(String key)
 	{
+		if( fullRoom() == true )
+		{
+			return null;
+		}
+
 		if( _roomKey.equals(key) == true && _isPrivate == false)
 		{
 			return this;
+		}
+
+		return null;
+	}
+
+	public RoomInfo GetRoomInfoByKey(String key)
+	{
+		if( _roomKey.equals(key) == true && _isPrivate == false)
+		{
+			RoomInfo info = new RoomInfo();
+			info.roomnumber = ridx;
+			info.ante = defaultmoney;
+			info.maxbet = maxmoney;
+			info.maxusersize = maxusersize;
+			info.currentcount = gameManager.userlist.size();
+			info.title = title;
+			return info;
 		}
 
 		return null;
@@ -208,6 +248,14 @@ public class Room {
 		}
 
 		return null;
+	}	
+
+	public void SetGoldRoom(GoldRoom roominfo)
+	{
+		this.defaultmoney = roominfo.ante;
+		this.maxmoney = (int)roominfo.maxbetvalue;
+		this.maxusersize = roominfo.maxplayer;		
+		_isPrivate = roominfo.isprivate;
 	}
 
 	private void SetRoomInfo(String key)
@@ -221,7 +269,7 @@ public class Room {
 			this.defaultmoney = setting.ante;
 			this.maxmoney = setting.max;
 			this.maxusersize = setting.maxplayer;
-			this.UsedItem = setting.useitem;
+			this.UsedItem = setting.useitem;			
 		}
 		catch (IOException e) {
 			e.printStackTrace();

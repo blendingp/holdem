@@ -3,9 +3,14 @@ package egovframework.example.sample.web;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.json.simple.JSONObject;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 public class RoomManager {
@@ -20,7 +25,7 @@ public class RoomManager {
 		
 	public Room findbykey(String roomkey){		
 		for( Room r : roomList){
-			if( r.GetRoomByKey(roomkey) != null)
+			if( r.fullRoom() == false && r.GetRoomByKey(roomkey) != null)
 			{
 				return r;
 			}				
@@ -29,8 +34,6 @@ public class RoomManager {
 	}	
 
 	public Room find(int roomnumber){		
-		System.out.println( "size : " + roomList.size());
-
 		for( Room r : roomList){
 			if( r.GetRoomByNumber(roomnumber) != null)
 			{
@@ -46,11 +49,110 @@ public class RoomManager {
 		{
 			++roomcount;
 			room = new Room(roomcount, roomkey);			
+			roomList.add(room);
+		}		
+
+		room.join(user, roomcount);		
+	}
+
+	void GoldRoomQuickJoin(User user)
+	{
+		ArrayList<Room> list = new ArrayList<>();
+		for( Room room : roomList )
+		{
+			if(room.GetRoomInfoByKey("goldroom") != null && room.fullRoom() == false)
+			{
+				list.add(room);
+			}
 		}
-		System.out.println(roomcount);
+
+		Collections.sort(roomList, new Comparator<Room>() {
+			@Override public int compare(Room s1, Room s2) {
+				return s1.gameManager.userlist.size() - s2.gameManager.userlist.size();
+			}
+		});
+
+		if( list.size() > 0 )
+		{
+			for( Room room : list )
+			{
+				if(room.join(user, room.ridx) == true)
+				{
+					break;
+				}
+			}
+		}
+		else
+		{
+			CreateRoom roominfo = new CreateRoom();
+			roominfo.roomkey = "goldroom";
+			roominfo.setting = new GoldRoom();
+			roominfo.setting.ante = 10;
+			roominfo.setting.maxbetvalue = 1000;			
+			roominfo.setting.isprivate = false;
+			roominfo.setting.maxplayer = 9;
+			CreateRoom(user, roominfo);
+		}
+
+	}
+
+	boolean JoinRoomByNumber(User user, int number){
+		Room room = find(number);
+		if( room == null )
+		{
+			return false;	
+		}	
+		if( room.fullRoom() == true )	
+		{
+			return false;
+		}
 
 		room.join(user, roomcount);
+
+		return true;
+	}
+
+	boolean CreateRoom(User user, CreateRoom roominfo)
+	{
+		if( user.balance < roominfo.setting.ante * 3 )
+		{
+			return false;
+		}
+
+		++roomcount;
+		Room room = new Room(roomcount, roominfo.roomkey);			
+		room.SetGoldRoom(roominfo.setting);
+		
+		room.join(user, roomcount);
 		roomList.add(room);
+
+		return true;
+	}
+
+	void GetRoomList(WebSocketSession session, String key)
+	{
+		ArrayList<RoomInfo> list = new ArrayList<>();
+		for( Room room : roomList )
+		{
+			if(room.GetRoomInfoByKey(key) != null)
+			{
+				list.add(room.GetRoomInfoByKey(key));
+			}
+		}
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		JSONObject cobj = new JSONObject();
+		cobj.put("cmd", "roomlist");
+		cobj.put("list", list);
+
+		try {
+			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	void leaveRoom(int roomNum , User user){			
@@ -68,12 +170,21 @@ public class RoomManager {
 	
 	void checkStartGame(){
 		for( Room r : roomList){
+			if( r == null )
+			{
+				continue;
+			}
 			r.checkStartGame();
 		}
 	}
 
 	void checkTimerGame(){
 		for( Room r : roomList){
+			if( r == null )
+			{
+				continue;
+			}
+			
 			r.checkTimerGame();
 		}
 	}

@@ -11,7 +11,7 @@ public class Pot {
 	
 	private ArrayList<JSONObject> PotUserSeats = new ArrayList<JSONObject>();	
 	
-	public int JoinPot(int seat, int amount)
+	public long JoinPot(int seat, long amount)
 	{
 		if( amount <= 0 )
 		{
@@ -90,7 +90,7 @@ public class Pot {
 		return totalPot;
 	}
 	
-	public Pot PotSlit(int amount)
+	public Pot PotSlit(long amount)
 	{
 		Pot slitpot = new Pot();
 		

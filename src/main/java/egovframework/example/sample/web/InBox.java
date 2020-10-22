@@ -47,7 +47,16 @@ public class InBox
 
         EgovMap in = new EgovMap();
         in.put("midx", idx);
-        in.put("type", type);
+        if( type == 1 )
+        {
+            in.put("mintype", 0);
+            in.put("maxtype", 10);
+        }
+        else if( type == 10 )
+        {
+            in.put("mintype", 10);
+            in.put("maxtype", 10);
+        }        
 
         ArrayList<EgovMap> ed = (ArrayList<EgovMap>)SocketHandler.sk.sampleDAO.list("GetInboxList", in);
         
@@ -55,7 +64,7 @@ public class InBox
         {            
             for( int nCount =0; nCount < ed.size(); ++nCount )
             {
-                InBox inbox = new InBox(ed.get(nCount).get("uid").toString(), idx, type, ed.get(nCount).get("title").toString());
+                InBox inbox = new InBox(ed.get(nCount).get("uid").toString(), idx, (int)ed.get(nCount).get("type"), ed.get(nCount).get("title").toString());
                 inbox.Expire = (long)ed.get(nCount).get("expire");
 
                 ObjectMapper mapper = new ObjectMapper();

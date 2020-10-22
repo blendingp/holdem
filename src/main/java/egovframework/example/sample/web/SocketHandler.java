@@ -5,6 +5,8 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
@@ -34,7 +36,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     static public int jokbotest = -1;
     
 	public static SocketHandler sk=null; 
-	public static Object insertLog(int gameid,String gkind,int useridx, int value1, int value2, String value3, int value4,int value5){
+	public static Object insertLog(int gameid,String gkind,int useridx, long value1, long value2, String value3, long value4,long value5){
 		Object rt=null;
 		EgovMap in=new EgovMap();
 		in.put("gameid", gameid);
@@ -71,9 +73,10 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 		System.out.println("접속끊김 :"+u.seat );    	    		
     	
     	if( u.roomnum != -1){
-			Room room = roommanager.find(u.roomnum);	
-				
+			Room room = roommanager.find(u.roomnum);					
 			room.leave(u);			
+			room.notifyLeaveUser(u.seat);
+
 			if( room.gameManager.userlist.size() <= 0 )
 			{
 				roommanager.roomList.remove(room);
@@ -143,13 +146,34 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
              	//int roomidx = Integer.parseInt(""+obj.get("roomidx"));
              	roommanager.joinRoom(u, ""+obj.get("roomkey"));             	
         		break;
-        	}
+			}
+			case "createroom":
+			{				
+				User u = usermanager.find(session);
+				ObjectMapper mapper = new ObjectMapper();								
+				CreateRoom roominfo = mapper.readValue(obj.toJSONString(), CreateRoom.class);				
+				roommanager.CreateRoom(u, roominfo);
+			}break;
+			case "joingoldroom":
+			{
+				User u = usermanager.find(session);
+				roommanager.JoinRoomByNumber(u, Integer.parseInt(""+obj.get("number")));
+			}break;
+			case "goldquickjoin":
+			{
+				User u = usermanager.find(session);
+				roommanager.GoldRoomQuickJoin(u);
+			}break;
+			case "getgoldroomlist":
+			{
+				roommanager.GetRoomList(session, "goldroom");
+			}break;
         	case "bet":
         	{             	
         		User u1 = usermanager.find(session);
              	int betkind = Integer.parseInt(""+obj.get("betkind"));
              	int roomidx = Integer.parseInt(""+obj.get("roomidx"));             
-             	roommanager.find(roomidx).gameManager.bet(roomidx , u1, betkind);
+             	roommanager.find(roomidx).gameManager.bet(u1, betkind);
         		break;
         	}
         	case "sbBet":
@@ -158,7 +182,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         		System.out.println("sb bet "+u2.seat);
              	int betkind = Integer.parseInt(""+obj.get("betkind"));
              	int roomidx = Integer.parseInt(""+obj.get("roomidx"));             
-             	roommanager.find(roomidx).gameManager.bet(roomidx , u2, betkind);
+             	roommanager.find(roomidx).gameManager.bet(u2, betkind);
         		break;
         	}
         	case "bbBet":
@@ -167,7 +191,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         		System.out.println("bb bet "+u3.seat);
              	int betkind = Integer.parseInt(""+obj.get("betkind"));
              	int roomidx = Integer.parseInt(""+obj.get("roomidx"));             
-             	roommanager.find(roomidx).gameManager.bet(roomidx , u3, betkind);
+             	roommanager.find(roomidx).gameManager.bet(u3, betkind);
         		break;
         	}
         	case "buy":{        		
@@ -176,7 +200,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 	        }break;
         	case "deal":
         	{        		
-        		usermanager.Deal(session, Integer.parseInt(""+obj.get("itemtype")), Integer.parseInt(""+obj.get("actiontype")), Integer.parseInt(""+obj.get("amount")));
+        		usermanager.Deal(session, Integer.parseInt(""+obj.get("itemtype")), Integer.parseInt(""+obj.get("actiontype")), Long.parseLong(""+obj.get("amount")));
         	}        	
 	        break;
         	case "beg":
@@ -242,6 +266,10 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			case "getinboxreward":
 			{				
 				usermanager.GetInBoxReward(session, ""+obj.get("uid"));
+			}break;
+			case "userinfo":
+			{
+				usermanager.GetUserInfo(session);
 			}break;
 		}
     }

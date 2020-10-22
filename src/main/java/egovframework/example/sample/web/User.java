@@ -1,14 +1,19 @@
 package egovframework.example.sample.web;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
 import javax.annotation.Resource;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.json.simple.JSONObject;
 import org.springframework.web.socket.WebSocketSession;
 
 import egovframework.example.sample.service.impl.SampleDAO;
+import egovframework.example.sample.web.model.MembersInfo;
+import egovframework.example.sample.web.model.MembersShopInfo;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
 
@@ -18,13 +23,14 @@ public class User {
 	public String nickname;
 	public int seat = -1;
 	public int roomnum= -1;
-	public int betmoney = 0;
-	public int balance = 0;
-	public int point = 0;
-	public int safe_point = 0;
-	public int safe_balance = 0;
-	public int cash = 0;
-	public int budget = 0;
+	public long betmoney = 0;
+	public long balance = 0;
+	public long point = 0;
+	public long safe_point = 0;
+	public long safe_balance = 0;
+	public long cash = 0;
+	public long budget = 0;
+	public long bank = 0;
 	public boolean die = false;//true일떄 다이인 상태
 	public int currentGuBetMoney=0;//현재 구 에 베팅한 머니 / 모든 유저가  이 머니가 같아야 다음  단계로 넘어감.
 	public String img;
@@ -33,6 +39,7 @@ public class User {
 	public int PlayStatus = 0;
 	public int Blind = 0;
 	public Attendance attendance;
+	public MembersInfo memberInfo;
 	String gamestat="";
 	int level = 1000;
 	int topcard = -1;
@@ -69,27 +76,31 @@ public class User {
 			{												
 				if( ed.get(nCount).get("type").toString().equals("balance") == true )
 				{					
-					this.balance = (int)ed.get(nCount).get("amount");					
+					this.balance = (long)ed.get(nCount).get("amount");					
 				}
 				else if( ed.get(nCount).get("type").toString().equals("cash") == true )
 				{
-					this.cash = (int)ed.get(nCount).get("amount");				
+					this.cash = (long)ed.get(nCount).get("amount");				
 				}
 				else if( ed.get(nCount).get("type").toString().equals("budget") == true )
 				{
-					this.budget = (int)ed.get(nCount).get("amount");				
+					this.budget = (long)ed.get(nCount).get("amount");				
 				}
 				else if( ed.get(nCount).get("type").toString().equals("point") == true )
 				{
-					this.point = (int)ed.get(nCount).get("amount");				
+					this.point = (long)ed.get(nCount).get("amount");				
 				}
 				else if( ed.get(nCount).get("type").toString().equals("safe_balance") == true )
 				{
-					this.safe_balance = (int)ed.get(nCount).get("amount");				
+					this.safe_balance = (long)ed.get(nCount).get("amount");				
 				}
 				else if( ed.get(nCount).get("type").toString().equals("safe_point") == true )
 				{
-					this.safe_point = (int)ed.get(nCount).get("amount");				
+					this.safe_point = (long)ed.get(nCount).get("amount");				
+				}
+				else if( ed.get(nCount).get("type").toString().equals("bank") == true )
+				{
+					this.bank = (long)ed.get(nCount).get("amount");				
 				}
 			}
 		}
@@ -98,6 +109,7 @@ public class User {
 		this.img = "Character"+(random.nextInt(4)+1);
 
 		attendance = Attendance.MakeAttendance(this.uidx);
+		memberInfo = Members.GetUserMembersInfo(this);
 	}
 	
 	private Object find(WebSocketSession session2) {
@@ -120,7 +132,7 @@ public class User {
 		 * */
 		
 		System.out.println(product);
-		System.out.println(receipt);
+		System.out.println(receipt);		
 		
 		EgovMap in = new EgovMap();
 		in.put("midx", uidx);	
@@ -184,6 +196,27 @@ public class User {
 				lottery = 10000 - (int)(Math.random() * 9000);
 			}			
 			break;
+		case "silver" :
+			{				
+				Members.BuyMembers(this, 1);				
+				in.put("amount", this.cash);
+				in.put("type", "cash");
+			}
+			break;
+		case "gold" :
+			{				
+				Members.BuyMembers(this, 2);				
+				in.put("amount", this.cash);
+				in.put("type", "cash");
+			}
+			break;
+		case "dia" :
+			{				
+				Members.BuyMembers(this, 3);				
+				in.put("amount", this.cash);
+				in.put("type", "cash");
+			}
+			break;
 		default: 
 			this.cash += 0;
 			in.put("amount", this.cash);
@@ -217,8 +250,17 @@ public class User {
 		if( useitem.equals("point") == true){
 			in.put("amount", this.point);
 		}
+		if( useitem.equals("safe_point") == true){
+			in.put("amount", this.safe_point);
+		}
 		else if( useitem.equals("balance") == true){
 			in.put("amount", this.balance);
+		}
+		else if( useitem.equals("safe_balance") == true){
+			in.put("amount", this.safe_balance);
+		}
+		else if( useitem.equals("bank") == true){
+			in.put("amount", this.bank);
 		}
 		in.put("type", useitem);
 		
@@ -227,7 +269,7 @@ public class User {
 		return rt;		
 	}
 	
-	public int Deal(int item, int action, int amount)
+	public int Deal(int item, int action, long amount)
 	{
 		EgovMap[] in = new EgovMap[2];
 		in[0] = new EgovMap();
@@ -245,6 +287,11 @@ public class User {
 				{
 					return 0;					
 				}
+
+				if( this.safe_point + amount > this.memberInfo.limit_safe_point )
+				{
+					return 0;
+				}
 				
 				this.point -= amount;
 				this.safe_point += amount;				
@@ -254,6 +301,11 @@ public class User {
 				if( this.safe_point < amount )
 				{
 					return 0;					
+				}
+
+				if( this.point + amount > this.memberInfo.limit_point )
+				{
+					return 0;
 				}
 				
 				this.safe_point -= amount;
@@ -276,6 +328,11 @@ public class User {
 				{
 					return 0;					
 				}
+
+				if( this.safe_balance + amount > this.memberInfo.limit_safe_gold )
+				{
+					return 0;
+				}
 				
 				this.balance -= amount;
 				this.safe_balance += amount;
@@ -285,6 +342,11 @@ public class User {
 				if( this.safe_balance < amount )
 				{
 					return 0;					
+				}
+
+				if( this.balance + amount > this.memberInfo.limit_gold )
+				{
+					return 0;
 				}
 				
 				this.safe_balance -= amount;
@@ -331,10 +393,122 @@ public class User {
 		card2.clear();
 	}
 
-	public void InsertItem(Item item)
+	public UserInfo MakeUserInfo()
+	{
+		UserInfo info = new UserInfo();
+		info.balance = balance;
+		info.point = point;
+		info.safe_point = safe_point;
+		info.safe_balance = safe_balance;
+		info.cash = cash;
+		info.attendance = attendance;
+		info.membersinfo = memberInfo;
+
+		return info;
+	}
+
+	public void ExpireMembers()
+	{
+		memberInfo = new MembersInfo();
+		long goldamount = 0;
+		long chipamount = 0;
+
+		long overgold = balance - memberInfo.limit_gold;
+		long oversafegold = safe_balance - memberInfo.limit_safe_gold;
+		long overchip = point - memberInfo.limit_point;
+		long oversafechip = safe_point - memberInfo.limit_safe_point;
+
+		goldamount += (overgold > 0) ? overgold : 0;
+		goldamount += (oversafegold > 0) ? oversafegold : 0;
+		chipamount += (overchip > 0) ? overchip : 0;
+		chipamount += (oversafechip > 0) ? oversafechip : 0;
+
+		if( overgold > 0 )
+		{
+			this.balance = memberInfo.limit_gold;
+			ApplyBalanace("balance");
+		}
+
+		if( oversafegold > 0 )
+		{
+			this.safe_balance= memberInfo.limit_safe_gold;
+			ApplyBalanace("safe_balance");
+		}
+
+		if( overchip > 0 )
+		{
+			this.point = memberInfo.limit_point;
+			ApplyBalanace("point");
+		}
+
+		if( oversafechip > 0 )
+		{
+			this.safe_point = memberInfo.limit_safe_point;
+			ApplyBalanace("safe_point");
+		}
+ 
+		ObjectMapper mapper = new ObjectMapper();
+
+		if( goldamount > 0 )
+		{
+			InBox inbox = InBox.MakeInBox("goldover", uidx, 4, "admin");
+			Item item = new Item();
+			item.Type = "balance";
+			item.Amount = goldamount;
+			inbox.ItemList.add(item);
+			inbox.Expire = System.currentTimeMillis() + 604800000;
+
+			try {
+				EgovMap refundin = new EgovMap();
+				refundin.put("uid", inbox.UID);
+				refundin.put("midx", inbox.Midx);
+				refundin.put("type", inbox.Type);
+				refundin.put("title", inbox.Title);
+				refundin.put("body", mapper.writeValueAsString(inbox.ItemList));
+				refundin.put("expire", inbox.Expire);
+	
+				SocketHandler.sk.sampleDAO.insert("AddInbox", refundin);
+			}
+			catch(IOException e){
+	
+			}
+		}
+
+		if( chipamount > 0 )
+		{
+			InBox inbox = InBox.MakeInBox("chipover", uidx, 4, "admin");
+			Item item = new Item();
+			item.Type = "point";
+			item.Amount = chipamount;
+			inbox.ItemList.add(item);
+			inbox.Expire = System.currentTimeMillis() + 604800000;
+
+			try {
+				EgovMap refundin = new EgovMap();
+				refundin.put("uid", inbox.UID);
+				refundin.put("midx", inbox.Midx);
+				refundin.put("type", inbox.Type);
+				refundin.put("title", inbox.Title);
+				refundin.put("body", mapper.writeValueAsString(inbox.ItemList));
+				refundin.put("expire", inbox.Expire);
+	
+				SocketHandler.sk.sampleDAO.insert("AddInbox", refundin);
+			}
+			catch(IOException e){
+	
+			}
+		}				
+	}
+
+	public boolean InsertItem(Item item)
 	{
 		if( item.Type.equals("point") == true)
-		{
+		{			
+			if( this.point + item.Amount > memberInfo.limit_point )
+			{
+				return false;
+			}
+
 			this.point += item.Amount;			
 
 			EgovMap in = new EgovMap();
@@ -345,7 +519,12 @@ public class User {
 			int rt = SocketHandler.sk.sampleDAO.update("updateItemAmont", in);		
 		}
 		else if( item.Type.equals("balance") == true)
-		{
+		{			
+			if( this.balance + item.Amount > memberInfo.limit_gold )
+			{
+				return false;
+			}
+
 			this.balance += item.Amount;
 
 			EgovMap in = new EgovMap();
@@ -355,5 +534,18 @@ public class User {
 			
 			int rt = SocketHandler.sk.sampleDAO.update("updateItemAmont", in);		
 		}
+		else if( item.Type.equals("cash") == true)
+		{
+			this.cash += item.Amount;
+
+			EgovMap in = new EgovMap();
+			in.put("midx", this.uidx);	
+			in.put("amount", this.cash);
+			in.put("type", "cash");
+			
+			int rt = SocketHandler.sk.sampleDAO.update("updateItemAmont", in);		
+		}
+
+		return true;
 	}
 }

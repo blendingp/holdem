@@ -1,0 +1,23 @@
+{    
+    "useitem":"cash",
+    "amount":180,
+    "payitem":[
+        {
+            "Type":"point",
+            "Amount":8000000000000
+        }
+    ],
+    "effect":{
+        "grade": 2,
+        "limit_point":1000000000000000,
+        "limit_safe_point":1000000000000000,
+        "limit_gold":20000000,
+        "limit_safe_gold":10000000,
+        "commission":0.042,
+        "chiprefill": 100000000000,
+        "avata": 1,
+        "bank_gold":10000000,
+        "gold_cashback": 0.005,
+        "expire":2592000000
+    }
+}

@@ -22,10 +22,10 @@ public class GameManager {
 	long timerStartTime = 0;//객체로 만들면 좋다
 	int whosturn = 0;//누구차례인지 
 	int turncnt = 0;
-	int money = 0;
-	int totalmoney = 0;
-	int prebetmoney =0 ;//이전 사람의 베팅머니
-	int preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.	
+	long money = 0;
+	long totalmoney = 0;
+	long prebetmoney =0 ;//이전 사람의 베팅머니
+	long preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.	
 	
 //	int startTime;
 //	int endtime;
@@ -184,6 +184,11 @@ public class GameManager {
 			else if( room.UsedItem.equals("point") == true){
 				u.point -= room.defaultmoney;
 			}	
+
+			if( u.memberInfo.expire < System.currentTimeMillis() )
+			{
+				u.ExpireMembers();;
+			}
 			
 			totalmoney = 0;
 		}				
@@ -340,7 +345,7 @@ public class GameManager {
 		}
 		
 		if(GameMode.compareTo("대기")==0){
-			//System.out.println("isPlayable():"+isPlayable()+" checkCmdTime(3):"+checkCmdTime(3));
+			System.out.println("isPlayable():"+isPlayable()+" checkCmdTime(3):"+checkCmdTime(3));
 			if (isPlayable() && checkCmdTime(6) ){
 				setWorkTime();
 				changeGameMode("checkstart");
@@ -542,7 +547,7 @@ public class GameManager {
 		sendRoom( obj);
 	}
 
-	public int thisTurnMoneyCompute(int kind,int mybetmoney){
+	public long thisTurnMoneyCompute(int kind, long mybetmoney){
 
 		if(kind==0) // 다이
 			return 0;
@@ -553,17 +558,17 @@ public class GameManager {
 		else if(kind==3)// 따당 
 			return prebetmoney*2;
 		else if(kind==4){// 하프
-			int tc = preTotalBetmoney - mybetmoney;
+			long tc = preTotalBetmoney - mybetmoney;
 			return tc + ((totalmoney + tc)/2);
 		}
 		else if(kind==5){// 풀
-			int tc = preTotalBetmoney - mybetmoney;
+			long tc = preTotalBetmoney - mybetmoney;
 			return tc + totalmoney;
 		}
 		else if(kind==6)// 맥스
 			return room.maxmoney;
 		else if(kind==7){// 쿼터
-			int tc = preTotalBetmoney - mybetmoney;
+			long tc = preTotalBetmoney - mybetmoney;
 			return tc + ((totalmoney+tc)/4);
 		}
 		else if(kind==8)// 패스 ( 올인이나 맥스벳 상태에서는 자기 차례올시에 자동 패스 커맨드 함) 
@@ -589,38 +594,40 @@ public class GameManager {
 		for(User uu : userlist){
 			if( uu.die == true)
 			{
-				if( room.UsedItem.equals("balance") == true){
-					if( uu.balance <= 0)
-					{
-						betablecount--;						
-					}	
-				}
-				else if( room.UsedItem.equals("point") == true){
-					if( uu.point <= 0)
-					{
-						betablecount--;						
-					}	
-				}
-			}									
+				betablecount--;	
+			}				
+			if( room.UsedItem.equals("balance") == true){
+				if( uu.balance <= 0)
+				{
+					betablecount--;						
+				}	
+			}
+			else if( room.UsedItem.equals("point") == true){
+				if( uu.point <= 0)
+				{
+					betablecount--;						
+				}	
+			}
 		}
 						
 		for(User uu : userlist){
 			
 			if( uu.die == true)
 			{
-				if( room.UsedItem.equals("balance") == true){
-					if( uu.balance <= 0 || uu.betmoney >= room.maxmoney)
-					{
-						continue;			
-					}	
-				}
-				else if( room.UsedItem.equals("point") == true){
-					if( uu.point <= 0 || uu.betmoney >= room.maxmoney)
-					{
-						continue;				
-					}	
-				}
+				
 			}	
+			if( room.UsedItem.equals("balance") == true){
+				if( uu.balance <= 0 || uu.betmoney >= room.maxmoney)
+				{
+					continue;			
+				}	
+			}
+			else if( room.UsedItem.equals("point") == true){
+				if( uu.point <= 0 || uu.betmoney >= room.maxmoney)
+				{
+					continue;				
+				}	
+			}
 
 			if(uu.PlayStatus == 1 && betablecount > 1)
 			{					
@@ -648,19 +655,21 @@ public class GameManager {
 		for(User uu : userlist){
 			if( uu.die == true)
 			{
-				if( room.UsedItem.equals("balance") == true){
-					if( uu.balance <= 0 || uu.betmoney >= room.maxmoney)
-					{
-						continue;			
-					}	
-				}
-				else if( room.UsedItem.equals("point") == true){
-					if( uu.point <= 0 || uu.betmoney >= room.maxmoney)
-					{
-						continue;				
-					}	
-				}
+				continue;
 			}	
+
+			if( room.UsedItem.equals("balance") == true){
+				if( uu.balance <= 0 || uu.betmoney >= room.maxmoney)
+				{
+					continue;			
+				}	
+			}
+			else if( room.UsedItem.equals("point") == true){
+				if( uu.point <= 0 || uu.betmoney >= room.maxmoney)
+				{
+					continue;				
+				}	
+			}
 
 			if(uu.betmoney != preTotalBetmoney)
 			{			
@@ -690,7 +699,7 @@ public class GameManager {
 		}*/
 	}
 
-	public void bet(int roomidx, User u, int betkind){			
+	public void bet(User u, int betkind){			
 		//System.out.println("========= whosturnUseridx:"+whosturnUseridx +" uidx:"+u.uidx+" u seat:"+u.seat);
 		if( whosturn != u.seat ){
 			System.out.println(whosturn+" 잘못된 유저의 BET 차례 "+u.seat);
@@ -708,7 +717,7 @@ public class GameManager {
 		
 		Boolean isAllIn = false;
 		
-		int tmo = thisTurnMoneyCompute(betkind , u.betmoney);		
+		long tmo = thisTurnMoneyCompute(betkind , u.betmoney);		
 		
 		if( room.UsedItem.equals("balance") == true){
 			if( u.balance <= tmo ){//올인인지 체크.
@@ -756,6 +765,18 @@ public class GameManager {
 		//배팅한 사람 돈 차감 시키기!!!
 		if( room.UsedItem.equals("balance") == true){
 			u.balance -= tmo;	
+			long amount = (long)(tmo * u.memberInfo.gold_cashback);
+			u.bank += amount;
+			if( u.bank > u.memberInfo.bank_gold )
+			{
+				u.bank = u.memberInfo.bank_gold;
+			}
+			else{
+				// 저금통 갱신
+				if( amount > 0 ){
+					u.ApplyBalanace("bank");
+				}
+			}
 		}
 		else if( room.UsedItem.equals("point") == true){
 			u.point -= tmo;	
@@ -1543,11 +1564,19 @@ public class GameManager {
 		for(User u : userlist){
 			if( u.seat == winSeat){
 				if( room.UsedItem.equals("balance") == true){
-					SearchUserBySeat(winSeat).balance += betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney);
+					SearchUserBySeat(winSeat).balance += (betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney)) * ( 1 - u.memberInfo.commission);
+					if( SearchUserBySeat(winSeat).balance > SearchUserBySeat(winSeat).memberInfo.limit_gold )
+					{
+						SearchUserBySeat(winSeat).balance = SearchUserBySeat(winSeat).memberInfo.limit_gold;
+					}
 				}
 				else if( room.UsedItem.equals("point") == true){
-					SearchUserBySeat(winSeat).point += betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney);
-				}	
+					SearchUserBySeat(winSeat).point += (betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney)) * ( 1 - u.memberInfo.commission);
+					if( SearchUserBySeat(winSeat).point > SearchUserBySeat(winSeat).memberInfo.limit_point )
+					{
+						SearchUserBySeat(winSeat).point = SearchUserBySeat(winSeat).memberInfo.limit_point;
+					}
+				}					
 				
 			}else{
 				if(SearchUserBySeat(winSeat).betmoney < u.betmoney){

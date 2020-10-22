@@ -20,6 +20,7 @@ import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import egovframework.example.sample.service.impl.SampleDAO;
+import egovframework.rte.psl.dataaccess.mapper.Mapper;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 
 public class UserManager {
@@ -80,24 +81,25 @@ public class UserManager {
 
 		int rt = find(session).buyItem(product, receipt);
 
+		ObjectMapper mapper = new ObjectMapper();
+
 		JSONObject cobj = new JSONObject();
 		cobj.put("cmd", "buyresult");
 		cobj.put("result", rt);
 		cobj.put("balance", find(session).balance);
 		cobj.put("cash", find(session).cash);
 		cobj.put("budget", find(session).budget);
-
-		System.out.println(rt);
+		cobj.put("members", find(session).memberInfo);
 
 		try {
-			session.sendMessage(new TextMessage(cobj.toJSONString()));
+			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void Deal(WebSocketSession session, int item, int action, int amount) {
+	public void Deal(WebSocketSession session, int item, int action, long amount) {
 
 		int rt = find(session).Deal(item, action, amount);
 		JSONObject cobj = new JSONObject();
@@ -398,16 +400,22 @@ public class UserManager {
 
 	public void GetInBoxReward(WebSocketSession session, String uid) throws JsonProcessingException
 	{				
-		InBox inbox = InBox.GetInbox(find(session).uidx, uid);
+		InBox inbox = InBox.GetInbox(find(session).uidx, uid);		
+		
+		for( Item item : inbox.ItemList )
+		{
+			if(find(session).InsertItem(item) == false)
+			{
+				uid = "";
+				inbox = null;
+				break;
+			}
+		}		
+
 		if( inbox != null )
 		{
 			inbox.DeleteInBox();
 		}
-		
-		for( Item item : inbox.ItemList )
-		{
-			find(session).InsertItem(item);
-		}		
 
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -429,5 +437,19 @@ public class UserManager {
 		}
 
 	}
-	
+
+	public void GetUserInfo(WebSocketSession session) {
+		JSONObject cobj = new JSONObject();
+		cobj.put("cmd", "userinfo");							
+		cobj.put("info", find(session).MakeUserInfo());
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }

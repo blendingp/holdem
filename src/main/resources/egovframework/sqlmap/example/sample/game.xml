@@ -81,9 +81,10 @@
 
 	<update id="updateItemAmont" parameterClass="egovMap">
 		<![CDATA[
-			UPDATE item SET
-				amount=#amount#
-				WHERE midx=#midx# AND `type`=#type#				
+			INSERT INTO item
+					( midx, type, amount )
+				VALUES ( #midx#, #type#, #amount# )
+				ON DUPLICATE KEY UPDATE amount=#amount#		
 		]]>
 	</update>
 	
@@ -204,8 +205,8 @@
 	</update>
 	<select id="GetInboxList" resultClass="EgovMap">
         <![CDATA[
-            SELECT uid, title, body, expire FROM inbox
-            WHERE midx=#midx# AND type=#type#
+            SELECT uid, title, type, body, expire FROM inbox
+            WHERE midx=#midx# AND type>=#mintype# AND type<#maxtype#
         ]]>
 	</select>
 	<select id="GetInbox" resultClass="EgovMap">
@@ -226,4 +227,24 @@
 				WHERE uid=#uid#
 		]]>
 	</delete>
+	<delete id="DeleteMemberExpire" parameterClass="egovMap">
+		<![CDATA[
+			DELETE FROM members_effect 
+				WHERE midx=#midx# AND expire < #now#
+		]]>
+	</delete>
+	<select id="GetMembers" resultClass="EgovMap">
+        <![CDATA[
+            SELECT type, expire FROM members_effect
+            WHERE midx=#midx#
+        ]]>
+	</select>
+	<insert id="InsertMembers" parameterClass="egovMap">
+        <![CDATA[
+				INSERT INTO members_effect
+					( midx, type, expire )
+				VALUES ( #midx#, #type#, #expire# )
+				ON DUPLICATE KEY UPDATE type = #type#, expire = #expire#
+			]]>
+	</insert>
 </sqlMap>
