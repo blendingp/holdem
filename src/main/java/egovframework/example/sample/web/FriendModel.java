@@ -52,14 +52,14 @@ public class FriendModel {
         return ed.get("muserid").toString();
     }
 
-    public int GetUserBalance(int idx)
+    public long GetUserBalance(int idx)
     {
         EgovMap searchin = new EgovMap();
         searchin.put("midx", idx);
 
         EgovMap ed = (EgovMap) SocketHandler.sk.sampleDAO.select("GetUserBalance", searchin);
 
-        return (int)ed.get("amount");
+        return (long)ed.get("amount");
     }
 
     public boolean Delete(String uid)

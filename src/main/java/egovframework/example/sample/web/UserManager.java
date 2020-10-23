@@ -65,6 +65,7 @@ public class UserManager {
 		cobj.put("point", find(session).point);
 		cobj.put("safe_balance", find(session).safe_balance);
 		cobj.put("safe_point", find(session).safe_point);
+		cobj.put("bank", find(session).bank);
 		cobj.put("nickname", ""+ find(session).nickname);
 		// 구정연_멘션 스트링 리스트 전달
 		cobj.put("chatmention", chatmention);
@@ -109,6 +110,7 @@ public class UserManager {
 		cobj.put("safe_balance", find(session).safe_balance);
 		cobj.put("point", find(session).point);
 		cobj.put("safe_point", find(session).safe_point);
+		cobj.put("bank", find(session).bank);
 
 		try {
 			session.sendMessage(new TextMessage(cobj.toJSONString()));

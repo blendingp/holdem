@@ -79,6 +79,7 @@ public class Room {
 				item.put("balance",gameManager.userlist.get(i).point);
 			}			
 			item.put("nickname",""+ gameManager.userlist.get(i).nickname);
+			item.put("profile", gameManager.userlist.get(i).todayprofile);
 			j.add(item);
 			System.out.println("uidx:"+gameManager.userlist.get(i).uidx +"  seat:"+gameManager.userlist.get(i).seat );
 		}
@@ -113,12 +114,15 @@ public class Room {
 					item.put("balance",gameManager.userlist.get(i).point);
 				}
 				item.put("nickname",""+ gameManager.userlist.get(i).nickname);
+				item.put("profile", gameManager.userlist.get(i).todayprofile);
 				j.add(item);
 			}
 			myobj.put("userlist", j);
 
+			ObjectMapper mapper = new ObjectMapper();
+
 			try {
-				u.session.sendMessage(new TextMessage(myobj.toJSONString()));
+				u.session.sendMessage(new TextMessage(mapper.writeValueAsString(myobj)));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

@@ -115,7 +115,9 @@ public class User {
 		memberInfo = Members.GetUserMembersInfo(this);		
 		
 		totalprofile = ProfileManager.GetTotalInfo(uidx);
+		totalprofile.midx = uidx;
 		todayprofile = ProfileManager.GetTodayInfo(uidx);
+		todayprofile.midx = uidx;
 	}
 	
 	private Object find(WebSocketSession session2) {
@@ -403,7 +405,9 @@ public class User {
 	{
 		if(todayprofile.CheckExpire() == true)
 		{
-			todayprofile = new ProfileModel();	
+			todayprofile = new ProfileModel();				
+			todayprofile.midx = uidx;
+			ProfileManager.UpdateTodayProfile(todayprofile);
 		}
 	}
 
@@ -415,6 +419,7 @@ public class User {
 		info.safe_point = safe_point;
 		info.safe_balance = safe_balance;
 		info.cash = cash;
+		info.bank = bank;
 		info.attendance = attendance;
 		info.membersinfo = memberInfo;		
 		info.todayprofile = todayprofile;

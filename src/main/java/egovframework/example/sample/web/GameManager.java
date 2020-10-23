@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.web.socket.TextMessage;
@@ -117,9 +119,12 @@ public class GameManager {
 		sendList(obj,userlist);
 	}
 	void sendList(JSONObject obj, ArrayList<User> lst){
+
+		ObjectMapper mapper = new ObjectMapper();
+
 		for(User u : lst)
 			try {				
-				u.session.sendMessage(new TextMessage(obj.toJSONString()));
+				u.session.sendMessage(new TextMessage(mapper.writeValueAsString(obj)));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}						
@@ -182,6 +187,7 @@ public class GameManager {
 			u.betmoney = 0;
 			if( room.UsedItem.equals("balance") == true){
 				u.balance -= room.defaultmoney;
+				u.todayprofile.gaingold -= room.defaultmoney;
 			}			
 			else if( room.UsedItem.equals("point") == true){
 				u.point -= room.defaultmoney;
@@ -195,6 +201,8 @@ public class GameManager {
 			u.CheckExpireTodayRecord();
 			u.totalprofile.totalgame++;
 			u.todayprofile.totalgame++;
+			ProfileManager.UpdateProfile(u.totalprofile);
+			ProfileManager.UpdateTodayProfile(u.todayprofile);
 			totalmoney = 0;
 		}			
 		
@@ -1653,6 +1661,7 @@ public class GameManager {
 				item.put("balance", userlist.get(i).point);
 			}				
 			item.put("die", userlist.get(i).die);
+			item.put("profile", userlist.get(i).todayprofile);
 			j.add(item);
 		}
 		obj.put("cardlist", j);
