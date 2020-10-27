@@ -80,7 +80,12 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			if( room.gameManager.userlist.size() <= 0 )
 			{
 				roommanager.roomList.remove(room);
-			}		    		
+			}
+			else
+			{
+				Task.IncreaseTask(u, 2, 1);
+				Task.UpdateDB(u);				
+			}			
 		}
 		
     	usermanager.userlist.remove(u);
@@ -275,6 +280,15 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			{
 				usermanager.GetUserInfo(session);
 			}break;
+			case "gettaskreward":
+			{
+				User user = usermanager.find(session);
+				Task.PayReward(""+obj.get("uid"), user);
+			}break;
+			case "setavata":
+			{
+				usermanager.SetUserAvata(session, ""+obj.get("avata"));				
+			}break;
 		}
     }
  
@@ -353,6 +367,5 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
                   this.logger.error("fail to send message!", ignored);
                }
           }
-    }
-    //=======================
+    }    
 }

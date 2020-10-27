@@ -1,7 +1,11 @@
 package egovframework.example.sample.web;
 
+import java.util.ArrayList;
+
+import egovframework.example.sample.web.model.MemberInfo;
 import egovframework.example.sample.web.model.MembersInfo;
 import egovframework.example.sample.web.model.ProfileModel;
+import egovframework.example.sample.web.model.TaskModel;
 
 public class UserInfo {
 
@@ -15,5 +19,8 @@ public class UserInfo {
     public MembersInfo membersinfo;
     public ProfileModel totalprofile;
     public ProfileModel todayprofile;
+    public ArrayList<TaskModel> tasklist;
+    public ArrayList<String> avatalist;
+    public MemberInfo memberinfo;
     
 }

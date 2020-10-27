@@ -197,6 +197,9 @@ public class GameManager {
 			{
 				u.ExpireMembers();				
 			}
+
+			Task.IncreaseTask(u, 0, 1);
+			Task.UpdateDB(u);			
 			
 			u.CheckExpireTodayRecord();
 			u.totalprofile.totalgame++;
@@ -211,8 +214,8 @@ public class GameManager {
 	
 	void setDealerSeat()
 	{
-		int seat = dealerSeatNum + 1;
-		for( int nCount = 0; nCount < this.seats.length; ++nCount )
+		int seat = dealerSeatNum + this.seats.length - 1;
+		for( int nCount = this.seats.length; nCount >= 0; --nCount )
 		{						
 			if( this.seats[(seat + nCount)%this.seats.length] >= 0 )
 			{
@@ -237,7 +240,7 @@ public class GameManager {
 	
 	int getDealerSeat(){
 		
-		for( int nCount = 0; nCount < this.seats.length; ++nCount )
+		for( int nCount = this.seats.length * 2; nCount >= 0; --nCount )
 		{						
 			if( this.seats[(dealerSeatNum + nCount)%this.seats.length] >= 0 )
 			{
@@ -253,7 +256,7 @@ public class GameManager {
 	{
 		int seat = dealerSeatNum;
 		
-		for( int nCount = 0; nCount < this.seats.length * 2; ++nCount )
+		for( int nCount = this.seats.length * 2; nCount >= 0; --nCount )
 		{				
 			if( this.seats[(seat + nCount)%this.seats.length] >= 0 )
 			{				
@@ -468,7 +471,7 @@ public class GameManager {
 
 	public int getWhoTurn(){
 										
-		for( int nCount = 0; nCount < this.seats.length * 2; ++nCount )
+		for( int nCount = this.seats.length * 2; nCount >= 0 ; --nCount )
 		{							
 			if( this.seats[(whosturn + nCount)%this.seats.length] >= 0 )
 			{				
@@ -697,7 +700,7 @@ public class GameManager {
 	}
 	
 	public void  nextTurn(){
-		whosturn++;//다음사람배팅
+		whosturn += this.seats.length - 1;//다음사람배팅
 		//int k=0;		
 		if( getWhoTurn() < 0 )
 		{			
@@ -1584,6 +1587,9 @@ public class GameManager {
 				u.totalprofile.win++;
 				u.todayprofile.win++;
 
+				Task.IncreaseTask(u, 1, 1);
+				Task.UpdateDB(u);			
+
 				u.totalprofile.putallin += allincount;
 				u.todayprofile.putallin += allincount;
 
@@ -1612,6 +1618,8 @@ public class GameManager {
 			}else{
 				u.totalprofile.lose++;
 				u.todayprofile.lose++;
+				Task.IncreaseTask(u, 2, 1);
+				Task.UpdateDB(u);			
 
 				if(SearchUserBySeat(winSeat).betmoney < u.betmoney){
 					if( room.UsedItem.equals("balance") == true){

@@ -265,4 +265,37 @@
 				ON DUPLICATE KEY UPDATE totalgame=#totalgame#, win=#win#, lose=#lose#, gaingold=#gaingold#, putallin=#putallin#, goldrefillcount=#goldrefillcount#, chiprefillcount=#chiprefillcount#, expire=#expire#
         ]]>
 	</update>
+
+	<select id="GetTaskList" resultClass="EgovMap">
+        <![CDATA[
+            SELECT uid, type, payed, current, max, expire FROM task
+            WHERE midx=#midx#
+        ]]>
+	</select>
+
+	<update id="UpdateTask" parameterClass="egovMap">	
+        <![CDATA[
+            INSERT INTO task
+					( uid, midx, type, payed, current, max, expire )
+				VALUES ( #uid#, #midx#, #type#, #payed#, #current#, #max#, #expire# )
+				ON DUPLICATE KEY UPDATE payed=#payed#, current=#current#, expire=#expire#
+        ]]>
+	</update>
+
+	<select id="GetMemberInfo" resultClass="EgovMap">
+        <![CDATA[
+            SELECT midx, exp, nickname, avata FROM member_info
+            WHERE midx=#midx#
+        ]]>
+	</select>
+
+	<update id="UpdateMemberInfo" parameterClass="egovMap">	
+        <![CDATA[
+            INSERT INTO member_info
+					( midx, exp, nickname, avata )
+				VALUES ( #midx#, #exp#, #nickname#, #avata# )
+				ON DUPLICATE KEY UPDATE exp=#exp#, nickname=#nickname#, avata=#avata#
+        ]]>
+	</update>
+	
 </sqlMap>

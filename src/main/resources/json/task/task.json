@@ -1,0 +1,42 @@
+[
+    {
+        "type":0,
+        "max": 3,
+        "reward" : {
+            "Type":"chip",
+            "Amount": 10000000
+        }
+    },
+    {
+        "type":0,
+        "max": 10,
+        "reward" : {
+            "Type":"chip",
+            "Amount": 100000000
+        }
+    },
+    {
+        "type":1,
+        "max": 10,
+        "reward" : {
+            "Type":"point",
+            "Amount": 100000000
+        }
+    },
+    {
+        "type":1,
+        "max": 20,
+        "reward" : {
+            "Type":"point",
+            "Amount": 200000000
+        }
+    },
+    {
+        "type":2,
+        "max": 50,
+        "reward" : {
+            "Type":"point",
+            "Amount": 100000000
+        }
+    }
+]

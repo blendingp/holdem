@@ -91,13 +91,8 @@ public class ProfileManager {
 	{				
 		try {
 			ObjectMapper mapper = new ObjectMapper();
-			String value = mapper.writeValueAsString(model);
-			System.out.println(value);
-			EgovMap jsonobject = mapper.readValue(value, EgovMap.class);
-			/*jsonobject.remove("goldrefillcount");
-			jsonobject.remove("chiprefillcount");
-			jsonobject.remove("expire");*/
-			System.out.println(jsonobject.toString());
+			String value = mapper.writeValueAsString(model);			
+			EgovMap jsonobject = mapper.readValue(value, EgovMap.class);			
 
 			SocketHandler.sk.sampleDAO.update("UpdateProfileData", jsonobject);
 		} catch (JsonProcessingException e) {

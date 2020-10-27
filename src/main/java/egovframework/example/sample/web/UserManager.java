@@ -457,4 +457,9 @@ public class UserManager {
 			e.printStackTrace();
 		}
 	}
+
+	public void SetUserAvata(WebSocketSession session, String avata) {
+
+		find(session).SetUserAvata(avata);
+	}
 }
