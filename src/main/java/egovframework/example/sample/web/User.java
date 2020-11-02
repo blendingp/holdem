@@ -47,6 +47,7 @@ public class User {
 	public MembersInfo memberInfo;
 	public ArrayList<TaskModel> tasklist;
 	public ArrayList<String> avatalist = new ArrayList<>();
+	public ArrayList<Integer> cardarr = new ArrayList<>();
 
 	MemberInfo _info;
 	String gamestat = "";

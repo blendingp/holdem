@@ -7,6 +7,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Map;
 
+import javax.json.JsonObject;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -448,10 +450,15 @@ public class UserManager {
 		cobj.put("cmd", "userinfo");							
 		cobj.put("info", find(session).MakeUserInfo());
 
+		JSONObject jackpot = new JSONObject();
+		jackpot.put("cmd", "jackpot");							
+		jackpot.put("amount", JackpotManager.GetJackpotAmount());
+
 		ObjectMapper mapper = new ObjectMapper();
 
 		try {
 			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+			session.sendMessage(new TextMessage(mapper.writeValueAsString(jackpot)));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

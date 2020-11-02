@@ -131,7 +131,7 @@ public class Members {
         }
         else
         {
-            System.out.println("ExpireMembers");
+            //System.out.println("ExpireMembers");
             user.ExpireMembers();
         }
 

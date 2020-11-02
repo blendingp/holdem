@@ -297,5 +297,17 @@
 				ON DUPLICATE KEY UPDATE exp=#exp#, nickname=#nickname#, avata=#avata#
         ]]>
 	</update>
+
+	<select id="GetJackpot" resultClass="EgovMap">
+        <![CDATA[
+            SELECT jackpot FROM jackpot            
+        ]]>
+	</select>
+
+	<update id="UpdateJackpot" parameterClass="egovMap">	
+        <![CDATA[
+			UPDATE jackpot SET jackpot = #jackpot#
+		]]>
+	</update>
 	
 </sqlMap>

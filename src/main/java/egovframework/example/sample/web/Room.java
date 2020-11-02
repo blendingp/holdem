@@ -98,6 +98,7 @@ public class Room {
 			myobj.put("seat",u.seat);
 			myobj.put("ante",defaultmoney);
 			myobj.put("max",maxmoney);
+			myobj.put("maxuser", maxusersize);
 			
 			//방에 참여중인 모든 사람 불러오기
 			JSONArray j = new JSONArray();
@@ -229,9 +230,10 @@ public class Room {
 
 	public RoomInfo GetRoomInfoByKey(String key)
 	{
-		if( _roomKey.equals(key) == true && _isPrivate == false)
+		if( _roomKey.contains(key) == true && _isPrivate == false)
 		{
 			RoomInfo info = new RoomInfo();
+			info.roomkey = _roomKey;
 			info.roomnumber = ridx;
 			info.ante = defaultmoney;
 			info.maxbet = maxmoney;
@@ -262,6 +264,25 @@ public class Room {
 		_isPrivate = roominfo.isprivate;
 	}
 
+	public void LeaveReserve(User user)
+	{		
+		for( int nCount = 0; nCount < gameManager.userlist.size(); ++nCount )
+		{						
+			if(gameManager.userlist.get(nCount).uidx == user.uidx)
+			{											
+				//gameManager.userlist.get(nCount).die = true;				
+				gameManager.leaveuserlist.add(gameManager.userlist.get(nCount));				
+				gameManager.userlist.remove(gameManager.userlist.get(nCount));				
+
+				JSONObject obj = new JSONObject();
+
+				obj.put("cmd","reserve");				
+				obj.put("seat", user.seat);
+				gameManager.sendRoom(obj);				
+			}
+		}		
+	}
+
 	private void SetRoomInfo(String key)
 	{
 		ClassPathResource resource = new ClassPathResource("json/roomsetting/" + key + ".json");
@@ -276,6 +297,7 @@ public class Room {
 			this.UsedItem = setting.useitem;			
 		}
 		catch (IOException e) {
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}        
 	}	 

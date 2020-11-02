@@ -2,6 +2,7 @@ package egovframework.example.sample.web;
 
 public class RoomInfo {
 
+    public String roomkey;
     public int roomnumber;
 	public long ante;
 	public long maxbet;

@@ -85,7 +85,7 @@ public class RoomManager {
 		else
 		{
 			CreateRoom roominfo = new CreateRoom();
-			roominfo.roomkey = "goldroom";
+			roominfo.roomkey = "goldroom10";
 			roominfo.setting = new GoldRoom();
 			roominfo.setting.ante = 10;
 			roominfo.setting.maxbetvalue = 1000;			
@@ -125,18 +125,17 @@ public class RoomManager {
 		
 		room.join(user, roomcount);
 		roomList.add(room);
-
 		return true;
 	}
 
-	void GetRoomList(WebSocketSession session, String key)
+	void GetRoomList(WebSocketSession session)
 	{
-		ArrayList<RoomInfo> list = new ArrayList<>();
+		ArrayList<RoomInfo> list = new ArrayList<>();		
 		for( Room room : roomList )
 		{
-			if(room.GetRoomInfoByKey(key) != null)
+			if(room.GetRoomInfoByKey("goldroom") != null)
 			{
-				list.add(room.GetRoomInfoByKey(key));
+				list.add(room.GetRoomInfoByKey("goldroom"));
 			}
 		}
 

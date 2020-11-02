@@ -69,26 +69,37 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     	User u = usermanager.find(session);
     	if( u == null)
     		return;
+		
+		int seat = u.seat;		
+		System.out.println("접속끊김 :"+seat );    	    		
     	
-		System.out.println("접속끊김 :"+u.seat );    	    		
-    	
-    	if( u.roomnum != -1){
+    	if( u.roomnum != -1){			
 			Room room = roommanager.find(u.roomnum);					
-			room.leave(u);			
-			room.notifyLeaveUser(u.seat);
+			//room.leave(u);			
+			//room.notifyLeaveUser(seat);
+			//System.out.println(seat);
+
+			room.LeaveReserve(u);
 
 			if( room.gameManager.userlist.size() <= 0 )
 			{
 				roommanager.roomList.remove(room);
 			}
 			else
-			{
+			{				
 				Task.IncreaseTask(u, 2, 1);
 				Task.UpdateDB(u);				
 			}			
 		}
 		
-    	usermanager.userlist.remove(u);
+		for( int nCount = 0; nCount < usermanager.userlist.size(); ++nCount)
+		{
+			if( usermanager.userlist.get(nCount).uidx == u.uidx )
+			{
+				usermanager.userlist.remove(usermanager.userlist.get(nCount));
+				break;
+			}			
+		}    	
     }
  
     @Override
@@ -139,7 +150,13 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         		if(ed==null){
         			System.out.println("로그인실패");
         			break;
-        		}
+				}
+				if( usermanager.findFromUseridx((int)ed.get("midx")) != null)				
+				{
+					System.out.println("중복 로그인");
+					break;
+				}
+
         		session.getAttributes().put("useridx", ed.get("midx"));
         		User user = new User(Integer.parseInt(""+ed.get("midx")), session, ""+ed.get("muserid"));
         		
@@ -175,7 +192,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			}break;
 			case "getgoldroomlist":
 			{
-				roommanager.GetRoomList(session, "goldroom");
+				roommanager.GetRoomList(session);
 			}break;
         	case "bet":
         	{             	
@@ -314,7 +331,8 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     		gameidIdx = Integer.parseInt(""+gameId.get("gameid"));
     	
     	chatmention.setDAO(sampleDAO);
-        chatmention.uploding();
+		chatmention.uploding();
+		JackpotManager.Init();
     	
         Thread thread = new Thread() {
             int i = 0;
@@ -326,7 +344,8 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
                         Thread.sleep(500);
                         second++;                        
                         roommanager.checkStartGame();
-                        roommanager.checkTimerGame();
+						roommanager.checkTimerGame();
+						JackpotManager.Update();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                         break;
