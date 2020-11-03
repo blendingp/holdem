@@ -309,5 +309,11 @@
 			UPDATE jackpot SET jackpot = #jackpot#
 		]]>
 	</update>
-	
+	<insert id="InsertPaymentLog" parameterClass="egovMap">
+        <![CDATA[
+				INSERT INTO payment_log
+					( uid, midx, product, receipt, iscash, price, year, month, day, date )
+				VALUES ( #uid#, #midx#, #product#, #receipt#, #iscash#, #price#, #year#, #month#, #day#, now() )
+			]]>
+	</insert>
 </sqlMap>

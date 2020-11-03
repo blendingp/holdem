@@ -161,26 +161,37 @@ public class User {
 		in.put("midx", uidx);
 		int lottery = 0;
 
+		int iscash = 0;
+		long price = 0;	
+
 		switch (product) {
 			case "Gem0":
 				this.cash += 110;
 				in.put("amount", this.cash);
 				in.put("type", "cash");
+				iscash = 1;
+				price = 11000;
 				break;
 			case "Gem1":
 				this.cash += 550;
 				in.put("amount", this.cash);
 				in.put("type", "cash");
+				iscash = 1;
+				price = 55000;
 				break;
 			case "Gem2":
 				this.cash += 1100;
 				in.put("amount", this.cash);
 				in.put("type", "cash");
+				iscash = 1;
+				price = 110000;
 				break;
 			case "Gem3":
-				this.cash += 5500;
+				this.cash += 2200;
 				in.put("amount", this.cash);
 				in.put("type", "cash");
+				iscash = 1;
+				price = 220000;
 				break;
 			case "Lottery0":
 				if (this.cash >= 110) {
@@ -233,9 +244,14 @@ public class User {
 			}
 				break;
 			case "Avata0":
+				price = 5500;
 			case "Avata1":
+				price = 11000;
 			case "Avata2":
+				price = 22000;
 			case "Avata3": {
+				price = 33000;
+				iscash = 1;
 				Avata.Buy(product, uidx);
 				in = null;
 			}
@@ -264,6 +280,8 @@ public class User {
 			SocketHandler.sk.sampleDAO.update("updateItemAmont", balancein);
 
 		}
+
+		PaymentLog.Insert(uidx, iscash, price, product, receipt);
 
 		return rt;
 	}
