@@ -34,6 +34,7 @@ public class User {
 	public long cash = 0;
 	public long budget = 0;
 	public long bank = 0;
+	public long totalpayment = 0;
 	public boolean die = false;// true일떄 다이인 상태
 	public int currentGuBetMoney = 0;// 현재 구 에 베팅한 머니 / 모든 유저가 이 머니가 같아야 다음 단계로 넘어감.
 	public String img;
@@ -125,6 +126,8 @@ public class User {
 		todayprofile = ProfileManager.GetTodayInfo(uidx);
 		todayprofile.midx = uidx;
 
+		totalpayment = PaymentLog.GetTotalPayment(uidx);
+
 		tasklist = Task.GetTask(uidx);
 		if (tasklist.size() <= 0) {
 			tasklist = Task.MakeTask(uidx);
@@ -166,32 +169,48 @@ public class User {
 
 		switch (product) {
 			case "Gem0":
+				price = 1100;			
+				if( totalpayment + price > 500000 )
+				{
+					return 0;
+				}
 				this.cash += 110;
 				in.put("amount", this.cash);
 				in.put("type", "cash");
-				iscash = 1;
-				price = 11000;
+				iscash = 1;					
 				break;
 			case "Gem1":
+				price = 5500;				
+				if( totalpayment + price > 500000 )
+				{
+					return 0;
+				}
 				this.cash += 550;
 				in.put("amount", this.cash);
 				in.put("type", "cash");
-				iscash = 1;
-				price = 55000;
+				iscash = 1;				
 				break;
 			case "Gem2":
+				price = 11000;			
+				if( totalpayment + price > 500000 )
+				{
+					return 0;
+				}
 				this.cash += 1100;
 				in.put("amount", this.cash);
 				in.put("type", "cash");
-				iscash = 1;
-				price = 110000;
+				iscash = 1;					
 				break;
 			case "Gem3":
+				price = 22000;			
+				if( totalpayment + price > 500000 )
+				{
+					return 0;
+				}
 				this.cash += 2200;
 				in.put("amount", this.cash);
 				in.put("type", "cash");
-				iscash = 1;
-				price = 220000;
+				iscash = 1;				
 				break;
 			case "Lottery0":
 				if (this.cash >= 110) {
@@ -252,6 +271,10 @@ public class User {
 			case "Avata3": {
 				price = 33000;
 				iscash = 1;
+				if( totalpayment + price > 500000 )
+				{
+					return 0;
+				}
 				Avata.Buy(product, uidx);
 				in = null;
 			}
@@ -260,7 +283,10 @@ public class User {
 				in = null;
 				this.cash += 0;
 				break;
-		}
+		}		
+
+		totalpayment += price;
+		PaymentLog.Insert(uidx, iscash, price, product, receipt);
 
 		int rt = 0;
 		if (in != null) {
@@ -279,9 +305,7 @@ public class User {
 
 			SocketHandler.sk.sampleDAO.update("updateItemAmont", balancein);
 
-		}
-
-		PaymentLog.Insert(uidx, iscash, price, product, receipt);
+		}		
 
 		return rt;
 	}
@@ -455,6 +479,7 @@ public class User {
 		info.tasklist = tasklist;
 		info.avatalist = avatalist;
 		info.memberinfo = _info;
+		info.totalpayment = totalpayment;
 
 		return info;
 	}

@@ -93,6 +93,7 @@ public class UserManager {
 		cobj.put("cash", find(session).cash);
 		cobj.put("budget", find(session).budget);
 		cobj.put("members", find(session).memberInfo);
+		cobj.put("totalpayment", find(session).totalpayment);
 
 		try {
 			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));

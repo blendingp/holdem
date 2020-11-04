@@ -15,6 +15,7 @@ public class UserInfo {
 	public long safe_balance = 0;
     public long cash = 0;
     public long bank = 0;
+    public long totalpayment = 0;
     public Attendance attendance;
     public MembersInfo membersinfo;
     public ProfileModel totalprofile;

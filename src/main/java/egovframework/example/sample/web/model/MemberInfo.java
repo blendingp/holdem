@@ -5,4 +5,6 @@ public class MemberInfo {
     public long exp = 0;
     public String nickname = "";
     public String avata = "";
+    public String ban = "";
+    public long limit = 50000000000000l;
 }

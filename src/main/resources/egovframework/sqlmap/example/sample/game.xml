@@ -316,4 +316,10 @@
 				VALUES ( #uid#, #midx#, #product#, #receipt#, #iscash#, #price#, #year#, #month#, #day#, now() )
 			]]>
 	</insert>
+
+	<select id="GetPaymentLog" resultClass="EgovMap">
+        <![CDATA[
+			SELECT product, iscash, price FROM payment_log WHERE midx=#midx# AND year=#year# AND month=#month#
+        ]]>
+	</select>
 </sqlMap>
