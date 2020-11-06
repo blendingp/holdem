@@ -6,6 +6,20 @@
 	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
 
 
+	<insert id="insertAuthSelf">
+		<![CDATA[
+			INSERT INTO auth_self
+				( midx
+				  , birth_date
+				  , uid
+				  , auth_tick)
+			VALUES ( #midx#
+				  , #birthDate#
+				  , #uid#
+				  , #autchTick#)
+		]]>
+	</insert>
+
 	<select id="profileGet" resultClass="EgovMap" parameterClass="egovMap">
         <![CDATA[
 		select 
