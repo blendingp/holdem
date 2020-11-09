@@ -1,27 +1,95 @@
-package egovframework.example.sample.Admin;
+package egovframework.example.sample.admin;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import egovframework.example.sample.service.impl.SampleDAO;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 @Controller
+@RequestMapping("/admin")
 public class AdminController {
 	@Resource(name = "sampleDAO")
 	private SampleDAO sampleDAO;
 	
+    private static byte[] Sha256(String password) throws NoSuchAlgorithmException {
+        MessageDigest messagediegest = MessageDigest.getInstance("SHA-256");
+        messagediegest.update(password.getBytes());
+        return messagediegest.digest();
+    }
+    
+    private static String BytesToHex(byte[] bytes) {
+        StringBuilder builder = new StringBuilder();
+
+        for (byte b: bytes) {
+          builder.append(String.format("%02x", b));
+        }
+        
+        return builder.toString();
+    }
+    
 	@RequestMapping(value = "/leftmenu.do")
 	public String leftmenu(HttpServletRequest request, ModelMap model) throws Exception {
 		return "frame/leftmenu";
+	}
+	
+	@RequestMapping(value="/login.do")
+	public String login() {
+		return "admin/login";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/loginChk.do" , produces = "application/json; charset=utf8")
+	public String loginChk(HttpServletRequest request) {
+		String id = ""+request.getParameter("id");
+		String pw = ""+request.getParameter("pw");
+		String savePw = "";
+		try {
+			savePw = BytesToHex(Sha256(pw));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		EgovMap in = new EgovMap();
+		in.put("id", id);
+		in.put("pw", savePw);
+		JSONObject lobj = new JSONObject();
+		HttpSession session = request.getSession();
+		if(sampleDAO.select("selectAdminLoginChk" , in)== null)
+		{
+			lobj.put("result", "fail");
+			lobj.put("msg", "아이디 혹은 비밀번호를 확인해주세요");
+		}
+		else
+		{
+			lobj.put("result", "success");
+			session.setAttribute("adminId", id);
+		}
+		return lobj.toJSONString();
+	}
+	
+	@RequestMapping(value="/logout.do")
+	public String logout(HttpServletRequest request) {
+		HttpSession session = request.getSession();
+		session.setAttribute("adminId", null);
+		return "redirect:login.do";
+	}
+	
+	@RequestMapping(value="/main.do")
+	public String main() {
+		return "admin/main";
 	}
 	
 	@RequestMapping(value = "/gamelogp.do")

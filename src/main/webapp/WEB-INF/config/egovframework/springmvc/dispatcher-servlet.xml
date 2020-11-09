@@ -30,6 +30,7 @@
         <property name="interceptors">
             <list>
                 <ref bean="localeChangeInterceptor" />
+                <ref bean="accessAuthorityInterceptor" /> 
             </list>
         </property>
     </bean>
@@ -39,7 +40,18 @@
     <bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
         <property name="paramName" value="language" />
     </bean>
-
+    
+    <!-- 관리자 로그인 interceptor -->
+    <bean id="accessAuthorityInterceptor" class="egovframework.example.sample.admin.LoginInterceptor">
+    	<property name="urls">
+    		<list> <!-- interceptor 제외할 url list -->
+    			<value>/holdem/admin/login.do</value>
+    			<value>/holdem/admin/loginChk.do</value>
+    			<value>/holdem/admin/logout.do</value>
+    		</list>
+    	</property>
+    </bean>
+    
     <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
         <property name="defaultErrorView" value="cmmn/egovError"/>
         <property name="exceptionMappings">
@@ -58,11 +70,13 @@
 
     <!-- For Pagination Tag -->
     <bean id="imageRenderer" class="egovframework.example.cmmn.web.EgovImgPaginationRenderer"/>
-
+    <bean id="adminRenderer" class="egovframework.example.sample.admin.AdminPaginationRenderer"/>
+    
     <bean id="paginationManager" class="egovframework.rte.ptl.mvc.tags.ui.pagination.DefaultPaginationManager">
         <property name="rendererType">
             <map>
                 <entry key="image" value-ref="imageRenderer"/>
+                <entry key="admin" value-ref="adminRenderer"/>
             </map>
         </property>
     </bean>
