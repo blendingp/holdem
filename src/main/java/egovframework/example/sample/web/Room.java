@@ -88,47 +88,49 @@ public class Room {
 		gameManager.sendRoom(myobj);
 	}
 
-	public void notifyJoinUser() {
+	public void notifyJoinUser(User u) {
 
-		for(User u : gameManager.userlist){
-			JSONObject myobj = new JSONObject();						
-			myobj.put("cmd","RoomJoinOk");
-			myobj.put("roomidx",ridx);
-			myobj.put("useridx",u.uidx);//참여자인덱스
-			myobj.put("seat",u.seat);
-			myobj.put("ante",defaultmoney);
-			myobj.put("max",maxmoney);
-			myobj.put("maxuser", maxusersize);
-			
-			//방에 참여중인 모든 사람 불러오기
-			JSONArray j = new JSONArray();
-			for(int i=0; i<gameManager.userlist.size(); i++)
-			{
-				JSONObject item = new JSONObject();
-				item.put("useridx",gameManager.userlist.get(i).uidx);
-				item.put("seat",gameManager.userlist.get(i).seat);
-				item.put("img",""+ gameManager.userlist.get(i).img);				
-				if( this.UsedItem.equals("balance") == true){
-					item.put("balance",gameManager.userlist.get(i).balance);
-				}			
-				else if( this.UsedItem.equals("point") == true){
-					item.put("balance",gameManager.userlist.get(i).point);
-				}
-				item.put("nickname",""+ gameManager.userlist.get(i).nickname);
-				item.put("profile", gameManager.userlist.get(i).todayprofile);
-				j.add(item);
-			}
-			myobj.put("userlist", j);
+		JSONObject myobj = new JSONObject();
+		myobj.put("cmd", "RoomJoinOk");
+		myobj.put("roomidx", ridx);
+		myobj.put("useridx", u.uidx);// 참여자인덱스
+		myobj.put("seat", u.seat);
+		myobj.put("ante", defaultmoney);
+		myobj.put("max", maxmoney);
+		myobj.put("maxuser", maxusersize);
 
-			ObjectMapper mapper = new ObjectMapper();
-
-			try {
-				u.session.sendMessage(new TextMessage(mapper.writeValueAsString(myobj)));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-
+		ArrayList<User> joinuserlist = new ArrayList<>();
+		for( User user : gameManager.userlist )
+		{
+			joinuserlist.add(user);
 		}
+
+		for( User user : gameManager.watchinguserlist )
+		{
+			joinuserlist.add(user);
+		}
+		
+		// 방에 참여중인 모든 사람 불러오기
+		JSONArray j = new JSONArray();
+		for (int i = 0; i < joinuserlist.size(); i++) {
+			JSONObject item = new JSONObject();
+			item.put("useridx", joinuserlist.get(i).uidx);
+			item.put("seat", joinuserlist.get(i).seat);
+			item.put("img", "" + joinuserlist.get(i).img);
+			if (this.UsedItem.equals("balance") == true) {
+				item.put("balance", joinuserlist.get(i).balance);
+			} else if (this.UsedItem.equals("point") == true) {
+				item.put("balance", joinuserlist.get(i).point);
+			}
+			item.put("isdie", joinuserlist.get(i).die);
+			item.put("nickname", "" + joinuserlist.get(i).nickname);
+			item.put("profile", joinuserlist.get(i).todayprofile);
+			j.add(item);
+		}
+		
+		myobj.put("userlist", j);
+
+		gameManager.sendRoom(myobj);
 	}
 
 	public void notifyLeaveUser(int seat) {
@@ -137,16 +139,7 @@ public class Room {
 		myobj.put("cmd","RoomLeaveOk");
 		myobj.put("seat",seat);
 		//방에 참여중인 모든 사람 불러오기
-		for(int i = 0; i<gameManager.userlist.size(); i++){
-
-			try {
-				gameManager.userlist.get(i).session.sendMessage(new TextMessage(myobj.toJSONString()));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block								
-				System.out.println(e.getMessage());
-				e.printStackTrace();
-			}
-		}
+		gameManager.sendRoom(myobj);
 
 	}
 
@@ -161,26 +154,32 @@ public class Room {
 			if( u.point < defaultmoney * 3 ){
 				return false;
 			}
+		}		
+
+		if( gameManager.GetEmptySeat() < 0 )
+		{
+			return false;
 		}
 
-		System.out.println(gameManager.GameMode);
+		u.seat = gameManager.GetEmptySeat();		
+		gameManager.SetSeat(u.seat);
+		u.roomnum = ridx;		
 		
 		if( gameManager.GameMode == "대기" )
+		{						
+			gameManager.userlist.add( u );		
+			gameManager.startCheck(u, gameManager.userlist);			
+			
+			gameManager.setWorkTime( );//새로 한명 들어올때마다 대기 시간을 증가시켜서 여러명이 들어올 여지를 둔다.			
+		}
+		else
 		{
-			u.seat = gameManager.GetEmptySeat();		
-			gameManager.SetSeat(u.seat);
-			
-			gameManager.userlist.add( u );
-			u.roomnum = ridx;
-			gameManager.startCheck(u, gameManager.userlist);
-			notifyJoinUser();
-			
-			gameManager.setWorkTime( );//새로 한명 들어올때마다 대기 시간을 증가시켜서 여러명이 들어올 여지를 둔다.
-
-			return true;
+			gameManager.InsertWatchingUser(u);
 		}
 
-		return false;
+		notifyJoinUser(u);
+
+		return true;
 				
 	}
 
@@ -188,6 +187,8 @@ public class Room {
 		System.out.println(u.seat);
 		gameManager.EmptySeat(u.seat);
 		gameManager.userlist.remove(u);
+		gameManager.leaveuserlist.remove(u);
+		gameManager.watchinguserlist.remove(u);
 		/*
 		for(int k=0; k<gameManager.userlist.size(); k++)
 			gameManager.userlist.get(k).seat = k;*/		

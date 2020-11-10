@@ -9,12 +9,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.springframework.ui.Model;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+
+import egovframework.example.sample.web.model.BanModel;
 
 public class GameManager {		
 	public ArrayList<User> userlist = new ArrayList<User>();	
 	public ArrayList<User> leaveuserlist = new ArrayList<User>();	
+	public ArrayList<User> watchinguserlist = new ArrayList<User>();	
 	public int[] seats = {-1, -1, -1, -1, -1, -1, -1, -1, -1};		
 	public CardManager cardManager = new CardManager();	
 	//public User reuser = new User();
@@ -117,7 +121,8 @@ public class GameManager {
 			u.currentGuBetMoney = 0;
 	}
 	void sendRoom(JSONObject obj){
-		sendList(obj,userlist);
+		sendList(obj, userlist);
+		sendList(obj, watchinguserlist);
 	}
 	void sendList(JSONObject obj, ArrayList<User> lst){
 
@@ -132,15 +137,8 @@ public class GameManager {
 	}
 
 	void startCheck(User user, ArrayList<User> userlist){
-		if (user != null)
-			user.setGameStat("OK");
-		int cnt = 0;
-		for(User u : userlist){
-			if(u.getGameStat()=="OK"){
-				cnt++;
-			}
-		}
-		if(cnt>=2) {			
+						
+		if(userlist.size() >= 2) {			
 			setWorkTime( );
 			changeGameMode("대기");
 		}
@@ -159,11 +157,17 @@ public class GameManager {
 	void DealerSeatSetting(){
 		dealerSeatNum = getDealerSeatOffset(0);
 	}
-	void startSetting(){
+	void startSetting(){		
 		gu = 1;
 		setGameId(SocketHandler.GameIdxAdder());
 		gamePot.clear();
 		gamePot.add(new Pot());
+
+		card1 = null;
+		card2 = null;
+		card3 = null;
+		card4 = null;
+		card5 = null;
 		
 		SocketHandler.insertLog(getGameId(), "gamestart", -1, -1, -1, "게임시작", -1, -1);
 		whosturn = 0;
@@ -173,6 +177,10 @@ public class GameManager {
 		preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.		
 
 		//cardarr = new int[userlist.size()][7];
+
+		for(User u : watchinguserlist){
+
+		}
 
 		for(User u : userlist){
 			SocketHandler.insertLog(getGameId(), "join", u.uidx , u.balance , u.seat , "참가머니", room.defaultmoney , -1);
@@ -214,10 +222,15 @@ public class GameManager {
 	void setDealerSeat()
 	{
 		int seat = dealerSeatNum + this.seats.length - 1;
-		for( int nCount = this.seats.length; nCount >= 0; --nCount )
+		for( int nCount = this.seats.length * 2; nCount >= 0; --nCount )
 		{						
 			if( this.seats[(seat + nCount)%this.seats.length] >= 0 )
 			{
+				if( IsJoinGame((seat + nCount)%this.seats.length) == false)				
+				{
+					continue;					
+				}
+
 				if( room.UsedItem.equals("balance") == true){
 					if( SearchUserBySeat((seat + nCount)%this.seats.length).balance <= 0 )
 					{
@@ -240,7 +253,12 @@ public class GameManager {
 	int getDealerSeat(){
 		
 		for( int nCount = this.seats.length * 2; nCount >= 0; --nCount )
-		{						
+		{	
+			if( IsJoinGame((dealerSeatNum + nCount)%this.seats.length) == false)				
+			{
+				continue;					
+			}
+			
 			if( this.seats[(dealerSeatNum + nCount)%this.seats.length] >= 0 )
 			{
 				dealerSeatNum = (dealerSeatNum + nCount)%this.seats.length;				
@@ -259,6 +277,11 @@ public class GameManager {
 		{				
 			if( this.seats[(seat + nCount)%this.seats.length] >= 0 )
 			{				
+				if( IsJoinGame((seat + nCount)%this.seats.length) == false)				
+				{
+					continue;					
+				}
+
 				if( offset > 0 )
 				{
 					offset--;
@@ -363,7 +386,7 @@ public class GameManager {
 		}
 		
 		if(GameMode.compareTo("대기")==0){
-			System.out.println("isPlayable():"+isPlayable()+" checkCmdTime(6):"+checkCmdTime(6));
+			//System.out.println("isPlayable():"+isPlayable()+" checkCmdTime(6):"+checkCmdTime(6));
 			LeaveReserveUser();
 			if (isPlayable() && checkCmdTime(6) ){
 				setWorkTime();
@@ -374,8 +397,9 @@ public class GameManager {
 
 	void LeaveReserveUser()
 	{
-		for(User user : leaveuserlist) 
+		for(int nCount = 0; nCount < leaveuserlist.size(); ++nCount) 
 		{
+			User user = leaveuserlist.get(nCount);
 			room.notifyLeaveUser(user.seat);
 			room.leave(user);
 		}
@@ -391,6 +415,28 @@ public class GameManager {
 			if( room.UsedItem.equals("balance") == true){
 				if( u.balance == 0){
 					rmlist.add(u);
+				}
+
+				if( Math.abs(u.todayprofile.gaingold) >= u._info.limit && u.todayprofile.gaingold < 0)
+				{
+					u._info.RecordBan(1, System.currentTimeMillis() + 86400000);
+					u.UpdateMemberInfo();
+					BanModel ban = new BanModel();
+					ban.type = 1;
+					ban.expire = System.currentTimeMillis() + 86400000;
+					JSONObject obj = new JSONObject();											
+					obj.put("cmd","ban");
+					obj.put("ban", ban);
+
+					ObjectMapper mapper = new ObjectMapper();
+						
+					try {
+						u.session.sendMessage(new TextMessage(mapper.writeValueAsString(obj)));
+						SocketHandler.sk.disconnect(u.session);
+						u.session.close();						
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}			
 			else if( room.UsedItem.equals("point") == true){
@@ -507,7 +553,10 @@ public class GameManager {
 				{
 					System.out.println("--die--");
 					System.out.println((whosturn + nCount)%this.seats.length);
-					SearchUserBySeat((whosturn + nCount)%this.seats.length).PlayStatus = -1;
+					if( SearchUserBySeat((whosturn + nCount)%this.seats.length) != null )
+					{
+						SearchUserBySeat((whosturn + nCount)%this.seats.length).PlayStatus = -1;	
+					}					
 					continue;					
 				}
 				if( checkLeave((whosturn + nCount)%this.seats.length) == true )
@@ -569,6 +618,7 @@ public class GameManager {
 
 		JSONObject obj = new JSONObject();		
 		obj.put("cmd","bet");
+		System.out.println("다음 사람 베팅 하시오:"+whosturn );		
 		if( turncnt == 0 )
 		{
 			if( preTotalBetmoney >= room.maxmoney)
@@ -595,8 +645,7 @@ public class GameManager {
 		obj.put("prebetmoney", preTotalBetmoney );
 		obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
 		
-		timer = SocketHandler.second;
-		System.out.println("다음 사람 베팅 하시오:"+whosturn );		
+		timer = SocketHandler.second;		
 		sendRoom( obj);
 	}
 
@@ -667,8 +716,9 @@ public class GameManager {
 			
 			if( uu.die == true)
 			{
-				
+				continue;		
 			}	
+			
 			if( room.UsedItem.equals("balance") == true){
 				if( uu.balance <= 0 || uu.betmoney >= room.maxmoney)
 				{
@@ -979,6 +1029,14 @@ public class GameManager {
 	
 	public boolean checkDieturn(int who){
 		
+		for( int nCount = 0; nCount < watchinguserlist.size(); ++nCount )
+		{
+			if(watchinguserlist.get(nCount).seat == who)
+			{
+				return true;
+			}
+		}
+
 		for( int nCount = 0; nCount < userlist.size(); ++nCount )
 		{
 			if(userlist.get(nCount).seat == who)
@@ -1540,10 +1598,11 @@ public class GameManager {
 	
 	int tempInfo1,tempInfo2;//임시 카드정보
 	public void showResult(){
+		/*
 		for( User user :leaveuserlist )
 		{
 			EmptySeat(user.seat);
-		}
+		}*/
 
 		ArrayList<User> sortRank;
 		whosturn=0;
@@ -1734,6 +1793,50 @@ public class GameManager {
 		}
 		obj.put("cardlist", j);
 		sendRoom(obj);
+
+		for( User u : watchinguserlist )
+		{
+			userlist.add(u);
+		}
+
+		watchinguserlist.clear();
+	}
+
+	public void InsertWatchingUser(User user)
+	{
+		watchinguserlist.add(user);
+		ArrayList<Integer> cardlist = new ArrayList<>();
+		if( card1 != null )
+		{
+			cardlist.add(card1.cardcode);
+		}
+		if( card2 != null )
+		{
+			cardlist.add(card2.cardcode);
+		}
+		if( card3 != null )
+		{
+			cardlist.add(card3.cardcode);
+		}		
+		if( card4 != null )
+		{
+			cardlist.add(card4.cardcode);
+		}
+		if( card5 != null )
+		{
+			cardlist.add(card5.cardcode);
+		}
+
+		JSONObject obj = new JSONObject();
+		obj.put("cmd","watching");
+		obj.put("cardlist", cardlist);
+		obj.put("totalbet", totalmoney);
+
+		try {
+			user.session.sendMessage(new TextMessage(obj.toJSONString()));
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	private JSONObject MakeWinCard(int lv, ArrayList<Integer> cards) {
@@ -1756,6 +1859,19 @@ public class GameManager {
 		}
 		
 		return null;		
+	}
+
+	private boolean IsJoinGame(int seat)
+	{
+		for( User user : userlist )
+		{
+			if( user.seat == seat )
+			{
+				return true;				
+			}
+		}
+
+		return false;
 	}
 	
 	private int GetAbleBettingUserCount()
@@ -1789,7 +1905,7 @@ public class GameManager {
 		}
 		
 		return total;
-	}
+	}	
 
 	private int GetBettingEndUserCount()
 	{

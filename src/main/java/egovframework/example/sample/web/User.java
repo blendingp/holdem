@@ -13,6 +13,7 @@ import org.json.simple.JSONObject;
 import org.springframework.web.socket.WebSocketSession;
 
 import egovframework.example.sample.service.impl.SampleDAO;
+import egovframework.example.sample.web.model.BanModel;
 import egovframework.example.sample.web.model.MemberInfo;
 import egovframework.example.sample.web.model.MembersInfo;
 import egovframework.example.sample.web.model.MembersShopInfo;
@@ -49,6 +50,7 @@ public class User {
 	public ArrayList<TaskModel> tasklist;
 	public ArrayList<String> avatalist = new ArrayList<>();
 	public ArrayList<Integer> cardarr = new ArrayList<>();
+	public ArrayList<Item> consumableItem = new ArrayList<>();
 
 	MemberInfo _info;
 	String gamestat = "";
@@ -65,13 +67,11 @@ public class User {
 		die = false;
 	}
 
-	public User(int uidx, WebSocketSession session, String userid) {
-		System.out.println("user객체생성 dbg1");
+	public User(int uidx, WebSocketSession session, String userid) {		
 		this.uidx = uidx;
 		this.nickname = userid;
 		this.balance = 1100;
-		this.session = session;
-		System.out.println("user객체생성 dbg2");
+		this.session = session;		
 
 		EgovMap in = new EgovMap();
 		in.put("midx", uidx);
@@ -110,6 +110,30 @@ public class User {
 				} else if (ed.get(nCount).get("type").toString().equals("avata4") == true) {
 					if ((long) ed.get(nCount).get("amount") > 0) {
 						avatalist.add("avata4");
+					}
+				}
+				else if (ed.get(nCount).get("type").toString().equals("chiprefill500") == true) {
+					if ((long) ed.get(nCount).get("amount") > 0) {
+						Item item = new Item();
+						item.Type = ed.get(nCount).get("type").toString();
+						item.Amount = (long) ed.get(nCount).get("amount");
+						consumableItem.add(item);
+					}
+				}
+				else if (ed.get(nCount).get("type").toString().equals("chiprefill1000") == true) {
+					if ((long) ed.get(nCount).get("amount") > 0) {
+						Item item = new Item();
+						item.Type = ed.get(nCount).get("type").toString();
+						item.Amount = (long) ed.get(nCount).get("amount");
+						consumableItem.add(item);
+					}
+				}
+				else if (ed.get(nCount).get("type").toString().equals("refill2000") == true) {
+					if ((long) ed.get(nCount).get("amount") > 0) {
+						Item item = new Item();
+						item.Type = ed.get(nCount).get("type").toString();
+						item.Amount = (long) ed.get(nCount).get("amount");
+						consumableItem.add(item);
 					}
 				}
 			}
@@ -161,9 +185,9 @@ public class User {
 		// System.out.println(receipt);
 
 		EgovMap in = new EgovMap();
-		in.put("midx", uidx);
-		int lottery = 0;
+		in.put("midx", uidx);		
 
+		String item = "";
 		int iscash = 0;
 		long price = 0;	
 
@@ -211,39 +235,7 @@ public class User {
 				in.put("amount", this.cash);
 				in.put("type", "cash");
 				iscash = 1;				
-				break;
-			case "Lottery0":
-				if (this.cash >= 110) {
-					this.cash -= 110;
-					in.put("amount", this.cash);
-					in.put("type", "cash");
-					lottery = 100 - (int) (Math.random() * 90);
-				}
-				break;
-			case "Lottery1":
-				if (this.cash >= 220) {
-					this.cash -= 220;
-					in.put("amount", this.cash);
-					in.put("type", "cash");
-					lottery = 200 - (int) (Math.random() * 150);
-				}
-				break;
-			case "Lottery2":
-				if (this.cash >= 550) {
-					this.cash -= 550;
-					in.put("amount", this.cash);
-					in.put("type", "cash");
-					lottery = 500 - (int) (Math.random() * 400);
-				}
-				break;
-			case "Lottery3":
-				if (this.cash >= 1100) {
-					this.cash -= 1100;
-					in.put("amount", this.cash);
-					in.put("type", "cash");
-					lottery = 10000 - (int) (Math.random() * 9000);
-				}
-				break;
+				break;			
 			case "silver": {
 				Members.BuyMembers(this, 1);
 				in.put("amount", this.cash);
@@ -261,6 +253,18 @@ public class User {
 				in.put("amount", this.cash);
 				in.put("type", "cash");
 			}
+				break;
+			case "refill500":
+				if (this.cash >= 40) 
+				{
+					item = product;
+				}
+				break;
+			case "refill1000":
+				if (this.cash >= 40) 
+				{
+					item = product;
+				}
 				break;
 			case "Avata0":
 				price = 5500;
@@ -295,13 +299,12 @@ public class User {
 			rt = 1;
 		}
 
-		if (lottery > 0) {
-			this.balance += lottery;
+		if (item.isEmpty() == false) {			
 
 			EgovMap balancein = new EgovMap();
 			balancein.put("midx", uidx);
-			balancein.put("amount", this.balance);
-			balancein.put("type", "balance");
+			balancein.put("amount", 10);
+			balancein.put("type", item);
 
 			SocketHandler.sk.sampleDAO.update("updateItemAmont", balancein);
 
@@ -633,14 +636,23 @@ public class User {
 		if( ed != null )
 		{
 			try {
-				String jsonstring = mapper.writeValueAsString(ed);
+				String jsonstring = mapper.writeValueAsString(ed);				
 				_info = mapper.readValue(jsonstring, MemberInfo.class);			
+				if( _info.ban.isEmpty() == false )
+				{
+					BanModel ban = mapper.readValue(_info.ban, BanModel.class);
+					if( ban.expire < System.currentTimeMillis() )
+					{
+						_info.ban = "";
+						UpdateMemberInfo();
+					}
+				}
 	
 			} catch (JsonProcessingException e) {
 				System.out.println(e.getMessage());
 			}
 
-			this.img = _info.avata;		
+			this.img = _info.avata;					
 		}		
 		else
 		{
@@ -654,7 +666,7 @@ public class User {
 		}		
 	}
 
-	private void UpdateMemberInfo()
+	public void UpdateMemberInfo()
 	{
 		ObjectMapper mapper = new ObjectMapper();
 		try {

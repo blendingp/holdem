@@ -449,7 +449,7 @@ public class UserManager {
 
 		JSONObject cobj = new JSONObject();
 		cobj.put("cmd", "userinfo");							
-		cobj.put("info", find(session).MakeUserInfo());
+		cobj.put("info", find(session).MakeUserInfo());		
 
 		JSONObject jackpot = new JSONObject();
 		jackpot.put("cmd", "jackpot");							
@@ -460,6 +460,10 @@ public class UserManager {
 		try {
 			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
 			session.sendMessage(new TextMessage(mapper.writeValueAsString(jackpot)));
+			if( find(session).MakeUserInfo().memberinfo.ban.isEmpty() == false )
+			{
+				session.close();
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

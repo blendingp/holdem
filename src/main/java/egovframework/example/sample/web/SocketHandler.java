@@ -311,8 +311,8 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
  
     @Override
     public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-    	System.out.println("접속에러" );
-    	disconnect(session);
+    	System.out.println("접속에러\n" + exception.getMessage());
+		disconnect(session);		
         this.logger.error("web socket error!", exception);
     }
  
