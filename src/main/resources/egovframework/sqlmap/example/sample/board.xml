@@ -42,7 +42,7 @@
         ]]>
 	</select>
 	
-	<select id="imageCnt" resultClass="int">
+	<select id="selectMainFileImageCnt" resultClass="int">
 		<![CDATA[
 			select count(*) num
 			from main_file
@@ -50,7 +50,7 @@
 		]]>
 	</select>
 	
-	<delete id="imageDel">
+	<delete id="deleteMainFileImageLimit">
 		<![CDATA[
 			delete from main_file
 			where kind='I'
@@ -59,4 +59,33 @@
 		]]>
 	</delete>
 	
+	<delete id="deleteMainFileImage">
+		<![CDATA[
+			delete from main_file
+			where idx = #idx#
+		]]>
+	</delete>
+	
+	<select id="selectMainFileDetail" resultClass="EgovMap">
+        <![CDATA[
+        	select * 
+        	from main_file
+        	where idx = #idx#
+        ]]>
+	</select>
+	
+	<update id="updateMainFileImageOrderNum" parameterClass="egovMap">
+        <![CDATA[
+        	update main_file
+        	set	orderNum = #orderNum#
+        	where idx = #idx#
+        ]]>
+	</update>
+	
+	<insert id="insertInquiry" parameterClass="egovMap">
+		<![CDATA[
+			insert into inquiry (title , text , pw , regDate , answerYn)
+			values (#title# , #text# , #pw# , now() , 'N')
+		]]>
+	</insert>
 </sqlMap>

@@ -60,11 +60,15 @@
 				contentType:false,
 				data: data,
 				success:function(data){
-					/* if(data.success == 'success'){
+					if(data.success == 'success')
+					{
 						alert("이미지가 등록되었습니다. ");
-						location.href="/holdem/admin/imgae.do";
-					} */
-					console.log(data)
+						location.href="/holdem/admin/image.do";
+					}
+					else
+					{
+						alert("등록 중 오류가 발생했습니다 \n다시 시도해주세요.");
+					}
 				},
 				error:function(e){
 					console.log('ajaxError' + e);

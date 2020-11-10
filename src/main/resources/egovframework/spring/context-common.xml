@@ -47,6 +47,11 @@
 		</property>
 	</bean>
 	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"> 
+	    <property name="maxUploadSize" value="100000000" /> 
+	    <property name="maxInMemorySize" value="100000000" /> 
+	</bean>
+		
 	<bean id="antPathMater" class="org.springframework.util.AntPathMatcher" />
 	<bean id="defaultTraceHandler" class="egovframework.rte.fdl.cmmn.trace.handler.DefaultTraceHandler" />
 	<util:properties id="fileProperties" location="classpath:/property/file.properties" />

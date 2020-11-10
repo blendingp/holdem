@@ -1,16 +1,20 @@
 package egovframework.example.sample.admin;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -85,6 +89,8 @@ public class BoardController {
 	public String imageInsert(MultipartHttpServletRequest mtfRequest) {
 		List<MultipartFile> mf = mtfRequest.getFiles("file");
 		String path = fileProperties.getProperty("file.photo");
+		JSONObject obj = new JSONObject();
+		obj.put("success", "success");
 		if (!new File(path).exists()) {
 			new File(path).mkdirs();
 		}
@@ -104,6 +110,7 @@ public class BoardController {
 						sampleDAO.insert("insertMainFile", in);
 					} catch (Exception e) {
 						e.printStackTrace();
+						obj.put("success", "fail");
 					}
 				}
 
@@ -124,24 +131,18 @@ public class BoardController {
 						sampleDAO.insert("insertMainFile", in);
 					} catch (Exception e) {
 						e.printStackTrace();
+						obj.put("success", "fail");
 					}
 				}
 			}
 		}
-
-		int imageCnt = (int) sampleDAO.select("imageCnt");
-		System.out.println("imageCnt======" + imageCnt);
-
-		
+		int imageCnt = (int) sampleDAO.select("selectMainFileImageCnt");
 		if(imageCnt > 7) { 
 			int limit = imageCnt -7;
-			System.out.println("limit====="+limit); EgovMap in = new EgovMap();
-			in.put("limit",limit); sampleDAO.delete("imageDel",in); 
+			EgovMap in = new EgovMap();
+			in.put("limit",limit); 
+			sampleDAO.delete("deleteMainFileImageLimit",in); 
 		}
-		
-		JSONObject obj = new JSONObject();
-
-		obj.put("success", "success");
 
 		return obj.toJSONString();
 	}
@@ -152,13 +153,19 @@ public class BoardController {
 		JSONObject obj = new JSONObject();
 		EgovMap in = new EgovMap();
 		String result = "success";
-		
+		String path = fileProperties.getProperty("file.photo");
 		String delList = ""+request.getParameter("delArray");
 		String[] delArray = delList.split("-");
 		if(delArray != null && delArray.length > 0){
 			for(int i=0; i<delArray.length; i++){
 				in.put("idx", delArray[i]);
-				sampleDAO.delete("iamgeDelete" , in);
+				EgovMap fileInfo = (EgovMap)sampleDAO.select("selectMainFileDetail" , in);
+				File file = new File(path+fileInfo.get("saveNm"));
+				if(file.exists())
+				{
+					file.delete();
+				}
+				sampleDAO.delete("deleteMainFileImage" , in);
 			}
 			result = "success";
 		}else{
@@ -169,4 +176,25 @@ public class BoardController {
 		return obj.toJSONString();
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/imageOrderUpdate.do", produces="application/json; charset=utf8;")
+	public String imageOrderUpdate(HttpServletRequest request)throws Exception {
+		String[] numArr = request.getParameterValues("numArr");
+		String[] idxArr = request.getParameterValues("idxArr");
+		JSONObject obj = new JSONObject();
+		for(int numCnt = 0; numCnt < numArr.length; numCnt++) {
+			EgovMap in = new EgovMap();
+			in.put("idx", idxArr[numCnt]);
+			in.put("orderNum", numArr[numCnt]);
+			try {
+				sampleDAO.update("updateMainFileImageOrderNum",in);
+			} catch (Exception e) {
+				obj.put("result", "fail");
+				return obj.toJSONString();
+			}
+		}
+		obj.put("result", "success");
+		return obj.toJSONString();
+	}
+	
 }
