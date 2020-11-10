@@ -17,3 +17,7 @@
     <link href="/holdem/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
 
 	<title>Wingame</title>
+	
+	<!-- jQuery -->
+	<script src="/holdem/vendor/jquery/jquery.min.js"></script>
+	

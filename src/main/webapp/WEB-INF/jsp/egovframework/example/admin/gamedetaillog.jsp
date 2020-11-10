@@ -14,7 +14,7 @@
 	<script>
 		        function fn_egov_link_page(pageNo){
 		        	document.listForm.pageIndex.value = pageNo;
-		        	document.listForm.action = "<c:url value='/gameDetailLogp.do'/>";
+		        	document.listForm.action = "<c:url value='/admin/gameDetailLogp.do'/>";
 		           	document.listForm.submit();
 		        }
 		        function showCard( cd){
@@ -30,7 +30,7 @@
 	</script>
 	
     <div id="wrapper">
-         <c:import url="/leftmenu.do" />
+         <c:import url="/admin/leftmenu.do" />
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
@@ -204,21 +204,11 @@
     </div>
     <!-- /#wrapper -->	
 	
-	<form action="/holdem/gameDetailLogp.do" name="listForm" id="listForm">
+	<form action="/holdem/admin/gameDetailLogp.do" name="listForm" id="listForm">
 		<input type="hidden" name="pageIndex" value="1"/>
 	</form>	
 
-    <!-- jQuery -->
-    <script src="/holdem/vendor/jquery/jquery.min.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="/holdem/vendor/bootstrap/js/bootstrap.min.js"></script>
-
-    <!-- Metis Menu Plugin JavaScript -->
-    <script src="/holdem/vendor/metisMenu/metisMenu.min.js"></script>
-
-    <!-- Custom Theme JavaScript -->
-    <script src="/holdem/dist/js/sb-admin-2.js"></script>
+   <jsp:include page="../frame/adminbottom.jsp" flush="true" />
 	
 </body>
 </html>

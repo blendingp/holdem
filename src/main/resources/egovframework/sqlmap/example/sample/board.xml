@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Sample">
+
+	<typeAlias alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap" />
+	<typeAlias alias="searchVO" type="egovframework.example.sample.service.SampleDefaultVO" />
+
+
+	<select id="selectMainFileYoutube" resultClass="EgovMap">
+        <![CDATA[
+        	select * 
+        	from main_file
+        	where kind = 'Y'
+        ]]>
+	</select>
+	
+	<insert id="insertMainFile" parameterClass="EgovMap">
+        <![CDATA[
+        	insert into main_file (originNm , saveNm , kind , orderNum , regDate)
+        	values (#originNm# , #saveNm# , #kind# ,#orderNum# , now()) 
+        ]]>
+	</insert>
+	
+	<update id="updateMainFile" parameterClass="EgovMap">
+        <![CDATA[
+        	update main_file
+        	set originNm = #originNm#,
+        		saveNm = #saveNm# ,
+        		kind = #kind#,
+        		orderNum = #orderNum#,
+        		regDate = now()
+        	where idx = #idx#
+        ]]>
+	</update>
+
+	<select id="selectMainFileImage" resultClass="EgovMap">
+        <![CDATA[
+        	select * 
+        	from main_file
+        	where kind = 'I'
+        ]]>
+	</select>
+</sqlMap>
