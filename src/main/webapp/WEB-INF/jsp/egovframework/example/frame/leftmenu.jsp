@@ -36,6 +36,13 @@
 				<li><a href="/holdem/admin/main.do"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
 				<li><a href="/holdem/admin/gamelogp.do"><i class="fa fa-gamepad fa-fw"></i> 게임로그</a></li>
 				<li><a href="/holdem/admin/chat.do"><i class="fa fa-comment fa-fw"></i> 채팅관리</a></li>
+				<li>
+					<a href="#"><i class="fa fa-thumb-tack fa-fw"></i> 메인<span class="fa arrow"></span></a>
+					<ul class="nav nav-second-level">
+						<li><a href="/holdem/admin/youtube.do"><i class="fa fa-video-camera fa-fw"></i> 유튜브 설정</a></li>
+						<li><a href="/holdem/admin/image.do"><i class="fa fa-image fa-fw"></i> 이미지 설정</a></li>
+					</ul>
+				</li>
 			</ul>
 		</div>
 	</div>

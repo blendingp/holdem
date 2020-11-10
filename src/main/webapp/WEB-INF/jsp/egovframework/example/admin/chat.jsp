@@ -24,45 +24,56 @@
 					<h1 class="page-header">채팅관리</h1>
 				</div>
 			</div>
-			<div class="panel-body">
-				<div class="table-responsive">
-					<button type="button" id="toggleButton" class="btn btn-primary btn-sm">상용문구 등록</button>
-					<form id="frm" action="/holdem/admin/chatinsert.do">
-						<div id="chatbody">
-							<input type="text" name="mention" />
-							<button type="button" onclick="document.getElementById('frm').submit();" class="btn btn-primary btn-sm">등록하기</button>
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<div class="table-responsive">
+								<button type="button" id="toggleButton"
+									class="btn btn-primary btn-sm">상용문구 등록</button>
+								<form id="frm" action="/holdem/admin/chatinsert.do">
+									<div id="chatbody">
+										<input type="text" name="mention" />
+										<button type="button" onclick="document.getElementById('frm').submit();" class="btn btn-primary btn-sm">등록하기</button>
+									</div>
+								</form>
+								<table class="table">
+									<thead>
+										<tr>
+											<th>#</th>
+											<th>상용문구</th>
+											<th>수정</th>
+											<th>삭제</th>
+										</tr>
+									</thead>
+									<tbody>
+										<c:forEach var="result" items="${resultList}">
+											<tr>
+												<td>${result.cidx}</td>
+												<td>${result.cmention}</td>
+												<td>
+													<button type="button"
+														onClick="location.href='/holdem/admin/chatupdate.do?cidx=${result.cidx}'"
+														class="btn btn-primary btn-sm">수정</button>
+												</td>
+												<td>
+													<button type="button"
+														onClick="location.href='/holdem/admin/chatdelete.do?cidx=${result.cidx}'"
+														class="btn btn-primary btn-sm">삭제</button>
+												</td>
+											</tr>
+										</c:forEach>
+									</tbody>
+								</table>
+							</div>
 						</div>
-					</form>
-					<table class="table">
-						<thead>
-							<tr>
-								<th>#</th>
-								<th>상용문구</th>
-								<th>수정</th>
-								<th>삭제</th>
-							</tr>
-						</thead>
-						<tbody>
-							<c:forEach var="result" items="${resultList}">
-								<tr>
-									<td>${result.cidx}</td>
-									<td>${result.cmention}</td>
-									<td>
-										<button type="button"
-											onClick="location.href='/holdem/admin/chatupdate.do?cidx=${result.cidx}'"
-											class="btn btn-primary btn-sm">수정</button>
-									</td>
-									<td>
-										<button type="button"
-											onClick="location.href='/holdem/admin/chatdelete.do?cidx=${result.cidx}'"
-											class="btn btn-primary btn-sm">삭제</button>
-									</td>
-								</tr>
-							</c:forEach>
-						</tbody>
-					</table>
-					<div style="display: flex; justify-content: center">
-						<ui:pagination paginationInfo="${paginationInfo }" type="image" jsFunction="fn_egov_link_page" />
+						<div class="row">
+							<div class="col-sm-12" style="text-align: center;">
+								<ul class="pagination">
+									<ui:pagination paginationInfo="${paginationInfo }" type="admin" jsFunction="fn_egov_link_page" />
+								</ul>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -83,12 +94,9 @@
 		$(document).ready(function() {
 			$('#toggleButton').click(function() {
 				var state = $('#chatbody').css('display');
-				if (state == 'none') 
-				{
+				if (state == 'none') {
 					$('#chatbody').show();
-				} 
-				else 
-				{
+				} else {
 					$('#chatbody').hide();
 				}
 
