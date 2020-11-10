@@ -43,6 +43,15 @@
         ]]>
 	</select>
 	
+	<select id="selectMainFileImageUser" resultClass="EgovMap">
+        <![CDATA[
+        	select * 
+        	from main_file
+        	where kind = 'I'
+        	order by orderNum , regDate desc
+        ]]>
+	</select>
+	
 	<select id="selectMainFileImageCnt" resultClass="int">
 		<![CDATA[
 			select count(*) num

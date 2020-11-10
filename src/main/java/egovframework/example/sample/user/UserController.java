@@ -35,6 +35,7 @@ public class UserController {
 	@RequestMapping(value="/main.do")
 	public String main(ModelMap model) {
 		model.addAttribute("youtube", sampleDAO.select("selectMainFileYoutube"));
+		model.addAttribute("imageList", sampleDAO.list("selectMainFileImageUser"));
 		return "user/main";
 	}
 	
