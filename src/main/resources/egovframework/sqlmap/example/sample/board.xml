@@ -39,6 +39,7 @@
         	select * 
         	from main_file
         	where kind = 'I'
+        	order by regDate desc
         ]]>
 	</select>
 	
@@ -88,4 +89,73 @@
 			values (#title# , #text# , #pw# , now() , 'N')
 		]]>
 	</insert>
+	
+	<insert id="insertNotice" parameterClass="egovMap">
+		<![CDATA[
+			insert into notice (title , text , expsYn , topYn , delYn , regDate)
+			values (#title# , #text# , #expsYn# , #topYn# , 'N' , now())
+		]]>
+	</insert>
+	
+	<insert id="updateNotice" parameterClass="egovMap">
+		<![CDATA[
+			update notice 
+			set title = #title#,
+				text = #text#,
+				expsYn = #expsYn#,
+				topYn = #topYn#
+			where idx = #idx#
+		]]>
+	</insert>
+	
+	<select id="selectNoticeAdmin" resultClass="EgovMap">
+        <![CDATA[
+        	select * 
+        	from notice
+        	where delYn = 'N'
+        	order by regDate desc
+        ]]>
+	</select>
+	
+	<update id="deleteNotice" parameterClass="egovMap">
+        <![CDATA[
+        	update notice
+        	set	delYn = 'Y'
+        	where idx = #idx#
+        ]]>
+	</update>
+	
+	<select id="selectNoticeDetail" resultClass="EgovMap">
+        <![CDATA[
+        	select * 
+        	from notice
+        	where idx = #idx#
+        ]]>
+	</select>
+	
+	<select id="selectInquiryDetail" resultClass="EgovMap">
+        <![CDATA[
+        	select * 
+        	from inquiry
+        	where idx = #idx#
+        ]]>
+	</select>
+	
+	<select id="selectInquiry" resultClass="EgovMap">
+        <![CDATA[
+        	select * 
+        	from inquiry
+        	order by regDate desc
+        ]]>
+	</select>
+	
+	<update id="insertAnswer" parameterClass="egovMap">
+        <![CDATA[
+        	update inquiry
+        	set answer = #answer#,
+        		answerYn= 'Y',
+        		answerDate = now()
+        	where idx = #idx#
+        ]]>
+	</update>
 </sqlMap>

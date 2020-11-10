@@ -32,16 +32,19 @@ function inquiryInsert(){
 	{
 		alert("제목을 입력해주세요.");
 		$("#title").focus();
+		return;
 	}
 	if(text == "")
 	{
 		alert("내용을 입력해주세요.");
 		$("#smartEditor").focus();
+		return;
 	}
 	if(pw == "")
 	{
 		alert("비밀번호를 입력해주세요.");
 		$("#pw").focus();
+		return;
 	}
 	$.ajax({
 		type : 'post',
