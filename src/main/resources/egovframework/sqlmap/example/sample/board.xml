@@ -41,4 +41,22 @@
         	where kind = 'I'
         ]]>
 	</select>
+	
+	<select id="imageCnt" resultClass="int">
+		<![CDATA[
+			select count(*) num
+			from main_file
+			where kind='I'
+		]]>
+	</select>
+	
+	<delete id="imageDel">
+		<![CDATA[
+			delete from main_file
+			where kind='I'
+			order by regDate
+			limit #limit#
+		]]>
+	</delete>
+	
 </sqlMap>

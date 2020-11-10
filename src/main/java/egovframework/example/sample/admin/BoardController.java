@@ -81,17 +81,15 @@ public class BoardController {
 	}
 
 	@ResponseBody
-	@RequestMapping(value = "/imageInsert.do", produces = "application/json; charset=utf8;")
+	@RequestMapping(value = "/imageInsert.do", produces = "appliction/json; charset=utf8")
 	public String imageInsert(MultipartHttpServletRequest mtfRequest) {
-		List<MultipartFile> mf = mtfRequest.getFiles("file[]");
+		List<MultipartFile> mf = mtfRequest.getFiles("file");
 		String path = fileProperties.getProperty("file.photo");
-		if (!new File(path).exists()) 
-		{
-			new File(path).mkdirs(); 
+		if (!new File(path).exists()) {
+			new File(path).mkdirs();
 		}
-		if(mf.size() <= 7)
-		{
-			for(int fileCnt=0; fileCnt < mf.size(); fileCnt ++) {
+		if (mf.size() <= 7) {
+			for (int fileCnt = 0; fileCnt < mf.size(); fileCnt++) {
 				if (!mf.get(fileCnt).isEmpty()) { // 파일 null check
 					String originFileName = mf.get(fileCnt).getOriginalFilename();
 					// 저장될 파일이름
@@ -101,24 +99,74 @@ public class BoardController {
 						EgovMap in = new EgovMap();
 						in.put("originNm", originFileName);
 						in.put("saveNm", safeFile);
-						in.put("orderNum", fileCnt+1);
-						sampleDAO.insert("uploadFileInsert", in); 
+						in.put("orderNum", fileCnt + 1);
+						in.put("kind", "I");
+						sampleDAO.insert("insertMainFile", in);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
 
 			}
-		}
-		else
-		{
-			for(int fileCnt=0; fileCnt < 7; fileCnt ++) {
-				
+		} else {
+			for (int fileCnt = 0; fileCnt < 7; fileCnt++) {
+				if (!mf.get(fileCnt).isEmpty()) { // 파일 null check
+					String originFileName = mf.get(fileCnt).getOriginalFilename();
+					// 저장될 파일이름
+					String safeFile = System.currentTimeMillis() + originFileName;
+					try {
+						mf.get(fileCnt).transferTo(new File(path + safeFile));
+						EgovMap in = new EgovMap();
+						in.put("originNm", originFileName);
+						in.put("saveNm", safeFile);
+						in.put("orderNum", fileCnt + 1);
+						in.put("kind", "I");
+						sampleDAO.insert("insertMainFile", in);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 
+		int imageCnt = (int) sampleDAO.select("imageCnt");
+		System.out.println("imageCnt======" + imageCnt);
+
+		
+		if(imageCnt > 7) { 
+			int limit = imageCnt -7;
+			System.out.println("limit====="+limit); EgovMap in = new EgovMap();
+			in.put("limit",limit); sampleDAO.delete("imageDel",in); 
+		}
+		
 		JSONObject obj = new JSONObject();
-		return "admin/imageAdd";
+
+		obj.put("success", "success");
+
+		return obj.toJSONString();
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/imageDel.do", produces="application/json; charset=utf8;")
+	public String imageDel(HttpServletRequest request)throws Exception {
+		JSONObject obj = new JSONObject();
+		EgovMap in = new EgovMap();
+		String result = "success";
+		
+		String delList = ""+request.getParameter("delArray");
+		String[] delArray = delList.split("-");
+		if(delArray != null && delArray.length > 0){
+			for(int i=0; i<delArray.length; i++){
+				in.put("idx", delArray[i]);
+				sampleDAO.delete("iamgeDelete" , in);
+			}
+			result = "success";
+		}else{
+			result = "nothing";
+		}
+		obj.put("result", result);
+		
+		return obj.toJSONString();
 	}
 
 }

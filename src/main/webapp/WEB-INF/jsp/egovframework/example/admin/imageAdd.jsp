@@ -48,16 +48,22 @@
 			var myFile = $("#file").prop('files');
 			if(myFile.length < 1)
 			{
-				alert("적어도 하나이상의 사진을 올려야합니다.");
+				alert("적어도 하나 이상의 사진을 올려야합니다.");
 				return;
 			}
+			console.log('ajax start');
+			console.log(data);
 			$.ajax({
 				type:'post',
 				url : '/holdem/admin/imageInsert.do',
-				data: data,
 				processData:false,
 				contentType:false,
+				data: data,
 				success:function(data){
+					/* if(data.success == 'success'){
+						alert("이미지가 등록되었습니다. ");
+						location.href="/holdem/admin/imgae.do";
+					} */
 					console.log(data)
 				},
 				error:function(e){

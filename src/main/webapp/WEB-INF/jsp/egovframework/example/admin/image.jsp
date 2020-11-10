@@ -105,7 +105,7 @@
 				jQuery.ajax({
 					type : 'post',
 					data : param,
-					url : "/radar/admin/user/delete.do",
+					url : "/holdem/admin/imageDel.do",
 					success : function(data) {
 						if (data.result == 'success') {
 							alert("삭제되었습니다.");
