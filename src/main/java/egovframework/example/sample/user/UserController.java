@@ -5,13 +5,16 @@ import java.io.PrintWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -22,6 +25,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import egovframework.example.sample.service.impl.SampleDAO;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 @Controller
 @RequestMapping("/user")
@@ -40,7 +44,10 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/inquiry.do")
-	public String inquiry(ModelMap model) {
+	public String inquiry(ModelMap model, HttpServletRequest request) {
+		List<EgovMap> inquiryList = (List<EgovMap>)sampleDAO.list("selectInquiry");
+		model.addAttribute("inquiryList", inquiryList);
+		
 		return "user/inquiry";
 	}
 	
@@ -69,6 +76,92 @@ public class UserController {
 			e.printStackTrace();
 		}
 		return obj.toJSONString();
+	}
+	
+	@RequestMapping(value="/inquiryChk.do")
+	public String inquiryChk(HttpServletRequest request, ModelMap model) {
+		String idx=""+request.getParameter("idx");
+		model.addAttribute("idx",idx);
+		
+		return "user/inquiryChk";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/inquiryPwChk.do", produces = "application/json; charset=utf8")
+	public String inquiryPwChk(HttpServletRequest request) {
+		JSONObject obj = new JSONObject();
+		
+		String pw = ""+request.getParameter("pw");
+		String idx= ""+request.getParameter("idx");
+		EgovMap in = new EgovMap();
+		in.put("idx",idx);
+		EgovMap pwChk = (EgovMap)sampleDAO.select("pwChk",in);
+		try {
+			pw = BytesToHex(Sha256(pw));
+			if(pw.equals(pwChk.get("pw"))) {
+				obj.put("result", "success");
+			}else {
+				obj.put("result","fail");
+			}
+			
+		} catch (NoSuchAlgorithmException e) {
+			obj.put("result", "fail");
+			e.printStackTrace();
+		}
+		
+		return obj.toJSONString();
+	}
+	
+	
+	@RequestMapping(value="/inquiryDetail.do")
+	public String inquiryDetail(HttpServletRequest request, ModelMap model) {
+		String idx=""+request.getParameter("idx");
+		EgovMap in = new EgovMap();
+		in.put("idx", idx);
+		EgovMap inquiryDetail = (EgovMap)sampleDAO.select("selectInquiryDetail",in);
+		model.addAttribute("inquiryDetail",inquiryDetail);
+		model.addAttribute("text",StringEscapeUtils.unescapeHtml3(""+inquiryDetail.get("text")));
+		
+		return "user/inquiryDetail";
+	}
+	
+	@RequestMapping(value="/inquiryEdit.do")
+	public String inquiryEdit(HttpServletRequest request,ModelMap model) {
+		String idx= ""+request.getParameter("idx");
+		EgovMap in = new EgovMap();
+		in.put("idx", idx);
+		model.addAttribute("inquiryDetail",sampleDAO.select("selectInquiryDetail",in));
+		
+		return "user/inquiryEdit";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/inquiryEditProcess.do", produces = "application/json; charset=utf8")
+	public String inquiryEditProcess(HttpServletRequest request) {
+		JSONObject obj = new JSONObject();
+		String title=""+request.getParameter("title");
+		String text=""+request.getParameter("text");
+		String idx=""+request.getParameter("idx");
+		
+		EgovMap in = new EgovMap();
+		in.put("title",title);
+		in.put("text", text);
+		in.put("idx",idx);
+		sampleDAO.update("inquiryUpdate",in);
+		obj.put("result", "success");
+		
+		return obj.toJSONString();
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/inquiryDel.do",produces = "application/json; charset=utf8")
+	public String inquiryDel(HttpServletRequest request) {
+		JSONObject obj = new JSONObject();
+		String idx= ""+request.getParameter("idx");
+		sampleDAO.update("inquiryDel",idx);
+		obj.put("result", "success");
+		
+		return obj.toJSONString(); 
 	}
 	
     private static byte[] Sha256(String password) throws NoSuchAlgorithmException {
@@ -120,5 +213,74 @@ public class UserController {
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
-}	
+	}
+	
+	@RequestMapping(value="/notice.do")
+	public String notice(ModelMap model, HttpServletRequest request) {
+		PaginationInfo paginationInfo = new PaginationInfo();
+		if (request.getParameter("pageIndex") == null) {
+			 paginationInfo.setCurrentPageNo(1);
+		} else {
+			paginationInfo.setCurrentPageNo(Integer.parseInt("" + request.getParameter("pageIndex")));
+		}
+		paginationInfo.setRecordCountPerPage(10);
+		paginationInfo.setPageSize(10);
+		EgovMap in = new EgovMap();
+		List<EgovMap> noticeListTop = (List<EgovMap>)sampleDAO.list("selectNoticeUserTop");
+		in.put("firstindex", paginationInfo.getFirstRecordIndex());
+		in.put("recordperpage", paginationInfo.getRecordCountPerPage()-noticeListTop.size());
+		List<EgovMap> noticeList = (List<EgovMap>)sampleDAO.list("selectNoticeUser" , in);
+		int totCnt = (int)sampleDAO.select("selectNoticeAdminCnt");
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("noticeListTop", noticeListTop);
+		model.addAttribute("noticeList", noticeList);
+		model.addAttribute("paginationInfo", paginationInfo);
+		
+		return "user/notice";
+	}
+	
+	@RequestMapping(value="/noticeDetail.do")
+	public String noticeDetail(HttpServletRequest request, ModelMap model, HttpServletResponse response) {
+		String idx=""+request.getParameter("idx");
+		EgovMap in = new EgovMap();
+		in.put("idx", idx);
+		EgovMap noticeDetail = (EgovMap)sampleDAO.select("selectNoticeDetailUser",in);
+		model.addAttribute("noticeDatail",noticeDetail);
+		model.addAttribute("noticeDatailText",StringEscapeUtils.unescapeHtml3(""+noticeDetail.get("text")));
+
+		//조회수 처리 
+		Cookie[] cookies = request.getCookies();
+		Cookie viewCookie = null;
+        if (cookies != null && cookies.length > 0){
+            for (int i = 0; i < cookies.length; i++){
+                // Cookie의 name이 cookie + reviewNo와 일치하는 쿠키를 viewCookie에 넣어줌 
+                if (cookies[i].getName().equals("cookie"+idx)){ 
+                    viewCookie = cookies[i];
+                }
+            }
+        }		
+        if(viewCookie == null){
+        	Cookie newCookie = new Cookie("cookie"+idx, "|" + idx + "|");
+        	response.addCookie(newCookie);
+        	sampleDAO.update("noticeViewCnt",idx);  //조회수
+        }
+        
+		return "user/noticeDetail";
+	}
+	
+	@RequestMapping(value="/game.do")
+	public String game(ModelMap model) {
+		EgovMap game = (EgovMap) sampleDAO.select("game");
+		model.addAttribute("game",StringEscapeUtils.unescapeHtml3(""+game.get("text")));
+		
+		return "user/game";
+	}
+	
+	@RequestMapping(value="/provision.do")
+	public String provision(ModelMap model) {
+		EgovMap provision = (EgovMap)sampleDAO.select("provision");
+		model.addAttribute("provision",StringEscapeUtils.unescapeHtml3(""+provision.get("text")));
+		
+		return "user/provision";
+	}
 }

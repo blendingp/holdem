@@ -13,21 +13,18 @@
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/se2/js/HuskyEZCreator.js" charset="utf-8"></script>
 <body>
-<a href="/holdem/user/main.do">메인</a>
 <form id="inquiryForm">
-	문의제목 : <input type="text" name="title" id="title"/> <br/>
-	문의 내용 <textarea class="form-control"rows="30" name="text" id="smartEditor"></textarea><br/>
-	비밀번호 : <input type="password" name="pw" id="pw"/>
-	※ 문의 확인 시 필요한 비밀번호입니다.
+	문의제목 : <input type="text" name="title" id="title" value="${inquiryDetail.title}"/> <br/>
+	문의 내용 <textarea class="form-control"rows="30" name="text" id="smartEditor">${inquiryDetail.text}</textarea><br/>
+	※ 처음 등록한 비밀번호는 변경할 수 없습니다.  
 	<br/>
-	<button type="button" onclick="inquiryInsert()">등록</button>
+	<button type="button" onclick="inquiryEdit()">수정</button>
 </form>
 <script>
-function inquiryInsert(){
+function inquiryEdit(){
 	oEditors.getById["smartEditor"].exec("UPDATE_CONTENTS_FIELD",[]);
 	var title = $("#title").val();
 	var text = $("#smartEditor").val();
-	var pw = $("#pw").val();
 	if(title == "")
 	{
 		alert("제목을 입력해주세요.");
@@ -40,25 +37,19 @@ function inquiryInsert(){
 		$("#smartEditor").focus();
 		return;
 	}
-	if(pw == "")
-	{
-		alert("비밀번호를 입력해주세요.");
-		$("#pw").focus();
-		return;
-	}
 	$.ajax({
 		type : 'post',
 		data : $("#inquiryForm").serialize(),
-		url : '/holdem/user/inquiryInsert.do',
+		url : '/holdem/user/inquiryEditProcess.do?idx='+${inquiryDetail.idx},
 		success:function(data){
 			if(data.result == 'success')
 			{
-				alert('등록이 완료되었습니다.');	
+				alert('수정이 완료되었습니다.');	
 				location.href="/holdem/user/inquiry.do";
 			}
 			else
 			{
-				alert('등록에 실패하였습니다. \n다시 시도해주세요.');
+				alert('수정에 실패하였습니다. \n다시 시도해주세요.');
 			}
 		},
 		error:function(e){

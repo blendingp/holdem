@@ -145,6 +145,16 @@
         ]]>
 	</select>
 	
+	<select id="selectNoticeUser" resultClass="EgovMap">
+        <![CDATA[
+        	select * 
+        	from notice
+        	where delYn = 'N'and expsYn='Y' and topYn='N'
+        	order by regDate desc
+        	limit #firstindex#, #recordperpage#
+        ]]>
+	</select>
+		
 	<update id="deleteNotice" parameterClass="egovMap">
         <![CDATA[
         	update notice
@@ -161,6 +171,22 @@
         ]]>
 	</select>
 	
+	<update id="noticeViewCnt">
+		<![CDATA[
+			update notice set
+			viewCnt = viewCnt + 1
+			where idx=#idx#
+		]]>
+	</update>
+	
+	<select id="selectNoticeDetailUser" resultClass="EgovMap">
+        <![CDATA[
+        	select * 
+        	from notice
+        	where idx = #idx# and expsYn='Y'
+        ]]>
+	</select>
+			
 	<select id="selectInquiryDetail" resultClass="EgovMap">
         <![CDATA[
         	select * 
@@ -229,4 +255,56 @@
         	where idx = #idx#
         ]]>
 	</update>
+	
+	<select id="game" resultClass="egovMap">
+		<![CDATA[
+			select *
+			from etc_board
+			where kind='G'			
+		]]>
+	</select>
+	
+	<select id="provision" resultClass="egovMap">
+		<![CDATA[
+			select *
+			from etc_board
+			where kind='P'			
+		]]>
+	</select>
+	
+	<select id="pwChk" resultClass="egovMap">
+		<![CDATA[
+			select *
+			from inquiry
+			where idx=#idx#
+		]]>
+	</select>
+	
+	<update id="inquiryUpdate">
+		<![CDATA[
+			update inquiry set
+				title=#title#,
+				text=#text#
+			where idx=#idx#
+		]]>
+	</update>
+	
+	<update id="inquiryDel">
+		<![CDATA[
+			update inquiry set
+				delYn='Y'
+			where idx=#idx#
+		]]>
+	</update>
+	
+	<select id="selectNoticeUserTop" resultClass="egovMap">
+		<![CDATA[
+			select *
+			from notice
+			where topYn='Y' and delYn='N' and expsYn='Y'
+			order by regDate desc
+			limit 3
+		]]>
+	</select>
+	
 </sqlMap>

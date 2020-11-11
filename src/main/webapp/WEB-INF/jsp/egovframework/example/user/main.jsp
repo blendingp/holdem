@@ -16,6 +16,9 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
 <body>
 userMain<br/>
+<a href="/holdem/user/notice.do">공지사항</a><br/>
+<a href="/holdem/user/game.do">게임설명</a><br/>
+<a href="/holdem/user/provision.do">약관</a><br/>
 <a href="/holdem/user/inquiry.do">1:1문의</a><br/>
 <iframe style="width:50%; height:500px;" src="https://www.youtube.com/embed/${youtube.saveNm}" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" ></iframe>
 <br/>
