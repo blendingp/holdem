@@ -175,6 +175,15 @@
         	from inquiry
         	where delYn = 'N'
         	order by regDate desc
+        	limit #firstindex#, #recordperpage#
+        ]]>
+	</select>
+		
+	<select id="selectInquiryCnt" resultClass="int">
+        <![CDATA[
+        	select count(*) 
+        	from inquiry
+        	where delYn = 'N'
         ]]>
 	</select>
 		

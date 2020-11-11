@@ -361,8 +361,23 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/inquiry.do")
-	public String inquiry(ModelMap model) {
-		model.addAttribute("inquiryList", sampleDAO.list("selectInquiry"));
+	public String inquiry(HttpServletRequest request , ModelMap model) {
+		PaginationInfo paginationInfo = new PaginationInfo();
+		if (request.getParameter("pageIndex") == null) {
+			 paginationInfo.setCurrentPageNo(1);
+		} else {
+			paginationInfo.setCurrentPageNo(Integer.parseInt("" + request.getParameter("pageIndex")));
+		}
+		paginationInfo.setRecordCountPerPage(15);
+		paginationInfo.setPageSize(10);
+		EgovMap in = new EgovMap();
+		in.put("firstindex", paginationInfo.getFirstRecordIndex());
+		in.put("recordperpage", paginationInfo.getRecordCountPerPage());
+		List<EgovMap> inquiryList = (List<EgovMap>)sampleDAO.list("selectInquiry" , in);
+		int totCnt = (int)sampleDAO.select("selectInquiryCnt");
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("inquiryList", inquiryList);
+		model.addAttribute("paginationInfo", paginationInfo);
 		return "admin/inquiry";
 	}
 	
