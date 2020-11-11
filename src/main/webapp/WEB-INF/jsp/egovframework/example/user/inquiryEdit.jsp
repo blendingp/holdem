@@ -4,75 +4,135 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="c"      uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
-<html>
+<html  data-wf-page="5fab6843c0cca0c084955994" data-wf-site="5faa9fb759c008dd7db7c885">
 <head>
-<meta charset="UTF-8">
-<title>WinGame</title>
-</head>
-<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+<jsp:include page="../frame/userTop.jsp"></jsp:include></head>
 <script type="text/javascript" src="${pageContext.request.contextPath}/se2/js/HuskyEZCreator.js" charset="utf-8"></script>
 <body>
-<form id="inquiryForm">
-	문의제목 : <input type="text" name="title" id="title" value="${inquiryDetail.title}"/> <br/>
-	문의 내용 <textarea class="form-control"rows="30" name="text" id="smartEditor">${inquiryDetail.text}</textarea><br/>
-	※ 처음 등록한 비밀번호는 변경할 수 없습니다.  
-	<br/>
-	<button type="button" onclick="inquiryEdit()">수정</button>
-</form>
-<script>
-function inquiryEdit(){
-	oEditors.getById["smartEditor"].exec("UPDATE_CONTENTS_FIELD",[]);
-	var title = $("#title").val();
-	var text = $("#smartEditor").val();
-	if(title == "")
-	{
-		alert("제목을 입력해주세요.");
-		$("#title").focus();
-		return;
-	}
-	if(text == "")
-	{
-		alert("내용을 입력해주세요.");
-		$("#smartEditor").focus();
-		return;
-	}
-	$.ajax({
-		type : 'post',
-		data : $("#inquiryForm").serialize(),
-		url : '/holdem/user/inquiryEditProcess.do?idx='+${inquiryDetail.idx},
-		success:function(data){
-			if(data.result == 'success')
+	<div class="frame">
+		<div class="form-block w-form">
+			<form id="inquiryForm">
+				<jsp:include page="../frame/userMenu.jsp"></jsp:include>
+				<div class="body">
+					<div class="notititlebox">
+						<img src="/holdem/webflow/images/WINGAME.png" loading="lazy" alt="" class="notilogo">
+						<div class="notititle">
+							윈게임<span class="text-span-10">1:1 문의</span>센터입니다.
+						</div>
+						<div class="notibottitle">
+							윈게임을 이용해 주셔서 감사합니다.<br>궁금하신 사항이 있으시다면 언제든지 문의해 주시기 바랍니다.
+						</div>
+					</div>
+					<div class="togbox">
+						<div class="listclick">
+							<a href="/holdem/user/main.do" class="listhomelink w-inline-block">
+								<div class="listlink">HOME</div>
+							</a>
+							<div class="listhome">&gt;</div>
+							<a href="/holdem/user/inquiry.do" class="listhomelink w-inline-block">
+								<div class="listlink click">1:1 문의</div>
+							</a>
+						</div>
+					</div>
+					<div class="write">
+						<div class="inquiry-write">
+							<div class="table-20">
+								<div class="trow-2">
+									<div class="twrap-2">
+										<div class="ttxt-3">제목</div>
+									</div>
+									<input type="text" class="tinput-2 w-input" maxlength="100" name="title" id="title"  value="${inquiryDetail.title}">
+								</div>
+								<div class="trow2-2-copy">
+									<div class="twrap-2">
+										<div class="ttxt-3">문의내용</div>
+									</div>
+									<textarea id="smartEditor" style="max-height:358px;" name="text">${inquiryDetail.text}</textarea>
+								</div>
+								<div class="trow-2-copy">
+									<div class="twrap-2">
+										<div class="ttxt-3">비밀번호</div>
+									</div>
+									<input type="text" style="width:89%;" class="text-field w-input" value="※ 처음 등록한 비밀번호는 변경 할 수 없습니다." readonly>
+								</div>
+							</div>
+							<div class="pbox-7">
+								<a href="#" class="pbtn-4 w-inline-block"></a>
+								<div class="listbtnwrap-copy-2">
+									<a href="javascript:inquiryEdit()" class="registerbtn w-inline-block">
+										<div class="deletebtntext">수정</div>
+									</a> 
+									<a href="/holdem/user/inquiry.do" class="listbtn-2 w-inline-block">
+										<div class="deletebtntext">목록으로</div>
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<jsp:include page="../frame/userBottom.jsp"></jsp:include>
+			</form>
+		</div>
+	</div>
+	<script>
+		function inquiryEdit(){
+			oEditors.getById["smartEditor"].exec("UPDATE_CONTENTS_FIELD",[]);
+			var title = $("#title").val();
+			var text = $("#smartEditor").val();
+			if(title == "")
 			{
-				alert('수정이 완료되었습니다.');	
-				location.href="/holdem/user/inquiry.do";
+				alert("제목을 입력해주세요.");
+				$("#title").focus();
+				return;
 			}
-			else
+			if(text == "")
 			{
-				alert('수정에 실패하였습니다. \n다시 시도해주세요.');
+				alert("내용을 입력해주세요.");
+				$("#smartEditor").focus();
+				return;
 			}
-		},
-		error:function(e){
-			console.log('ajax error' + e);
+			$.ajax({
+				type : 'post',
+				data : $("#inquiryForm").serialize(),
+				url : '/holdem/user/inquiryEditProcess.do?idx='+${inquiryDetail.idx},
+				success:function(data){
+					if(data.result == 'success')
+					{
+						alert('수정이 완료되었습니다.');	
+						location.href="/holdem/user/inquiry.do";
+					}
+					else
+					{
+						alert('수정에 실패하였습니다. \n다시 시도해주세요.');
+					}
+				},
+				error:function(e){
+					console.log('ajax error' + e);
+				}
+			})
 		}
-	})
-}
-var oEditors = []; 
-nhn.husky.EZCreator.createInIFrame({ 
-	oAppRef : oEditors, 
-	elPlaceHolder : "smartEditor",  
-	sSkinURI : "${pageContext.request.contextPath}/se2/SmartEditor2Skin.html",  
-	fCreator : "createSEditor2", 
-	htParams : {  
-		bUseToolbar : true,   // 툴사용여부 
-		bUseVerticalResizer : false, // 입력창 크기 조절 바 
-		//bSkipXssFilter : true, // xss 필터 
-		bUseModeChanger : false  // 텍스트 모드 변경 
-		},
-	fOnAppLoad : function(){
-	   oEditors.getById["smartEditor"].exec("PASTE_HTML", ['${text}']); // 미리 적용할 텍스트 내용이 있는경우 
-	  },		
-});
-</script>
+		var oEditors = []; 
+		nhn.husky.EZCreator.createInIFrame({ 
+			oAppRef : oEditors, 
+			elPlaceHolder : "smartEditor",  
+			sSkinURI : "${pageContext.request.contextPath}/se2/SmartEditor2Skin.html",  
+			fCreator : "createSEditor2", 
+			htParams : {  
+				bUseToolbar : true,   // 툴사용여부 
+				bUseVerticalResizer : false, // 입력창 크기 조절 바 
+				//bSkipXssFilter : true, // xss 필터 
+				bUseModeChanger : false  // 텍스트 모드 변경 
+				},
+			fOnAppLoad : function(){
+			   oEditors.getById["smartEditor"].exec("PASTE_HTML", ['${text}']); // 미리 적용할 텍스트 내용이 있는경우
+			   document.getElementsByTagName("iframe")[0].style.width = "89%";
+			   document.getElementsByTagName("iframe")[0].style.height = "100%";
+			   document.getElementsByTagName("iframe")[0].style.padding = "1%";
+
+			  },		
+		});
+	</script>
 </body>
 </html>

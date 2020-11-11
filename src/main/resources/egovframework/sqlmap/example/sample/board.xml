@@ -149,20 +149,18 @@
         	select count(*) 
         	from notice
         	where delYn = 'N' and expsYn = 'Y'
-        		and idx not in (
         ]]>
-        		<isNotEmpty property="excludeIdx0">
-        			#excludeIdx0#
-        		</isNotEmpty>
+       		<isNotEmpty property="excludeIdx0">
+       		and idx not in (
+       			#excludeIdx0#
         		<isNotEmpty property="excludeIdx1">
         			,#excludeIdx1#
+	        		<isNotEmpty property="excludeIdx2">
+	        			,#excludeIdx2#
+	        		</isNotEmpty>
         		</isNotEmpty>
-        		<isNotEmpty property="excludeIdx2">
-        			,#excludeIdx2#
-        		</isNotEmpty>
-        <![CDATA[
-        		)
-        ]]>
+        	)
+       		</isNotEmpty>
 	</select>
 	
 	<select id="selectNoticeUser" resultClass="EgovMap">
@@ -170,20 +168,19 @@
         	select * 
         	from notice
         	where delYn = 'N'and expsYn='Y'
-        		and idx not in (
         ]]>
-        		<isNotEmpty property="excludeIdx0">
-        			#excludeIdx0#
-        		</isNotEmpty>
+       		<isNotEmpty property="excludeIdx0">
+       		and idx not in (
+       			#excludeIdx0#
         		<isNotEmpty property="excludeIdx1">
         			,#excludeIdx1#
+	        		<isNotEmpty property="excludeIdx2">
+	        			,#excludeIdx2#
+	        		</isNotEmpty>
         		</isNotEmpty>
-        		<isNotEmpty property="excludeIdx2">
-        			,#excludeIdx2#
-        		</isNotEmpty>
+        	)
+       		</isNotEmpty>
         <![CDATA[
-        		
-        		)
         	order by regDate desc
         	limit #firstindex#, #recordperpage#
         ]]>

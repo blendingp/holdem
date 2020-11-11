@@ -91,14 +91,6 @@ public class UserController {
 		return obj.toJSONString();
 	}
 	
-	@RequestMapping(value="/inquiryChk.do")
-	public String inquiryChk(HttpServletRequest request, ModelMap model) {
-		String idx=""+request.getParameter("idx");
-		model.addAttribute("idx",idx);
-		
-		return "user/inquiryChk";
-	}
-	
 	@ResponseBody
 	@RequestMapping(value="/inquiryPwChk.do", produces = "application/json; charset=utf8")
 	public String inquiryPwChk(HttpServletRequest request) {
@@ -244,7 +236,7 @@ public class UserController {
 			in.put("excludeIdx"+topCnt, noticeListTop.get(topCnt).get("idx"));
 		}
 		paginationInfo.setRecordCountPerPage(10 - noticeListTop.size());
-		paginationInfo.setPageSize(10);
+		paginationInfo.setPageSize(5);
 		in.put("firstindex", paginationInfo.getFirstRecordIndex());
 		in.put("recordperpage", paginationInfo.getRecordCountPerPage());
 		List<EgovMap> noticeList = (List<EgovMap>)sampleDAO.list("selectNoticeUser" , in);

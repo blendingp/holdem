@@ -70,6 +70,7 @@
 
     <!-- For Pagination Tag -->
     <bean id="imageRenderer" class="egovframework.example.cmmn.web.EgovImgPaginationRenderer"/>
+    <bean id="userRenderer" class="egovframework.example.sample.user.UserPaginationRenderer"/>
     <bean id="adminRenderer" class="egovframework.example.sample.admin.AdminPaginationRenderer"/>
     
     <bean id="paginationManager" class="egovframework.rte.ptl.mvc.tags.ui.pagination.DefaultPaginationManager">
@@ -77,6 +78,7 @@
             <map>
                 <entry key="image" value-ref="imageRenderer"/>
                 <entry key="admin" value-ref="adminRenderer"/>
+                <entry key="user" value-ref="userRenderer"/>
             </map>
         </property>
     </bean>
