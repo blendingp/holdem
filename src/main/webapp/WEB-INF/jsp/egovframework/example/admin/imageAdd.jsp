@@ -51,8 +51,6 @@
 				alert("적어도 하나 이상의 사진을 올려야합니다.");
 				return;
 			}
-			console.log('ajax start');
-			console.log(data);
 			$.ajax({
 				type:'post',
 				url : '/holdem/admin/imageInsert.do',

@@ -51,6 +51,13 @@
 								</table>
 							</div>
 						</div>
+						<div class="row">
+							<div class="col-sm-12" style="text-align: center;">
+								<ul class="pagination">
+									<ui:pagination paginationInfo="${paginationInfo }" type="admin" jsFunction="fn_egov_link_page" />
+								</ul>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -59,8 +66,14 @@
 		</div>
 	</div>
 	<jsp:include page="../frame/adminbottom.jsp" flush="true" />
+	<form action="/holdem/admin/notice.do" name="listForm" id="listForm">
+		<input type="hidden" name="pageIndex" value="1" />
+	</form>
 	<script>
-		
+		function fn_egov_link_page(pageNo) {
+			document.listForm.pageIndex.value = pageNo;
+			document.listForm.submit();
+		}
 		function allChk(obj) {
 			var chkObj = document.getElementsByName("arrayIdx");
 			var rowCnt = chkObj.length - 1;

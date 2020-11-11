@@ -34,6 +34,17 @@
         ]]>
 	</update>
 
+	<update id="updateMainFileImage" parameterClass="EgovMap">
+        <![CDATA[
+        	update main_file
+        	set originNm = #originNm#,
+        		saveNm = #saveNm# ,
+        		kind = #kind#,
+        		orderNum = #orderNum#
+        	where idx = #idx#
+        ]]>
+	</update>
+
 	<select id="selectMainFileImage" resultClass="EgovMap">
         <![CDATA[
         	select * 
@@ -94,8 +105,8 @@
 	
 	<insert id="insertInquiry" parameterClass="egovMap">
 		<![CDATA[
-			insert into inquiry (title , text , pw , regDate , answerYn)
-			values (#title# , #text# , #pw# , now() , 'N')
+			insert into inquiry (title , text , pw , regDate , answerYn , delYn)
+			values (#title# , #text# , #pw# , now() , 'N' , 'N')
 		]]>
 	</insert>
 	
@@ -123,6 +134,14 @@
         	from notice
         	where delYn = 'N'
         	order by regDate desc
+        	limit #firstindex#, #recordperpage#
+        ]]>
+	</select>
+	<select id="selectNoticeAdminCnt" resultClass="int">
+        <![CDATA[
+        	select count(*) 
+        	from notice
+        	where delYn = 'N'
         ]]>
 	</select>
 	
@@ -154,9 +173,18 @@
         <![CDATA[
         	select * 
         	from inquiry
+        	where delYn = 'N'
         	order by regDate desc
         ]]>
 	</select>
+		
+	<update id="deleteInquiry" parameterClass="egovMap">
+        <![CDATA[
+        	update inquiry
+        	set delYn = 'Y'
+        	where idx = #idx#
+        ]]>
+	</update>
 	
 	<update id="insertAnswer" parameterClass="egovMap">
         <![CDATA[
@@ -164,6 +192,31 @@
         	set answer = #answer#,
         		answerYn= 'Y',
         		answerDate = now()
+        	where idx = #idx#
+        ]]>
+	</update>
+	
+	<select id="selectEtcBoardByKind" resultClass="egovMap">
+        <![CDATA[
+        	select * 
+        	from etc_board
+        	where kind = #kind#
+        ]]>
+	</select>
+	
+	<insert id="insertEtcBoard" parameterClass="egovMap">
+        <![CDATA[
+        	insert into etc_board (text , kind , regDate , updtDate)
+        	values(#text# , #kind# , now() , now())
+        ]]>
+	</insert>
+	
+	<update id="updateEtcBoard" parameterClass="egovMap">
+        <![CDATA[
+        	update etc_board
+        	set text = #text#,
+        		kind = #kind#,
+        		updtDate = now()
         	where idx = #idx#
         ]]>
 	</update>

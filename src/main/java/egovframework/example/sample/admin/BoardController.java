@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import egovframework.example.sample.service.impl.SampleDAO;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
+import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 @Controller
 @RequestMapping("/admin")
@@ -76,6 +77,12 @@ public class BoardController {
 		return "admin/image";
 	}
 
+	@RequestMapping("/imageEdit.do")
+	public String imageEdit(ModelMap model) {
+		model.addAttribute("imageList", sampleDAO.list("selectMainFileImage"));
+		return "admin/imageEdit";
+	}
+	
 	@RequestMapping("/imageAdd.do")
 	public String imageAdd(ModelMap model) {
 		return "admin/imageAdd";
@@ -110,7 +117,6 @@ public class BoardController {
 						obj.put("success", "fail");
 					}
 				}
-
 			}
 		} else {
 			for (int fileCnt = 0; fileCnt < 7; fileCnt++) {
@@ -141,6 +147,63 @@ public class BoardController {
 			sampleDAO.delete("deleteMainFileImageLimit",in); 
 		}
 
+		return obj.toJSONString();
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/imageUpdate.do" , produces = "application/json; charset=utf8;")
+	public String imageUpdate(MultipartHttpServletRequest mtfRequest) {
+		List<MultipartFile> mf = mtfRequest.getFiles("file[]");
+		String[] idx = mtfRequest.getParameterValues("idx[]");
+		String[] orderNum = mtfRequest.getParameterValues("orderNum[]");
+		String path = fileProperties.getProperty("file.photo");
+		JSONObject obj = new JSONObject();
+		obj.put("success", "success");
+		if (!new File(path).exists()) {
+			new File(path).mkdirs();
+		}
+		for(int idxCnt=0; idxCnt < idx.length; idxCnt++)
+		{
+			EgovMap info = (EgovMap)sampleDAO.select("selectMainFileDetail" , idx[idxCnt]);
+			if (!mf.get(idxCnt).isEmpty()) 
+			{ // 파일이 존재함 
+				String originFileName = mf.get(idxCnt).getOriginalFilename();
+				String safeFile = System.currentTimeMillis() + originFileName;
+				try {
+					File file = new File(path+info.get("saveNm"));
+					if(file.exists()) 
+					{
+						file.delete(); // 기존에 있던 파일 삭제 
+					}
+					mf.get(idxCnt).transferTo(new File(path + safeFile));
+					EgovMap in = new EgovMap();
+					in.put("originNm", originFileName);
+					in.put("saveNm", safeFile);
+					in.put("orderNum", orderNum[idxCnt]);
+					in.put("kind", "I");
+					in.put("idx", idx[idxCnt]);
+					sampleDAO.update("updateMainFileImage", in);
+				} catch (Exception e) {
+					e.printStackTrace();
+					obj.put("success", "fail");
+				}
+			}
+			else
+			{ // 파일 변경 X 
+				try {
+					EgovMap in = new EgovMap();
+					in.put("originNm", info.get("originNm"));
+					in.put("saveNm", info.get("saveNm"));
+					in.put("orderNum", orderNum[idxCnt]);
+					in.put("kind", "I");
+					in.put("idx", idx[idxCnt]);
+					sampleDAO.update("updateMainFileImage", in);
+				} catch (Exception e) {
+					e.printStackTrace();
+					obj.put("success", "fail");
+				}
+			}
+		}
 		return obj.toJSONString();
 	}
 	
@@ -195,8 +258,23 @@ public class BoardController {
 	}
 	
 	@RequestMapping(value="/notice.do")
-	public String notice(ModelMap model) {
-		model.addAttribute("noticeList", sampleDAO.list("selectNoticeAdmin"));
+	public String notice(HttpServletRequest request , ModelMap model) {
+		PaginationInfo paginationInfo = new PaginationInfo();
+		if (request.getParameter("pageIndex") == null) {
+			 paginationInfo.setCurrentPageNo(1);
+		} else {
+			paginationInfo.setCurrentPageNo(Integer.parseInt("" + request.getParameter("pageIndex")));
+		}
+		paginationInfo.setRecordCountPerPage(15);
+		paginationInfo.setPageSize(10);
+		EgovMap in = new EgovMap();
+		in.put("firstindex", paginationInfo.getFirstRecordIndex());
+		in.put("recordperpage", paginationInfo.getRecordCountPerPage());
+		List<EgovMap> noticeList = (List<EgovMap>)sampleDAO.list("selectNoticeAdmin" , in);
+		int totCnt = (int)sampleDAO.select("selectNoticeAdminCnt");
+		paginationInfo.setTotalRecordCount(totCnt);
+		model.addAttribute("noticeList", noticeList);
+		model.addAttribute("paginationInfo", paginationInfo);
 		return "admin/notice";
 	}
 	
@@ -298,6 +376,28 @@ public class BoardController {
 	}
 	
 	@ResponseBody
+	@RequestMapping(value = "/inquiryDel.do", produces="application/json; charset=utf8;")
+	public String inquiryDel(HttpServletRequest request)throws Exception {
+		JSONObject obj = new JSONObject();
+		EgovMap in = new EgovMap();
+		String result = "success";
+		String delList = ""+request.getParameter("delArray");
+		String[] delArray = delList.split("-");
+		if(delArray != null && delArray.length > 0){
+			for(int i=0; i<delArray.length; i++){
+				in.put("idx", delArray[i]);
+				sampleDAO.update("deleteInquiry" , in);
+			}
+			result = "success";
+		}else{
+			result = "nothing";
+		}
+		obj.put("result", result);
+		
+		return obj.toJSONString();
+	}	
+	
+	@ResponseBody
 	@RequestMapping(value="/answerInsert.do" , produces = "application/json; charset=utf8")
 	public String answerInsert(HttpServletRequest request) {
 		int idx = Integer.parseInt(""+request.getParameter("idx"));
@@ -308,6 +408,72 @@ public class BoardController {
 		JSONObject obj = new JSONObject();
 		try {
 			sampleDAO.update("insertAnswer", in);
+			obj.put("result", "success");
+			return obj.toJSONString();
+		} catch (Exception e) {
+			obj.put("result", "fail");
+			return obj.toJSONString();
+		}
+	}
+	
+	@RequestMapping(value="/gameDescription.do")
+	public String gameDescription(ModelMap model) {
+		model.addAttribute("info", sampleDAO.select("selectEtcBoardByKind","G"));
+		return "admin/gameDescription";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/gameDescInsert.do" , produces = "application/json; charset=utf8")
+	public String gameDescInsert(HttpServletRequest request) {
+		String text = request.getParameter("text");
+		EgovMap in = new EgovMap();
+		in.put("text", text);
+		in.put("kind", "G");
+		JSONObject obj = new JSONObject();
+		try {
+			EgovMap gameDesc = (EgovMap) sampleDAO.select("selectEtcBoardByKind",in);
+			if(gameDesc == null)
+			{
+				sampleDAO.insert("insertEtcBoard" , in);
+			}
+			else
+			{
+				in.put("idx", gameDesc.get("idx"));
+				sampleDAO.update("updateEtcBoard" , in);
+			}
+			obj.put("result", "success");
+			return obj.toJSONString();
+		} catch (Exception e) {
+			obj.put("result", "fail");
+			return obj.toJSONString();
+		}
+	}
+	
+	@RequestMapping(value="/provision.do")
+	public String provision(ModelMap model) {
+		model.addAttribute("info", sampleDAO.select("selectEtcBoardByKind","P"));
+		return "admin/provision";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/provisionInsert.do" , produces = "application/json; charset=utf8")
+	public String provisionInsert(HttpServletRequest request) {
+		String text = request.getParameter("text");
+		EgovMap in = new EgovMap();
+		in.put("text", text);
+		in.put("kind", "P");
+		JSONObject obj = new JSONObject();
+		try {
+			EgovMap provision = (EgovMap) sampleDAO.select("selectEtcBoardByKind",in);
+			if(provision == null)
+			{
+				sampleDAO.insert("insertEtcBoard" , in);
+			}
+			else
+			{
+				in.put("idx", provision.get("idx"));
+				sampleDAO.update("updateEtcBoard" , in);
+			}
 			obj.put("result", "success");
 			return obj.toJSONString();
 		} catch (Exception e) {

@@ -28,7 +28,7 @@
 								<table class="table table-hover">
 									<thead>
 										<tr>
-											<!-- <th><input id="allChk" type="checkbox" onclick="allChk(this)"/></th> -->
+											<th><input id="allChk" type="checkbox" onclick="allChk(this)"/></th>
 											<th>문의 제목</th>
 											<th>문의일</th>
 											<th>답변여부</th>
@@ -38,7 +38,7 @@
 									<tbody>
 										<c:forEach var="result" items="${inquiryList}">
 											<tr>
-												<%-- <td><input type="checkbox" name="arrayIdx" value="${result.idx}"/></td> --%>
+												<td><input type="checkbox" name="arrayIdx" value="${result.idx}"/></td>
 												<td onclick="location.href='/holdem/admin/inquiryInfo.do?idx=${result.idx}'" style="cursor:pointer;">${result.title}</td>
 												<td onclick="location.href='/holdem/admin/inquiryInfo.do?idx=${result.idx}'" style="cursor:pointer;"><fmt:formatDate value="${result.regDate}" pattern="yyyy-MM-dd HH:mm"/></td>
 												<td onclick="location.href='/holdem/admin/inquiryInfo.do?idx=${result.idx}'" style="cursor:pointer;">${result.answerYn}</td>
@@ -52,7 +52,7 @@
 					</div>
 				</div>
 			</div>
-			<!-- <button type="button" onclick="listDel()" class="btn btn-outline btn-danger">선택삭제</button> -->
+			<button type="button" onclick="listDel()" class="btn btn-outline btn-danger">선택삭제</button>
 		</div>
 	</div>
 	<jsp:include page="../frame/adminbottom.jsp" flush="true" />
@@ -107,7 +107,7 @@
 				jQuery.ajax({
 					type : 'post',
 					data : param,
-					url : "/holdem/admin/noticeDel.do",
+					url : "/holdem/admin/inquiryDel.do",
 					success : function(data) {
 						if (data.result == 'success') {
 							alert("삭제되었습니다.");
