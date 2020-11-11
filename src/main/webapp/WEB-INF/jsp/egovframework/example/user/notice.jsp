@@ -62,7 +62,7 @@ function fn_egov_link_page(pageIndex){
 						<c:forEach var="item" items="${noticeList}">
 							<a href="/holdem/user/noticeDetail.do?idx=${item.idx}" class="rowbtn w-inline-block">
 								<div class="row-11">
-									<div class="tnum2-4">순번</div>
+									<div class="tnum2-4">${item.no}</div>
 									<div class="ttitle2-2">${item.title}</div>
 									<div class="tnum2-4">${item.viewCnt }</div>
 									<div class="tdate2-4"><fmt:formatDate value="${item.regDate}" pattern="yyyy-MM-dd"/></div>

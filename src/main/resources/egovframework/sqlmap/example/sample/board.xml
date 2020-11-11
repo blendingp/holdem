@@ -165,7 +165,10 @@
 	
 	<select id="selectNoticeUser" resultClass="EgovMap">
         <![CDATA[
-        	select * 
+		select format(@ROWNUM:=@ROWNUM+1 , 0)as  no, A.*
+		from (
+			select @ROWNUM:=0) rn, 
+			(select * 
         	from notice
         	where delYn = 'N'and expsYn='Y'
         ]]>
@@ -181,8 +184,10 @@
         	)
        		</isNotEmpty>
         <![CDATA[
-        	order by regDate desc
-        	limit #firstindex#, #recordperpage#
+        	order by regDate 
+        )A
+        order by no desc
+        limit #firstindex#, #recordperpage#
         ]]>
 	</select>
 		
@@ -220,10 +225,15 @@
 	
 	<select id="selectInquiry" resultClass="EgovMap">
         <![CDATA[
-        	select * 
-        	from inquiry
-        	where delYn = 'N'
-        	order by regDate desc
+			select format(@ROWNUM:=@ROWNUM+1 , 0)as  no, A.*
+			from (
+				select @ROWNUM:=0) rn, 
+	        		(select * 
+		        	from inquiry
+	        		where delYn = 'N'
+	        		order by regDate 
+			) A
+			order by no desc
         	limit #firstindex#, #recordperpage#
         ]]>
 	</select>

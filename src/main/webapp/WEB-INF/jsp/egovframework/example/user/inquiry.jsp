@@ -47,9 +47,9 @@
 							<c:forEach var="item" items="${inquiryList}">
 								<a href="javascript:pwChk(${item.idx})" class="rowbtn w-inline-block">
 									<div class="row-11">
-										<div class="tnum2-4">1</div>
+										<div class="tnum2-4">${item.no }</div>
 										<div class="ttitle2-2">${item.title}</div>
-										<div class="tdate2-4"><fmt:formatDate value="${item.regDate}" pattern="yyyy.MM.dd HH:mm"/></div>
+										<div class="tdate2-4"><fmt:formatDate value="${item.regDate}" pattern="yyyy-MM-dd HH:mm"/></div>
 										<div class="wstate">
 											<c:if test="${item.answerYn == 'Y' }">
 												<div class="wstatext-3 done">답변완료</div>
