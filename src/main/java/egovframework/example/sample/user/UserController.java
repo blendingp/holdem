@@ -45,9 +45,22 @@ public class UserController {
 	
 	@RequestMapping(value="/inquiry.do")
 	public String inquiry(ModelMap model, HttpServletRequest request) {
-		List<EgovMap> inquiryList = (List<EgovMap>)sampleDAO.list("selectInquiry");
+		PaginationInfo paginationInfo = new PaginationInfo();
+		if (request.getParameter("pageIndex") == null) {
+			 paginationInfo.setCurrentPageNo(1);
+		} else {
+			paginationInfo.setCurrentPageNo(Integer.parseInt("" + request.getParameter("pageIndex")));
+		}
+		EgovMap in = new EgovMap();
+		paginationInfo.setRecordCountPerPage(10);
+		paginationInfo.setPageSize(10);
+		in.put("firstindex", paginationInfo.getFirstRecordIndex());
+		in.put("recordperpage", paginationInfo.getRecordCountPerPage());
+		List<EgovMap> inquiryList = (List<EgovMap>)sampleDAO.list("selectInquiry" , in);
+		int totCnt = (int)sampleDAO.select("selectInquiryCnt" , in);
+		paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("inquiryList", inquiryList);
-		
+		model.addAttribute("paginationInfo", paginationInfo);
 		return "user/inquiry";
 	}
 	
@@ -223,14 +236,19 @@ public class UserController {
 		} else {
 			paginationInfo.setCurrentPageNo(Integer.parseInt("" + request.getParameter("pageIndex")));
 		}
-		paginationInfo.setRecordCountPerPage(10);
-		paginationInfo.setPageSize(10);
 		EgovMap in = new EgovMap();
 		List<EgovMap> noticeListTop = (List<EgovMap>)sampleDAO.list("selectNoticeUserTop");
+		// 상단 고정된 값 빼고 select 되게 
+		for(int topCnt = 0; topCnt < noticeListTop.size(); topCnt ++)
+		{
+			in.put("excludeIdx"+topCnt, noticeListTop.get(topCnt).get("idx"));
+		}
+		paginationInfo.setRecordCountPerPage(10 - noticeListTop.size());
+		paginationInfo.setPageSize(10);
 		in.put("firstindex", paginationInfo.getFirstRecordIndex());
-		in.put("recordperpage", paginationInfo.getRecordCountPerPage()-noticeListTop.size());
+		in.put("recordperpage", paginationInfo.getRecordCountPerPage());
 		List<EgovMap> noticeList = (List<EgovMap>)sampleDAO.list("selectNoticeUser" , in);
-		int totCnt = (int)sampleDAO.select("selectNoticeAdminCnt");
+		int totCnt = (int)sampleDAO.select("selectNoticeUserCnt" , in);
 		paginationInfo.setTotalRecordCount(totCnt);
 		model.addAttribute("noticeListTop", noticeListTop);
 		model.addAttribute("noticeList", noticeList);
@@ -239,12 +257,14 @@ public class UserController {
 		return "user/notice";
 	}
 	
+	
+	
 	@RequestMapping(value="/noticeDetail.do")
 	public String noticeDetail(HttpServletRequest request, ModelMap model, HttpServletResponse response) {
 		String idx=""+request.getParameter("idx");
 		EgovMap in = new EgovMap();
 		in.put("idx", idx);
-		EgovMap noticeDetail = (EgovMap)sampleDAO.select("selectNoticeDetailUser",in);
+		EgovMap noticeDetail = (EgovMap)sampleDAO.select("selectNoticeDetail",in);
 		model.addAttribute("noticeDatail",noticeDetail);
 		model.addAttribute("noticeDatailText",StringEscapeUtils.unescapeHtml3(""+noticeDetail.get("text")));
 

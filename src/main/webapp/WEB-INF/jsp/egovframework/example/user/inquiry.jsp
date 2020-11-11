@@ -12,6 +12,12 @@
 <title>WinGame</title>
 </head>
 <body>
+<script>
+function fn_egov_link_page(pageIndex){
+	location.href="/holdem/user/inquiry.do?pageIndex="+pageIndex;
+}
+</script>
+
 <a href="/holdem/user/main.do">메인</a>
 <a href="/holdem/user/inquiryAdd.do">문의하기</a>
 
@@ -32,6 +38,6 @@
 		</tr>
 	</c:forEach>
 </table>
-
+<ui:pagination paginationInfo="${paginationInfo}" type="image" jsFunction="fn_egov_link_page"/>
 </body>
 </html>

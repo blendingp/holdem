@@ -144,12 +144,46 @@
         	where delYn = 'N'
         ]]>
 	</select>
+	<select id="selectNoticeUserCnt" resultClass="int">
+        <![CDATA[
+        	select count(*) 
+        	from notice
+        	where delYn = 'N' and expsYn = 'Y'
+        		and idx not in (
+        ]]>
+        		<isNotEmpty property="excludeIdx0">
+        			#excludeIdx0#
+        		</isNotEmpty>
+        		<isNotEmpty property="excludeIdx1">
+        			,#excludeIdx1#
+        		</isNotEmpty>
+        		<isNotEmpty property="excludeIdx2">
+        			,#excludeIdx2#
+        		</isNotEmpty>
+        <![CDATA[
+        		)
+        ]]>
+	</select>
 	
 	<select id="selectNoticeUser" resultClass="EgovMap">
         <![CDATA[
         	select * 
         	from notice
-        	where delYn = 'N'and expsYn='Y' and topYn='N'
+        	where delYn = 'N'and expsYn='Y'
+        		and idx not in (
+        ]]>
+        		<isNotEmpty property="excludeIdx0">
+        			#excludeIdx0#
+        		</isNotEmpty>
+        		<isNotEmpty property="excludeIdx1">
+        			,#excludeIdx1#
+        		</isNotEmpty>
+        		<isNotEmpty property="excludeIdx2">
+        			,#excludeIdx2#
+        		</isNotEmpty>
+        <![CDATA[
+        		
+        		)
         	order by regDate desc
         	limit #firstindex#, #recordperpage#
         ]]>
@@ -179,14 +213,6 @@
 		]]>
 	</update>
 	
-	<select id="selectNoticeDetailUser" resultClass="EgovMap">
-        <![CDATA[
-        	select * 
-        	from notice
-        	where idx = #idx# and expsYn='Y'
-        ]]>
-	</select>
-			
 	<select id="selectInquiryDetail" resultClass="EgovMap">
         <![CDATA[
         	select * 
