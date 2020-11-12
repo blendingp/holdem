@@ -47,6 +47,7 @@
 				<li><a href="/holdem/admin/inquiry.do"><i class="fa fa-question-circle fa-fw"></i> 1:1문의</a></li>
 				<li><a href="/holdem/admin/gameDescription.do"><i class="fa fa-gamepad fa-fw"></i> 게임설명</a></li>
 				<li><a href="/holdem/admin/provision.do"><i class="fa fa-file-text fa-fw"></i> 약관</a></li>
+				<li><a href="#" onclick="alert('준비중입니다.');return false;"><i class="fa fa-won fa-fw"></i> 정산 페이지</a></li>
 			</ul>
 		</div>
 	</div>

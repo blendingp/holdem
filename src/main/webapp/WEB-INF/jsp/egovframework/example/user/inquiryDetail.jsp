@@ -11,7 +11,7 @@
 <jsp:include page="../frame/userTop.jsp"></jsp:include></head>
 <body>
 	<div class="frame">
-		<div class="form-block w-form">
+		<div class="bg form-block w-form">
 			<form id="email-form-2" name="email-form-2" data-name="Email Form 2">
 				<jsp:include page="../frame/userMenu.jsp"></jsp:include>
 				<div class="body">
@@ -40,7 +40,7 @@
 						<div class="table-19">
 							<div class="ttop-9">
 								<div class="inquirytitle">${inquiryDetail.title}</div>
-								<div class="div-block-9">
+								<div class="twrap">
 									<div class="tdate-7-copy">
 										등록일<span class="text-span-11"><fmt:formatDate value="${inquiryDetail.regDate}" pattern="yyyy.MM.dd"/></span>
 									</div>

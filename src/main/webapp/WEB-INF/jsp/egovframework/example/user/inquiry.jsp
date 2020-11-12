@@ -11,7 +11,7 @@
 <jsp:include page="../frame/userTop.jsp"></jsp:include></head>
 <body>
 	<div class="frame">
-		<div class="form-block w-form">
+		<div class="bg form-block w-form">
 			<form id="email-form-2" name="email-form-2" data-name="Email Form 2">
 				<jsp:include page="../frame/userMenu.jsp"></jsp:include>
 				<div class="body">

@@ -13,15 +13,15 @@
   -ms-flex-direction: column;
   flex-direction: column;
   background-color: #4f151a;
-  background-image: url('../images/background.png');
-  background-position: 0px 0px;
-  background-size: cover;
+  background-image: url('../images/backgroundnew.jpg');
+  background-position: 50% 0%;
+  background-size: 100%;
   background-repeat: no-repeat;
 }
 
 .toplogoicon {
   position: relative;
-  bottom: 25px;
+  top: -16px;
   z-index: 2;
   width: 100%;
   margin-right: auto;
@@ -29,23 +29,42 @@
 }
 
 .chipsbg {
-  position: absolute;
+  position: static;
   left: 0%;
-  top: 24.3%;
-  right: 0%;
+  top: 24%;
+  right: auto;
   bottom: auto;
-  width: 1612px;
-  height: 439px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+  height: 362px;
   margin-right: auto;
   margin-left: auto;
+  padding-top: 12px;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
   background-image: url('../images/chips.png');
-  background-position: 0px 0px;
-  background-size: cover;
+  background-position: 50% 0%;
+  background-size: contain;
   background-repeat: no-repeat;
+  background-attachment: scroll;
 }
 
 .line {
-  position: absolute;
+  position: static;
   left: 0%;
   top: 23.5%;
   right: auto;
@@ -53,6 +72,7 @@
   z-index: 1;
   width: 1920px;
   height: 41px;
+  margin-top: -13vw;
 }
 
 .textback1 {
@@ -88,8 +108,8 @@
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  width: 1030px;
-  margin-top: 230px;
+  width: 1000px;
+  margin-top: 14px;
   margin-right: auto;
   margin-left: auto;
   -webkit-box-pack: justify;
@@ -236,10 +256,11 @@
   display: -ms-flexbox;
   display: flex;
   width: 100%;
-  height: 240px;
   margin-top: 0px;
   margin-right: auto;
   margin-left: auto;
+  padding-top: 40px;
+  padding-bottom: 40px;
   -webkit-box-pack: center;
   -webkit-justify-content: center;
   -ms-flex-pack: center;
@@ -323,12 +344,12 @@
   height: 66px;
 }
 
-.onstore_btnicon {
+.pcdownload_btnicon {
   width: 221px;
   height: 66px;
 }
 
-.onstore_btn {
+.pcdownload_btn {
   margin-left: 10px;
 }
 
@@ -377,10 +398,10 @@
   -webkit-justify-content: flex-start;
   -ms-flex-pack: start;
   justify-content: flex-start;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  -ms-flex-align: center;
-  align-items: center;
+  -webkit-box-align: start;
+  -webkit-align-items: flex-start;
+  -ms-flex-align: start;
+  align-items: flex-start;
 }
 
 .wingame {
@@ -444,18 +465,13 @@
 }
 
 .topmenu_back {
-  position: static;
-  left: 0%;
-  top: 0%;
-  right: auto;
-  bottom: auto;
   z-index: 4;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
   width: 100%;
-  height: 78px;
+  height: 76px;
   padding-bottom: 0px;
   -webkit-box-pack: center;
   -webkit-justify-content: center;
@@ -466,7 +482,10 @@
   -ms-flex-align: center;
   align-items: center;
   border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);
-  background-color: #fff;
+  background-image: url('../images/top_menu_back.png');
+  background-position: 0px 0px;
+  background-size: cover;
+  background-repeat: no-repeat;
   box-shadow: 0 0 12px -7px rgba(0, 0, 0, 0.4);
 }
 
@@ -668,6 +687,8 @@
 }
 
 .image-2 {
+  width: 191px;
+  height: 116px;
   margin-right: 100px;
 }
 
@@ -690,6 +711,10 @@
 
 .text-span-5 {
   color: #a17851;
+}
+
+.textback1lmage {
+  width: 210px;
 }
 
 .text-span-6 {
@@ -1838,10 +1863,10 @@
   display: -ms-flexbox;
   display: flex;
   width: 142px;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
 }
 
 .mititlebotbox {
@@ -1924,7 +1949,7 @@
   -webkit-align-items: center;
   -ms-flex-align: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.29);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .pwpopup {
@@ -2045,41 +2070,103 @@
   font-weight: 700;
 }
 
+.twrap {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  width: 260px;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.holdemicon {
+  width: 22%;
+  min-height: 100px;
+  min-width: 100px;
+  margin-top: 60px;
+}
+
+.holdemtxt {
+  position: static;
+  left: auto;
+  top: auto;
+  right: auto;
+  bottom: -2%;
+  min-height: 103px;
+  min-width: 766px;
+  margin-top: 60px;
+  margin-bottom: 20px;
+}
+
 @media screen and (max-width: 767px) {
   .bg {
     width: 100%;
+    height: auto;
+    background-position: 50% 0%;
+    background-size: contain;
+    background-repeat: no-repeat;
   }
 
   .toplogoicon {
     bottom: 0px;
     width: 92vw;
     height: auto;
+    min-width: 92vw;
     margin-top: -3vw;
   }
 
   .chipsbg {
-    width: 70vw;
-    height: 19vw;
+    width: 100vw;
+    height: 41vw;
+    margin-top: 0vw;
+    padding-top: 9vw;
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    background-size: contain;
   }
 
   .line {
+    top: 16%;
     width: 100%;
     height: auto;
   }
 
   .textback1 {
-    width: 11vw;
+    width: 16vw;
     height: auto;
+    min-width: 16vw;
   }
 
   .explain {
-    font-size: 1.7vw;
-    line-height: 2.5vw;
+    font-size: 2.4vw;
+    line-height: 3.5vw;
   }
 
   .tbwrap {
-    width: 50%;
-    margin-top: 20vw;
+    width: 69vw;
+    margin-top: -5vw;
+  }
+
+  .left-arrow {
+    width: 8vw;
+    min-width: 8vw;
+    padding-left: 2vw;
+  }
+
+  .leftarrowicon {
+    width: auto;
+    height: 5vw;
+    min-height: 5vw;
+    min-width: auto;
   }
 
   .slideimg {
@@ -2088,21 +2175,37 @@
   }
 
   .slider {
-    width: 50vw;
-    height: 56vw;
-    max-height: 56vw;
-    min-height: 56vw;
+    width: 94vw;
+    height: auto;
+    max-height: 26vw;
+    min-height: 26vw;
+    margin-top: 2vw;
+  }
+
+  .rightarrowicon {
+    width: auto;
+    height: 5vw;
+    min-height: 5vw;
+    min-width: auto;
+  }
+
+  .right-arrow {
+    width: 8vw;
+    min-width: 8vw;
+    padding-right: 2vw;
   }
 
   .div-block {
-    width: 50vw;
-    height: 56vw;
-    margin-top: 5vw;
-    margin-bottom: 2vw;
+    width: 94vw;
+    height: auto;
+    margin-top: 0px;
+    margin-bottom: 0vw;
   }
 
   .bottombg {
     width: 100%;
+    padding-top: 7vw;
+    padding-bottom: 7vw;
   }
 
   .frame {
@@ -2111,24 +2214,79 @@
 
   .b_back {
     width: 100%;
-  }
-
-  .bottom_wrap {
-    padding-right: 3vw;
-    padding-left: 3vw;
+    height: 33vw;
+    margin-top: 3.3vw;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
     -webkit-flex-direction: column;
     -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+  }
+
+  .down_btnwrap {
+    width: 65vw;
+  }
+
+  .game_logo {
+    width: auto;
+    height: 6.5vw;
+  }
+
+  .googleplay_btnicon {
+    width: auto;
+    height: 5.5vw;
+  }
+
+  .pcdownload_btnicon {
+    width: auto;
+    height: 5.5vw;
+  }
+
+  .pcdownload_btn {
+    margin-left: 1vw;
+  }
+
+  .wingameholdem {
+    margin-left: 2vw;
+    font-size: 2.8vw;
+    line-height: 4vw;
+  }
+
+  .text-span {
+    font-size: 2vw;
+    line-height: 3vw;
+  }
+
+  .bottom_wrap {
+    padding-right: 3vw;
+    padding-left: 3vw;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
     -webkit-box-align: start;
     -webkit-align-items: flex-start;
     -ms-flex-align: start;
     align-items: flex-start;
   }
 
+  .b_menu {
+    font-size: 1.5vw;
+    line-height: 3vw;
+  }
+
+  .b_menuwrap {
+    margin-bottom: 1vw;
+  }
+
   .text-block-2 {
-    font-size: 2.4vw;
+    font-size: 2vw;
+    line-height: 3vw;
   }
 
   .topmenu_back {
@@ -2137,6 +2295,11 @@
     min-height: 9vw;
     padding-right: 3vw;
     padding-left: 3vw;
+  }
+
+  .topmenuwrap {
+    padding-right: 0%;
+    padding-left: 0%;
   }
 
   .wingamelogo {
@@ -2154,11 +2317,13 @@
   }
 
   .wingamebtn {
+    left: 0%;
     margin-right: 0px;
   }
 
   .monititlebox {
-    bottom: -19%;
+    bottom: 4%;
+    width: 100%;
   }
 
   .motitleback {
@@ -2166,25 +2331,44 @@
   }
 
   .mititle {
-    font-size: 4vw;
-    line-height: 4vw;
+    font-size: 5vw;
+    line-height: 5vw;
   }
 
   .mititle2 {
     margin-bottom: 0px;
+    font-size: 2.5vw;
+    line-height: 4vw;
+  }
+
+  .mititlebold {
+    font-size: 3vw;
+    line-height: 3vw;
   }
 
   .mitotitle {
     margin-top: 1vw;
+    font-size: 2.3vw;
+    line-height: 3vw;
+  }
+
+  .text-span-4 {
+    line-height: 3vw;
   }
 
   .image-2 {
-    margin-right: 0px;
+    width: auto;
+    height: 13vw;
+    margin-right: 4vw;
+    margin-bottom: 5vw;
   }
 
   .video {
-    width: 50vw;
-    height: 35vw;
+    width: 100%;
+  }
+
+  .motibold {
+    font-size: 3vw;
   }
 
   .togbox {
@@ -2294,10 +2478,6 @@
     line-height: 4vw;
   }
 
-  .table-19 {
-    margin-bottom: 3vw;
-  }
-
   .ttitle-8 {
     font-size: 2.8vw;
     line-height: 4vw;
@@ -2368,13 +2548,13 @@
   }
 
   .notilogo {
-    width: 21vw;
+    width: 23vw;
   }
 
   .notititle {
     margin-top: 4vw;
-    font-size: 3vw;
-    line-height: 3vw;
+    font-size: 4vw;
+    line-height: 4vw;
   }
 
   .listlink {
@@ -2423,13 +2603,11 @@
     line-height: 3vw;
   }
 
-  .div-block-9 {
-    width: 40%;
-  }
-
   .notidetailbox {
-    min-height: 100vw;
+    min-height: 70vw;
     padding: 3vw;
+    font-size: 2.8vw;
+    line-height: 4vw;
   }
 
   .noticedetail {
@@ -2445,6 +2623,7 @@
   .twrap-2 {
     width: 20%;
     height: 100%;
+    min-width: 20%;
   }
 
   .pbtn-4 {
@@ -2456,7 +2635,7 @@
     width: 80%;
     height: 6.5vw;
     padding: 2vw;
-    font-size: 2.5vw;
+    font-size: 2.8vw;
     line-height: 3vw;
   }
 
@@ -2468,8 +2647,7 @@
 
   .pbox-7 {
     height: 6vw;
-    margin-top: 8vw;
-    margin-bottom: 20vw;
+    margin-top: 2vw;
   }
 
   .trow-2 {
@@ -2491,7 +2669,6 @@
   }
 
   .listbtnwrap-copy-2 {
-    bottom: 9vw;
     width: 100%;
   }
 
@@ -2508,6 +2685,13 @@
 
   .table-20 {
     margin-bottom: 3vw;
+  }
+
+  .inquiry-write {
+    width: 100%;
+    min-width: 100%;
+    padding-right: 3vw;
+    padding-left: 3vw;
   }
 
   .quedetail {
@@ -2528,6 +2712,13 @@
     height: 50vw;
   }
 
+  .text-field {
+    width: 80%;
+    padding-left: 2vw;
+    font-size: 2.8vw;
+    line-height: 3vw;
+  }
+
   .wstatext-3-copy {
     width: 12vw;
     height: 5vw;
@@ -2544,13 +2735,79 @@
     font-weight: 700;
   }
 
+  .div-block-11 {
+    width: auto;
+  }
+
+  .mititlebotbox {
+    bottom: -8.3vw;
+    width: 100%;
+  }
+
   .mititle3 {
-    font-size: 2vw;
+    width: 100%;
+    font-size: 2.1vw;
+    line-height: 4vw;
+    text-align: center;
   }
 
   .notidetext {
     font-size: 2.8vw;
     line-height: 4vw;
+  }
+
+  .clausebox {
+    padding: 2vw 3vw 3vw;
+  }
+
+  .ctxt {
+    margin-top: 2vw;
+    font-size: 2.8vw;
+    line-height: 4vw;
+  }
+
+  .bold-text-9 {
+    font-size: 2.8vw;
+  }
+
+  .pwpopup {
+    padding: 5vw;
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    -webkit-box-align: start;
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+  }
+
+  .checkbtn {
+    height: 7vw;
+    margin-top: 3vw;
+    font-size: 3vw;
+    line-height: 3vw;
+  }
+
+  .pwtitle {
+    margin-bottom: 4vw;
+    font-size: 4vw;
+    line-height: 4vw;
+  }
+
+  .pwinput {
+    width: 48vw;
+    height: 7vw;
+    min-height: 7vw;
+    min-width: 48vw;
+    font-size: 2.8vw;
+    line-height: 3vw;
+  }
+
+  .ntxt {
+    margin-top: 0.5vw;
+    font-size: 2.2vw;
+    line-height: 3vw;
   }
 
   .form-block {
@@ -2574,5 +2831,44 @@
     padding-left: 3vw;
     font-size: 2.8vw;
     line-height: 4vw;
+  }
+
+  .twrap {
+    width: 38vw;
+  }
+
+  .div-block-12 {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    margin-top: 3vw;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+  }
+
+  .holdemicon {
+    width: 34%;
+    max-width: 90%;
+    min-height: 2vw;
+    min-width: 30%;
+    margin-top: -1vw;
+  }
+
+  .holdemtxt {
+    bottom: 12%;
+    width: 66%;
+    max-width: 90%;
+    min-height: 10%;
+    min-width: 10%;
+    margin-top: 4vw;
+    margin-bottom: 5vw;
   }
 }
