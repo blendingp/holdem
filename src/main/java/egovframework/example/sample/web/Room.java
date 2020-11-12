@@ -186,6 +186,7 @@ public class Room {
 	public void leave(User u) {		
 		System.out.println(u.seat);
 		gameManager.EmptySeat(u.seat);
+		u.die = false;
 		gameManager.userlist.remove(u);
 		gameManager.leaveuserlist.remove(u);
 		gameManager.watchinguserlist.remove(u);
