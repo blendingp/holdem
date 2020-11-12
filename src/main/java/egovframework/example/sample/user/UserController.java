@@ -283,16 +283,28 @@ public class UserController {
 	@RequestMapping(value="/game.do")
 	public String game(ModelMap model) {
 		EgovMap game = (EgovMap) sampleDAO.select("game");
-		model.addAttribute("game",StringEscapeUtils.unescapeHtml3(""+game.get("text")));
-		
+		if(game != null)
+		{
+			model.addAttribute("game",StringEscapeUtils.unescapeHtml3(""+game.get("text")));
+		}
+		else
+		{
+			model.addAttribute("game","등록된 게임설명이 없습니다.");
+		}
 		return "user/game";
 	}
 	
 	@RequestMapping(value="/provision.do")
 	public String provision(ModelMap model) {
 		EgovMap provision = (EgovMap)sampleDAO.select("provision");
-		model.addAttribute("provision",StringEscapeUtils.unescapeHtml3(""+provision.get("text")));
-		
+		if(provision != null)
+		{
+			model.addAttribute("provision",StringEscapeUtils.unescapeHtml3(""+provision.get("text")));
+		}
+		else
+		{
+			model.addAttribute("provision","등록된 약관이 없습니다.");
+		}
 		return "user/provision";
 	}
 }
