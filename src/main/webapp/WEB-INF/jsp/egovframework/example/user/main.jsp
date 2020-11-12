@@ -26,7 +26,7 @@
 					<img src="/holdem/webflow/images/pngwing.com---2020-11-11T111932.785.png" loading="lazy" alt="" class="motitleback">
 					<div class="mititle">
 						HOLDEM<br>
-						<span class="mitotitle">원게임<strong class="motibold">카지노 홀덤</strong></span>
+						<span class="mitotitle">윈게임<strong class="motibold">카지노 홀덤</strong></span>
 					</div>
 					<div class="mititlebotbox">
 						<div class="mititle2">
