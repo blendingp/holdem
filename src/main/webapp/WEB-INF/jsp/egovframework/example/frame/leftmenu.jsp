@@ -35,7 +35,7 @@
 			<ul class="nav" id="side-menu">
 				<li><a href="/holdem/admin/main.do"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
 				<li><a href="/holdem/admin/gamelogp.do"><i class="fa fa-gamepad fa-fw"></i> 게임로그</a></li>
-				<li><a href="/holdem/admin/chat.do"><i class="fa fa-comment fa-fw"></i> 채팅관리</a></li>
+				<!-- <li><a href="/holdem/admin/chat.do"><i class="fa fa-comment fa-fw"></i> 채팅관리</a></li> -->
 				<li>
 					<a href="#"><i class="fa fa-thumb-tack fa-fw"></i> 메인<span class="fa arrow"></span></a>
 					<ul class="nav nav-second-level">
