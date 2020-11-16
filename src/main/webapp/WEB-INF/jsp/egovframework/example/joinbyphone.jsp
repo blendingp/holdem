@@ -91,6 +91,7 @@
                     	opener.parent.getphone(mobile, sBirthDate, idnum, sName, sDupInfo, 0, aa);                    	
                     },
                      complete : function(data) {
+                        alert("인증 완료 창을 닫아주세요");
                     	 self.close(); 
                      },
                      error : function(xhr, status , error){console.log("ajax ERROR!!! : " );}

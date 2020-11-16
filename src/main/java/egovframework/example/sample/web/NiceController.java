@@ -20,6 +20,7 @@ public class NiceController {
 	@RequestMapping(value = "/join.do")
 	public String join(HttpServletRequest request, ModelMap model) throws Exception {
 		String midx = request.getParameter("midx");
+		System.out.println(midx);
 		model.addAttribute("midx", midx);
 		return "join";
 	}
@@ -41,15 +42,15 @@ public class NiceController {
 	@ResponseBody
 	@RequestMapping(value = "/insertAuth.do")
 	public String insertAuth(HttpServletRequest request, ModelMap model) throws Exception {
-		String midx = ""+1;//request.getParameter("midx");
+		String midx = request.getParameter("midx");
 		String birthDate = request.getParameter("birthDate");
 		String uid = request.getParameter("uid");
 		String autchTick = request.getParameter("autchTick");		
-		System.out.println("birthDate:"+birthDate);
+		System.out.println("birthdate:"+birthDate);
 		
 		EgovMap in = new EgovMap();
 		in.put("midx", midx);
-		in.put("birthDate", birthDate);
+		in.put("birthdate", birthDate);
 		in.put("uid", uid);
 		in.put("autchTick", autchTick);
 		sampleDAO.insert("insertAuthSelf",in);

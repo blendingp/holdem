@@ -44,6 +44,37 @@ public class RoomManager {
 	}	
 
 	void joinRoom(User user, String roomkey){
+		if( user.IsAuth() == false )
+		{
+			ObjectMapper mapper = new ObjectMapper();
+
+			JSONObject cobj = new JSONObject();
+			cobj.put("cmd", "auth");
+			cobj.put("result", false);
+
+			try {
+				user.session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return ;
+		}
+
+		System.out.println(roomkey);
+		if( Room.GetRoomInfo(roomkey).useitem.equals("balance") == true){
+			if( user.balance < Room.GetRoomInfo(roomkey).ante * 3 ){
+				return ;
+			}
+		}
+		else if( Room.GetRoomInfo(roomkey).useitem.equals("point") == true){
+			if( user.point < Room.GetRoomInfo(roomkey).ante * 3 ){
+				return ;
+			}
+		}	
+
+		System.out.println(roomkey);
 		Room room = findbykey(roomkey);
 		if( room == null )
 		{
@@ -52,11 +83,41 @@ public class RoomManager {
 			roomList.add(room);
 		}		
 
+		System.out.println(roomcount);
 		room.join(user, roomcount);		
 	}
 
 	void GoldRoomQuickJoin(User user)
 	{
+		if( user.IsAuth() == false )
+		{
+			ObjectMapper mapper = new ObjectMapper();
+
+			JSONObject cobj = new JSONObject();
+			cobj.put("cmd", "auth");
+			cobj.put("result", false);
+
+			try {
+				user.session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return ;
+		}
+
+		if( Room.GetRoomInfo("goldroom10").useitem.equals("balance") == true){
+			if( user.balance < Room.GetRoomInfo("goldroom10").ante * 3 ){
+				return ;
+			}
+		}
+		else if( Room.GetRoomInfo("goldroom10").useitem.equals("point") == true){
+			if( user.point < Room.GetRoomInfo("goldroom10").ante * 3 ){
+				return ;
+			}
+		}
+		
 		ArrayList<Room> list = new ArrayList<>();
 		for( Room room : roomList )
 		{
@@ -97,6 +158,25 @@ public class RoomManager {
 	}
 
 	boolean JoinRoomByNumber(User user, int number){
+
+		if( user.IsAuth() == false )
+		{
+			ObjectMapper mapper = new ObjectMapper();
+
+			JSONObject cobj = new JSONObject();
+			cobj.put("cmd", "auth");
+			cobj.put("result", false);
+
+			try {
+				user.session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return false;
+		}
+
 		Room room = find(number);
 		if( room == null )
 		{
@@ -114,6 +194,24 @@ public class RoomManager {
 
 	boolean CreateRoom(User user, CreateRoom roominfo)
 	{
+		if( user.IsAuth() == false )
+		{
+			ObjectMapper mapper = new ObjectMapper();
+
+			JSONObject cobj = new JSONObject();
+			cobj.put("cmd", "auth");
+			cobj.put("result", false);
+
+			try {
+				user.session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return false;
+		}
+
 		if( user.balance < roominfo.setting.ante * 3 )
 		{
 			return false;

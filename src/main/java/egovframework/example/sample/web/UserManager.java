@@ -474,4 +474,20 @@ public class UserManager {
 
 		find(session).SetUserAvata(avata);
 	}
+
+	public void GetUserAuth(WebSocketSession session)
+	{
+		boolean result = find(session).GetAuth();
+		JSONObject cobj = new JSONObject();
+		cobj.put("cmd", "authresult");							
+		cobj.put("result", result);		
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+		} catch (IOException e) {			
+			e.printStackTrace();
+		}
+	}
 }

@@ -10,11 +10,11 @@
 		<![CDATA[
 			INSERT INTO auth_self
 				( midx
-				  , birth_date
+				  , birthdate
 				  , uid
-				  , auth_tick)
+				  , authtick)
 			VALUES ( #midx#
-				  , #birthDate#
+				  , #birthdate#
 				  , #uid#
 				  , #autchTick#)
 		]]>

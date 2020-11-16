@@ -2,6 +2,7 @@ package egovframework.example.sample.web;
 
 import java.util.ArrayList;
 
+import egovframework.example.sample.web.model.AuthSelf;
 import egovframework.example.sample.web.model.MemberInfo;
 import egovframework.example.sample.web.model.MembersInfo;
 import egovframework.example.sample.web.model.ProfileModel;
@@ -23,5 +24,6 @@ public class UserInfo {
     public ArrayList<TaskModel> tasklist;
     public ArrayList<String> avatalist;
     public MemberInfo memberinfo;
+    public AuthSelf auth;
     
 }

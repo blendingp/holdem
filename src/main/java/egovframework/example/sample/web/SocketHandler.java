@@ -306,6 +306,10 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			{
 				usermanager.SetUserAvata(session, ""+obj.get("avata"));				
 			}break;
+			case "checkauth":
+			{
+				usermanager.GetUserAuth(session);
+			}break;
 		}
     }
  

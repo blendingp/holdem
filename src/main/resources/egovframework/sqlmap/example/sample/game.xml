@@ -322,4 +322,11 @@
 			SELECT product, iscash, price FROM payment_log WHERE midx=#midx# AND year=#year# AND month=#month#
         ]]>
 	</select>
+
+	<select id="GetAuthInfo" resultClass="EgovMap">
+        <![CDATA[
+			SELECT birthdate, uid, authtick FROM auth_self WHERE midx=#midx#
+        ]]>
+	</select>
+
 </sqlMap>

@@ -80,12 +80,17 @@
     var midx = "${midx}";    
     window.name ="Parent_window";
     
-    $(document).ready(function(){
-    	fnPopup();
+    $(document).ready(function(){    	
+        var windowRef = window.open('', 'popupChk', 'width=500, height=550, top=0, left=0, fullscreen=yes, menubar=no, status=no, toolbar=no, titlebar=no, location=no, scrollbar=no');                
+        $(windowRef.document).ready(function()
+        {
+            console.log("windowRef is readyed");
+            fnPopup();
+        });        
     });    
     
     function fnPopup(){
-        window.open('', 'popupChk', 'width=500, height=550, top=100, left=100, fullscreen=no, menubar=no, status=no, toolbar=no, titlebar=yes, location=no, scrollbar=no');
+        
         document.form_chk.action = "https://nice.checkplus.co.kr/CheckPlusSafeModel/checkplus.cb";
         document.form_chk.target = "popupChk";
         document.form_chk.submit();

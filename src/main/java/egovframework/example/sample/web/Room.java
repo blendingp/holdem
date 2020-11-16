@@ -21,14 +21,33 @@ public class Room {
 	GameManager gameManager;
 
 	int ridx;
-	int defaultmoney;//삥머니
-	int maxmoney;//배팅 맥스 머니
+	long defaultmoney;//삥머니
+	long maxmoney;//배팅 맥스 머니
 	int maxusersize = 9;
 	int title = 0;
 
 	public String UsedItem = "balance";
 	private String _roomKey = "";
 	private boolean _isPrivate = false;
+
+	public static RoomSetting GetRoomInfo(String key)
+	{
+		ClassPathResource resource = new ClassPathResource("json/roomsetting/" + key + ".json");
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+            Path path = Paths.get(resource.getURI());
+			String content = Files.readString(path);
+			//System.out.println(content);
+			RoomSetting setting = mapper.readValue(content, RoomSetting.class);
+			return setting;	
+		}
+		catch (IOException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}        
+
+		return null;
+	}	
 
 	public Room(int ridx, String roomkey){
 		this.ridx = ridx;		

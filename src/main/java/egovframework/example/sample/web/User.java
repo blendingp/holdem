@@ -1,6 +1,7 @@
 package egovframework.example.sample.web;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -13,6 +14,7 @@ import org.json.simple.JSONObject;
 import org.springframework.web.socket.WebSocketSession;
 
 import egovframework.example.sample.service.impl.SampleDAO;
+import egovframework.example.sample.web.model.AuthSelf;
 import egovframework.example.sample.web.model.BanModel;
 import egovframework.example.sample.web.model.MemberInfo;
 import egovframework.example.sample.web.model.MembersInfo;
@@ -52,6 +54,7 @@ public class User {
 	public ArrayList<Integer> cardarr = new ArrayList<>();
 	public ArrayList<Item> consumableItem = new ArrayList<>();
 
+	AuthSelf auth = null;
 	MemberInfo _info;
 	String gamestat = "";
 	int level = 1000;
@@ -160,7 +163,7 @@ public class User {
 		}
 
 		GetMemberInfo();
-
+		GetAuthInfo();
 	}
 
 	private Object find(WebSocketSession session2) {
@@ -575,6 +578,27 @@ public class User {
 		}
 	}
 
+	public boolean IsAuth()
+	{
+		
+		if( auth == null )
+		{
+			return false;
+		}
+
+		if( auth.uid.isEmpty() == true )
+		{
+			return false;
+		}
+
+		if( auth.authtick + 31536000000L < System.currentTimeMillis())
+		{
+			return false;
+		}
+
+		return true;		
+	}
+
 	public boolean InsertItem(Item item) {
 		if (item.Type.equals("point") == true) {
 			if (this.point + item.Amount > memberInfo.limit_point) {
@@ -668,6 +692,47 @@ public class User {
 
 			UpdateMemberInfo();
 		}		
+	}
+
+	private void GetAuthInfo()
+	{
+		EgovMap in = new EgovMap();
+		in.put("midx", this.uidx);
+		EgovMap ed = (EgovMap) SocketHandler.sk.sampleDAO.select("GetAuthInfo", in);
+		if( ed != null )
+		{
+			ObjectMapper mapper = new ObjectMapper();
+
+			try {
+				String jsonstring = mapper.writeValueAsString(ed);				
+				auth = mapper.readValue(jsonstring, AuthSelf.class);			
+			} catch (JsonProcessingException e) {			
+				System.out.println(e.getMessage());
+			}
+		}		
+	}
+
+	public boolean GetAuth()
+	{
+		GetAuthInfo();
+		if( auth.authtick + 31536000000L < System.currentTimeMillis())
+		{
+			return false;
+		}
+
+		if( auth.uid.isEmpty() == true )
+		{
+			return false;
+		}
+
+		String birthyear = auth.birthdate.substring(0, 3);
+		int year = LocalDateTime.now().getYear() - Integer.parseInt(birthyear);
+		if( year < 18 )
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	public void UpdateMemberInfo()
