@@ -108,10 +108,10 @@
 						</div>	
 					</c:if>				
 				</div>
-				<jsp:include page="../frame/userBottom.jsp"></jsp:include>
 			</form>
 		</div>
 	</div>
+	<jsp:include page="../frame/userBottom.jsp"></jsp:include>
 	<script>
 		function inquiryDel(){
 			if(confirm("글을 삭제하시겠습니까?")){

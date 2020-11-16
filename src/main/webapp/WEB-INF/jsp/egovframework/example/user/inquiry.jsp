@@ -75,7 +75,6 @@
 						</div>
 					</div>
 				</div>
-				<jsp:include page="../frame/userBottom.jsp"></jsp:include>
 				<div class="pframe" id="pwChk">
 					<div class="pwpopup">
 						<div class="pwtitle">비밀번호 입력</div>
@@ -91,6 +90,7 @@
 			</form>
 		</div>
 	</div>
+	<jsp:include page="../frame/userBottom.jsp"></jsp:include>
 	<script>
 		function fn_egov_link_page(pageIndex){
 			location.href="/holdem/user/inquiry.do?pageIndex="+pageIndex;

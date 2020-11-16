@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -283,31 +284,22 @@ public class UserController {
 		return "user/noticeDetail";
 	}
 	
-	@RequestMapping(value="/game.do")
-	public String game(ModelMap model) {
-		EgovMap game = (EgovMap) sampleDAO.select("game");
-		if(game != null)
+	
+	@RequestMapping(value="/etcB/{path}.do")
+	public String path(@PathVariable("path") String path , HttpServletRequest request , ModelMap model) {
+		String type = ""+request.getParameter("type");
+		EgovMap info = (EgovMap) sampleDAO.select("selectEtcBoardByKind" , type);
+		if(info != null)
 		{
-			model.addAttribute("game",StringEscapeUtils.unescapeHtml3(""+game.get("text")));
+			model.addAttribute("info",StringEscapeUtils.unescapeHtml3(""+info.get("text")));
 		}
 		else
 		{
-			model.addAttribute("game","등록된 게임설명이 없습니다.");
+			model.addAttribute("info","등록된 글이 없습니다.");
 		}
-		return "user/game";
+		model.addAttribute("path" , path);
+		model.addAttribute("type" , type);
+		return "user/etcBoard";
 	}
 	
-	@RequestMapping(value="/provision.do")
-	public String provision(ModelMap model) {
-		EgovMap provision = (EgovMap)sampleDAO.select("provision");
-		if(provision != null)
-		{
-			model.addAttribute("provision",StringEscapeUtils.unescapeHtml3(""+provision.get("text")));
-		}
-		else
-		{
-			model.addAttribute("provision","등록된 약관이 없습니다.");
-		}
-		return "user/provision";
-	}
 }

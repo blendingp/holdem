@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.simple.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -431,62 +432,33 @@ public class BoardController {
 		}
 	}
 	
-	@RequestMapping(value="/gameDescription.do")
-	public String gameDescription(ModelMap model) {
-		model.addAttribute("info", sampleDAO.select("selectEtcBoardByKind","G"));
-		return "admin/gameDescription";
+	@RequestMapping(value="/etcB/{path}.do")
+	public String path(@PathVariable("path") String path, HttpServletRequest request , ModelMap model) {
+		String type = ""+request.getParameter("type");
+		model.addAttribute("info", sampleDAO.select("selectEtcBoardByKind",type));
+		model.addAttribute("type", type);
+		model.addAttribute("path", path);
+		return "admin/etcBoard";
 	}
 	
 	@ResponseBody
-	@RequestMapping(value="/gameDescInsert.do" , produces = "application/json; charset=utf8")
-	public String gameDescInsert(HttpServletRequest request) {
+	@RequestMapping(value="/etcB/{path}Insert.do" , produces = "application/json; charset=utf8")
+	public String pathInsert(@PathVariable("path") String path, HttpServletRequest request) {
+		String type = ""+request.getParameter("type");
 		String text = request.getParameter("text");
 		EgovMap in = new EgovMap();
 		in.put("text", text);
-		in.put("kind", "G");
+		in.put("kind", type);
 		JSONObject obj = new JSONObject();
 		try {
-			EgovMap gameDesc = (EgovMap) sampleDAO.select("selectEtcBoardByKind",in);
-			if(gameDesc == null)
+			EgovMap info = (EgovMap) sampleDAO.select("selectEtcBoardByKind",in);
+			if(info == null)
 			{
 				sampleDAO.insert("insertEtcBoard" , in);
 			}
 			else
 			{
-				in.put("idx", gameDesc.get("idx"));
-				sampleDAO.update("updateEtcBoard" , in);
-			}
-			obj.put("result", "success");
-			return obj.toJSONString();
-		} catch (Exception e) {
-			obj.put("result", "fail");
-			return obj.toJSONString();
-		}
-	}
-	
-	@RequestMapping(value="/provision.do")
-	public String provision(ModelMap model) {
-		model.addAttribute("info", sampleDAO.select("selectEtcBoardByKind","P"));
-		return "admin/provision";
-	}
-	
-	@ResponseBody
-	@RequestMapping(value="/provisionInsert.do" , produces = "application/json; charset=utf8")
-	public String provisionInsert(HttpServletRequest request) {
-		String text = request.getParameter("text");
-		EgovMap in = new EgovMap();
-		in.put("text", text);
-		in.put("kind", "P");
-		JSONObject obj = new JSONObject();
-		try {
-			EgovMap provision = (EgovMap) sampleDAO.select("selectEtcBoardByKind",in);
-			if(provision == null)
-			{
-				sampleDAO.insert("insertEtcBoard" , in);
-			}
-			else
-			{
-				in.put("idx", provision.get("idx"));
+				in.put("idx", info.get("idx"));
 				sampleDAO.update("updateEtcBoard" , in);
 			}
 			obj.put("result", "success");
