@@ -289,21 +289,6 @@
         ]]>
 	</update>
 	
-	<select id="game" resultClass="egovMap">
-		<![CDATA[
-			select *
-			from etc_board
-			where kind='G'			
-		]]>
-	</select>
-	
-	<select id="provision" resultClass="egovMap">
-		<![CDATA[
-			select *
-			from etc_board
-			where kind='P'			
-		]]>
-	</select>
 	
 	<select id="pwChk" resultClass="egovMap">
 		<![CDATA[

@@ -34,7 +34,7 @@
 										</div>
 										<div class="form-group">
 											<label>문의 내용</label>
-											<pre style="max-height:450px;">${text}</pre>
+											<pre style="max-height:450px; background-color:transparent;">${text}</pre>
 										</div>
 										<div class="form-group">
 											<label>답변 내용</label> 

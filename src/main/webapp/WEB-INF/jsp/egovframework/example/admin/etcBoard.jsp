@@ -12,7 +12,12 @@
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">약관 등록</h1>
+					<h1 class="page-header">
+					<c:if test="${type == 'G' }">게임 설명</c:if>
+					<c:if test="${type == 'P' }">이용약관</c:if>
+					<c:if test="${type == 'C' }">회사소개</c:if>
+					<c:if test="${type == 'V' }">개인정보처리방침</c:if>
+					 등록</h1>
 				</div>
 			</div>
 			<div class="row">
@@ -21,7 +26,9 @@
 						<div class="panel-body">
 							<div class="row">
 								<div class="col-lg-12">
-									<form role="form" id="provisionForm">
+									<form role="form" id="etcBoardForm">
+										<input type="hidden" id="type" name="type" value="${type}"/>
+										<input type="hidden" id="path" name="path" value="${path}"/>
 										<div class="form-group">
 											<label>내용</label> 
 											<textarea class="form-control" rows="30" name="text" id="smartEditor">${info.text}</textarea>
@@ -31,16 +38,18 @@
 							</div>
 						</div>
 					</div>
-					<button type="button" onclick="provisionInsert()" class="btn btn-outline btn-default">등록</button>
+					<button type="button" onclick="etcBoardInsert()" class="btn btn-outline btn-default">등록</button>
 				</div>
 			</div>
 		</div>
 	</div>
 	<jsp:include page="../frame/adminbottom.jsp" flush="true" />
 	<script>
-	function provisionInsert(){
+	function etcBoardInsert(){
 		oEditors.getById["smartEditor"].exec("UPDATE_CONTENTS_FIELD",[]);
 		var text = $("#smartEditor").val();
+		var type =$("#type").val();
+		var path = $("#path").val();
 		if(text == "")
 		{
 			alert("내용을 입력해주세요.");
@@ -49,13 +58,13 @@
 		}
 		$.ajax({
 			type:'post',
-			data:$("#provisionForm").serialize(),
-			url:'/holdem/admin/provisionInsert.do',
+			data:$("#etcBoardForm").serialize(),
+			url:'/holdem/admin/etcB/'+path+'Insert.do',
 			success:function(data){
 				if(data.result == 'success')
 				{
 					alert('등록이 완료되었습니다.');
-					location.href="/holdem/admin/provision.do";
+					location.href="/holdem/admin/etcB/"+path+".do?type="+type;
 				}
 				else 
 				{

@@ -72,10 +72,10 @@
 						</div>
 					</div>
 				</div>
-				<jsp:include page="../frame/userBottom.jsp"></jsp:include>
 			</form>
 		</div>
 	</div>
+	<jsp:include page="../frame/userBottom.jsp"></jsp:include>
 	<script>
 		function inquiryEdit(){
 			oEditors.getById["smartEditor"].exec("UPDATE_CONTENTS_FIELD",[]);

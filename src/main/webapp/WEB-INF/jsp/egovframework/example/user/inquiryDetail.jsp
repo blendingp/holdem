@@ -69,21 +69,49 @@
 									<a href="javascript:inquiryDel()" class="listbtn-2 w-inline-block">
 										<div class="deletebtntext">삭제</div>
 									</a> 
+									<a href="/holdem/user/inquiry.do" class="listbtn-2 w-inline-block">
+										<div class="deletebtntext">목록으로</div>
+									</a>
 								</c:if>
-								<c:if test="${inquiryDetail.answerYn == 'Y' }">
-									<div>※ 관리자가 답변을 한 후에는 수정, 삭제가 불가능 합니다.</div> 
-								</c:if>
-								<a href="/holdem/user/inquiry.do" class="listbtn-2 w-inline-block">
-									<div class="deletebtntext">목록으로</div>
-								</a>
 							</div>
 						</div>
 					</div>
+					<c:if test="${inquiryDetail.answerYn == 'Y' }">
+						<div class="quedetail">
+							<div class="table-19">
+								<div class="ttop-9">
+									<div class="inquirytitle">[답변]</div>
+									<div class="twrap">
+										<div class="tdate-7-copy">
+											답변일<span class="text-span-11"><fmt:formatDate value="${inquiryDetail.answerDate}" pattern="yyyy.MM.dd"/></span>
+										</div>
+										<div class="div-block-11">
+											<div class="wstatext-3 done">답변완료</div>
+										</div>
+									</div>
+								</div>
+								<a href="#" class="rowbtn w-inline-block"></a>
+								<div class="notidetailbox">
+									<div>${answer}</div>
+								</div>
+							</div>
+							<div class="pbox-7">
+								<div class="listbtnwrap-copy-2" style="width:auto;">
+									<c:if test="${inquiryDetail.answerYn == 'Y' }">
+										<div>※ 관리자가 답변을 한 후에는 수정, 삭제가 불가능 합니다.</div> 
+									</c:if>
+									<a href="/holdem/user/inquiry.do" class="listbtn-2 w-inline-block">
+										<div class="deletebtntext">목록으로</div>
+									</a>
+								</div>
+							</div>
+						</div>	
+					</c:if>				
 				</div>
-				<jsp:include page="../frame/userBottom.jsp"></jsp:include>
 			</form>
 		</div>
 	</div>
+	<jsp:include page="../frame/userBottom.jsp"></jsp:include>
 	<script>
 		function inquiryDel(){
 			if(confirm("글을 삭제하시겠습니까?")){
