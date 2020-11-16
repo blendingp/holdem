@@ -126,7 +126,10 @@ public class UserController {
 		EgovMap inquiryDetail = (EgovMap)sampleDAO.select("selectInquiryDetail",in);
 		model.addAttribute("inquiryDetail",inquiryDetail);
 		model.addAttribute("text",StringEscapeUtils.unescapeHtml3(""+inquiryDetail.get("text")));
-		
+		if(inquiryDetail.get("answerYn") != null && inquiryDetail.get("answerYn").equals("Y")) 
+		{
+			model.addAttribute("answer",StringEscapeUtils.unescapeHtml3(""+inquiryDetail.get("answer")));
+		}
 		return "user/inquiryDetail";
 	}
 	
