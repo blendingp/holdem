@@ -329,4 +329,39 @@
         ]]>
 	</select>
 
+	<select id="ExsitID" resultClass="EgovMap">
+        <![CDATA[
+			SELECT midx FROM member WHERE muserid=#muserid#
+        ]]>
+	</select>
+
+	<select id="ExsitSocial" resultClass="EgovMap">
+        <![CDATA[
+			SELECT midx FROM member WHERE socail=#socail#
+        ]]>
+	</select>
+
+	<insert id="InsertUser" parameterClass="egovMap">
+        <![CDATA[
+				INSERT INTO member
+					( muserid, muserpw, socail )
+				VALUES ( #muserid#, #muserpw#, #socail# )
+			]]>
+	</insert>
+
+	<insert id="InsertItem" parameterClass="egovMap">
+        <![CDATA[
+				INSERT INTO item
+					( midx, type, amount )
+				VALUES 
+				( #midx#, 'balance', 0 ),
+				( #midx#, 'cash', 0 ),
+				( #midx#, 'budget', 0 ),
+				( #midx#, 'point', #point# ),
+				( #midx#, 'safe_balance', 0 ),
+				( #midx#, 'safe_point', 0 ),
+				( #midx#, 'bank', 0 );
+			]]>
+	</insert>
+
 </sqlMap>

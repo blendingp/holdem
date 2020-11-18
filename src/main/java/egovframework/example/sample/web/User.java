@@ -749,5 +749,5 @@ public class User {
 		}
 		
 		this.img = _info.avata;		
-	}
+	}	
 }

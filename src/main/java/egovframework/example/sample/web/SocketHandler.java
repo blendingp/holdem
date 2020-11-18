@@ -160,10 +160,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         		session.getAttributes().put("useridx", ed.get("midx"));
         		User user = new User(Integer.parseInt(""+ed.get("midx")), session, ""+ed.get("muserid"));
         		
-        		//구정연_멘션 보내도록 추가
-        		String chatMention = chatmention.getChatMentionString();
-        		
-        		usermanager.connect(session, user, chatMention);
+        		usermanager.connect(session, user);
         		break;
         	}
         	case "joinRoom":
@@ -309,6 +306,18 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			case "checkauth":
 			{
 				usermanager.GetUserAuth(session);
+			}break;
+			case "signup":
+			{
+				if( (""+obj.get("social")).isEmpty() == true )
+				{
+					usermanager.SignUp(session, ""+obj.get("id"), ""+obj.get("pass"));
+				}				
+
+			}break;		
+			case "googlesign":
+			{
+				usermanager.SignUp(session, ""+obj.get("social"));
 			}break;
 		}
     }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import javax.json.JsonObject;
+import javax.mail.Session;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -54,7 +55,7 @@ public class UserManager {
 		return null;
 	}
 
-	public void connect(WebSocketSession session, User user, String chatmention) {
+	public void connect(WebSocketSession session, User user) {
 		userlist.add(user);
 
 		JSONObject cobj = new JSONObject();
@@ -70,8 +71,6 @@ public class UserManager {
 		cobj.put("bank", find(session).bank);
 		cobj.put("nickname", ""+ find(session).nickname);
 		// 구정연_멘션 스트링 리스트 전달
-		cobj.put("chatmention", chatmention);
-		System.out.println("chatmention :" + chatmention);
 		try {
 			session.sendMessage(new TextMessage(cobj.toJSONString()));
 		} catch (IOException e) {
@@ -489,5 +488,110 @@ public class UserManager {
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}
+	}
+
+	public void SignUp(WebSocketSession session, String id, String pass)
+	{
+		JSONObject cobj = new JSONObject();
+		cobj.put("cmd", "singup");							
+
+		if( ExsitID(id) == true)
+		{
+			cobj.put("result", false);		
+
+			ObjectMapper mapper = new ObjectMapper();
+
+			try {
+				session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+			} catch (IOException e) {			
+				e.printStackTrace();
+			}
+
+			return ;
+		}		
+
+		EgovMap insert = new EgovMap();
+		insert.put("muserid", id);
+		insert.put("muserpw", pass);    			
+		insert.put("socail", "");
+		SocketHandler.sk.sampleDAO.insert("InsertUser", insert);		
+
+		EgovMap in = new EgovMap();
+        in.put("muserid", id);
+        in.put("muserpw", pass);    			
+        EgovMap ed = (EgovMap)SocketHandler.sk.sampleDAO.select("Login", in);
+		session.getAttributes().put("useridx", ed.get("midx"));
+		if( ed == null )
+		{
+			cobj.put("result", false);		
+
+			ObjectMapper mapper = new ObjectMapper();
+
+			try {
+				session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+			} catch (IOException e) {			
+				e.printStackTrace();
+			}
+
+			return ;
+		}
+		
+		EgovMap itemin = new EgovMap();
+		itemin.put("midx", ed.get("midx"));		
+		itemin.put("point", 5000);		
+		SocketHandler.sk.sampleDAO.insert("InsertItem", itemin);		
+		
+        User user = new User(Integer.parseInt(""+ed.get("midx")), session, id);        		
+        		
+        connect(session, user);
+	}
+
+	public void SignUp(WebSocketSession session, String social)
+	{
+		EgovMap in = new EgovMap();
+        in.put("socail", social);
+		EgovMap ed = (EgovMap)SocketHandler.sk.sampleDAO.select("ExsitSocial", in);
+		
+		if( ed == null )
+		{
+			EgovMap insert = new EgovMap();
+			insert.put("muserid", "");
+			insert.put("muserpw", "");    			
+			insert.put("socail", social);
+			SocketHandler.sk.sampleDAO.insert("InsertUser", insert);		
+
+			ed = (EgovMap)SocketHandler.sk.sampleDAO.select("ExsitSocial", in);
+
+			EgovMap itemin = new EgovMap();
+			itemin.put("midx", ed.get("midx"));		
+			itemin.put("point", 5000);		
+			SocketHandler.sk.sampleDAO.insert("InsertItem", itemin);			        
+		}				
+		
+		session.getAttributes().put("useridx", ed.get("midx"));			
+		
+		User user = new User(Integer.parseInt(""+ed.get("midx")), session, social);        		
+        		
+        connect(session, user);
+	}
+
+	public boolean ExsitID(String id)
+	{
+		EgovMap in = new EgovMap();
+		in.put("muserid", id);
+
+		EgovMap ed = (EgovMap) SocketHandler.sk.sampleDAO.select("ExsitID", in);		
+
+		return ed != null;
+	}
+
+	public boolean ExsitSocail(String socail)
+	{
+		EgovMap in = new EgovMap();
+		in.put("socail", socail);
+
+		EgovMap ed = (EgovMap) SocketHandler.sk.sampleDAO.select("ExsitSocial", in);		
+
+		return ed != null;
 	}
 }
