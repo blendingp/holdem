@@ -1586,20 +1586,22 @@ public class GameManager {
 		return false;
 	}
 	
+	int getnum(int g)
+	{
+		return g%13 == 0? 13 : g%13;
+	}
 	//10 탑카드  : 제일 큰숫자 한장 리턴
-	public int checkTopCard(int atarr[]){
-		int []tarr= {atarr[0],atarr[1]}; // 애초에 탑카드까지 왔다는것은 커뮤니티카드 5장과는 맞은게 없어서 개인카드 두장가지고 TOP카드 족보를 구성해야 한다는 뜻이다. 두장만 가져와야 함.
+	public int checkTopCard(int tarr[]){
 		int[] arr=cardsort(tarr,true);
 		int pre = -1;
 		ArrayList<Integer> cards = new ArrayList<>();
 
-		tempInfo1 = arr[0];
+		tempInfo1 = getnum(arr[0])*1000000 + getnum(arr[1])*100000 + getnum(arr[2])*10000 + getnum(arr[3])*1000 + getnum(arr[4])*100 ;
 
-		cards.add(tempInfo1);
+		cards.add(arr[0]);
 		
 		JSONObject win = MakeWinCard(1, cards);
 		currentUser.wincard.add(win);
-		if(tempInfo1%13 ==0)tempInfo1 = 13;
 		
 		return tempInfo1;
 	}	
@@ -1682,7 +1684,7 @@ public class GameManager {
 				}else {//탑카드 
 					lv=1;
 					checkTopCard(card);
-					currentUser.jokbocode=10000000+tempInfo1*100000;
+					currentUser.jokbocode=10000000+tempInfo1*100;
 				}
 				
 			}
@@ -1694,6 +1696,7 @@ public class GameManager {
 	            	return s2.jokbocode - s1.jokbocode;
 	            }
 	        });
+			
 		}
 
 		winSeat=sortRank.get(0).seat;// 이게 유저 자리 번호 맞나? 확인하기 2020 09 10		
