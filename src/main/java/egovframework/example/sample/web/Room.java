@@ -299,7 +299,11 @@ public class Room {
 
 				obj.put("cmd","reserve");				
 				obj.put("seat", user.seat);
-				gameManager.sendRoom(obj);				
+				gameManager.sendRoom(obj);		
+				
+				if( gameManager.checkAbstention() ){
+					gameManager.TheEnd();
+				}
 			}
 		}		
 	}
