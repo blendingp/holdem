@@ -1583,9 +1583,10 @@ public class GameManager {
 	}
 	
 	//10 탑카드  : 제일 큰숫자 한장 리턴
-	public int checkTopCard(int tarr[]){
+	public int checkTopCard(int atarr[]){
+		int []tarr= {atarr[0],atarr[1]}; // 애초에 탑카드까지 왔다는것은 커뮤니티카드 5장과는 맞은게 없어서 개인카드 두장가지고 TOP카드 족보를 구성해야 한다는 뜻이다. 두장만 가져와야 함.
 		int[] arr=cardsort(tarr,true);
-		int pre = -1;		
+		int pre = -1;
 		ArrayList<Integer> cards = new ArrayList<>();
 
 		tempInfo1 = arr[0];
