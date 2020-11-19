@@ -57,7 +57,7 @@ public class Task {
 
         for( TaskModel task : user.tasklist )
         {
-            if( task.uid.equals(uid) == true)
+            if( task.uid.equals(uid) == true && task.payed == 0)
             {
                 try {
                     task.payed = 1;
@@ -92,7 +92,7 @@ public class Task {
     {
         for( TaskModel task : user.tasklist )
         {
-            if( task.type == type )            
+            if( task.type == type && task.current < task.max)
             {
                 task.current += offset;
                 task.isChanged = true;
