@@ -375,7 +375,11 @@ public class GameManager {
 		}
 		if(GameMode.compareTo("THEEND")==0){
 			setWorkTime();
-			showResult();
+			try {
+				showResult();
+			}catch(Exception e) {
+				System.out.println("error log: showResult 계산시 에러 발생================"+e.toString() );
+			}
 			changeGameMode("showResult");
 		}
 		
@@ -1705,6 +1709,7 @@ public class GameManager {
 		}
 		
 		System.out.println("---balanace-----");
+		long winnerpoint = 0;
 		for(User u : userlist){
 			if( u.seat == winSeat){
 				u.totalprofile.win++;
@@ -1718,6 +1723,7 @@ public class GameManager {
 
 				if( room.UsedItem.equals("balance") == true){	
 					long getamount = (long)((betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney)) * ( 1 - u.memberInfo.commission));
+					winnerpoint = getamount;
 					SearchUserBySeat(winSeat).balance += getamount;
 					if( SearchUserBySeat(winSeat).balance > SearchUserBySeat(winSeat).memberInfo.limit_gold )
 					{
@@ -1731,7 +1737,9 @@ public class GameManager {
 					u.todayprofile.gaingold += getamount;
 				}
 				else if( room.UsedItem.equals("point") == true){
-					SearchUserBySeat(winSeat).point += (betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney)) * ( 1 - u.memberInfo.commission);
+					long getamount =(long)( (betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney)) * ( 1 - u.memberInfo.commission));
+					winnerpoint = getamount;
+					SearchUserBySeat(winSeat).point += getamount;
 					if( SearchUserBySeat(winSeat).point > SearchUserBySeat(winSeat).memberInfo.limit_point )
 					{
 						SearchUserBySeat(winSeat).point = SearchUserBySeat(winSeat).memberInfo.limit_point;
@@ -1765,6 +1773,8 @@ public class GameManager {
 		setDealerSeat();
 		
 		System.out.println("승자 족보레벨:"+ (sortRank.get(0).jokbocode/10000000) +" 승자id:"+sortRank.get(0).nickname + " card:"+sortRank.get(0).wincard.toString() );
+		SocketHandler.insertLog(getGameId(), "result", sortRank.get(0).uidx , sortRank.get(0).balance, sortRank.get(0).point
+					, "승리금:"+winnerpoint , sortRank.get(0).jokbocode , -1 );
 		
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","showResult");
