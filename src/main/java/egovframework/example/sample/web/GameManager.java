@@ -182,6 +182,12 @@ public class GameManager {
 		//cardarr = new int[userlist.size()][7];
 
 		for(User u : userlist){
+			
+			if( u == null )
+			{
+				continue;
+			}
+
 			SocketHandler.insertLog(getGameId(), "join", u.uidx , u.balance , u.seat , "참가머니", room.defaultmoney , -1);
 			u.init();
 			u.PlayStatus = 1;
