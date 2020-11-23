@@ -56,6 +56,26 @@ public class UserManager {
 	}
 
 	public void connect(WebSocketSession session, User user) {
+
+		// 닉네임 설정이 안되어 있으면 닉네임 설정 될떄까지 다음으로 안넘김
+		System.out.println(user.GetNickNameEmpty());
+		if( user.GetNickNameEmpty() == true )  		
+		{
+			JSONObject cobj = new JSONObject();
+			cobj.put("cmd", "nickname");
+			cobj.put("empty", true);
+
+			ObjectMapper mapper = new ObjectMapper();
+
+			try {
+				session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return;
+		}
+
 		userlist.add(user);
 
 		JSONObject cobj = new JSONObject();
@@ -541,7 +561,7 @@ public class UserManager {
 		itemin.put("point", 5000);		
 		SocketHandler.sk.sampleDAO.insert("InsertItem", itemin);		
 		
-        User user = new User(Integer.parseInt(""+ed.get("midx")), session, id);        		
+        User user = new User(Integer.parseInt(""+ed.get("midx")), session);        		
         		
         connect(session, user);
 	}
@@ -570,9 +590,76 @@ public class UserManager {
 		
 		session.getAttributes().put("useridx", ed.get("midx"));			
 		
-		User user = new User(Integer.parseInt(""+ed.get("midx")), session, social);        		
-        		
-        connect(session, user);
+		User user = new User(Integer.parseInt(""+ed.get("midx")), session);      			
+					
+		connect(session, user);			
+	}
+
+	public void GoogleLogin(WebSocketSession session, String social)
+	{
+		EgovMap in = new EgovMap();
+        in.put("socail", social);
+		EgovMap ed = (EgovMap)SocketHandler.sk.sampleDAO.select("ExsitSocial", in);
+		
+		if( ed == null )
+		{
+			JSONObject cobj = new JSONObject();
+			cobj.put("cmd", "gsingin");							
+			cobj.put("result", false);
+
+			ObjectMapper mapper = new ObjectMapper();
+
+			try {
+				session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+			} catch (IOException e) {			
+				e.printStackTrace();
+			}
+
+			return ;
+		}
+		else
+		{
+			session.getAttributes().put("useridx", ed.get("midx"));			
+		
+			User user = new User(Integer.parseInt(""+ed.get("midx")), session);      			
+					
+			connect(session, user);
+		}		
+	}
+
+	public User SetNickName(WebSocketSession session, String nickname)
+	{
+		if(session.getAttributes().containsKey("useridx") == false)
+		{
+			return null;
+		}
+
+		EgovMap in = new EgovMap();
+		in.put("nickname", nickname);
+
+		EgovMap ed = (EgovMap) SocketHandler.sk.sampleDAO.select("ExsitNickName", in);		
+
+		JSONObject cobj = new JSONObject();
+		cobj.put("cmd", "exsitnickname");
+		cobj.put("exsit", ed != null);
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		if( ed != null )
+		{			
+			return null;			
+		}
+		
+		User user = new User( (int)session.getAttributes().get("useridx"), session);
+		user.SetNickName(nickname);
+
+		return user;
 	}
 
 	public boolean ExsitID(String id)

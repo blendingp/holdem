@@ -341,6 +341,12 @@
         ]]>
 	</select>
 
+	<select id="ExsitNickName" resultClass="EgovMap">
+        <![CDATA[
+			SELECT midx FROM member_info WHERE nickname=#nickname#
+        ]]>
+	</select>
+
 	<insert id="InsertUser" parameterClass="egovMap">
         <![CDATA[
 				INSERT INTO member
