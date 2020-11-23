@@ -38,6 +38,7 @@ public class User {
 	public long budget = 0;
 	public long bank = 0;
 	public long totalpayment = 0;
+	public boolean isAI = false;// true 일때 ai 유저.
 	public boolean die = false;// true일떄 다이인 상태
 	public int currentGuBetMoney = 0;// 현재 구 에 베팅한 머니 / 모든 유저가 이 머니가 같아야 다음 단계로 넘어감.
 	public String img;
@@ -137,6 +138,11 @@ public class User {
 						item.Type = ed.get(nCount).get("type").toString();
 						item.Amount = (long) ed.get(nCount).get("amount");
 						consumableItem.add(item);
+					}
+				}
+				else if (ed.get(nCount).get("type").toString().equals("aiuser") == true) {
+					if ((long) ed.get(nCount).get("amount") > 0) {
+						this.isAI = true; 
 					}
 				}
 			}
@@ -581,6 +587,10 @@ public class User {
 
 	public boolean IsAuth()
 	{
+		if(isAI == true)
+		{//ai유저이면 인증 통과
+			return true;
+		}
 		/*
 		if( auth == null )
 		{
@@ -596,7 +606,6 @@ public class User {
 		{
 			return false;
 		}*/
-
 		return true;		
 	}
 
@@ -732,7 +741,6 @@ public class User {
 		{
 			return false;
 		}
-
 		return true;
 	}
 
