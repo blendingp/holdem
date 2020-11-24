@@ -22,6 +22,7 @@
         <property name="url" value="jdbc:mysql://127.0.0.1:3306/holdem?useUnicode=true&amp;characterEncoding=UTF-8" />
         <property name="username" value="holdem"/>
         <property name="password" value="ghfeja!@34"/>
+        <property name="validationQuery" value="select 1"/>
     </bean>
 
     
