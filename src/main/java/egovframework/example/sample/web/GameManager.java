@@ -1344,6 +1344,14 @@ public class GameManager {
 		if(level == 2 )
 		{
 			for(int i=0; i<7; i++){
+				if(arr[i]%13 != tempInfo1)
+				{
+					if( tempInfo3 < 0x100)
+					{
+						tempInfo3=(tempInfo3*0x10+(arr[i]%13==0?0xd:arr[i]%13) );
+					}
+				}
+				
 				if( arr[i]%13 == tempInfo1 ){
 					cards.add( arr[i] );
 				}
@@ -1364,6 +1372,7 @@ public class GameManager {
 		int []cNum = new int[13];
 		tempInfo1=-1;
 		tempInfo2=-1;
+		tempInfo3=-1;
 		for(int i=0; i<7; i++){
 			cNum[ arr[i]%13 ]++;
 			if(cNum[ arr[i]%13 ] >= 2){
@@ -1379,6 +1388,12 @@ public class GameManager {
 		if(level == 3 )
 		{
 			for(int i=0; i<7; i++){
+				if( arr[i]%13 != tempInfo1 && arr[i]%13 != tempInfo2  && tempInfo3 == -1)
+				{
+					int cnum = arr[i]%13==0?0xd:arr[i]%13;
+					tempInfo3 =  cnum;
+				}
+				
 				if( arr[i]%13 == tempInfo1 || arr[i]%13 == tempInfo2  ){
 					cards.add( arr[i] );
 				}
@@ -1393,6 +1408,7 @@ public class GameManager {
 	}
 
 	public boolean checkThree(int tarr[]){
+		tempInfo3 = -1;
 		ArrayList<Integer> cards = new ArrayList<>();
 		int [] arr=cardsort(tarr,true);
 		int level = -1;
@@ -1402,12 +1418,33 @@ public class GameManager {
 			if(cNum[ arr[i]%13 ] >= 3){
 				tempInfo1 = arr[i]%13;
 				level = 4;
+				break;
 			}
 		}
-		
+	    //0 1 2 3 4 5 6 7 8 9 a  b c d e
+		//0 1 2 3 4 5 6 7 8 9 10 j q k
 		if(level == 4 )
 		{
 			for(int i=0; i<7; i++){
+				/*if(arr[i]%13 != tempInfo1) 
+					if( tempInfo3 < 0x10)
+						tempInfo3=(tempInfo3*0x10+(arr[i]%13==0?0xd:arr[i]%13) );*/
+				if(arr[i]%13 != tempInfo1 ) 
+				{
+					int cnum = arr[i]%13==0?0xd:arr[i]%13;
+					if(tempInfo3 != -1)
+					{
+						tempInfo3 = cnum;
+					}
+					else 
+					{
+						if( tempInfo3 < 0x10 )
+						{
+							tempInfo3 = tempInfo3*0x10 + cnum;
+						}
+					}
+				}
+				
 				if( arr[i]%13 == tempInfo1 ){
 					cards.add( arr[i] );
 				}
@@ -1435,7 +1472,14 @@ public class GameManager {
 		}
 		
 		if(level == 8 )
-		{
+		{			
+			for(int i=0; i<7; i++){
+				if( arr[i] % 13 != tempInfo1) {					
+					tempInfo3 = arr[i]%13;
+					break;
+				}				
+			}
+			
 			for(int i=0; i<7; i++){
 				if( arr[i]%13 == tempInfo1 ){
 					cards.add( arr[i] );
@@ -1505,7 +1549,6 @@ public class GameManager {
 		int ct = 0;
 		int pre = 0;	
 		
-		
 		ct=0;
 		pre=0;
 		arr=cardsort(tarr,true);//먼저 에이스를 13으로 놓고 스트레이트 체크
@@ -1525,6 +1568,8 @@ public class GameManager {
 				break;
 			}
 			pre= arr[i]%13;
+			if(pre == 0)
+				pre = 13;
 		}
 		if(ct <5){//스트레이트가 안되었다면 에이스를 0으로 놓고 다시 스트레이트 체크 한번더
 			ct=0;
@@ -1552,8 +1597,7 @@ public class GameManager {
 		
 		
 		if( ct >= 5 ){
-			if( tempInfo1%13 == 0 ) tempInfo1 = 14;//마운틴 스트레이트
-			if( tempInfo1%13 == 4 ) tempInfo1 = 13;//에이스 스트레이트
+			if( tempInfo1%13 == 0 ) tempInfo1 = 14;//마운틴
 			JSONObject win = MakeWinCard(5, cards);
 			currentUser.wincard.add(win);
 			return true;
@@ -1565,7 +1609,7 @@ public class GameManager {
 		int []arr=cardsort(tarr,true);
 		int []shape = new int[4]; 
 		ArrayList<Integer> cards = new ArrayList<>();
-		tempInfo1 = -1;
+		tempInfo3 = -1;
 		int lv= -1;
 		for(int k=0; k<7; k++){
 			shape[ (int)(arr[k]/13) ]++;
@@ -1578,15 +1622,16 @@ public class GameManager {
 			int tmp5=0;
 			for(int k=0;k<7;k++){
 				if(  (int)(arr[k]/13) == tempInfo2 && tmp5<5 ){
-					if( tempInfo1 == -1)
-						tempInfo1 = arr[k];
+					if( tempInfo3 < 0x10000)
+					{
+						tempInfo3=(tempInfo3*0x10 + getnum(arr[k]) );
+					}
 					cards.add( (arr[k]) );
 					tmp5++;
 				}
 			}
 			JSONObject win = MakeWinCard(6, cards);
 			currentUser.wincard.add(win);
-			if( tempInfo1%13==0)tempInfo1=13;
 			return true;
 		}
 		return false;
@@ -1599,10 +1644,9 @@ public class GameManager {
 	//10 탑카드  : 제일 큰숫자 한장 리턴
 	public int checkTopCard(int tarr[]){
 		int[] arr=cardsort(tarr,true);
-		int pre = -1;
 		ArrayList<Integer> cards = new ArrayList<>();
 
-		tempInfo1 = getnum(arr[0])*1000000 + getnum(arr[1])*100000 + getnum(arr[2])*10000 + getnum(arr[3])*1000 + getnum(arr[4])*100 ;
+		tempInfo3 = getnum(arr[0])*0x10000 + getnum(arr[1])*0x1000 + getnum(arr[2])*0x100 + getnum(arr[3])*0x10 + getnum(arr[4]) ;
 
 		cards.add(arr[0]);
 		
@@ -1613,7 +1657,7 @@ public class GameManager {
 	}	
 	
 	
-	int tempInfo1,tempInfo2;//임시 카드정보
+	int tempInfo1,tempInfo2,tempInfo3;//임시 카드정보
 	public void showResult(){
 		/*
 		for( User user :leaveuserlist )
@@ -1663,34 +1707,34 @@ public class GameManager {
 				//스트레이트 플러시 2
 				if(checkStraightFlush(card)==true){//
 					lv=9;
-					currentUser.jokbocode=90000000+tempInfo1*100000;
+					currentUser.jokbocode=0x9000000+tempInfo1;
 					currentUser.balance += JackpotManager.GetJackpotAmount();
 					JackpotManager.WithdrawJackpot();
 				}else if(checkFourCard(card) == true ){// 포카드 *
 					lv=8;
-					currentUser.jokbocode=80000000+tempInfo1*100000;
+					currentUser.jokbocode=0x8000000+tempInfo1*10 + tempInfo3;
 				}else if(checkFullHouse(card)==true){//풀하우스 *
 					lv=7;
-					currentUser.jokbocode=70000000+tempInfo1*100000+tempInfo2*1000;
+					currentUser.jokbocode=0x7000000+tempInfo1*10+tempInfo2;
 				}else if(checkFlush(card)==true){//플러시 모양 *
 					lv=6;
-					currentUser.jokbocode=60000000+tempInfo1*100000;
+					currentUser.jokbocode=0x6000000+tempInfo1;
 				}else if(checkStraight(card)==true){//스트레이트숫자 *?
 					lv=5;
-					currentUser.jokbocode=50000000+tempInfo1*100000;
+					currentUser.jokbocode=0x5000000+tempInfo1;
 				}else if(checkThree(card)==true){//트리플*
 					lv=4;
-					currentUser.jokbocode=40000000+tempInfo1*100000;
+					currentUser.jokbocode=0x4000000+tempInfo1*100+tempInfo3;
 				}else if(checkTwoPair(card)==true){//투페어*
 					lv=3;
-					currentUser.jokbocode=30000000+tempInfo1*100000+tempInfo2*1000;
+					currentUser.jokbocode=0x3000000+tempInfo1*100+tempInfo2*10+tempInfo3; 
 				}else if(checkPair(card)==true){//원페어 *
 					lv=2;
-					currentUser.jokbocode=20000000+tempInfo1*100000;
+					currentUser.jokbocode= 0x2000000+tempInfo1*0x1000 + tempInfo3;
 				}else {//탑카드 
 					lv=1;
 					checkTopCard(card);
-					currentUser.jokbocode=10000000+tempInfo1*100;
+					currentUser.jokbocode= 0x1000000 + tempInfo3; 
 				}
 				
 			}
