@@ -158,7 +158,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 				}
 
         		session.getAttributes().put("useridx", ed.get("midx"));
-        		User user = new User(Integer.parseInt(""+ed.get("midx")), session, ""+ed.get("muserid"));
+        		User user = new User(Integer.parseInt(""+ed.get("midx")), session);
         		
         		usermanager.connect(session, user);
         		break;
@@ -315,9 +315,24 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 				}				
 
 			}break;		
+			case "existgoogle":
+			{
+				if( (""+obj.get("social")).isEmpty() == false )
+				{
+					usermanager.GoogleLogin(session, ""+obj.get("social"));
+				}
+			}break;
 			case "googlesign":
 			{
 				usermanager.SignUp(session, ""+obj.get("social"));
+			}break;
+			case "setnickname":
+			{
+				User user = usermanager.SetNickName(session, ""+obj.get("nickname"));
+				if( user != null )
+				{
+					usermanager.connect(session, user);
+				}				
 			}break;
 		}
     }

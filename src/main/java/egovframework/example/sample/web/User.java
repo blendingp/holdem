@@ -26,7 +26,7 @@ import egovframework.rte.psl.dataaccess.util.EgovMap;
 public class User {
 	public int uidx;
 	public boolean use = false;
-	public String nickname;
+	public String nickname = "";
 	public int seat = -1;
 	public int roomnum = -1;
 	public long betmoney = 0;
@@ -72,9 +72,8 @@ public class User {
 		wincard.clear();
 	}
 
-	public User(int uidx, WebSocketSession session, String userid) {		
-		this.uidx = uidx;
-		this.nickname = userid;
+	public User(int uidx, WebSocketSession session) {		
+		this.uidx = uidx;		
 		this.balance = 1100;
 		this.session = session;		
 
@@ -170,6 +169,8 @@ public class User {
 
 		GetMemberInfo();
 		GetAuthInfo();
+
+		this.nickname = _info.nickname;
 	}
 
 	private Object find(WebSocketSession session2) {
@@ -590,7 +591,7 @@ public class User {
 		{//ai유저이면 인증 통과
 			return true;
 		}
-		
+		/*
 		if( auth == null )
 		{
 			return false;
@@ -604,7 +605,7 @@ public class User {
 		if( auth.authtick + 31536000000L < System.currentTimeMillis())
 		{
 			return false;
-		}
+		}*/
 		return true;		
 	}
 
@@ -697,7 +698,7 @@ public class User {
 			_info.midx = uidx;
 			_info.exp = 0;
 			_info.avata = "";
-			_info.nickname = this.nickname;
+			_info.nickname = "";
 
 			UpdateMemberInfo();
 		}		
@@ -741,6 +742,20 @@ public class User {
 			return false;
 		}
 		return true;
+	}
+
+	public boolean SetNickName(String name)
+	{
+		_info.nickname = name;
+		nickname = name;
+		UpdateMemberInfo();
+
+		return true;
+	}
+
+	public boolean GetNickNameEmpty()
+	{
+		return _info.nickname.isEmpty();
 	}
 
 	public void UpdateMemberInfo()
