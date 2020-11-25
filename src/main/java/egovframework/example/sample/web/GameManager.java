@@ -194,7 +194,8 @@ public class GameManager {
 			u.jokbocode = 0;
 			money = 0;
 			u.betmoney = 0;
-			u.cardarr.clear();;
+			u.cardarr.clear();
+			u.wlv = 99;
 			if( room.UsedItem.equals("balance") == true){
 				u.balance -= room.defaultmoney;
 				u.todayprofile.gaingold -= room.defaultmoney;
@@ -1708,36 +1709,36 @@ public class GameManager {
 				}
 				
 				//3포카드 7트리플 8투페어 9페어			
-				int lv =-1;// checkAllpair(card);
+				
 				//스트레이트 플러시 2
 				if(checkStraightFlush(card)==true){//
-					lv=9;
+					currentUser.wlv = 9;
 					currentUser.jokbocode=0x9000000+tempInfo1;
 					currentUser.balance += JackpotManager.GetJackpotAmount();
 					JackpotManager.WithdrawJackpot();
 				}else if(checkFourCard(card) == true ){// 포카드 *
-					lv=8;
+					currentUser.wlv = 8;
 					currentUser.jokbocode=0x8000000+tempInfo1*10 + tempInfo3;
 				}else if(checkFullHouse(card)==true){//풀하우스 *
-					lv=7;
+					currentUser.wlv = 7;
 					currentUser.jokbocode=0x7000000+tempInfo1*10+tempInfo2;
 				}else if(checkFlush(card)==true){//플러시 모양 *
-					lv=6;
+					currentUser.wlv = 6;
 					currentUser.jokbocode=0x6000000+tempInfo1;
 				}else if(checkStraight(card)==true){//스트레이트숫자 *?
-					lv=5;
+					currentUser.wlv = 5;
 					currentUser.jokbocode=0x5000000+tempInfo1;
 				}else if(checkThree(card)==true){//트리플*
-					lv=4;
+					currentUser.wlv = 4;
 					currentUser.jokbocode=0x4000000+tempInfo1*100+tempInfo3;
 				}else if(checkTwoPair(card)==true){//투페어*
-					lv=3;
+					currentUser.wlv = 3;
 					currentUser.jokbocode=0x3000000+tempInfo1*100+tempInfo2*10+tempInfo3; 
 				}else if(checkPair(card)==true){//원페어 *
-					lv=2;
+					currentUser.wlv = 2;
 					currentUser.jokbocode= 0x2000000+tempInfo1*0x1000 + tempInfo3;
 				}else {//탑카드 
-					lv=1;
+					currentUser.wlv = 1;
 					checkTopCard(card);
 					currentUser.jokbocode= 0x1000000 + tempInfo3; 
 				}
@@ -1831,13 +1832,13 @@ public class GameManager {
 		
 		setDealerSeat();
 		
-		System.out.println("승자 족보레벨:"+ (sortRank.get(0).jokbocode/10000000) +" 승자id:"+sortRank.get(0).nickname + " card:"+sortRank.get(0).wincard.toString() );
+		System.out.println("승자 족보레벨:"+ (sortRank.get(0).wlv) +" 승자id:"+sortRank.get(0).nickname + " card:"+sortRank.get(0).wincard.toString() );
 		SocketHandler.insertLog(getGameId(), "result", sortRank.get(0).uidx , sortRank.get(0).balance, sortRank.get(0).point
 					, "승리금:"+winnerpoint , sortRank.get(0).jokbocode , -1 );
 		
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","showResult");
-		obj.put("wlv", sortRank.get(0).jokbocode/10000000);//레벨순서 변경됨.		
+		obj.put("wlv", sortRank.get(0).wlv);//레벨순서 변경됨.		
 		if( room.UsedItem.equals("balance") == true){
 			obj.put("winnerbalance", sortRank.get(0).balance);
 		}
