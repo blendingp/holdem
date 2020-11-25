@@ -1330,6 +1330,7 @@ public class GameManager {
 	
 	public boolean checkPair(int tarr[]){
 		ArrayList<Integer> cards = new ArrayList<>();
+		tempInfo3 = 0;
 		int [] arr=cardsort(tarr,true);
 		int level = -1;
 		int []cNum = new int[13]; 
@@ -1699,8 +1700,12 @@ public class GameManager {
 
 				int []card = new int[7]; 		
 
+				String cardForDebug="";
 				for(int i = 0; i < user.cardarr.size(); i++){				
 					card[i] = user.cardarr.get(i);
+					if( i!= 0)
+						cardForDebug+=",";
+					cardForDebug+=card[i];
 				}
 				
 				//3포카드 7트리플 8투페어 9페어			
@@ -1738,6 +1743,7 @@ public class GameManager {
 					currentUser.jokbocode= 0x1000000 + tempInfo3; 
 				}
 				
+				SocketHandler.insertLog(getGameId(), "card", currentUser.uidx , currentUser.jokbocode , -1, ""+cardForDebug , -1 , -1 );
 			}
 
 			//유저  족보 순위 정렬

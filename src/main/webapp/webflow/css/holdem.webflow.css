@@ -12,7 +12,6 @@
   -webkit-flex-direction: column;
   -ms-flex-direction: column;
   flex-direction: column;
-  background-color: #4f151a;
   background-image: url('../images/backgroundnew.jpg');
   background-position: 50% 0%;
   background-size: 100%;
@@ -24,6 +23,8 @@
   top: -16px;
   z-index: 2;
   width: 100%;
+  min-height: 893px;
+  min-width: 1867px;
   margin-right: auto;
   margin-left: auto;
 }
@@ -490,18 +491,15 @@
 }
 
 .topmenuwrap {
-  position: relative;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  width: 100%;
-  padding-right: 20%;
-  padding-left: 20%;
-  -webkit-box-pack: end;
-  -webkit-justify-content: flex-end;
-  -ms-flex-pack: end;
-  justify-content: flex-end;
+  min-width: 1200px;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
   -webkit-box-align: center;
   -webkit-align-items: center;
   -ms-flex-align: center;
@@ -519,14 +517,6 @@
 
 .topmenu_btn {
   margin-left: 60px;
-}
-
-.wingamebtn {
-  position: absolute;
-  left: 5%;
-  top: auto;
-  right: auto;
-  bottom: -15%;
 }
 
 .div-block-2 {
@@ -2087,9 +2077,8 @@
 }
 
 .holdemicon {
-  width: 22%;
-  min-height: 100px;
-  min-width: 100px;
+  min-height: 161px;
+  min-width: 443px;
   margin-top: 60px;
 }
 
@@ -2204,6 +2193,11 @@
     width: 100%;
     padding-top: 7vw;
     padding-bottom: 7vw;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
   }
 
   .frame {
@@ -2260,13 +2254,14 @@
   }
 
   .bottom_wrap {
+    width: 100%;
     padding-right: 3vw;
     padding-left: 3vw;
-    -webkit-box-orient: horizontal;
+    -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
-    -webkit-flex-direction: row;
-    -ms-flex-direction: row;
-    flex-direction: row;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
     -webkit-box-align: start;
     -webkit-align-items: flex-start;
     -ms-flex-align: start;

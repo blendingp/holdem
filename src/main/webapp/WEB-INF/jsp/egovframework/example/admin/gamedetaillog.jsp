@@ -9,6 +9,9 @@
 <html>
 <head>
 	<jsp:include page="../frame/admintop.jsp" flush="true" />
+	<style>
+		.cd{width:20px;height:50px;border:1px solid gray;margin:1px;padding:1px;}
+	</style>
 </head>
 <body>
 	<script>
@@ -27,6 +30,17 @@
 		        	document.write(parseInt(cd) % 13 + 1);
 		        	
 		        }
+		        function showCard2( cd){
+		        	switch( parseInt(cd/13) ){
+		        		case 0: document.write("♣<br>");break;
+		        		case 1: document.write("◆<br>");break;
+		        		case 2: document.write("♥<br>");break;
+		        		case 3: document.write("♠<br>");break;
+		        	}
+		        	document.write(parseInt(cd) % 13 + 1);
+		        	
+		        }
+	var tmpv='';
 	</script>
 	
     <div id="wrapper">
@@ -88,18 +102,38 @@
                                 	<c:if test="${result.gkind eq 'gameEnd'}">
                                 	totalmoney:
                                 	</c:if>
-                                	
-                                	<c:if test="${result.gvalue1 ne -1}">
-                                		<c:if test="${result.gkind ne 'twoCard' && result.gkind ne 'THEFLOP' 
-                                	&& result.gkind ne 'THETURN' && result.gkind ne 'THERIVER'}">
-                                			${result.gvalue1}
-                                		</c:if>                     
+                                	<c:if test="${result.gkind eq 'card'}">
+                                	족보:
                                 	</c:if>
                                 	
-                                	<c:if test="${result.gkind eq 'twoCard' || result.gkind eq 'THEFLOP' 
-                                	|| result.gkind eq 'THETURN' || result.gkind eq 'THERIVER'}">
-                                	<script>showCard( '${result.gvalue1}' );</script>
-                                	</c:if>           	
+                                	<c:if test="${result.gkind eq 'card' }">
+                                		<script>
+                                		tcode = parseInt('${result.gvalue1}');
+                                			 if( (tcode & 0x9000000) == 0x9000000) document.write('스티플:'+tcode.toString(16) );
+                                		else if( (tcode & 0x8000000) == 0x8000000) document.write('포커:'+tcode.toString(16) );
+                                		else if( (tcode & 0x7000000) == 0x7000000) document.write('풀하우스:'+tcode.toString(16) );
+                                		else if( (tcode & 0x6000000) == 0x6000000) document.write('플러시:'+tcode.toString(16) );
+                                		else if( (tcode & 0x5000000) == 0x5000000) document.write('스트레이트:'+tcode.toString(16) );
+                                		else if( (tcode & 0x4000000) == 0x4000000) document.write('트리플:'+tcode.toString(16) );
+                                		else if( (tcode & 0x3000000) == 0x3000000) document.write('투페어:'+tcode.toString(16) );
+                                		else if( (tcode & 0x2000000) == 0x2000000) document.write('원페어:'+tcode.toString(16) );
+                                		else if( (tcode & 0x1000000) == 0x1000000) document.write('탑:'+tcode.toString(16) );
+                                		</script>
+                                	</c:if>
+                                	
+                                	<c:if test="${result.gkind ne 'card' }">
+	                                	<c:if test="${result.gvalue1 ne -1}">
+	                                		<c:if test="${result.gkind ne 'twoCard' && result.gkind ne 'THEFLOP' 
+	                                	&& result.gkind ne 'THETURN' && result.gkind ne 'THERIVER'}">
+	                                			${result.gvalue1}
+	                                		</c:if>                     
+	                                	</c:if>
+                                	
+	                                	<c:if test="${result.gkind eq 'twoCard' || result.gkind eq 'THEFLOP' 
+	                                	|| result.gkind eq 'THETURN' || result.gkind eq 'THERIVER'}">
+	                                	<script>showCard( '${result.gvalue1}' );</script>
+	                                	</c:if>
+	                                </c:if>           	
                                 </td>
                                 <td>
 									<c:if test="${result.gkind eq 'join'}">
@@ -127,7 +161,22 @@
                                 	  
                                 </td>
                                 <td>
+                                	<c:if test="${result.gkind ne 'card'}">
                                 	${result.gvalue3}
+                                	</c:if>
+                                	<c:if test="${result.gkind eq 'card'}">
+										<div style="display:flex;">                                	
+	                                	<script>
+	                                	tmpv = '${result.gvalue3}';
+	                                	tarr = tmpv.split(',');
+	                                	for(let i=0;i<7;i++){
+	                                    	document.write('<div class="cd">');
+	                                    	showCard2(tarr[i]);
+	                                    	document.write('</div>');
+	                                	}
+	                                	</script>
+                                		</div>
+                                	</c:if>
                                 </td>
                                 <td>
                                 	<c:if test="${result.gkind eq 'THEFLOP'}">
