@@ -1755,8 +1755,28 @@ public class GameManager {
 	        });
 			
 		}
+		
+		
 
 		winSeat=sortRank.get(0).seat;// 이게 유저 자리 번호 맞나? 확인하기 2020 09 10		
+
+		//공동우승자 숫자 카운팅{
+		int []twinners= {-1,-1,-1,-1,-1,-1,-1,-1,-1};
+		int widx=0;
+		for( User user : userlist )
+		{
+			if( user.jokbocode == SearchUserBySeat(winSeat).jokbocode )
+			{
+				twinners[widx++] = user.uidx;
+			}
+		}
+		int []winners=new int[widx];
+		for(int user=0;user<widx;user++)
+		{
+			winners[user]=twinners[user];
+		}
+		// winners[] <== 우승자 int array;
+		//공동우승자 숫자 카운팅}
 				
 		int betMoney=0;
 		int cnt=0;
