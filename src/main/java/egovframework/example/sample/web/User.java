@@ -710,13 +710,14 @@ public class User {
 	{
 		EgovMap in = new EgovMap();
 		in.put("midx", this.uidx);
-		EgovMap ed = (EgovMap) SocketHandler.sk.sampleDAO.select("GetAuthInfo", in);
+		EgovMap ed = (EgovMap) SocketHandler.sk.sampleDAO.select("GetAuthInfo", in);		
 		if( ed != null )
 		{
 			ObjectMapper mapper = new ObjectMapper();
 
 			try {
-				String jsonstring = mapper.writeValueAsString(ed);				
+				String jsonstring = mapper.writeValueAsString(ed);		
+				System.out.println(jsonstring);		
 				auth = mapper.readValue(jsonstring, AuthSelf.class);			
 			} catch (JsonProcessingException e) {			
 				System.out.println(e.getMessage());
@@ -726,7 +727,13 @@ public class User {
 
 	public boolean GetAuth()
 	{
-		GetAuthInfo();
+		GetAuthInfo();		
+
+		if( auth == null )
+		{
+			return false;
+		}
+
 		if( auth.authtick + 31536000000L < System.currentTimeMillis())
 		{
 			return false;
