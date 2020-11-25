@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import javax.json.JsonObject;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.simple.JSONArray;
@@ -1763,18 +1765,22 @@ public class GameManager {
 		//공동우승자 숫자 카운팅{
 		int []twinners= {-1,-1,-1,-1,-1,-1,-1,-1,-1};
 		int widx=0;
+		ArrayList<Integer> winners = new ArrayList<>();
+		ArrayList<JSONObject> wincards = new ArrayList<>();
+
 		for( User user : userlist )
 		{
 			if( user.jokbocode == SearchUserBySeat(winSeat).jokbocode )
 			{
 				twinners[widx++] = user.uidx;
+				winners.add(user.seat);
+				for( JSONObject card : user.wincard )
+				{
+					wincards.add(card);
+				}				
 			}
 		}
-		int []winners=new int[widx];
-		for(int user=0;user<widx;user++)
-		{
-			winners[user]=twinners[user];
-		}
+		
 		// winners[] <== 우승자 int array;
 		//공동우승자 숫자 카운팅}
 				
@@ -1803,7 +1809,7 @@ public class GameManager {
 
 				if( room.UsedItem.equals("balance") == true){	
 					long getamount = (long)((betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney)) * ( 1 - u.memberInfo.commission));
-					winnerpoint = getamount;
+					winnerpoint = getamount / winners.size();
 					SearchUserBySeat(winSeat).balance += getamount;
 					if( SearchUserBySeat(winSeat).balance > SearchUserBySeat(winSeat).memberInfo.limit_gold )
 					{
@@ -1818,7 +1824,7 @@ public class GameManager {
 				}
 				else if( room.UsedItem.equals("point") == true){
 					long getamount =(long)( (betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney)) * ( 1 - u.memberInfo.commission));
-					winnerpoint = getamount;
+					winnerpoint = getamount / winners.size();
 					SearchUserBySeat(winSeat).point += getamount;
 					if( SearchUserBySeat(winSeat).point > SearchUserBySeat(winSeat).memberInfo.limit_point )
 					{
@@ -1865,10 +1871,10 @@ public class GameManager {
 		else if( room.UsedItem.equals("point") == true){
 			obj.put("winnerbalance", sortRank.get(0).point);
 		}	
-		obj.put("winmoney", this.totalmoney + ante);
-		obj.put("winSeat", winSeat);				
+		obj.put("winmoney", (this.totalmoney + ante) / winners.size());
+		obj.put("winSeat", winners);				
 		obj.put("usersize", userlist.size());		
-		obj.put("wincard", sortRank.get(0).wincard);//
+		obj.put("wincard", wincards);//
 		
 		JSONArray j = new JSONArray();
 		for(int i=0; i<userlist.size(); i++){
@@ -1881,8 +1887,9 @@ public class GameManager {
 			}
 			else if( room.UsedItem.equals("point") == true){
 				item.put("balance", userlist.get(i).point);
-			}				
+			}						
 			item.put("die", userlist.get(i).die);
+			item.put("win", winners.contains(userlist.get(i).seat));
 			item.put("profile", userlist.get(i).todayprofile);
 			j.add(item);
 		}

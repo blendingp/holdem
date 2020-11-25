@@ -78,21 +78,17 @@
   <script src="https://d3e54v103j8qbb.cloudfront.net/js/jquery-3.4.1.min.220afd743d.js?site=5e9e98d3908fa91a88dbb4ca" type="text/javascript" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
   <script language='javascript'>  
     var midx = "${midx}";    
-    window.name ="Parent_window";
+    window.name ="Parent_window";    
     
-    $(document).ready(function(){    	
-        var windowRef = window.open('', 'popupChk', 'width=500, height=550, top=0, left=0, fullscreen=yes, menubar=no, status=no, toolbar=no, titlebar=no, location=no, scrollbar=no');                
-        $(windowRef.document).ready(function()
-        {
-            console.log("windowRef is readyed");
-            fnPopup();
-        });        
+    $(document).ready(function(){    	        
+        console.log("windowRef is readyed");
+        fnPopup();
     });    
     
     function fnPopup(){
         
         document.form_chk.action = "https://nice.checkplus.co.kr/CheckPlusSafeModel/checkplus.cb";
-        document.form_chk.target = "popupChk";
+        document.form_chk.target = "_self";
         document.form_chk.submit();
     }
     
