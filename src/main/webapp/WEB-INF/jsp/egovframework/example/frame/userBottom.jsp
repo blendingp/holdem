@@ -28,13 +28,7 @@
 					<div class="b_menu">제휴/제안</div>
 				</a> -->
 			</div>
-			<div class="text-block-2">
-				상호명: (주)00 000    대표이사: 000    <br>사업자등록번호: 000-00-00000  
-				 통신판매업신고번호: 제2020-0000-0000호 <br>주소: 계양구 계양대로 140 3층<br>e-mail:
-				blending@naver.com    대표번호:000-0000-0000    Fax: 000-0000-0000<br>
-				<span class="text-span-4">ⓒ 2020 Blending. All rights
-					reserved.</span>
-			</div>
+			<div class="text-block-2">대표: 김은경   <br>사업자등록번호: 550-14-01461 <br>대표번호: 010-5883-1587  <br><span class="text-span-4">ⓒ 2020 Blending. All rights reserved.</span></div>
 		</div>
 	</div>
 </div>
