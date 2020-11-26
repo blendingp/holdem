@@ -1314,13 +1314,15 @@ public class GameManager {
 		}
 		else return false;
 	}
-	int cdval(int cd, boolean st){return st?(   cd%13==0?13:0  ): cd%13 ; }
+	int cdval(int cd, boolean st){return st?(   cd%13==0?13:cd%13  ): cd%13 ; }
 	int[] cardsort(int tcl[]){return cardsort(tcl,false);}
 	int[] cardsort(int tcl[],boolean ace){
 		int cl[]=tcl.clone();
 		for(int a=0;a<cl.length;a++){
 			for(int b=a+1;b<cl.length;b++){
-				if( cdval(cl[a],ace) < cdval(cl[b],ace) ){
+				int tma = cdval(cl[a],ace);
+				int tmb = cdval(cl[b],ace);
+				if( tma < tmb ){
 					int tmp=cl[a];
 					cl[a]=cl[b];
 					cl[b]=tmp;
@@ -1385,7 +1387,10 @@ public class GameManager {
 				else if(tempInfo2 == -1)
 					tempInfo2 = arr[i]%13;
 				if( tempInfo1!= -1 && tempInfo2 != -1)
+				{
 					level = 3;
+					break;
+				}
 			}
 		}
 		
@@ -1436,7 +1441,7 @@ public class GameManager {
 				if(arr[i]%13 != tempInfo1 ) 
 				{
 					int cnum = arr[i]%13==0?0xd:arr[i]%13;
-					if(tempInfo3 != -1)
+					if(tempInfo3 == -1)
 					{
 						tempInfo3 = cnum;
 					}
@@ -1613,7 +1618,7 @@ public class GameManager {
 		int []arr=cardsort(tarr,true);
 		int []shape = new int[4]; 
 		ArrayList<Integer> cards = new ArrayList<>();
-		tempInfo3 = -1;
+		tempInfo3 = 0;
 		int lv= -1;
 		for(int k=0; k<7; k++){
 			shape[ (int)(arr[k]/13) ]++;
@@ -1721,22 +1726,22 @@ public class GameManager {
 					JackpotManager.WithdrawJackpot();
 				}else if(checkFourCard(card) == true ){// 포카드 *
 					currentUser.wlv = 8;
-					currentUser.jokbocode=0x8000000+tempInfo1*10 + tempInfo3;
+					currentUser.jokbocode=0x8000000+tempInfo1*0x10 + tempInfo3;
 				}else if(checkFullHouse(card)==true){//풀하우스 *
 					currentUser.wlv = 7;
-					currentUser.jokbocode=0x7000000+tempInfo1*10+tempInfo2;
+					currentUser.jokbocode=0x7000000+tempInfo1*0x10+tempInfo2;
 				}else if(checkFlush(card)==true){//플러시 모양 *
 					currentUser.wlv = 6;
-					currentUser.jokbocode=0x6000000+tempInfo1;
+					currentUser.jokbocode=0x6000000+tempInfo3;
 				}else if(checkStraight(card)==true){//스트레이트숫자 *?
 					currentUser.wlv = 5;
 					currentUser.jokbocode=0x5000000+tempInfo1;
 				}else if(checkThree(card)==true){//트리플*
 					currentUser.wlv = 4;
-					currentUser.jokbocode=0x4000000+tempInfo1*100+tempInfo3;
+					currentUser.jokbocode=0x4000000+tempInfo1*0x100+tempInfo3;
 				}else if(checkTwoPair(card)==true){//투페어*
 					currentUser.wlv = 3;
-					currentUser.jokbocode=0x3000000+tempInfo1*100+tempInfo2*10+tempInfo3; 
+					currentUser.jokbocode=0x3000000+tempInfo1*0x100+tempInfo2*0x10+tempInfo3; 
 				}else if(checkPair(card)==true){//원페어 *
 					currentUser.wlv = 2;
 					currentUser.jokbocode= 0x2000000+tempInfo1*0x1000 + tempInfo3;
@@ -1876,10 +1881,10 @@ public class GameManager {
 		else if( room.UsedItem.equals("point") == true){
 			obj.put("winnerbalance", sortRank.get(0).point);
 		}	
-		obj.put("winmoney", (this.totalmoney + ante) / winners.size());
-		obj.put("winSeat", winners);				
+		obj.put("winmoney", (this.totalmoney + ante));
+		obj.put("winSeat", sortRank.get(0).seat);				
 		obj.put("usersize", userlist.size());		
-		obj.put("wincard", wincards);//
+		obj.put("wincard", sortRank.get(0).wincard);//
 		
 		JSONArray j = new JSONArray();
 		for(int i=0; i<userlist.size(); i++){
@@ -1894,7 +1899,7 @@ public class GameManager {
 				item.put("balance", userlist.get(i).point);
 			}						
 			item.put("die", userlist.get(i).die);
-			item.put("win", winners.contains(userlist.get(i).seat));
+			//item.put("win", winners.contains(userlist.get(i).seat));
 			item.put("profile", userlist.get(i).todayprofile);
 			j.add(item);
 		}
