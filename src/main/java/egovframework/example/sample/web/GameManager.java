@@ -1881,10 +1881,12 @@ public class GameManager {
 		else if( room.UsedItem.equals("point") == true){
 			obj.put("winnerbalance", sortRank.get(0).point);
 		}	
-		obj.put("winmoney", (this.totalmoney + ante));
-		obj.put("winSeat", sortRank.get(0).seat);				
-		obj.put("usersize", userlist.size());		
-		obj.put("wincard", sortRank.get(0).wincard);//
+
+		obj.put("winmoney", (this.totalmoney + ante) / winners.size());
+		obj.put("winSeat", winners);
+		obj.put("wincard", wincards);//
+		obj.put("usersize", userlist.size());
+
 		
 		JSONArray j = new JSONArray();
 		for(int i=0; i<userlist.size(); i++){
@@ -1899,7 +1901,7 @@ public class GameManager {
 				item.put("balance", userlist.get(i).point);
 			}						
 			item.put("die", userlist.get(i).die);
-			//item.put("win", winners.contains(userlist.get(i).seat));
+			item.put("win", winners.contains(userlist.get(i).seat));
 			item.put("profile", userlist.get(i).todayprofile);
 			j.add(item);
 		}
