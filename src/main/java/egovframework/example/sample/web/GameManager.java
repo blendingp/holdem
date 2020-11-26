@@ -678,17 +678,17 @@ public class GameManager {
 			return prebetmoney*2;
 		else if(kind==4){// 하프
 			long tc = preTotalBetmoney - mybetmoney;
-			return tc + ((totalmoney + tc)/2);
+			return tc + (((totalmoney + ante) + tc)/2);
 		}
 		else if(kind==5){// 풀
 			long tc = preTotalBetmoney - mybetmoney;
-			return tc + totalmoney;
+			return tc + (totalmoney + ante);
 		}
 		else if(kind==6)// 맥스
 			return room.maxmoney;
 		else if(kind==7){// 쿼터
 			long tc = preTotalBetmoney - mybetmoney;
-			return tc + ((totalmoney+tc)/4);
+			return tc + (((totalmoney + ante) + tc)/4);
 		}
 		else if(kind==8)// 패스 ( 올인이나 맥스벳 상태에서는 자기 차례올시에 자동 패스 커맨드 함) 
 			return 0;
@@ -882,7 +882,7 @@ public class GameManager {
 		//System.out.println("{ tmo:"+tmo +" u.betmoney:"+u.betmoney+" prebetmoney:"+prebetmoney+" preTotalBetmoney:"+preTotalBetmoney);
 		//System.out.println("dbg6 u.betmoney:"+u.betmoney);
 
-		totalmoney +=tmo;
+		totalmoney += tmo;
 		
 		//배팅한 사람 돈 차감 시키기!!!
 		if( room.UsedItem.equals("balance") == true){
