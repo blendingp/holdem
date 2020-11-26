@@ -25,6 +25,7 @@ public class CardManager {
 	}
 	public void shuffleCard(){
 		tmidx = 0;
+		SocketHandler.jokbotest = 0;//테스트 할때만 풀어서 쓰자.
 		switch(SocketHandler.jokbotest){
 		case 0:
 		case -1:Collections.shuffle(cardlist);
@@ -60,7 +61,6 @@ public class CardManager {
 			cv(1,10);cv(1,2);
 			cv(3,9);cv(2,5);cv(1,3);cv(0,8);cv(1,1);break;
 		}
-		
 	}	
 	
 	public Card popCard(){
