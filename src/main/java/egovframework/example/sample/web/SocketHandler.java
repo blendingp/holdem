@@ -138,7 +138,19 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     		{    			
     			User u = usermanager.find(session);    			
 				int roomidx = Integer.parseInt(""+obj.get("roomidx"));				
-    			roommanager.leaveRoom(u.roomnum, u);    			
+    			roommanager.leaveRoom(u.roomnum, u);    	
+    			
+    			//AI일경우 자동 재충전 처리
+    			if(u.isAI == true)
+    			{
+    				u.point += 20000000;
+    				// insertLog 머니로그 남겨야 함 !!!
+    				JSONObject chgobj=new JSONObject();
+    				chgobj.put("cmd", "aiautocharge");
+    				chgobj.put("currentpoint",""+u.point);
+    				chgobj.put("currentbalance",""+u.balance);
+    				u.sendMe(chgobj);
+    			}
     		}break;
         	case "connect":
         	{        	
