@@ -1676,7 +1676,7 @@ public class GameManager {
 		//결과 계산하기
 		// 유저들의 카드 목록 2차원 배열 출력
 		int winSeat=-1,wlv=10000;
-		
+		ArrayList<Integer> winners = new ArrayList<>();
 		
 		//기권승시 족보계산안함 ,이긴사람 돈줌 
 		if( this.checkAbstention() ){
@@ -1686,10 +1686,11 @@ public class GameManager {
 				if(u.die == false){
 					winSeat = cnt;
 					sortRank.add(u);
+					winners.add(u.seat);
 				}
 				cnt++;
 			}
-			wlv = 99;
+			wlv = 99;			
 		}else {
 
 			for( User user : userlist )
@@ -1765,7 +1766,7 @@ public class GameManager {
 		//공동우승자 숫자 카운팅{
 		int []twinners= {-1,-1,-1,-1,-1,-1,-1,-1,-1};
 		int widx=0;
-		ArrayList<Integer> winners = new ArrayList<>();
+		
 		ArrayList<JSONObject> wincards = new ArrayList<>();
 
 		for( User user : userlist )
@@ -1773,7 +1774,11 @@ public class GameManager {
 			if( user.jokbocode == SearchUserBySeat(winSeat).jokbocode )
 			{
 				twinners[widx++] = user.uidx;
-				winners.add(user.seat);
+				if( wlv != 99 )
+				{
+					winners.add(user.seat);
+				}				
+
 				for( JSONObject card : user.wincard )
 				{
 					wincards.add(card);
@@ -1840,10 +1845,10 @@ public class GameManager {
 
 				if(SearchUserBySeat(winSeat).betmoney < u.betmoney){
 					if( room.UsedItem.equals("balance") == true){
-						u.balance = u.betmoney - SearchUserBySeat(winSeat).betmoney;
+						u.balance += u.betmoney - SearchUserBySeat(winSeat).betmoney;
 					}
 					else if( room.UsedItem.equals("point") == true){
-						u.point = u.betmoney - SearchUserBySeat(winSeat).betmoney;
+						u.point += u.betmoney - SearchUserBySeat(winSeat).betmoney;
 					}					
 				}
 			}
