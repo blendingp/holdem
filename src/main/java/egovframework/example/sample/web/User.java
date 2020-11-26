@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.simple.JSONObject;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
 import egovframework.example.sample.service.impl.SampleDAO;
@@ -781,5 +782,16 @@ public class User {
 		}
 		
 		this.img = _info.avata;		
-	}	
+	}
+	public void sendMe(JSONObject obj)
+	{
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			session.sendMessage(new TextMessage(mapper.writeValueAsString(obj)));
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+			System.out.println("sendMe Error:"+obj.toJSONString() );
+		}
+	}
 }
