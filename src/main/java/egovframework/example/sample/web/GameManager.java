@@ -519,8 +519,8 @@ public class GameManager {
 	}
 
 	public void drawCard(){
-		//cardManager.shuffleCard();
-		cardManager.cardlist.clear();
+		cardManager.shuffleCard();
+		/*cardManager.cardlist.clear();
 		cardManager.cardlist.add(new Card(45));
 		cardManager.cardlist.add(new Card(7));
 		cardManager.cardlist.add(new Card(19));
@@ -529,7 +529,7 @@ public class GameManager {
 		cardManager.cardlist.add(new Card(49));
 		cardManager.cardlist.add(new Card(4));
 		cardManager.cardlist.add(new Card(0));
-		cardManager.cardlist.add(new Card(30));
+		cardManager.cardlist.add(new Card(30));*/
 
 		JSONObject obj = new JSONObject();
 		//JSONArray j = new JSONArray();
@@ -1826,8 +1826,8 @@ public class GameManager {
 				u.todayprofile.putallin += allincount;
 
 				if( room.UsedItem.equals("balance") == true){	
-					long getamount = (long)((betMoney + ((cnt*SearchUserBySeat(u.seat).betmoney) + (ante)) * ( 1 - u.memberInfo.commission)));
-					winnerpoint = getamount / winners.size();
+					long getamount = (long)((betMoney + ((cnt*SearchUserBySeat(u.seat).betmoney) + (ante))) / winners.size());
+					winnerpoint = (long)(getamount * ( 1 - u.memberInfo.commission));
 					SearchUserBySeat(u.seat).balance += winnerpoint;
 
 					if( SearchUserBySeat(u.seat).balance > SearchUserBySeat(u.seat).memberInfo.limit_gold )
@@ -1843,14 +1843,17 @@ public class GameManager {
 					u.todayprofile.gaingold += winnerpoint;
 				}
 				else if( room.UsedItem.equals("point") == true){
-					long getamount = (long)((betMoney + ((cnt*SearchUserBySeat(u.seat).betmoney) + (ante)) * ( 1 - u.memberInfo.commission)));
-					winnerpoint = getamount / winners.size();
+					long getamount = (long)((betMoney + ((cnt*SearchUserBySeat(u.seat).betmoney) + (ante))) / winners.size());
+					winnerpoint = (long)(getamount * ( 1 - u.memberInfo.commission));
 					SearchUserBySeat(u.seat).point += winnerpoint;
 					if( SearchUserBySeat(u.seat).point > SearchUserBySeat(u.seat).memberInfo.limit_point )
 					{
 						SearchUserBySeat(u.seat).point = SearchUserBySeat(u.seat).memberInfo.limit_point;
 					}
-				}					
+				}		
+				
+				SocketHandler.insertLog(getGameId(), "result", u.uidx , u.balance, u.point
+					, "승리금:"+winnerpoint , u.jokbocode , -1 );
 				
 			}else{
 				u.totalprofile.lose++;
@@ -1876,12 +1879,10 @@ public class GameManager {
 			ProfileManager.UpdateTodayProfile(u.todayprofile);
 		}	
 		
-		setDealerSeat();
+		setDealerSeat();		
 		
 		//System.out.println("승자 족보레벨:"+ (sortRank.get(0).wlv) +" 승자id:"+sortRank.get(0).nickname + " card:"+sortRank.get(0).wincard.toString() );
-		SocketHandler.insertLog(getGameId(), "result", sortRank.get(0).uidx , sortRank.get(0).balance, sortRank.get(0).point
-					, "승리금:"+winnerpoint , sortRank.get(0).jokbocode , -1 );
-		
+				
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","showResult");
 		obj.put("wlv", sortRank.get(0).wlv);//레벨순서 변경됨.		
