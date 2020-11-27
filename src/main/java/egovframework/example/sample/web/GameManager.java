@@ -921,10 +921,10 @@ public class GameManager {
 		
 		//System.out.println("BET whosturn: "+whosturn+"("+getWhoTurn()+") Game:"+GameMode+" betkind:"+betkind+" totalmoney:"+totalmoney+" 잔액:"+u.balance +"   :::" + "{ tmo:"+tmo +" u.betmoney:"+u.betmoney+" prebetmoney:"+prebetmoney+" preTotalBetmoney:"+preTotalBetmoney);
 		if( room.UsedItem.equals("balance") == true){
-			SocketHandler.insertLog(getGameId(), "bet", u.uidx , u.betmoney , u.balance , "배팅액:"+tmo+", total:"+totalmoney , betkind, whosturn );
+			SocketHandler.insertLog(getGameId(), "bet", u.uidx , u.betmoney , u.balance , "배팅액:"+tmo+", total:"+(totalmoney+ante) , betkind, whosturn );
 		}
 		else if( room.UsedItem.equals("point") == true){
-			SocketHandler.insertLog(getGameId(), "bet", u.uidx , u.betmoney , u.point , "배팅액:"+tmo+", total:"+totalmoney , betkind, whosturn );
+			SocketHandler.insertLog(getGameId(), "bet", u.uidx , u.betmoney , u.point , "배팅액:"+tmo+", total:"+(totalmoney+ante) , betkind, whosturn );
 		}		
 
 		JSONObject obj = new JSONObject();
