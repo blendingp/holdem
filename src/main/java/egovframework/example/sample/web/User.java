@@ -693,7 +693,17 @@ public class User {
 				System.out.println(e.getMessage());
 			}
 
-			this.img = _info.avata;					
+			this.img = _info.avata;			
+			try {
+				if( (""+ed.get("ai")).compareTo("1") == 0 ) 
+				{
+					this.isAI = true;
+					System.out.println("ai 유저 로긴:"+_info.nickname );
+				}
+			}catch(Exception e) 
+			{
+				System.out.println("ai info 읽기 실패");
+			}
 		}		
 		else
 		{

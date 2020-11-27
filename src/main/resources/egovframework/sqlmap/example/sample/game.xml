@@ -284,7 +284,7 @@
 
 	<select id="GetMemberInfo" resultClass="EgovMap">
         <![CDATA[
-            SELECT midx, `exp`, nickname, avata, ban, `limit` FROM member_info
+            SELECT midx, `exp`, nickname, avata, ban, `limit` , ai FROM member_info
             WHERE midx=#midx#
         ]]>
 	</select>
