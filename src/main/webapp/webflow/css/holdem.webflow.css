@@ -14,7 +14,7 @@
   flex-direction: column;
   background-image: url('../images/backgroundnew.jpg');
   background-position: 50% 0%;
-  background-size: 100%;
+  background-size: cover;
   background-repeat: no-repeat;
 }
 
@@ -23,8 +23,6 @@
   top: -16px;
   z-index: 2;
   width: 100%;
-  min-height: 893px;
-  min-width: 1867px;
   margin-right: auto;
   margin-left: auto;
 }
@@ -41,6 +39,7 @@
   display: flex;
   width: 100%;
   height: 362px;
+  margin-top: -16px;
   margin-right: auto;
   margin-left: auto;
   padding-top: 12px;
@@ -110,7 +109,7 @@
   display: -ms-flexbox;
   display: flex;
   width: 1000px;
-  margin-top: 14px;
+  margin-top: 91px;
   margin-right: auto;
   margin-left: auto;
   -webkit-box-pack: justify;
@@ -450,7 +449,7 @@
   height: 13px;
   margin-right: 15px;
   margin-left: 15px;
-  background-color: hsla(0, 0%, 100%, 0.28);
+  background-color: hsla(0, 0%, 100%, 0.16);
 }
 
 .link-block {
@@ -460,7 +459,7 @@
 }
 
 .text-block-2 {
-  color: hsla(0, 0%, 100%, 0.74);
+  color: hsla(0, 0%, 100%, 0.31);
   line-height: 22px;
   letter-spacing: 0px;
 }
@@ -478,28 +477,28 @@
   -webkit-justify-content: center;
   -ms-flex-pack: center;
   justify-content: center;
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  -ms-flex-align: center;
-  align-items: center;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.3);
+  -webkit-box-align: start;
+  -webkit-align-items: flex-start;
+  -ms-flex-align: start;
+  align-items: flex-start;
   background-image: url('../images/top_menu_back.png');
   background-position: 0px 0px;
   background-size: cover;
   background-repeat: no-repeat;
-  box-shadow: 0 0 12px -7px rgba(0, 0, 0, 0.4);
 }
 
 .topmenuwrap {
+  position: relative;
+  top: 19px;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
   min-width: 1200px;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-  -ms-flex-pack: justify;
-  justify-content: space-between;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
   -webkit-box-align: center;
   -webkit-align-items: center;
   -ms-flex-align: center;
@@ -517,6 +516,14 @@
 
 .topmenu_btn {
   margin-left: 60px;
+}
+
+.wingamebtn {
+  position: absolute;
+  left: 0%;
+  top: auto;
+  right: auto;
+  bottom: auto;
 }
 
 .div-block-2 {
@@ -898,7 +905,7 @@
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  width: 15%;
+  width: 8%;
   -webkit-box-pack: center;
   -webkit-justify-content: center;
   -ms-flex-pack: center;
@@ -1101,7 +1108,7 @@
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  width: 15%;
+  width: 8%;
   -webkit-box-pack: center;
   -webkit-justify-content: center;
   -ms-flex-pack: center;
@@ -1289,7 +1296,6 @@
   -ms-flex-align: center;
   align-items: center;
   border-bottom: 1px solid rgba(0, 0, 0, 0.11);
-  background-color: #f8f8f8;
 }
 
 .notibottitle {
@@ -2094,27 +2100,74 @@
   margin-bottom: 20px;
 }
 
+.text-span-12 {
+  color: #b81515;
+}
+
+.bg-copy {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+
+.ttitle2-2-copy {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  width: 76%;
+  max-width: 76%;
+  padding-left: 0px;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
+  color: #000;
+  font-size: 15px;
+  font-weight: 700;
+}
+
 @media screen and (max-width: 767px) {
   .bg {
     width: 100%;
     height: auto;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
     background-position: 50% 0%;
     background-size: contain;
-    background-repeat: no-repeat;
+    background-repeat: repeat;
+    background-attachment: scroll;
   }
 
   .toplogoicon {
+    top: 0px;
     bottom: 0px;
-    width: 92vw;
+    width: 83%;
     height: auto;
-    min-width: 92vw;
-    margin-top: -3vw;
+    min-height: auto;
+    min-width: 0%;
   }
 
   .chipsbg {
     width: 100vw;
-    height: 41vw;
-    margin-top: 0vw;
+    height: auto;
+    margin-top: -1vw;
     padding-top: 9vw;
     -webkit-box-pack: start;
     -webkit-justify-content: flex-start;
@@ -2142,7 +2195,7 @@
 
   .tbwrap {
     width: 69vw;
-    margin-top: -5vw;
+    margin-top: -2vw;
   }
 
   .left-arrow {
@@ -2166,7 +2219,6 @@
   .slider {
     width: 94vw;
     height: auto;
-    margin-top: 2vw;
   }
 
   .rightarrowicon {
@@ -2191,8 +2243,8 @@
 
   .bottombg {
     width: 100%;
-    padding-top: 7vw;
-    padding-bottom: 7vw;
+    padding-top: 4vw;
+    padding-bottom: 6vw;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
     -webkit-flex-direction: column;
@@ -2207,7 +2259,7 @@
   .b_back {
     width: 100%;
     height: 23vw;
-    margin-top: 3.3vw;
+    margin-top: 6vw;
     -webkit-box-orient: vertical;
     -webkit-box-direction: normal;
     -webkit-flex-direction: column;
@@ -2257,11 +2309,15 @@
     width: 100%;
     padding-right: 3vw;
     padding-left: 3vw;
-    -webkit-box-orient: vertical;
+    -webkit-box-orient: horizontal;
     -webkit-box-direction: normal;
-    -webkit-flex-direction: column;
-    -ms-flex-direction: column;
-    flex-direction: column;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
     -webkit-box-align: start;
     -webkit-align-items: flex-start;
     -ms-flex-align: start;
@@ -2269,30 +2325,48 @@
   }
 
   .b_menu {
-    font-size: 1.5vw;
+    font-size: 1.8vw;
     line-height: 3vw;
   }
 
   .b_menuwrap {
-    margin-bottom: 1vw;
+    margin-bottom: 3vw;
+  }
+
+  .arrow {
+    width: 0.1vw;
+    margin-right: 2vw;
+    margin-left: 2vw;
+    background-color: hsla(0, 0%, 100%, 0.11);
   }
 
   .text-block-2 {
     font-size: 2vw;
-    line-height: 3vw;
+    line-height: 2.5vw;
   }
 
   .topmenu_back {
     width: 100%;
-    height: 8vw;
-    min-height: 9vw;
+    height: 11vw;
+    min-height: 11vw;
     padding-right: 3vw;
     padding-left: 3vw;
+    -webkit-box-align: start;
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
+    align-items: flex-start;
   }
 
   .topmenuwrap {
+    top: 2.3vw;
+    width: 100%;
+    min-width: 100%;
     padding-right: 0%;
     padding-left: 0%;
+    -webkit-box-pack: end;
+    -webkit-justify-content: flex-end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
   }
 
   .wingamelogo {
@@ -2302,11 +2376,11 @@
 
   .topmenuicon {
     width: auto;
-    height: 2.5vw;
+    height: 3vw;
   }
 
   .topmenu_btn {
-    margin-left: 10vw;
+    margin-left: 5vw;
   }
 
   .wingamebtn {
@@ -2370,8 +2444,8 @@
     display: -ms-flexbox;
     display: flex;
     width: 100%;
-    margin-top: 5vw;
-    margin-bottom: 2vw;
+    margin-top: 6vw;
+    margin-bottom: 7vw;
     padding-right: 3vw;
   }
 
@@ -2407,29 +2481,33 @@
   }
 
   .tdate2-4 {
-    width: 20%;
+    width: 18%;
     font-size: 2.8vw;
     line-height: 3vw;
   }
 
   .twriter2-4 {
+    width: 13%;
     font-size: 2.8vw;
     line-height: 4vw;
   }
 
   .tnum-7 {
-    width: 14%;
+    width: 9%;
     font-size: 2.8vw;
     line-height: 4vw;
   }
 
   .row-11 {
     height: 10vw;
-    padding: 1.5vw 0px 1.5vw 0vw;
+    padding: 1.5vw 1vw;
   }
 
   .ttitle2-2 {
     overflow: hidden;
+    width: 41%;
+    max-width: 41%;
+    min-width: auto;
     padding-left: 0px;
     -webkit-box-pack: start;
     -webkit-justify-content: flex-start;
@@ -2457,9 +2535,7 @@
 
   .ttop-9 {
     height: 10vw;
-    padding-top: 1.5vw;
-    padding-right: 3vw;
-    padding-bottom: 1.5vw;
+    padding: 1.5vw 1vw;
     -webkit-box-pack: justify;
     -webkit-justify-content: space-between;
     -ms-flex-pack: justify;
@@ -2467,33 +2543,35 @@
   }
 
   .twriter-7 {
+    width: 13%;
     font-size: 2.8vw;
     line-height: 4vw;
   }
 
   .ttitle-8 {
+    width: 41%;
     font-size: 2.8vw;
     line-height: 4vw;
   }
 
   .tdate-copy-2 {
-    width: 20%;
+    width: 13%;
     font-size: 2.8vw;
     line-height: 3vw;
   }
 
   .wstate {
-    width: 20%;
+    width: 13%;
   }
 
   .tnum2-4 {
-    width: 12%;
+    width: 9%;
     font-size: 2.8vw;
     line-height: 3vw;
   }
 
   .tdate-7 {
-    width: 20%;
+    width: 18%;
     font-size: 2.8vw;
     line-height: 3vw;
   }
@@ -2584,9 +2662,13 @@
   }
 
   .noticetilte {
-    width: 60%;
-    min-width: 60%;
-    padding-left: 3vw;
+    width: auto;
+    min-width: 56vw;
+    padding-left: 0px;
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
     font-size: 2.8vw;
     line-height: 4vw;
   }
@@ -2594,6 +2676,14 @@
   .tdate-7-copy {
     font-size: 2.8vw;
     line-height: 3vw;
+  }
+
+  .div-block-9 {
+    width: 35vw;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
   }
 
   .notidetailbox {
@@ -2730,6 +2820,7 @@
 
   .div-block-11 {
     width: auto;
+    margin-left: 1.5vw;
   }
 
   .mititlebotbox {
@@ -2809,9 +2900,7 @@
 
   .ttop10 {
     height: 10vw;
-    padding-top: 1.5vw;
-    padding-right: 0vw;
-    padding-bottom: 1.5vw;
+    padding: 1.5vw 1vw;
     -webkit-box-pack: justify;
     -webkit-justify-content: space-between;
     -ms-flex-pack: justify;
@@ -2819,15 +2908,16 @@
   }
 
   .inquirytitle {
-    width: 50%;
-    min-width: 50%;
+    width: 49%;
+    max-width: 49%;
+    min-width: 0%;
     padding-left: 3vw;
     font-size: 2.8vw;
     line-height: 4vw;
   }
 
   .twrap {
-    width: 38vw;
+    width: auto;
   }
 
   .div-block-12 {
@@ -2857,11 +2947,32 @@
 
   .holdemtxt {
     bottom: 12%;
-    width: 66%;
-    max-width: 90%;
-    min-height: 10%;
-    min-width: 10%;
+    width: 66vw;
+    height: auto;
+    max-width: none;
+    min-height: auto;
+    min-width: 0vw;
     margin-top: 4vw;
     margin-bottom: 5vw;
+  }
+
+  .bg-copy {
+    width: 100%;
+    height: auto;
+    background-position: 50% 0%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  }
+
+  .ttitle2-2-copy {
+    overflow: hidden;
+    width: 68%;
+    padding-left: 0px;
+    -webkit-box-pack: start;
+    -webkit-justify-content: flex-start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    font-size: 2.8vw;
+    line-height: 3vw;
   }
 }

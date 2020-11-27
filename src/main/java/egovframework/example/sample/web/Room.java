@@ -117,6 +117,7 @@ public class Room {
 		myobj.put("ante", defaultmoney);
 		myobj.put("max", maxmoney);
 		myobj.put("maxuser", maxusersize);
+		myobj.put("isprivate", _isPrivate);		
 
 		ArrayList<User> joinuserlist = new ArrayList<>();
 		for( User user : gameManager.userlist )

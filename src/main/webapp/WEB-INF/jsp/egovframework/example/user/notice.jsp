@@ -18,7 +18,7 @@ function fn_egov_link_page(pageIndex){
 </head>
 <body>
 	<div class="frame">
-		<div class="bg">
+		<div class="bg-copy">
 			<jsp:include page="../frame/userMenu.jsp"></jsp:include>
 			<div class="body">
 				<div class="notititlebox">

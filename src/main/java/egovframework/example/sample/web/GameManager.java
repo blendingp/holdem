@@ -199,11 +199,11 @@ public class GameManager {
 			u.cardarr.clear();
 			u.wlv = 99;
 			if( room.UsedItem.equals("balance") == true){
-				u.balance -= room.defaultmoney;
-				u.todayprofile.gaingold -= room.defaultmoney;
+				u.balance -= room.defaultmoney;				
 			}			
 			else if( room.UsedItem.equals("point") == true){
 				u.point -= room.defaultmoney;
+				u.todayprofile.gaingold -= room.defaultmoney;
 			}	
 
 			ante += room.defaultmoney;
@@ -433,11 +433,13 @@ public class GameManager {
 				if( u.balance < room.defaultmoney * 3){
 					rmlist.add(u);
 				}
-
+			}			
+			else if( room.UsedItem.equals("point") == true){
+				if( u.point < room.defaultmoney * 3){
+					rmlist.add(u);
+				}
 				if( Math.abs(u.todayprofile.gaingold) >= u._info.limit && u.todayprofile.gaingold < 0)
-				{
-					u._info.RecordBan(1, System.currentTimeMillis() + 86400000);
-					u.UpdateMemberInfo();
+				{					
 					BanModel ban = new BanModel();
 					ban.type = 1;
 					ban.expire = System.currentTimeMillis() + 86400000;
@@ -448,6 +450,8 @@ public class GameManager {
 					ObjectMapper mapper = new ObjectMapper();
 						
 					try {
+						u._info.ban = mapper.writeValueAsString(ban);
+						u.UpdateMemberInfo();
 						u.session.sendMessage(new TextMessage(mapper.writeValueAsString(obj)));
 						SocketHandler.sk.disconnect(u.session);
 						u.session.close();						
@@ -455,11 +459,7 @@ public class GameManager {
 						e.printStackTrace();
 					}
 				}
-			}			
-			else if( room.UsedItem.equals("point") == true){
-				if( u.point < room.defaultmoney * 3){
-					rmlist.add(u);
-				}
+
 			}				
 		}
 		/*for(User u:rmlist)
@@ -895,8 +895,7 @@ public class GameManager {
 		totalmoney += tmo;
 		
 		//배팅한 사람 돈 차감 시키기!!!
-		if( room.UsedItem.equals("balance") == true){
-			u.todayprofile.gaingold -= tmo;
+		if( room.UsedItem.equals("balance") == true){			
 			u.balance -= tmo;	
 			long amount = (long)(tmo * u.memberInfo.gold_cashback);
 			u.bank += amount;
@@ -914,6 +913,7 @@ public class GameManager {
 			JackpotManager.AccumulateJackpot(tmo);
 		}
 		else if( room.UsedItem.equals("point") == true){
+			u.todayprofile.gaingold -= tmo;
 			u.point -= tmo;	
 		}
 				
@@ -1838,9 +1838,7 @@ public class GameManager {
 					if( u.totalprofile.highgaingold < winnerpoint )
 					{
 						u.totalprofile.highgaingold = winnerpoint;
-					}
-
-					u.todayprofile.gaingold += winnerpoint;
+					}					
 				}
 				else if( room.UsedItem.equals("point") == true){
 					long getamount = (long)((betMoney + ((cnt*SearchUserBySeat(u.seat).betmoney) + (ante))) / winners.size());
@@ -1850,6 +1848,8 @@ public class GameManager {
 					{
 						SearchUserBySeat(u.seat).point = SearchUserBySeat(u.seat).memberInfo.limit_point;
 					}
+
+					u.todayprofile.gaingold += winnerpoint;
 				}		
 				
 				SocketHandler.insertLog(getGameId(), "result", u.uidx , u.balance, u.point
