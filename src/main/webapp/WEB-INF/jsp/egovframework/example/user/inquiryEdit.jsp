@@ -12,7 +12,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/se2/js/HuskyEZCreator.js" charset="utf-8"></script>
 <body>
 	<div class="frame">
-		<div class="bg form-block w-form">
+		<div class="bg-copy form-block w-form">
 			<form id="inquiryForm">
 				<jsp:include page="../frame/userMenu.jsp"></jsp:include>
 				<div class="body">
