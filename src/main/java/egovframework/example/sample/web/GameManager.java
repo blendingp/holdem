@@ -519,7 +519,17 @@ public class GameManager {
 	}
 
 	public void drawCard(){
-		cardManager.shuffleCard();
+		//cardManager.shuffleCard();
+		cardManager.cardlist.clear();
+		cardManager.cardlist.add(new Card(45));
+		cardManager.cardlist.add(new Card(7));
+		cardManager.cardlist.add(new Card(19));
+		cardManager.cardlist.add(new Card(21));
+		cardManager.cardlist.add(new Card(6));
+		cardManager.cardlist.add(new Card(49));
+		cardManager.cardlist.add(new Card(4));
+		cardManager.cardlist.add(new Card(0));
+		cardManager.cardlist.add(new Card(30));
 
 		JSONObject obj = new JSONObject();
 		//JSONArray j = new JSONArray();
@@ -1763,9 +1773,7 @@ public class GameManager {
 	        });
 			
 		}
-		
-		
-
+			
 		winSeat=sortRank.get(0).seat;// 이게 유저 자리 번호 맞나? 확인하기 2020 09 10		
 
 		//공동우승자 숫자 카운팅{
@@ -1807,7 +1815,7 @@ public class GameManager {
 		System.out.println("---balanace-----");
 		long winnerpoint = 0;
 		for(User u : userlist){
-			if( u.seat == winSeat){
+			if( winners.contains(u.seat)){
 				u.totalprofile.win++;
 				u.todayprofile.win++;
 
@@ -1818,27 +1826,29 @@ public class GameManager {
 				u.todayprofile.putallin += allincount;
 
 				if( room.UsedItem.equals("balance") == true){	
-					long getamount = (long)((betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney)) * ( 1 - u.memberInfo.commission));
+					long getamount = (long)((betMoney + ((cnt*SearchUserBySeat(u.seat).betmoney) + (ante)) * ( 1 - u.memberInfo.commission)));
 					winnerpoint = getamount / winners.size();
-					SearchUserBySeat(winSeat).balance += getamount;
-					if( SearchUserBySeat(winSeat).balance > SearchUserBySeat(winSeat).memberInfo.limit_gold )
+					SearchUserBySeat(u.seat).balance += winnerpoint;
+
+					if( SearchUserBySeat(u.seat).balance > SearchUserBySeat(u.seat).memberInfo.limit_gold )
 					{
-						SearchUserBySeat(winSeat).balance = SearchUserBySeat(winSeat).memberInfo.limit_gold;						
-					}
-					if( u.totalprofile.highgaingold < getamount )
-					{
-						u.totalprofile.highgaingold = getamount;
+						SearchUserBySeat(u.seat).balance = SearchUserBySeat(u.seat).memberInfo.limit_gold;						
 					}
 
-					u.todayprofile.gaingold += getamount;
+					if( u.totalprofile.highgaingold < winnerpoint )
+					{
+						u.totalprofile.highgaingold = winnerpoint;
+					}
+
+					u.todayprofile.gaingold += winnerpoint;
 				}
 				else if( room.UsedItem.equals("point") == true){
-					long getamount =(long)( (betMoney + (cnt*SearchUserBySeat(winSeat).betmoney) + (userlist.size() * room.defaultmoney)) * ( 1 - u.memberInfo.commission));
+					long getamount = (long)((betMoney + ((cnt*SearchUserBySeat(u.seat).betmoney) + (ante)) * ( 1 - u.memberInfo.commission)));
 					winnerpoint = getamount / winners.size();
-					SearchUserBySeat(winSeat).point += getamount;
-					if( SearchUserBySeat(winSeat).point > SearchUserBySeat(winSeat).memberInfo.limit_point )
+					SearchUserBySeat(u.seat).point += winnerpoint;
+					if( SearchUserBySeat(u.seat).point > SearchUserBySeat(u.seat).memberInfo.limit_point )
 					{
-						SearchUserBySeat(winSeat).point = SearchUserBySeat(winSeat).memberInfo.limit_point;
+						SearchUserBySeat(u.seat).point = SearchUserBySeat(u.seat).memberInfo.limit_point;
 					}
 				}					
 				
@@ -1868,7 +1878,7 @@ public class GameManager {
 		
 		setDealerSeat();
 		
-		System.out.println("승자 족보레벨:"+ (sortRank.get(0).wlv) +" 승자id:"+sortRank.get(0).nickname + " card:"+sortRank.get(0).wincard.toString() );
+		//System.out.println("승자 족보레벨:"+ (sortRank.get(0).wlv) +" 승자id:"+sortRank.get(0).nickname + " card:"+sortRank.get(0).wincard.toString() );
 		SocketHandler.insertLog(getGameId(), "result", sortRank.get(0).uidx , sortRank.get(0).balance, sortRank.get(0).point
 					, "승리금:"+winnerpoint , sortRank.get(0).jokbocode , -1 );
 		
@@ -1882,9 +1892,9 @@ public class GameManager {
 			obj.put("winnerbalance", sortRank.get(0).point);
 		}	
 		obj.put("winmoney", (this.totalmoney + ante));
-		obj.put("winSeat", sortRank.get(0).seat);				
+		obj.put("winSeat", winners);				
 		obj.put("usersize", userlist.size());		
-		obj.put("wincard", sortRank.get(0).wincard);//
+		obj.put("wincard", wincards);//
 		
 		JSONArray j = new JSONArray();
 		for(int i=0; i<userlist.size(); i++){
@@ -1899,7 +1909,7 @@ public class GameManager {
 				item.put("balance", userlist.get(i).point);
 			}						
 			item.put("die", userlist.get(i).die);
-			//item.put("win", winners.contains(userlist.get(i).seat));
+			item.put("win", winners.contains(userlist.get(i).seat));
 			item.put("profile", userlist.get(i).todayprofile);
 			j.add(item);
 		}
