@@ -1718,7 +1718,6 @@
 
 .textarea-2 {
   width: 1000px;
-  height: 418px;
   max-height: 418px;
   min-height: 418px;
   padding: 20px;
@@ -1804,6 +1803,7 @@
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
+  overflow: auto;
   height: 419px;
   border-bottom: 0.5px solid hsla(0, 0%, 69.4%, 0.42);
 }
@@ -2342,7 +2342,7 @@
 
   .text-block-2 {
     font-size: 2vw;
-    line-height: 2.5vw;
+    line-height: 3.5vw;
   }
 
   .topmenu_back {
@@ -2954,6 +2954,10 @@
     min-width: 0vw;
     margin-top: 4vw;
     margin-bottom: 5vw;
+  }
+
+  .text-span-12 {
+    color: #fff;
   }
 
   .bg-copy {

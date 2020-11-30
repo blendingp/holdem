@@ -50,11 +50,11 @@ nhn.husky.EZCreator = new (function(){
 		 
 
 		try{
-			elIFrame = document.createElement("<IFRAME frameborder=0 scrolling=no>");
+			elIFrame = document.createElement("<IFRAME frameborder=0 scrolling=yes>");
 		}catch(e){
 			elIFrame = document.createElement("IFRAME");
 			elIFrame.setAttribute("frameborder", "0");
-			elIFrame.setAttribute("scrolling", "no");
+			elIFrame.setAttribute("scrolling", "yes");
 		}
 		
 		elIFrame.style.width = "1px";

@@ -129,7 +129,7 @@
 			   oEditors.getById["smartEditor"].exec("PASTE_HTML", ['${text}']); // 미리 적용할 텍스트 내용이 있는경우
 			   document.getElementsByTagName("iframe")[0].style.width = "89%";
 			   document.getElementsByTagName("iframe")[0].style.height = "100%";
-			   document.getElementsByTagName("iframe")[0].style.padding = "1%";
+			   document.getElementsByTagName("iframe")[0].style.padding = "5px 1px 5px 1px";
 
 			  },		
 		});
