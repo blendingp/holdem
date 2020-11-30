@@ -132,7 +132,7 @@ public class GameManager {
 		ObjectMapper mapper = new ObjectMapper();
 
 		for(User u : lst)
-			try {				
+			try {								
 				u.session.sendMessage(new TextMessage(mapper.writeValueAsString(obj)));
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -959,14 +959,16 @@ public class GameManager {
 		obj.put("callmoney", "" + (preTotalBetmoney - u.betmoney) );
 		obj.put("prebetmoney", preTotalBetmoney );
 		obj.put("myBetMoney", u.betmoney );
+		long amount = 0;		
 		
-		if( room.UsedItem.equals("balance") == true){
-			obj.put("balance", u.balance);
+		if( room.UsedItem.equals("balance") == true){		
+			amount = u.balance;			
 		}
-		else if( room.UsedItem.equals("point") == true){
-			obj.put("balance", u.point);
+		else if( room.UsedItem.equals("point") == true){			
+			amount = u.point;			
 		}
 		
+		obj.put("balance", amount);		
 		obj.put("betkind", betkind);
 		obj.put("seat", u.seat);//금방배팅한 사람
 		obj.put("nextwho", whosturn );//이제 배팅할 사람의 번호
@@ -989,23 +991,23 @@ public class GameManager {
 		if( GetAbleBettingUserCount() <= 1 && isBetEnd == true)
 		{
 			JSONArray j = new JSONArray();
-			for(int i=0; i<userlist.size(); i++){
+			for(int i=0; i < userlist.size(); i++){
 				JSONObject item = new JSONObject();
 				item.put("seat",userlist.get(i).seat);			
 				item.put("card1",userlist.get(i).card1.cardcode);
 				item.put("card2",userlist.get(i).card2.cardcode);
-				if( room.UsedItem.equals("balance") == true){
-					obj.put("balance", userlist.get(i).balance);
+				if( room.UsedItem.equals("balance") == true){					
+					item.put("balance", userlist.get(i).balance);
 				}
-				else if( room.UsedItem.equals("point") == true){
-					obj.put("balance", userlist.get(i).point);
+				else if( room.UsedItem.equals("point") == true){					
+					item.put("balance", userlist.get(i).point);
 				}				
 				item.put("die",userlist.get(i).die);
 				j.add(item);
 			}
 			obj.put("cardlist", j);	
 		}
-		
+
 		sendRoom(obj);//베팅 성공 정보를 전송					
 		
 		if( checkAbstention() ){

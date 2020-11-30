@@ -79,7 +79,7 @@ public class UserManager {
 		userlist.add(user);
 
 		JSONObject cobj = new JSONObject();
-		System.out.println("useridx: " + find(session).uidx);
+		System.out.println("useridx: " + find(session).uidx);		
 		cobj.put("cmd", "connectResult");
 		cobj.put("useridx", find(session).uidx);
 		cobj.put("balance", find(session).balance);
