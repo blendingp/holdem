@@ -49,7 +49,7 @@
 									<div class="twrap-2">
 										<div class="ttxt-3">문의내용</div>
 									</div>
-									<textarea id="smartEditor" style="max-height:358px;" name="text">${inquiryDetail.text}</textarea>
+									<textarea id="smartEditor" style="max-height:358px; min-width:100%;" name="text">${inquiryDetail.text}</textarea>
 								</div>
 								<div class="trow-2-copy">
 									<div class="twrap-2">
@@ -129,7 +129,7 @@
 			   oEditors.getById["smartEditor"].exec("PASTE_HTML", ['${text}']); // 미리 적용할 텍스트 내용이 있는경우
 			   document.getElementsByTagName("iframe")[0].style.width = "89%";
 			   document.getElementsByTagName("iframe")[0].style.height = "100%";
-			   document.getElementsByTagName("iframe")[0].style.padding = "5px 1px 5px 1px";
+			   document.getElementsByTagName("iframe")[0].style.padding = "5px 0px 5px 3px";
 
 			  },		
 		});
