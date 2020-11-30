@@ -1216,11 +1216,11 @@ public class GameManager {
 		
 		int [] arr;
 		int ct = 0;
-		int pre = 0;	
+		int pre = -1;	
 		int preShape = -1;
 		
 		ct=0;
-		pre=0;
+		pre=-1;
 		preShape=-1;
 		arr=cardsort(tarr,true);
 		for(int i=0; i<7; i++){
@@ -1244,7 +1244,7 @@ public class GameManager {
 		
 		if( ct< 5){//스트레이트를 못찾았다면
 			ct=0;
-			pre=0;
+			pre=-1;
 			preShape=-1;
 			arr=cardsort(tarr);//위에는 에이스를 13으로 놓고 한것이고, 여기서 에이스를 0으로 놓고 다시한번 스트레이트 체크 시도
 			for(int i=0; i<7; i++){
@@ -1568,10 +1568,10 @@ public class GameManager {
 
 		int arr[];
 		int ct = 0;
-		int pre = 0;	
+		int pre = -1;	
 		
 		ct=0;
-		pre=0;
+		pre=-1;
 		arr=cardsort(tarr,true);//먼저 에이스를 13으로 놓고 스트레이트 체크
 		for(int i=0; i<7; i++){
 			if(pre == arr[i]%13 )continue;//8 7 (7) 6 5 4 3 <==  같은수 걸러내기
@@ -1594,7 +1594,7 @@ public class GameManager {
 		}
 		if(ct <5){//스트레이트가 안되었다면 에이스를 0으로 놓고 다시 스트레이트 체크 한번더
 			ct=0;
-			pre=0;
+			pre=-1;
 			arr=cardsort(tarr);//에이스를 0으로 놓고 스트레이트 체크
 			for(int i=0; i<7; i++){
 				if(pre == arr[i]%13 )continue;//8 7 (7) 6 5 4 3 <==  같은수 걸러내기
