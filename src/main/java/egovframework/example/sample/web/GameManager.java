@@ -199,9 +199,11 @@ public class GameManager {
 			u.cardarr.clear();
 			u.wlv = 99;
 			if( room.UsedItem.equals("balance") == true){
+				u.prevamount = u.balance;
 				u.balance -= room.defaultmoney;				
 			}			
 			else if( room.UsedItem.equals("point") == true){
+				u.prevamount = u.point;
 				u.point -= room.defaultmoney;
 				u.todayprofile.gaingold -= room.defaultmoney;
 			}	
@@ -896,19 +898,7 @@ public class GameManager {
 		
 		//배팅한 사람 돈 차감 시키기!!!
 		if( room.UsedItem.equals("balance") == true){			
-			u.balance -= tmo;	
-			long amount = (long)(tmo * u.memberInfo.gold_cashback);
-			u.bank += amount;
-			if( u.bank > u.memberInfo.bank_gold )
-			{
-				u.bank = u.memberInfo.bank_gold;
-			}
-			else{
-				// 저금통 갱신
-				if( amount > 0 ){
-					u.ApplyBalanace("bank");
-				}
-			}
+			u.balance -= tmo;				
 
 			JackpotManager.AccumulateJackpot(tmo);
 		}
@@ -1821,11 +1811,8 @@ public class GameManager {
 				u.totalprofile.win++;
 				u.todayprofile.win++;
 
-				Task.IncreaseTask(u, 1, 1);
-				Task.UpdateDB(u);			
-
 				u.totalprofile.putallin += allincount;
-				u.todayprofile.putallin += allincount;
+				u.todayprofile.putallin += allincount;								
 
 				if( room.UsedItem.equals("balance") == true){	
 					long getamount = (long)((betMoney + ((cnt*SearchUserBySeat(u.seat).betmoney) + (ante))) / winners.size());
@@ -1840,7 +1827,21 @@ public class GameManager {
 					if( u.totalprofile.highgaingold < winnerpoint )
 					{
 						u.totalprofile.highgaingold = winnerpoint;
-					}					
+					}		
+					
+					long amount = (long)(getamount * u.memberInfo.gold_cashback);
+					u.bankamount = amount;
+					u.bank += amount;
+					if( u.bank > u.memberInfo.bank_gold )
+					{
+						u.bank = u.memberInfo.bank_gold;
+					}
+					else{
+						// 저금통 갱신
+						if( amount > 0 ){
+							u.ApplyBalanace("bank");
+						}
+					}
 				}
 				else if( room.UsedItem.equals("point") == true){
 					long getamount = (long)((betMoney + ((cnt*SearchUserBySeat(u.seat).betmoney) + (ante))) / winners.size());
@@ -1853,6 +1854,9 @@ public class GameManager {
 
 					u.todayprofile.gaingold += winnerpoint;
 				}		
+
+				Task.IncreaseTask(u, 1, 1);
+				Task.UpdateDB(u);			
 				
 				SocketHandler.insertLog(getGameId(), "result", u.uidx , u.balance, u.point
 					, "승리금:"+winnerpoint , u.jokbocode , -1 );
@@ -1907,14 +1911,18 @@ public class GameManager {
 			item.put("card2", userlist.get(i).card2.cardcode);
 			if( room.UsedItem.equals("balance") == true){
 				item.put("balance", userlist.get(i).balance);
+				item.put("amount", userlist.get(i).balance - userlist.get(i).prevamount);
 			}
 			else if( room.UsedItem.equals("point") == true){
 				item.put("balance", userlist.get(i).point);
-			}						
+				item.put("amount", userlist.get(i).point - userlist.get(i).prevamount);
+			}									
+			item.put("bankamount", userlist.get(i).bankamount);
 			item.put("die", userlist.get(i).die);
 			item.put("win", winners.contains(userlist.get(i).seat));
 			item.put("profile", userlist.get(i).todayprofile);
 			j.add(item);
+			userlist.get(i).die = false;
 		}
 		obj.put("cardlist", j);
 		sendRoom(obj);

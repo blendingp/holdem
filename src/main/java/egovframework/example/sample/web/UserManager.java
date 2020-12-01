@@ -90,6 +90,7 @@ public class UserManager {
 		cobj.put("safe_point", find(session).safe_point);
 		cobj.put("bank", find(session).bank);
 		cobj.put("nickname", ""+ find(session).nickname);
+		System.out.println(cobj.toJSONString());
 		// 구정연_멘션 스트링 리스트 전달
 		try {
 			session.sendMessage(new TextMessage(cobj.toJSONString()));

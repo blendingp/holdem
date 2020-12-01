@@ -67,10 +67,10 @@ public class JackpotManager {
         jackpot.put("amount", _amount);
 
         try {
-            System.out.println(jackpot.toJSONString());
+            //System.out.println(jackpot.toJSONString());
             user.session.sendMessage(new TextMessage(jackpot.toJSONString()));
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            //System.out.println(e.getMessage());
             return false;
         }
 

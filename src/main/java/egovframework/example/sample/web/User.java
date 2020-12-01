@@ -31,6 +31,7 @@ public class User {
 	public int seat = -1;
 	public int roomnum = -1;
 	public long betmoney = 0;
+	public long prevamount = 0;
 	public long balance = 0;
 	public long point = 0;
 	public long safe_point = 0;
@@ -38,6 +39,7 @@ public class User {
 	public long cash = 0;
 	public long budget = 0;
 	public long bank = 0;
+	public long bankamount = 0;
 	public long totalpayment = 0;
 	public boolean isAI = false;// true 일때 ai 유저.
 	public boolean die = false;// true일떄 다이인 상태
@@ -67,8 +69,9 @@ public class User {
 	Card card1 = new Card(-1);// 아직카드없음
 	Card card2 = new Card(-1);
 
-	public void init() {
+	public void init() {	
 		betmoney = 0;
+		bankamount = 0;
 		currentGuBetMoney = 0;// 현재 구 에 베팅한 머니 / 모든 유저가 이 머니가 같아야 다음 단계로 넘어감.
 		die = false;
 		wincard.clear();
