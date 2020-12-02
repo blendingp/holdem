@@ -39,6 +39,7 @@ public class User {
 	public long cash = 0;
 	public long budget = 0;
 	public long bank = 0;
+	public long lastbetmoney = 0;
 	public long bankamount = 0;
 	public long totalpayment = 0;
 	public boolean isAI = false;// true 일때 ai 유저.

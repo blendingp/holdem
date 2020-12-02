@@ -881,6 +881,7 @@ public class GameManager {
 			gamePot.add(gamePot.get(gamePot.size()-1).PotSlit(u.betmoney));
 		}
 				
+		u.lastbetmoney = tmo;
 		u.betmoney += tmo ;//나의 배팅금액 현재돈+배팅금액
 		money = prebetmoney;
 		
@@ -1697,7 +1698,7 @@ public class GameManager {
 				}
 				cnt++;
 			}
-			wlv = 99;			
+			wlv = 99;						 
 		}else {
 
 			for( User user : userlist )
@@ -1812,7 +1813,12 @@ public class GameManager {
 				u.todayprofile.win++;
 
 				u.totalprofile.putallin += allincount;
-				u.todayprofile.putallin += allincount;								
+				u.todayprofile.putallin += allincount;			
+				
+				if( wlv == 99 )
+				{
+					u.prevamount -= u.lastbetmoney;
+				}
 
 				if( room.UsedItem.equals("balance") == true){	
 					long getamount = (long)((betMoney + ((cnt*SearchUserBySeat(u.seat).betmoney) + (ante))) / winners.size());
@@ -1914,6 +1920,10 @@ public class GameManager {
 				item.put("amount", userlist.get(i).balance - userlist.get(i).prevamount);
 			}
 			else if( room.UsedItem.equals("point") == true){
+				
+				System.out.println("point : " + userlist.get(i).point);
+				System.out.println("prev : " + userlist.get(i).prevamount);
+
 				item.put("balance", userlist.get(i).point);
 				item.put("amount", userlist.get(i).point - userlist.get(i).prevamount);
 			}									
@@ -2079,16 +2089,14 @@ public class GameManager {
 		return total;
 	}
 
-	public void Chat(WebSocketSession session, User u, String chat) {
-		
-		System.out.println(" 메시지 전달 :" + u.seat);
+	public void EmoticonBroadCast(User user, int type) {
+				
 		JSONObject obj = new JSONObject();
-		obj.put("cmd", "chatresult");
-		obj.put("chat", chat);
-		obj.put("seat", u.seat);
+		obj.put("cmd", "emoticon");
+		obj.put("emoticon", type);
+		obj.put("seat", user.seat);
 		
-		sendRoom(obj);
-		
+		sendRoom(obj);		
 		
 	}
 	

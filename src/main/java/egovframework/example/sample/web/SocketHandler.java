@@ -243,24 +243,20 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         		System.out.println(obj.toJSONString());
         		usermanager.Beg(session);
         	}        	
-	        break;
-	        
+	        break;	        
         	case "JokboTestPacket":
         	{        		
         		System.out.println("JokboTestPacket:"+ obj.toJSONString());
         		jokbotest = Integer.parseInt(""+obj.get("jokbokind"));
         		System.out.println("jokbotest:"+jokbotest);
         	}        	
-	        break;
-	        
-	        //구정연_채팅메시지 패킷 추가
-        	case "chatmessage":
+	        break;	        	        
+        	case "emoticon":
         	{
-        		User u4 = usermanager.find(session);
-        		System.out.println("chatmessage:"+ obj.toJSONString());
-        		String chat = ""+obj.get("chat");
-        		int roomidx = Integer.parseInt(""+obj.get("roomidx"));  
-        		roommanager.find(roomidx).gameManager.Chat(session, u4, chat);
+        		User user = usermanager.find(session);        		        		
+				int roomidx = user.roomnum;
+				int type = Integer.parseInt(""+obj.get("type"));
+        		roommanager.find(roomidx).gameManager.EmoticonBroadCast(user, type);
 			}break;			
 			case "searchuser":
 			{
