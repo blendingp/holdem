@@ -42,7 +42,7 @@ public class InBox
         EgovMap delin = new EgovMap();
         delin.put("midx", idx);
         delin.put("now", System.currentTimeMillis());
-        System.out.println(System.currentTimeMillis());
+        
         SocketHandler.sk.sampleDAO.delete("DeleteExpire", delin);
 
         EgovMap in = new EgovMap();
@@ -55,7 +55,7 @@ public class InBox
         else if( type == 10 )
         {
             in.put("mintype", 10);
-            in.put("maxtype", 10);
+            in.put("maxtype", 11);
         }        
 
         ArrayList<EgovMap> ed = (ArrayList<EgovMap>)SocketHandler.sk.sampleDAO.list("GetInboxList", in);

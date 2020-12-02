@@ -62,12 +62,27 @@ public class JackpotManager {
     }
 
     public static boolean SendJackpotMessage(User user) {
+        if( user == null )
+        {
+            return false;
+        }
+
+        if( user.session == null )
+        {
+            return false;
+        }
+
+        if( user.session.isOpen() == false)
+        {
+            return false;
+        }
+
         JSONObject jackpot = new JSONObject();
         jackpot.put("cmd", "jackpot");
         jackpot.put("amount", _amount);
 
         try {
-            //System.out.println(jackpot.toJSONString());
+            //System.out.println(jackpot.toJSONString());            
             user.session.sendMessage(new TextMessage(jackpot.toJSONString()));
         } catch (IOException e) {
             //System.out.println(e.getMessage());
