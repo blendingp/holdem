@@ -45,7 +45,7 @@
 				<div class="quedetail">
 					<div class="table-19">
 						<div class="clausebox">
-							<div class="ctxt">
+							<div class="ctxt" style="width:100%;">
 								${info}
 							</div>
 						</div>
