@@ -5,9 +5,9 @@
 <title>WinGame</title>
 <meta content="width=device-width, initial-scale=1" name="viewport">
 <meta content="Webflow" name="generator">
-<link href="/holdem/webflow/css/normalize.css" rel="stylesheet" type="text/css">
-<link href="/holdem/webflow/css/webflow.css?v=<%=(new Date()).getTime()%>"" rel="stylesheet" type="text/css">
-<link href="/holdem/webflow/css/holdem.webflow.css?v=<%=(new Date()).getTime()%>"" rel="stylesheet" type="text/css">
+<link href="/holdem/webflow/css/normalize.css?v=<%=(new Date()).getTime()%>" rel="stylesheet" type="text/css">
+<link href="/holdem/webflow/css/webflow.css?v=<%=(new Date()).getTime()%>" rel="stylesheet" type="text/css">
+<link href="/holdem/webflow/css/holdem.webflow.css?v=<%=(new Date()).getTime()%>" rel="stylesheet" type="text/css">
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
 <script type="text/javascript">WebFont.load({  google: {    families: ["Lato:100,100italic,300,300italic,400,400italic,700,700italic,900,900italic"]  }});</script>
 <!-- [if lt IE 9]><script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js" type="text/javascript"></script><![endif] -->

@@ -302,4 +302,9 @@ public class UserController {
 		return "user/etcBoard";
 	}
 	
+	@RequestMapping(value="/ldPlayerGuide.do")
+	public String ldPlayerGuide() {
+		return "user/ldPlayerGuide";
+	}
+	
 }
