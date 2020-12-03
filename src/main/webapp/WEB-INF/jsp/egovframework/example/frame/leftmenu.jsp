@@ -43,6 +43,7 @@
 						<li><a href="/holdem/admin/image.do"><i class="fa fa-image fa-fw"></i> 이미지 설정</a></li>
 					</ul>
 				</li>
+				<li><a href="/holdem/admin/user.do"><i class="fa fa-user fa-fw"></i> 유저목록관리</a></li>
 				<li><a href="/holdem/admin/notice.do"><i class="fa fa-exclamation-circle fa-fw"></i> 공지사항</a></li>
 				<li><a href="/holdem/admin/inquiry.do"><i class="fa fa-question-circle fa-fw"></i> 1:1문의</a></li>
 				<li><a href="/holdem/admin/etcB/gameDescription.do?type=G"><i class="fa fa-gamepad fa-fw"></i> 게임설명</a></li>
