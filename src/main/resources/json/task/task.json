@@ -38,5 +38,13 @@
             "Type":"point",
             "Amount": 100000000
         }
+    },
+    {
+        "type":3,
+        "max": 3,
+        "reward" : {
+            "Type":"balance",
+            "Amount": 100
+        }
     }
 ]

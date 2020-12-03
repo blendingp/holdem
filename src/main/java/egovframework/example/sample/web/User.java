@@ -167,12 +167,30 @@ public class User {
 		todayprofile.midx = uidx;
 
 		totalpayment = PaymentLog.GetTotalPayment(uidx);
-
+	
 		tasklist = Task.GetTask(uidx);
-		if (tasklist.size() <= 0) {
-			tasklist = Task.MakeTask(uidx);
-			Task.UpdateDB(this);
+		ArrayList<TaskModel> datalist = Task.MakeTask(uidx);		
+
+		for(TaskModel data : datalist)
+		{
+			boolean isinsert = true;
+			for(TaskModel task : tasklist)
+			{
+				if( data.max == task.max && data.type == task.type)
+				{
+					isinsert = false;
+					break;
+				}
+			}
+
+			if( isinsert == true )
+			{				
+				data.isChanged = true;				
+				tasklist.add(data);
+			}			
 		}
+		
+		Task.UpdateDB(this);
 
 		GetMemberInfo();
 		GetAuthInfo();

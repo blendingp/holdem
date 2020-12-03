@@ -131,12 +131,28 @@ public class GameManager {
 
 		ObjectMapper mapper = new ObjectMapper();
 
-		for(User u : lst)
+		for(User u : lst){
+			if( u == null )
+			{
+				continue ;
+			}
+
+			if( u.session == null )
+			{
+				continue ;
+			}
+
+			if( u.session.isOpen() == false )
+			{
+				continue ;
+			}
+
 			try {								
 				u.session.sendMessage(new TextMessage(mapper.writeValueAsString(obj)));
 			} catch (IOException e) {
 				e.printStackTrace();
-			}						
+			}			
+		}			
 	}
 
 	void startCheck(User user, ArrayList<User> userlist){
@@ -431,6 +447,21 @@ public class GameManager {
 		ArrayList<User> rmlist=new ArrayList<User>();
 		for(User u : userlist) 
 		{
+			if( u == null )
+			{
+				continue ;
+			}
+
+			if( u.session == null )
+			{
+				continue ;
+			}
+
+			if( u.session.isOpen() == false )
+			{
+				continue ;
+			}
+
 			if( room.UsedItem.equals("balance") == true){
 				if( u.balance < room.defaultmoney * 3){
 					rmlist.add(u);

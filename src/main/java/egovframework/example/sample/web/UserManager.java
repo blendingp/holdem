@@ -294,6 +294,9 @@ public class UserManager {
 		{
 			if( friend.SendGold(find(session).uidx, uid) == true )
 			{
+				Task.IncreaseTask(find(session), 3, 1);
+				Task.UpdateDB(find(session));			
+
 				JSONObject cobj = new JSONObject();
 				cobj.put("cmd", "sendfriendgold");
 				cobj.put("result", true);
@@ -313,6 +316,9 @@ public class UserManager {
 		{
 			if( friend.SendGold(find(session).uidx, uid) == true )
 			{
+				Task.IncreaseTask(find(session), 3, 1);
+				Task.UpdateDB(find(session));			
+
 				JSONObject cobj = new JSONObject();
 				cobj.put("cmd", "sendfriendgold");
 				cobj.put("result", true);
@@ -327,7 +333,7 @@ public class UserManager {
 
 				return ;
 			}
-		}
+		}		
 
 		JSONObject cobj = new JSONObject();
 		cobj.put("cmd", "sendfriendgold");
