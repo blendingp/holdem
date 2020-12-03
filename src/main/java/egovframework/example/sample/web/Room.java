@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Random;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.lang3.RandomUtils;
@@ -16,91 +17,98 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
+
+import egovframework.example.sample.web.model.RoomInfoModel;
 
 public class Room {
 	GameManager gameManager;
 
 	int ridx;
-	long defaultmoney;//삥머니
-	long maxmoney;//배팅 맥스 머니
+	long defaultmoney;// 삥머니
+	long maxmoney;// 배팅 맥스 머니
 	int maxusersize = 9;
 	int title = 0;
+	RoomInfoModel roominfo = new RoomInfoModel();
 
 	public String UsedItem = "balance";
 	private String _roomKey = "";
 	private boolean _isPrivate = false;
 
-	public static RoomSetting GetRoomInfo(String key)
-	{
+	public static RoomSetting GetRoomInfo(String key) {
 		ClassPathResource resource = new ClassPathResource("json/roomsetting/" + key + ".json");
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-            Path path = Paths.get(resource.getURI());
+			Path path = Paths.get(resource.getURI());
 			String content = Files.readString(path);
-			//System.out.println(content);
+			// System.out.println(content);
 			RoomSetting setting = mapper.readValue(content, RoomSetting.class);
-			return setting;	
-		}
-		catch (IOException e) {
+			return setting;
+		} catch (IOException e) {
 			System.out.println(e.getMessage());
 			e.printStackTrace();
-		}        
+		}
 
 		return null;
-	}	
+	}
 
-	public Room(int ridx, String roomkey){
-		this.ridx = ridx;		
-		_roomKey = roomkey;	
-		
+	public Room(int ridx, String roomkey) {
+		this.ridx = ridx;
+		_roomKey = roomkey;
+
 		SetRoomInfo(roomkey);
 		gameManager = new GameManager(this);
-		
-		Random random = new Random();		
-		title = random.nextInt(4);		
-	}
-	public void init(){
-		gameManager.init();
+
+		Random random = new Random();
+		title = random.nextInt(4);
 	}
 
-	public boolean fullRoom(){
-		
-		if( gameManager.userlist.size() >= maxusersize)
-		{
+	public void init() {
+		gameManager.init();		
+		roominfo.playcount = 0;
+		roominfo.totalbetamount = 0;
+		roominfo.totalwinamount = 0;
+	}
+
+	public boolean fullRoom() {
+
+		if (gameManager.userlist.size() >= maxusersize) {
 			return true;
 		}
 
 		return false;
 
 	}
-	public boolean emptyRoom(){
-		if( gameManager.userlist.size() == 0)
+
+	public boolean emptyRoom() {
+		if (gameManager.userlist.size() == 0)
 			return true;
 		return false;
 	}
-	public void notifyRoomUsers() {//notifyJoinUser아래와 거의 같으나 내가 안만들어서 어디서 쓰이는지 불안해서 새로 만듬, 룸안의 유저가 변경되었을때 갱신하기 위해 쓰임.
 
-		JSONObject myobj = new JSONObject();						
-		myobj.put("cmd","RoomUsers");
-		//방에 참여중인 모든 사람 불러오기
+	public void notifyRoomUsers() {// notifyJoinUser아래와 거의 같으나 내가 안만들어서 어디서 쓰이는지 불안해서 새로 만듬, 룸안의 유저가 변경되었을때 갱신하기 위해
+									// 쓰임.
+
+		JSONObject myobj = new JSONObject();
+		myobj.put("cmd", "RoomUsers");
+		// 방에 참여중인 모든 사람 불러오기
 		JSONArray j = new JSONArray();
 		System.out.println("notifyRoomUsers");
-		for(int i=0; i<gameManager.userlist.size(); i++)
-		{
-			JSONObject item = new JSONObject();			
-			item.put("useridx",gameManager.userlist.get(i).uidx);
-			item.put("seat",gameManager.userlist.get(i).seat);
-			item.put("img",""+ gameManager.userlist.get(i).img);
-			if( this.UsedItem.equals("balance") == true){
-				item.put("balance",gameManager.userlist.get(i).balance);
-			}			
-			else if( this.UsedItem.equals("point") == true){
-				item.put("balance",gameManager.userlist.get(i).point);
-			}			
-			item.put("nickname",""+ gameManager.userlist.get(i).nickname);
+		for (int i = 0; i < gameManager.userlist.size(); i++) {
+			JSONObject item = new JSONObject();
+			item.put("useridx", gameManager.userlist.get(i).uidx);
+			item.put("seat", gameManager.userlist.get(i).seat);
+			item.put("img", "" + gameManager.userlist.get(i).img);
+			if (this.UsedItem.equals("balance") == true) {
+				item.put("balance", gameManager.userlist.get(i).balance);
+			} else if (this.UsedItem.equals("point") == true) {
+				item.put("balance", gameManager.userlist.get(i).point);
+			}
+			item.put("nickname", "" + gameManager.userlist.get(i).nickname);
 			item.put("profile", gameManager.userlist.get(i).todayprofile);
 			j.add(item);
-			System.out.println("uidx:"+gameManager.userlist.get(i).uidx +"  seat:"+gameManager.userlist.get(i).seat );
+			System.out
+					.println("uidx:" + gameManager.userlist.get(i).uidx + "  seat:" + gameManager.userlist.get(i).seat);
 		}
 		myobj.put("userlist", j);
 
@@ -117,20 +125,18 @@ public class Room {
 		myobj.put("ante", defaultmoney);
 		myobj.put("max", maxmoney);
 		myobj.put("maxuser", maxusersize);
-		myobj.put("isprivate", _isPrivate);		
-		myobj.put("roomkey", _roomKey);		
+		myobj.put("isprivate", _isPrivate);
+		myobj.put("roomkey", _roomKey);
 
 		ArrayList<User> joinuserlist = new ArrayList<>();
-		for( User user : gameManager.userlist )
-		{
+		for (User user : gameManager.userlist) {
 			joinuserlist.add(user);
 		}
 
-		for( User user : gameManager.watchinguserlist )
-		{
+		for (User user : gameManager.watchinguserlist) {
 			joinuserlist.add(user);
 		}
-		
+
 		// 방에 참여중인 모든 사람 불러오기
 		JSONArray j = new JSONArray();
 		for (int i = 0; i < joinuserlist.size(); i++) {
@@ -148,7 +154,7 @@ public class Room {
 			item.put("profile", joinuserlist.get(i).todayprofile);
 			j.add(item);
 		}
-		
+
 		myobj.put("userlist", j);
 
 		gameManager.sendRoom(myobj);
@@ -156,12 +162,47 @@ public class Room {
 
 	public void notifyLeaveUser(int seat) {
 
-		JSONObject myobj = new JSONObject();						
-		myobj.put("cmd","RoomLeaveOk");
-		myobj.put("seat",seat);
-		//방에 참여중인 모든 사람 불러오기
+		JSONObject myobj = new JSONObject();
+		myobj.put("cmd", "RoomLeaveOk");
+		myobj.put("seat", seat);
+		// 방에 참여중인 모든 사람 불러오기
 		gameManager.sendRoom(myobj);
 
+	}
+
+	public void GetRoomInfo(WebSocketSession session) {
+		if( session == null )
+		{
+			return ;
+		}
+
+		roominfo.roomidx = ridx;
+		roominfo.ante = defaultmoney;
+		roominfo.lowerlimit = defaultmoney * 3;
+		roominfo.max = maxmoney;
+		roominfo.maxuser = maxusersize;
+
+		ObjectMapper mapper = new ObjectMapper();
+		
+		try {
+			JSONObject myobj = new JSONObject();
+			myobj.put("cmd", "roominfo");
+			myobj.put("info", roominfo);
+			
+			if( session.isOpen() == false )
+			{
+				return ;
+			}
+
+			session.sendMessage(new TextMessage(mapper.writeValueAsString(myobj)));
+		} 
+		catch (JsonProcessingException e) {			
+			e.printStackTrace();
+		}
+		catch ( IOException ioe )
+		{
+
+		}
 	}
 
 	public boolean join(User u, int ridx ) {

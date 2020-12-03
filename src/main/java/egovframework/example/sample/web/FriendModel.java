@@ -136,9 +136,9 @@ public class FriendModel {
         inboxin.put("body", mapper.writeValueAsString(inbox.ItemList));
         inboxin.put("expire", inbox.Expire);
 
-        SocketHandler.sk.sampleDAO.insert("AddInbox", inboxin);
+        SocketHandler.sk.sampleDAO.insert("AddInbox", inboxin);        
 
-        System.out.println(mapper.writeValueAsString(inbox));
+        //System.out.println(mapper.writeValueAsString(inbox));
             
         return true;
 

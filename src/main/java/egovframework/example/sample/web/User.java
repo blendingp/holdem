@@ -616,6 +616,7 @@ public class User {
 		{//ai유저이면 인증 통과
 			return true;
 		}
+		/*
 		if( auth == null )
 		{
 			return false;
@@ -629,7 +630,8 @@ public class User {
 		if( auth.authtick + 31536000000L < System.currentTimeMillis())
 		{
 			return false;
-		}
+		}*/
+		
 		return true;		
 	}
 

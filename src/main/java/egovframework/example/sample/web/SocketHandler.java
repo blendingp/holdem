@@ -342,6 +342,12 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 					usermanager.connect(session, user);
 				}				
 			}break;
+			case "getroominfo":
+			{
+				User user = usermanager.find(session);        		        		
+				int roomidx = user.roomnum;
+				roommanager.find(roomidx).GetRoomInfo(session);
+			}break;
 		}
     }
  

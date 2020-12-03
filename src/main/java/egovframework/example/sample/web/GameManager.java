@@ -37,15 +37,11 @@ public class GameManager {
 	long preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.	
 	long ante = 0;
 	
-//	int startTime;
-//	int endtime;
 	int workTime=0;
 	
 	int timer = -1;
 	int dealerSeatNum = 0;//누가딜러인지 유저인덱스 저장
 	int lastCmdSecond=1000000;//마지막 명령을 받은 시간, 1분  이상 누구도 명령을 내리지 않은 상태인데 방이 대기 상태가 아니라면 에러난 상태이므로 방을 강제 초기화 시켜야 함. 
-	
-	//int[][] cardarr;// 사람별 카드 소유
 	
 	Card card1;
 	Card card2;
@@ -180,6 +176,7 @@ public class GameManager {
 
 		ante = 0;
 		gu = 1;
+		room.roominfo.StartGame();
 		setGameId(SocketHandler.GameIdxAdder());
 		gamePot.clear();
 		gamePot.add(new Pot());
@@ -911,7 +908,9 @@ public class GameManager {
 		{									
 			gamePot.add(gamePot.get(gamePot.size()-1).PotSlit(u.betmoney));
 		}
-				
+		
+		room.roominfo.Bet(tmo);
+		
 		u.lastbetmoney = tmo;
 		u.betmoney += tmo ;//나의 배팅금액 현재돈+배팅금액
 		money = prebetmoney;
@@ -1856,6 +1855,8 @@ public class GameManager {
 					winnerpoint = (long)(getamount * ( 1 - u.memberInfo.commission));
 					SearchUserBySeat(u.seat).balance += winnerpoint;
 
+					room.roominfo.EndGame(u.nickname, winnerpoint);
+
 					if( SearchUserBySeat(u.seat).balance > SearchUserBySeat(u.seat).memberInfo.limit_gold )
 					{
 						SearchUserBySeat(u.seat).balance = SearchUserBySeat(u.seat).memberInfo.limit_gold;						
@@ -1890,6 +1891,7 @@ public class GameManager {
 					}
 
 					u.todayprofile.gaingold += winnerpoint;
+					room.roominfo.EndGame(u.nickname, winnerpoint);
 				}		
 
 				Task.IncreaseTask(u, 1, 1);
