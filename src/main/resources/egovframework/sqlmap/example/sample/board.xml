@@ -325,4 +325,52 @@
 		]]>
 	</select>
 	
+     <select id="selectUserListByAdmin" resultClass="EgovMap">
+        <![CDATA[
+			select m.midx , m.muserid , mi.nickname  , m.socail, mi.ai  , ifnull(i.amount,0) balance  , ifnull(ii.amount,0) point
+			from member m
+			left join member_info mi on mi.midx = m.midx 
+			left join item i on i.midx = m.midx and i.type = 'balance' 
+			left join item ii on ii.midx = m.midx and ii.type = 'point'
+			limit #first# , #record#
+        ]]>
+    </select>
+    
+     <select id="selectUserListByAdminTot" resultClass="int">
+        <![CDATA[
+			select count(*)
+			from member m
+			left join member_info mi on mi.midx = m.midx 
+			left join item i on i.midx = m.midx and i.type = 'balance' 
+			left join item ii on ii.midx = m.midx and ii.type = 'point'
+        ]]>
+    </select>
+    
+     <select id="selectUserInfoByAdmin" resultClass="EgovMap">
+        <![CDATA[
+			select m.midx , m.muserid , mi.nickname  , m.socail, mi.ai  , ifnull(i.amount,0) balance  , ifnull(ii.amount,0) point
+			from member m
+			left join member_info mi on mi.midx = m.midx 
+			left join item i on i.midx = m.midx and i.type = 'balance' 
+			left join item ii on ii.midx = m.midx and ii.type = 'point'
+			where m.midx = #idx#
+        ]]>
+    </select>
+    	
+	<update id="updateUserMoneyDeposit" parameterClass="EgovMap">
+		<![CDATA[
+			update item
+			set amount = amount + #money#
+			where midx = #idx# and type = #type#
+		]]>
+	</update>
+	
+	<update id="updateUserMoneyWithdrawal" parameterClass="EgovMap">
+		<![CDATA[
+			update item
+			set amount = amount - #money#
+			where midx = #idx# and type = #type#
+		]]>
+	</update>
+	
 </sqlMap>

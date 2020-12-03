@@ -1,6 +1,8 @@
 package egovframework.example.sample.admin;
 
 import java.io.File;
+import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Properties;
 
@@ -18,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import egovframework.example.sample.service.impl.SampleDAO;
+import egovframework.example.sample.web.PaymentLog;
+import egovframework.example.sample.web.SocketHandler;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
@@ -468,6 +472,79 @@ public class BoardController {
 			return obj.toJSONString();
 		}
 	}
+
 	
+	@RequestMapping(value="/user.do")
+	public String user(HttpServletRequest request , ModelMap model) {
+		PaginationInfo paginationInfo = new PaginationInfo();
+		if (request.getParameter("pageIndex") == null || request.getParameter("pageIndex").equals("")) 
+		{
+			paginationInfo.setCurrentPageNo(1);
+		} 
+		else 
+		{
+			paginationInfo.setCurrentPageNo(Integer.parseInt("" + request.getParameter("pageIndex")));
+		}
+		paginationInfo.setRecordCountPerPage(15);
+		paginationInfo.setPageSize(10);
+		EgovMap in = new EgovMap();
+		in.put("first", paginationInfo.getFirstRecordIndex());
+		in.put("record", paginationInfo.getRecordCountPerPage());
+		List<?> list = (List<?>)sampleDAO.list("selectUserListByAdmin" , in);
+		paginationInfo.setTotalRecordCount((int)sampleDAO.select("selectUserListByAdminTot"));
+		model.addAttribute("list", list);
+		model.addAttribute("pi", paginationInfo);
+		return "admin/user";
+	}	
+	
+	@RequestMapping(value="/userInfo.do")
+	public String userInfo(HttpServletRequest request , ModelMap model) {
+		int idx = Integer.parseInt(""+request.getParameter("idx"));
+		model.addAttribute("info", sampleDAO.select("selectUserInfoByAdmin" , idx));
+		return "admin/userInfo";
+	}	
+	
+	@ResponseBody
+	@RequestMapping(value="/userMoneyUpdate.do" , produces = "application/json; charset=utf8")
+	public String userMoneyUpdate(HttpServletRequest request) {
+		int idx = Integer.parseInt(""+request.getParameter("idx"));
+		int money = Integer.parseInt(""+request.getParameter("money"));
+		String kind = ""+request.getParameter("kind");
+		String type = ""+request.getParameter("type");
+		EgovMap in = new EgovMap();
+		in.put("idx", idx);
+		in.put("kind", kind);
+		in.put("type", type);
+		in.put("money", money);
+		JSONObject obj = new JSONObject();
+		try {
+			// 기존 정보 가져옴
+			EgovMap info = (EgovMap)sampleDAO.select("selectUserInfoByAdmin" , idx);
+			// 기존 머니 
+			int beforeM = Integer.parseInt(""+info.get(type)); 
+			// 입금인지 출금인지 확인하여 업데이트 
+			if(kind.equals("deposit"))
+			{ // 입금
+				sampleDAO.update("updateUserMoneyDeposit",in);
+			}
+			else
+			{ // 출금
+				if(beforeM - money < 0)
+				{
+					obj.put("result", "noMoney");
+					return obj.toJSONString();
+				}
+				sampleDAO.update("updateUserMoneyWithdrawal",in);
+			}
+			// 로그추가 
+			PaymentLog.Insert(idx, 0, money, "ad_"+type+"_"+kind, null);
+			obj.put("result", "success");
+			return obj.toJSONString();
+		} catch (Exception e) {
+			obj.put("result", "fail");
+			return obj.toJSONString();
+		}
+	}
+
 }
 
