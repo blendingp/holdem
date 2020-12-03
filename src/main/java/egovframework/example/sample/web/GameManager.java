@@ -434,7 +434,7 @@ public class GameManager {
 		int size = leaveuserlist.size();
 		for(int nCount = 0; nCount < size; ++nCount) 
 		{
-			User user = leaveuserlist.get(nCount);
+			User user = leaveuserlist.get(0);
 			room.notifyLeaveUser(user.seat);
 			room.leave(user);
 		}
