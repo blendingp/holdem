@@ -476,6 +476,7 @@ public class BoardController {
 	
 	@RequestMapping(value="/user.do")
 	public String user(HttpServletRequest request , ModelMap model) {
+		String uKind = "all";
 		PaginationInfo paginationInfo = new PaginationInfo();
 		if (request.getParameter("pageIndex") == null || request.getParameter("pageIndex").equals("")) 
 		{
@@ -487,13 +488,19 @@ public class BoardController {
 		}
 		paginationInfo.setRecordCountPerPage(15);
 		paginationInfo.setPageSize(10);
+		if(request.getParameter("uKind") != null)
+		{
+			uKind = ""+request.getParameter("uKind");
+		}
 		EgovMap in = new EgovMap();
 		in.put("first", paginationInfo.getFirstRecordIndex());
 		in.put("record", paginationInfo.getRecordCountPerPage());
+		in.put("uKind", uKind);
 		List<?> list = (List<?>)sampleDAO.list("selectUserListByAdmin" , in);
-		paginationInfo.setTotalRecordCount((int)sampleDAO.select("selectUserListByAdminTot"));
+		paginationInfo.setTotalRecordCount((int)sampleDAO.select("selectUserListByAdminTot" ,in));
 		model.addAttribute("list", list);
 		model.addAttribute("pi", paginationInfo);
+		model.addAttribute("uKind", uKind);
 		return "admin/user";
 	}	
 	

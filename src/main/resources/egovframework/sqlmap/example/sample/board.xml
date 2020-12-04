@@ -332,6 +332,13 @@
 			left join member_info mi on mi.midx = m.midx 
 			left join item i on i.midx = m.midx and i.type = 'balance' 
 			left join item ii on ii.midx = m.midx and ii.type = 'point'
+        ]]>
+        	<isNotEqual property="uKind" compareValue="all">
+        		<isEqual property="uKind" compareValue="normal">where mi.ai = 0 or mi.ai is null</isEqual>
+        		<isEqual property="uKind" compareValue="ai">where mi.ai = 1</isEqual>
+        	</isNotEqual>
+        <![CDATA[
+			order by m.midx desc
 			limit #first# , #record#
         ]]>
     </select>
@@ -344,6 +351,10 @@
 			left join item i on i.midx = m.midx and i.type = 'balance' 
 			left join item ii on ii.midx = m.midx and ii.type = 'point'
         ]]>
+        	<isNotEqual property="uKind" compareValue="all">
+        		<isEqual property="uKind" compareValue="normal">where mi.ai = 0 or mi.ai is null</isEqual>
+        		<isEqual property="uKind" compareValue="ai">where mi.ai = 1</isEqual>
+        	</isNotEqual>
     </select>
     
      <select id="selectUserInfoByAdmin" resultClass="EgovMap">

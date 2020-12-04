@@ -32,6 +32,20 @@
 					<div class="panel panel-default">
 						<div class="panel-body">
 							<div class="table-responsive">
+								<form action="/holdem/admin/user.do" name="listForm" id="listForm">
+									<input type="hidden" name="pageIndex" value="1" />
+									<div class="row">
+										<div class="col-lg-2">
+											<div class="form-group">
+												<select class="form-control" name="uKind" onchange="fn_egov_link_page(1)">
+													<option value="all"<c:if test="${uKind == 'all' }">selected="selected"</c:if>>전체</option>
+													<option value="normal"<c:if test="${uKind == 'normal' }">selected="selected"</c:if>>일반유저</option>
+													<option value="ai"<c:if test="${uKind == 'ai' }">selected="selected"</c:if>>AI유저</option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</form>
 								<table class="table table-hover">
 									<thead>
 										<tr>
@@ -71,9 +85,6 @@
 		</div>
 	</div>
 
-	<form action="/holdem/admin/user.do" name="listForm" id="listForm">
-		<input type="hidden" name="pageIndex" value="1" />
-	</form>
 	<jsp:include page="../frame/adminbottom.jsp" flush="true" />
 </body>
 </html>
