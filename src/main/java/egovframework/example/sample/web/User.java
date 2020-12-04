@@ -70,6 +70,26 @@ public class User {
 	Card card1 = new Card(-1);// 아직카드없음
 	Card card2 = new Card(-1);
 
+	public static boolean CheckSendPacket(User user)
+	{
+		if( user == null )
+		{
+			return false;
+		}
+
+		if( user.session == null )
+		{
+			return false;
+		}
+
+		if( user.session.isOpen() == false)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
 	public void init() {	
 		betmoney = 0;
 		bankamount = 0;
@@ -616,7 +636,7 @@ public class User {
 		{//ai유저이면 인증 통과
 			return true;
 		}
-		/*
+		
 		if( auth == null )
 		{
 			return false;
@@ -630,7 +650,7 @@ public class User {
 		if( auth.authtick + 31536000000L < System.currentTimeMillis())
 		{
 			return false;
-		}*/
+		}
 		
 		return true;		
 	}
@@ -818,6 +838,16 @@ public class User {
 	}
 	public void sendMe(JSONObject obj)
 	{
+		if( session == null )
+		{
+			return ;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return ;
+		}
+
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			session.sendMessage(new TextMessage(mapper.writeValueAsString(obj)));

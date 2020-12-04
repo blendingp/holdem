@@ -57,13 +57,22 @@ public class UserManager {
 
 	public void connect(WebSocketSession session, User user) {
 
-		// 닉네임 설정이 안되어 있으면 닉네임 설정 될떄까지 다음으로 안넘김
-		System.out.println(user.GetNickNameEmpty());
+		// 닉네임 설정이 안되어 있으면 닉네임 설정 될떄까지 다음으로 안넘김		
 		if( user.GetNickNameEmpty() == true )  		
 		{
 			JSONObject cobj = new JSONObject();
 			cobj.put("cmd", "nickname");
 			cobj.put("empty", true);
+
+			if( session == null )
+			{
+				return ;
+			}
+
+			if( session.isOpen() == false )
+			{
+				return ;
+			}
 
 			ObjectMapper mapper = new ObjectMapper();
 
@@ -90,8 +99,17 @@ public class UserManager {
 		cobj.put("safe_point", find(session).safe_point);
 		cobj.put("bank", find(session).bank);
 		cobj.put("nickname", ""+ find(session).nickname);
-		System.out.println(cobj.toJSONString());
-		// 구정연_멘션 스트링 리스트 전달
+		
+		if( session == null )
+		{
+			return ;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return ;
+		}
+
 		try {
 			session.sendMessage(new TextMessage(cobj.toJSONString()));
 		} catch (IOException e) {
@@ -115,6 +133,16 @@ public class UserManager {
 		cobj.put("members", find(session).memberInfo);
 		cobj.put("totalpayment", find(session).totalpayment);
 
+		if( session == null )
+		{
+			return ;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return ;
+		}
+
 		try {
 			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
 		} catch (IOException e) {
@@ -135,6 +163,16 @@ public class UserManager {
 		cobj.put("safe_point", find(session).safe_point);
 		cobj.put("bank", find(session).bank);
 
+		if( session == null )
+		{
+			return ;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return ;
+		}
+
 		try {
 			session.sendMessage(new TextMessage(cobj.toJSONString()));
 		} catch (IOException e) {
@@ -151,6 +189,16 @@ public class UserManager {
 		cobj.put("result", rt);
 		cobj.put("balance", find(session).balance);
 
+		if( session == null )
+		{
+			return ;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return ;
+		}
+
 		try {
 			session.sendMessage(new TextMessage(cobj.toJSONString()));
 		} catch (IOException e) {
@@ -161,6 +209,16 @@ public class UserManager {
 
 	public void SearchUserByID(WebSocketSession session, String id) {
 		JSONObject cobj = Friend.SearchUserByID(id);
+
+		if( session == null )
+		{
+			return ;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return ;
+		}
 
 		try {
 			session.sendMessage(new TextMessage(cobj.toJSONString()));
@@ -173,6 +231,16 @@ public class UserManager {
 	public void RequestFriend(WebSocketSession session, String id) {
 		JSONObject cobj = Friend.RequestFriend(find(session), id);
 
+		if( session == null )
+		{
+			return ;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return ;
+		}
+
 		try {
 			session.sendMessage(new TextMessage(cobj.toJSONString()));
 		} catch (IOException e) {
@@ -183,6 +251,16 @@ public class UserManager {
 
 	public void AcceptFriend(WebSocketSession session, String id) {
 		JSONObject cobj = Friend.AcceptFriend(id);
+
+		if( session == null )
+		{
+			return ;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return ;
+		}
 
 		//System.out.println(cobj.toJSONString());
 
@@ -201,10 +279,7 @@ public class UserManager {
 		JSONObject cobj = new JSONObject();
 		cobj.put("cmd", "requestfriendlist");
 		cobj.put("result", true);
-		cobj.put("servertime", System.currentTimeMillis());
-
-		ObjectMapper mapper = new ObjectMapper();
-		System.out.println(mapper.writeValueAsString(requestlist));
+		cobj.put("servertime", System.currentTimeMillis());		
 		
 		JSONArray list = new JSONArray();
 		for(int nCount = 0; nCount < requestlist.size(); ++nCount)
@@ -223,6 +298,16 @@ public class UserManager {
 		}
 
 		cobj.put("list", list);
+
+		if( session == null )
+		{
+			return ;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return ;
+		}
 
 		try {
 			session.sendMessage(new TextMessage(cobj.toJSONString()));
@@ -277,6 +362,16 @@ public class UserManager {
 
 		cobj.put("list", list);
 
+		if( session == null )
+		{
+			return ;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return ;
+		}
+
 		try {
 			session.sendMessage(new TextMessage(cobj.toJSONString()));
 		} catch (IOException e) {
@@ -302,6 +397,16 @@ public class UserManager {
 				cobj.put("result", true);
 				cobj.put("uid", uid);
 
+				if( session == null )
+				{
+					return ;
+				}
+
+				if( session.isOpen() == false )
+				{
+					return ;
+				}
+
 				try {
 					session.sendMessage(new TextMessage(cobj.toJSONString()));
 				} catch (IOException e) {
@@ -324,6 +429,16 @@ public class UserManager {
 				cobj.put("result", true);
 				cobj.put("uid", uid);
 
+				if( session == null )
+				{
+					return ;
+				}
+
+				if( session.isOpen() == false )
+				{
+					return ;
+				}
+
 				try {
 					session.sendMessage(new TextMessage(cobj.toJSONString()));
 				} catch (IOException e) {
@@ -339,6 +454,16 @@ public class UserManager {
 		cobj.put("cmd", "sendfriendgold");
 		cobj.put("result", false);
 		cobj.put("uid", uid);
+
+		if( session == null )
+		{
+			return ;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return ;
+		}
 
 		try {
 			session.sendMessage(new TextMessage(cobj.toJSONString()));
@@ -378,6 +503,16 @@ public class UserManager {
 
 		cobj.put("result", result);
 
+		if( session == null )
+		{
+			return ;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return ;
+		}
+
 		try {
 			session.sendMessage(new TextMessage(cobj.toJSONString()));
 		} catch (IOException e) {
@@ -402,7 +537,17 @@ public class UserManager {
 			ObjectMapper mapper = new ObjectMapper();
 			ArrayList<AttendanceItem> itemlist = mapper.readValue(content, new ArrayList<AttendanceItem>().getClass());
 
-			cobj.put("attandance", itemlist);		
+			cobj.put("attandance", itemlist);	
+			
+			if( session == null )
+			{
+				return ;
+			}
+
+			if( session.isOpen() == false )
+			{
+				return ;
+			}
 
 			session.sendMessage(new TextMessage(cobj.toJSONString()));
 		} 
@@ -419,6 +564,16 @@ public class UserManager {
 		JSONObject cobj = new JSONObject();
 		cobj.put("cmd", "getinbox");
 		cobj.put("list", list);
+
+		if( session == null )
+		{
+			return ;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return ;
+		}
 
 		try {
 			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
@@ -458,7 +613,15 @@ public class UserManager {
 			cobj.put("reward", inbox.ItemList);			
 		}					
 
-		System.out.println(mapper.writeValueAsString(cobj));
+		if( session == null )
+		{
+			return ;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return ;
+		}
 
 		try {
 			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
@@ -482,6 +645,16 @@ public class UserManager {
 		jackpot.put("amount", JackpotManager.GetJackpotAmount());
 
 		ObjectMapper mapper = new ObjectMapper();
+
+		if( session == null )
+		{
+			return ;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return ;
+		}
 
 		try {
 			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
@@ -510,6 +683,16 @@ public class UserManager {
 
 		ObjectMapper mapper = new ObjectMapper();
 
+		if( session == null )
+		{
+			return ;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return ;
+		}
+
 		try {
 			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
 		} catch (IOException e) {			
@@ -527,6 +710,16 @@ public class UserManager {
 			cobj.put("result", false);		
 
 			ObjectMapper mapper = new ObjectMapper();
+
+			if( session == null )
+			{
+				return ;
+			}
+
+			if( session.isOpen() == false )
+			{
+				return ;
+			}
 
 			try {
 				session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
@@ -553,6 +746,16 @@ public class UserManager {
 			cobj.put("result", false);		
 
 			ObjectMapper mapper = new ObjectMapper();
+
+			if( session == null )
+			{
+				return ;
+			}
+
+			if( session.isOpen() == false )
+			{
+				return ;
+			}
 
 			try {
 				session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
@@ -651,6 +854,16 @@ public class UserManager {
 		cobj.put("exsit", ed != null);
 
 		ObjectMapper mapper = new ObjectMapper();
+
+		if( session == null )
+		{
+			return null;
+		}
+
+		if( session.isOpen() == false )
+		{
+			return null;
+		}
 
 		try {
 			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));

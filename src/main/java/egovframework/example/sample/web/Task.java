@@ -89,16 +89,13 @@ public class Task {
     }
 
     public static void IncreaseTask(User user, int type, long offset)
-    {
-        System.out.println("tasktype : " + type);
+    {        
         for( TaskModel task : user.tasklist )
         {
             if( task.type == type && task.current < task.max)
             {
                 task.current += offset;
                 task.isChanged = true;
-
-                System.out.println("current : " + task.current);
             }
         }
     }

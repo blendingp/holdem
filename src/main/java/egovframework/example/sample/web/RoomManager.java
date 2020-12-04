@@ -53,7 +53,10 @@ public class RoomManager {
 			cobj.put("result", false);
 
 			try {
-				user.session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+				if(User.CheckSendPacket(user) == true)
+				{
+					user.session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+				}				
 			} 
 			catch (IOException e) {
 				e.printStackTrace();
@@ -98,7 +101,10 @@ public class RoomManager {
 			cobj.put("result", false);
 
 			try {
-				user.session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+				if(User.CheckSendPacket(user) == true)
+				{
+					user.session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+				}				
 			} 
 			catch (IOException e) {
 				e.printStackTrace();
@@ -168,7 +174,10 @@ public class RoomManager {
 			cobj.put("result", false);
 
 			try {
-				user.session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+				if(User.CheckSendPacket(user) == true)
+				{
+					user.session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+				}				
 			} 
 			catch (IOException e) {
 				e.printStackTrace();
@@ -203,7 +212,10 @@ public class RoomManager {
 			cobj.put("result", false);
 
 			try {
-				user.session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+				if(User.CheckSendPacket(user) == true)
+				{
+					user.session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+				}				
 			} 
 			catch (IOException e) {
 				e.printStackTrace();
@@ -242,6 +254,16 @@ public class RoomManager {
 		JSONObject cobj = new JSONObject();
 		cobj.put("cmd", "roomlist");
 		cobj.put("list", list);
+
+		if( session == null )
+		{
+			return;
+		}
+
+		if( session.isOpen()==false )
+		{
+			return;			
+		}
 
 		try {
 			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));

@@ -243,7 +243,7 @@ public class GameManager {
 			totalmoney = 0;
 		}			
 		
-		allincount = 0;
+		allincount = 0;		
 	}
 	
 	void setDealerSeat()
@@ -401,6 +401,7 @@ public class GameManager {
 			setWorkTime();
 			try {
 				showResult();
+				room.BroadCasetUser();
 			}catch(Exception e) {
 				System.out.println("error log: showResult 계산시 에러 발생================"+e.toString() );
 			}
@@ -427,9 +428,8 @@ public class GameManager {
 	}
 
 	void LeaveReserveUser()
-	{
-		int size = leaveuserlist.size();
-		for(int nCount = 0; nCount < size; ++nCount) 
+	{		
+		while( leaveuserlist.size() > 0 )
 		{
 			User user = leaveuserlist.get(0);
 			room.notifyLeaveUser(user.seat);
@@ -482,7 +482,10 @@ public class GameManager {
 					try {
 						u._info.ban = mapper.writeValueAsString(ban);
 						u.UpdateMemberInfo();
-						u.session.sendMessage(new TextMessage(mapper.writeValueAsString(obj)));
+						if(User.CheckSendPacket(u) == true)
+						{
+							u.session.sendMessage(new TextMessage(mapper.writeValueAsString(obj)));
+						}						
 						SocketHandler.sk.disconnect(u.session);
 						u.session.close();						
 					} catch (IOException e) {
@@ -511,7 +514,10 @@ public class GameManager {
 						obj.put("cmd","timeOut");
 						
 						try {
-							u.session.sendMessage(new TextMessage(obj.toJSONString()));
+							if(User.CheckSendPacket(u) == true)
+							{
+								u.session.sendMessage(new TextMessage(obj.toJSONString()));
+							}							
 						} catch (IOException e) {
 							e.printStackTrace();
 						}						
@@ -589,7 +595,10 @@ public class GameManager {
 
 
 			try {
-				userlist.get(k).session.sendMessage(new TextMessage(obj.toJSONString()));
+				if(User.CheckSendPacket(userlist.get(k)) == true)
+				{
+					userlist.get(k).session.sendMessage(new TextMessage(obj.toJSONString()));	
+				}				
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -2009,7 +2018,10 @@ public class GameManager {
 		obj.put("totalbet", totalmoney + ante);
 
 		try {
-			user.session.sendMessage(new TextMessage(obj.toJSONString()));
+			if(User.CheckSendPacket(user) == true)
+			{
+				user.session.sendMessage(new TextMessage(obj.toJSONString()));
+			}			
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
@@ -2037,7 +2049,7 @@ public class GameManager {
 		return null;		
 	}
 
-	private boolean IsJoinGame(int seat)
+	public boolean IsJoinGame(int seat)
 	{
 		for( User user : userlist )
 		{

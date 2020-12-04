@@ -28,8 +28,7 @@ public class RoomInfoModel {
     {
         totalwinamount += amount;
         for( int nCount = 0; nCount < roomhistory.size(); nCount++ )
-        {
-            System.out.println("dist : " + (playcount - roomhistory.get(nCount).playcount));
+        {            
             if( playcount - roomhistory.get(nCount).playcount > 4)
             {
                 roomhistory.remove(nCount);

@@ -106,9 +106,7 @@ public class Room {
 			}
 			item.put("nickname", "" + gameManager.userlist.get(i).nickname);
 			item.put("profile", gameManager.userlist.get(i).todayprofile);
-			j.add(item);
-			System.out
-					.println("uidx:" + gameManager.userlist.get(i).uidx + "  seat:" + gameManager.userlist.get(i).seat);
+			j.add(item);			
 		}
 		myobj.put("userlist", j);
 
@@ -127,31 +125,99 @@ public class Room {
 		myobj.put("maxuser", maxusersize);
 		myobj.put("isprivate", _isPrivate);
 		myobj.put("roomkey", _roomKey);
+		myobj.put("dealer", gameManager.getDealerSeat() );
+		myobj.put("smallblind", gameManager.getDealerSeatOffset(1) );
+		myobj.put("bigblind", gameManager.getDealerSeatOffset(2));
 
-		ArrayList<User> joinuserlist = new ArrayList<>();
+		JSONArray j = new JSONArray();
+
 		for (User user : gameManager.userlist) {
-			joinuserlist.add(user);
+			JSONObject item = new JSONObject();
+			item.put("useridx", user.uidx);
+			item.put("seat", user.seat);
+			item.put("img", "" + user.img);
+			if (this.UsedItem.equals("balance") == true) {
+				item.put("balance", user.balance);
+			} else if (this.UsedItem.equals("point") == true) {
+				item.put("balance", user.point);
+			}
+			item.put("isdie", user.die);
+			item.put("nickname", "" + user.nickname);
+			item.put("profile", user.todayprofile);
+			item.put("iswatching", false);
+			j.add(item);
 		}
 
 		for (User user : gameManager.watchinguserlist) {
-			joinuserlist.add(user);
+			JSONObject item = new JSONObject();
+			item.put("useridx", user.uidx);
+			item.put("seat", user.seat);
+			item.put("img", "" + user.img);
+			if (this.UsedItem.equals("balance") == true) {
+				item.put("balance", user.balance);
+			} else if (this.UsedItem.equals("point") == true) {
+				item.put("balance", user.point);
+			}
+			item.put("isdie", user.die);
+			item.put("nickname", "" + user.nickname);
+			item.put("profile", user.todayprofile);
+			item.put("iswatching", true);
+			j.add(item);
 		}
 
-		// 방에 참여중인 모든 사람 불러오기
+		myobj.put("userlist", j);
+
+		gameManager.sendRoom(myobj);
+	}
+
+	public void BroadCasetUser() {
+
+		JSONObject myobj = new JSONObject();
+		myobj.put("cmd", "RoomJoinOk");
+		myobj.put("roomidx", ridx);		
+		myobj.put("ante", defaultmoney);
+		myobj.put("max", maxmoney);
+		myobj.put("maxuser", maxusersize);
+		myobj.put("isprivate", _isPrivate);
+		myobj.put("roomkey", _roomKey);
+
+		myobj.put("dealer", gameManager.getDealerSeat() );
+		myobj.put("smallblind", gameManager.getDealerSeatOffset(1) );
+		myobj.put("bigblind", gameManager.getDealerSeatOffset(2));
+
 		JSONArray j = new JSONArray();
-		for (int i = 0; i < joinuserlist.size(); i++) {
+
+		for (User user : gameManager.userlist) {
 			JSONObject item = new JSONObject();
-			item.put("useridx", joinuserlist.get(i).uidx);
-			item.put("seat", joinuserlist.get(i).seat);
-			item.put("img", "" + joinuserlist.get(i).img);
+			item.put("useridx", user.uidx);
+			item.put("seat", user.seat);
+			item.put("img", "" + user.img);
 			if (this.UsedItem.equals("balance") == true) {
-				item.put("balance", joinuserlist.get(i).balance);
+				item.put("balance", user.balance);
 			} else if (this.UsedItem.equals("point") == true) {
-				item.put("balance", joinuserlist.get(i).point);
+				item.put("balance", user.point);
 			}
-			item.put("isdie", joinuserlist.get(i).die);
-			item.put("nickname", "" + joinuserlist.get(i).nickname);
-			item.put("profile", joinuserlist.get(i).todayprofile);
+			item.put("isdie", user.die);
+			item.put("nickname", "" + user.nickname);
+			item.put("profile", user.todayprofile);
+			item.put("iswatching", false);
+			j.add(item);
+		}
+
+		for (User user : gameManager.watchinguserlist) {
+			JSONObject item = new JSONObject();
+			item.put("useridx", user.uidx);
+			item.put("seat", user.seat);
+			item.put("img", "" + user.img);
+			if (this.UsedItem.equals("balance") == true) {
+				item.put("balance", user.balance);
+			} else if (this.UsedItem.equals("point") == true) {
+				item.put("balance", user.point);
+			}
+			item.put("isdie", user.die);
+			item.put("nickname", "" + user.nickname);
+			item.put("profile", user.todayprofile);
+			item.put("iswatching", true);
 			j.add(item);
 		}
 
@@ -165,6 +231,7 @@ public class Room {
 		JSONObject myobj = new JSONObject();
 		myobj.put("cmd", "RoomLeaveOk");
 		myobj.put("seat", seat);
+		myobj.put("iswatching", (!gameManager.IsJoinGame(seat)));
 		// 방에 참여중인 모든 사람 불러오기
 		gameManager.sendRoom(myobj);
 
