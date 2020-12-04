@@ -313,15 +313,12 @@ public class Room {
 	}
 
 	public void leave(User u) {		
-		System.out.println(u.seat);
+		
 		gameManager.EmptySeat(u.seat);
 		u.die = false;
 		gameManager.userlist.remove(u);
 		gameManager.leaveuserlist.remove(u);
 		gameManager.watchinguserlist.remove(u);
-		/*
-		for(int k=0; k<gameManager.userlist.size(); k++)
-			gameManager.userlist.get(k).seat = k;*/		
 		
 		u.clear();
 		System.out.println("<< Room . leave >>");
@@ -397,6 +394,13 @@ public class Room {
 
 	public void LeaveReserve(User user)
 	{		
+		if( gameManager.IsJoinGame(user.seat) == false)
+		{
+			notifyLeaveUser(user.seat);
+			leave(user);
+			return ;
+		}
+
 		for( int nCount = 0; nCount < gameManager.userlist.size(); ++nCount )
 		{						
 			if(gameManager.userlist.get(nCount).uidx == user.uidx)
