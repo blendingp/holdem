@@ -43,6 +43,13 @@
 						<li><a href="/holdem/admin/image.do"><i class="fa fa-image fa-fw"></i> 이미지 설정</a></li>
 					</ul>
 				</li>
+				<li>
+					<a href="#"><i class="fa fa-android fa-fw"></i> AI관련<span class="fa arrow"></span></a>
+					<ul class="nav nav-second-level">
+						<li><a href="/holdem/admin/aiSetting.do"><i class="fa fa-gears fa-fw"></i> AI설정</a></li>
+						<li><a href="/holdem/admin/aiUserCreate.do"><i class="fa fa-male fa-fw"></i> AI유저생성</a></li>
+					</ul>
+				</li>
 				<li><a href="/holdem/admin/user.do"><i class="fa fa-user fa-fw"></i> 유저목록관리</a></li>
 				<li><a href="/holdem/admin/notice.do"><i class="fa fa-exclamation-circle fa-fw"></i> 공지사항</a></li>
 				<li><a href="/holdem/admin/inquiry.do"><i class="fa fa-question-circle fa-fw"></i> 1:1문의</a></li>
