@@ -51,7 +51,12 @@
 											<div class="col-lg-6">
 												<div class="form-group">
 													<label>AI구분</label> 
-													<pre>${info.ai ? 'ai유저' : '일반유저'}</pre>
+													<c:if test="${item.ai == 1}">
+														<pre>AI 유저</pre>		
+													</c:if>
+													<c:if test="${item.ai != 1}">
+														<pre>일반 유저</pre>
+													</c:if>
 												</div>
 											</div>
 										</div>

@@ -63,7 +63,14 @@
 												<td>${item.muserid}</td>
 												<td>${item.nickname}</td>
 												<td>${item.socail}</td>
-												<td>${item.ai ? 'ai유저' : '일반유저'}</td>
+												<td>
+													<c:if test="${item.ai == 1}">
+														AI 유저		
+													</c:if>
+													<c:if test="${item.ai != 1}">
+														일반 유저 
+													</c:if>
+												</td>
 												<td><fmt:formatNumber value="${item.balance}" pattern="#,###"/></td>
 												<td><fmt:formatNumber value="${item.point}" pattern="#,###"/></td>
 											</tr>

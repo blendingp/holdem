@@ -46,12 +46,19 @@
 											<tr>
 												<td><input type="checkbox" name="arrayIdx" value="${item.midx}"/></td>
 												<td>${item.nickname}</td>
-												<td>${item.ai ? 'ai유저' : '일반유저'}</td>
 												<td>
-													<c:if test="${item.ai}">
+													<c:if test="${item.ai == 1}">
+														AI 유저		
+													</c:if>
+													<c:if test="${item.ai != 1}">
+														일반 유저 
+													</c:if>
+												</td>
+												<td>
+													<c:if test="${item.ai == 1}">
 														<button type="button" onclick="ChangeSetOne('0' , '${item.midx}')" class="btn btn-outline btn-warning">일반유저로 변경</button>		
 													</c:if>
-													<c:if test="${!item.ai}">
+													<c:if test="${item.ai != 1}">
 														<button type="button" onclick="ChangeSetOne('1' , '${item.midx}')" class="btn btn-outline btn-primary">ai유저로 변경</button>
 													</c:if>
 												</td>
