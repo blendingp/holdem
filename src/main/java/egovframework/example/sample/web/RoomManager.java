@@ -86,8 +86,8 @@ public class RoomManager {
 			roomList.add(room);
 		}		
 
-		System.out.println(roomcount);
-		room.join(user, roomcount);		
+		System.out.println("room ridx:"+room.ridx);
+		room.join(user, room.ridx);		
 	}
 
 	void GoldRoomQuickJoin(User user)
@@ -274,11 +274,11 @@ public class RoomManager {
 		
 	}
 	
-	void leaveRoom(int roomNum , User user){			
-		Room room = find(user.roomnum);	
-	
-		room.notifyLeaveUser(user.seat);
-		room.leave(user);		
+	void leaveRoom(int roomNum , User user){
+		System.out.println("leave room dbg 1 roomnum:"+user.roomnum);
+		Room room = find(user.roomnum);					
+		room.notifyLeaveUser(user.seat);		
+		room.leave(user);				
 		if( room.gameManager.userlist.size() <= 0 )
 		{
 			roomList.remove(room);
