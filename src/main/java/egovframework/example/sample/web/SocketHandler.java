@@ -78,6 +78,8 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			//room.leave(u);			
 			//room.notifyLeaveUser(seat);
 			//System.out.println(seat);
+			
+			room.checkSBorBBfirstOut(u);
 
 			room.LeaveReserve(u);
 
@@ -135,11 +137,11 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         		
         	}break;
 			case "leave":
-    		{    			
+    		{    			    			
     			User u = usermanager.find(session);    			
-				int roomidx = Integer.parseInt(""+obj.get("roomidx"));				
-    			roommanager.leaveRoom(u.roomnum, u);    	
-    			
+				int roomidx = Integer.parseInt(""+obj.get("roomidx"));
+				System.out.println("leave roomnum :"+u.roomnum);
+    			roommanager.leaveRoom(u.roomnum, u);    	    			
     			//AI일경우 자동 재충전 처리
     			if(u.isAI == true)
     			{
@@ -151,6 +153,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     				chgobj.put("currentbalance",""+u.balance);
     				u.sendMe(chgobj);
     			}
+    			System.out.println("leave dbg 5");
     		}break;
         	case "connect":
         	{        	

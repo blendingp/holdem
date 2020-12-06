@@ -41,7 +41,8 @@ public class GameManager {
 	
 	int timer = -1;
 	int dealerSeatNum = 0;//누가딜러인지 유저인덱스 저장
-	int lastCmdSecond=1000000;//마지막 명령을 받은 시간, 1분  이상 누구도 명령을 내리지 않은 상태인데 방이 대기 상태가 아니라면 에러난 상태이므로 방을 강제 초기화 시켜야 함. 
+	int lastCmdSecond=1000000;//마지막 명령을 받은 시간, 1분  이상 누구도 명령을 내리지 않은 상태인데 방이 대기 상태가 아니라면 에러난 상태이므로 방을 강제 초기화 시켜야 함.
+	User outSBUser= null,outBBUser=null;// 첫 베팅하기전에 sb, bb 유저가 나가면 해당 유저 객체를 저장해둔다. 대신 베팅 처리를 위해서.
 	
 	Card card1;
 	Card card2;
@@ -77,6 +78,7 @@ public class GameManager {
 		bbBetCount = 0;
 		dealerSeatNum = 0;//누가딜러인지 유저인덱스 저장
 		gamePot.clear();
+		outSBUser = outBBUser = null;
 		System.out.println("게임초기화");
 	}
 	
@@ -656,28 +658,41 @@ public class GameManager {
 		return -1;
 	}
 	public void sbBet(){
-		JSONObject obj = new JSONObject();
-		whosturn = getDealerSeatOffset(1);
-		obj.put("cmd","sbBet");
-		obj.put("whosturn", whosturn );
-		obj.put("prebetmoney", preTotalBetmoney );
-		obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
-//		obj.put("whosturn",userlist.get(whosturn).uidx);
-		sendRoom(obj);
-		System.out.println("sbBet하시오 :"+whosturn );
+		
+		if( outSBUser != null)
+		{
+		   bet( outSBUser , 1 );
+		}else
+		{
+			JSONObject obj = new JSONObject();
+			whosturn = getDealerSeatOffset(1);
+			obj.put("cmd","sbBet");
+			obj.put("whosturn", whosturn );
+			obj.put("prebetmoney", preTotalBetmoney );
+			obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
+//			obj.put("whosturn",userlist.get(whosturn).uidx);
+			sendRoom(obj);
+//			System.out.println("sbBet하시오 :"+whosturn );
+		}
 	}
 
-	public void bbBet(){		
-		bbSeat = whosturn;
-		bbBetCount++;
-		JSONObject obj = new JSONObject();
-		obj.put("cmd","bbBet");
-		obj.put("whosturn", whosturn );
-		obj.put("prebetmoney", preTotalBetmoney );
-		obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
-		sendRoom(obj);
-		timer = SocketHandler.second;		
-		System.out.println("bbBet하시오 :"+whosturn );
+	public void bbBet(){
+		if( outBBUser != null )
+		{
+		   bet( outBBUser , 3 );
+		}else
+		{
+			bbSeat = whosturn;
+			bbBetCount++;
+			JSONObject obj = new JSONObject();
+			obj.put("cmd","bbBet");
+			obj.put("whosturn", whosturn );
+			obj.put("prebetmoney", preTotalBetmoney );
+			obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
+			sendRoom(obj);
+			timer = SocketHandler.second;		
+//			System.out.println("bbBet하시오 :"+whosturn );
+		}
 	}
 
 	public void showBetPan(){
@@ -2036,7 +2051,7 @@ public class GameManager {
 		return win;
 	}
 	
-	private User SearchUserBySeat(int seat)
+	public User SearchUserBySeat(int seat)
 	{
 		for( User user : userlist )
 		{
@@ -2052,7 +2067,7 @@ public class GameManager {
 	public boolean IsJoinGame(int seat)
 	{
 		for( User user : userlist )
-		{
+		{	
 			if( user.seat == seat )
 			{
 				return true;				

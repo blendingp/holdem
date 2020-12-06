@@ -227,14 +227,12 @@ public class Room {
 	}
 
 	public void notifyLeaveUser(int seat) {
-
 		JSONObject myobj = new JSONObject();
 		myobj.put("cmd", "RoomLeaveOk");
 		myobj.put("seat", seat);
 		myobj.put("iswatching", (!gameManager.IsJoinGame(seat)));
 		// 방에 참여중인 모든 사람 불러오기
 		gameManager.sendRoom(myobj);
-
 	}
 
 	public void GetRoomInfo(WebSocketSession session) {
@@ -292,8 +290,8 @@ public class Room {
 
 		u.seat = gameManager.GetEmptySeat();		
 		gameManager.SetSeat(u.seat);
-		u.roomnum = ridx;		
-		
+		System.out.println(u.roomnum+"=========================> Roomnum:"+ridx);
+		u.roomnum = ridx;				
 		if( gameManager.GameMode == "대기" )
 		{						
 			gameManager.userlist.add( u );		
@@ -440,4 +438,11 @@ public class Room {
 			e.printStackTrace();
 		}        
 	}	 
+	public void checkSBorBBfirstOut(User u)
+	{//나간 유저가   SB or BB 유저이면 임시 기록해두는 함수.
+		if( u.seat == gameManager.SearchUserBySeat( gameManager.getDealerSeatOffset(1) ).seat )
+			gameManager.outSBUser = u;
+		if( u.seat == gameManager.SearchUserBySeat( gameManager.getDealerSeatOffset(2) ).seat )
+			gameManager.outBBUser = u;
+	}
 }
