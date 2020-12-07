@@ -2037,15 +2037,7 @@ public class GameManager {
 				item.put("balance", userlist.get(i).balance);
 				item.put("amount", userlist.get(i).balance - userlist.get(i).prevamount);
 			}
-<<<<<<< Updated upstream
-			else if( room.UsedItem.equals("point") == true){				
-=======
 			else if( room.UsedItem.equals("point") == true){
-				
-//				System.out.println("point : " + userlist.get(i).point);
-//				System.out.println("prev : " + userlist.get(i).prevamount);
-
->>>>>>> Stashed changes
 				item.put("balance", userlist.get(i).point);
 				item.put("amount", userlist.get(i).point - userlist.get(i).prevamount);
 			}									
