@@ -71,13 +71,12 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     		return;
 		
 		int seat = u.seat;		
-		System.out.println("접속끊김 :"+seat );    	    		
+		System.out.println("강제 접속끊김 발생  uidx:"+u.uidx);    	    		
     	
     	if( u.roomnum != -1){			
 			Room room = roommanager.find(u.roomnum);					
-			//room.leave(u);			
-			//room.notifyLeaveUser(seat);
-			//System.out.println(seat);
+						//room.leave(u);			
+						//room.notifyLeaveUser(seat);
 			
 			room.checkSBorBBfirstOut(u);
 
@@ -217,7 +216,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         	case "sbBet":
         	{             	
         		User u2 = usermanager.find(session);
-        		System.out.println("sb bet "+u2.seat);
              	int betkind = Integer.parseInt(""+obj.get("betkind"));
              	int roomidx = Integer.parseInt(""+obj.get("roomidx"));             
              	roommanager.find(roomidx).gameManager.bet(u2, betkind);
@@ -226,7 +224,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         	case "bbBet":
         	{             	
         		User u3 = usermanager.find(session);
-        		System.out.println("bb bet "+u3.seat);
              	int betkind = Integer.parseInt(""+obj.get("betkind"));
              	int roomidx = Integer.parseInt(""+obj.get("roomidx"));             
              	roommanager.find(roomidx).gameManager.bet(u3, betkind);

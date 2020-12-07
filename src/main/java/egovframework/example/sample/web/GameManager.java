@@ -30,7 +30,8 @@ public class GameManager {
 	//Calendar startTime;
 	long timerStartTime = 0;//객체로 만들면 좋다
 	int whosturn = 0;//누구차례인지 
-	int turncnt = 0;
+	int turncnt = 0;//각 구에서 몇번의 베팅이 되었는 카운팅
+	int totalcnt= 0;//현 게임에서 몇번의 베팅이 되었는지 카운팅( sb,bb가 베팅을 했는지 체크하기 위함)
 	long money = 0;
 	long totalmoney = 0;
 	long prebetmoney =0 ;//이전 사람의 베팅머니
@@ -61,6 +62,7 @@ public class GameManager {
 	
 	ArrayList<Pot> gamePot = new ArrayList<>();
 	
+	/*
 	public void init(){
 		cardManager.init();
 		gu=0;//1구 2구 3구 4구
@@ -80,7 +82,7 @@ public class GameManager {
 		gamePot.clear();
 		outSBUser = outBBUser = null;
 		System.out.println("게임초기화");
-	}
+	}*/
 	
 	public GameManager(Room room){
 		this.room = room;
@@ -114,6 +116,7 @@ public class GameManager {
 	
 	public void EmptySeat(int seat)
 	{		
+		System.out.println("=============EmptySeat seat:"+seat);
 		seats[seat] = -1;
 	}
 	
@@ -175,7 +178,7 @@ public class GameManager {
 		dealerSeatNum = getDealerSeatOffset(0);
 	}
 	void startSetting(){		
-
+		totalcnt = 0;
 		ante = 0;
 		gu = 1;
 		room.roominfo.StartGame();
@@ -256,6 +259,7 @@ public class GameManager {
 			ProfileManager.UpdateProfile(u.totalprofile);
 			ProfileManager.UpdateTodayProfile(u.todayprofile);
 			totalmoney = 0;
+			outSBUser = outBBUser = null;
 		}			
 		
 		allincount = 0;		
@@ -527,8 +531,12 @@ public class GameManager {
 
 	void checkTimerGame(){
 		//배팅시간 지났음
-		if( GameMode.compareTo("nmBet")==0 || GameMode.compareTo("showBetPan")==0 || GameMode.compareTo("THEFLOP")==0 || GameMode.compareTo("THETURN")==0 || GameMode.compareTo("THERIVER")==0){
-			if(timer!=-1 && SocketHandler.second - timer > 18){ // 자기턴 타임아웃 시간 8초로.				
+		if( GameMode.compareTo("sbBeted")==0 || GameMode.compareTo("bbBeted")==0 || GameMode.compareTo("nmBet")==0  
+				|| GameMode.compareTo("showBetPan")==0 || GameMode.compareTo("THEFLOP")==0				
+				|| GameMode.compareTo("THETURN")==0 || GameMode.compareTo("THERIVER")==0)
+		{
+			if(timer!=-1 && SocketHandler.second - timer > 18)// 자기턴 타임아웃 시간 8초로.
+			{ 				
 				for(User u : userlist){
 					if(u.seat==whosturn ){
 						JSONObject obj = new JSONObject();						
@@ -547,6 +555,8 @@ public class GameManager {
 					}
 				}										
 			}
+			
+			
 			for( User user : leaveuserlist )
 			{
 				if( user.die == true )
@@ -556,7 +566,20 @@ public class GameManager {
 
 				if(user.seat == whosturn )
 				{
-					bet(user, 0);
+					if( totalcnt ==0 && this.outSBUser != null)
+					{
+						System.out.println("SB 유저가 강종되어 서버가 대신 SB 베팅을 시도 해줌. uidx :"+outSBUser.uidx);
+						bet(outSBUser,1);
+					}
+					else if( totalcnt ==1 && this.outBBUser != null)
+					{
+						System.out.println("BB 유저가 강종되어 서버가 대신 BB 베팅을 시도 해줌. uidx :"+outBBUser.uidx);
+						bet(outBBUser,3);
+					}
+					else {
+						System.out.println("예약 유저 다이처리=================== whosturn: "+whosturn);
+						bet(user, 0);
+					}
 					break;
 				}
 			}
@@ -639,20 +662,20 @@ public class GameManager {
 			{				
 				if( checkDieturn((whosturn + nCount)%this.seats.length) == true )
 				{
-					System.out.println("--die--");
-					System.out.println((whosturn + nCount)%this.seats.length);
+//					System.out.println("--die--");
+//					System.out.println((whosturn + nCount)%this.seats.length);
 					if( SearchUserBySeat((whosturn + nCount)%this.seats.length) != null )
 					{
 						SearchUserBySeat((whosturn + nCount)%this.seats.length).PlayStatus = -1;	
 					}					
 					continue;					
 				}
-				if( checkLeave((whosturn + nCount)%this.seats.length) == true )
+/*				if( checkLeave((whosturn + nCount)%this.seats.length) == true )
 				{
-					System.out.println("--die--");
-					System.out.println((whosturn + nCount)%this.seats.length);
-					continue;			
-				}
+//					System.out.println("--die--");
+//					System.out.println((whosturn + nCount)%this.seats.length);
+				//	continue;			
+				}*/
 				/*
 				if( SearchUserBySeat((whosturn + nCount)%this.seats.length).balance <= 0 )
 				{
@@ -678,41 +701,28 @@ public class GameManager {
 		return -1;
 	}
 	public void sbBet(){
-		
-		if( outSBUser != null)
-		{
-		   bet( outSBUser , 1 );
-		}else
-		{
-			JSONObject obj = new JSONObject();
-			whosturn = getDealerSeatOffset(1);
-			obj.put("cmd","sbBet");
-			obj.put("whosturn", whosturn );
-			obj.put("prebetmoney", preTotalBetmoney );
-			obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
+		JSONObject obj = new JSONObject();
+		whosturn = getDealerSeatOffset(1);
+		obj.put("cmd","sbBet");
+		obj.put("whosturn", whosturn );
+		obj.put("prebetmoney", preTotalBetmoney );
+		obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
 //			obj.put("whosturn",userlist.get(whosturn).uidx);
-			sendRoom(obj);
+		sendRoom(obj);
 //			System.out.println("sbBet하시오 :"+whosturn );
-		}
 	}
 
 	public void bbBet(){
-		if( outBBUser != null )
-		{
-		   bet( outBBUser , 3 );
-		}else
-		{
-			bbSeat = whosturn;
-			bbBetCount++;
-			JSONObject obj = new JSONObject();
-			obj.put("cmd","bbBet");
-			obj.put("whosturn", whosturn );
-			obj.put("prebetmoney", preTotalBetmoney );
-			obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
-			sendRoom(obj);
-			timer = SocketHandler.second;		
+		bbSeat = whosturn;
+		bbBetCount++;
+		JSONObject obj = new JSONObject();
+		obj.put("cmd","bbBet");
+		obj.put("whosturn", whosturn );
+		obj.put("prebetmoney", preTotalBetmoney );
+		obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
+		sendRoom(obj);
+		timer = SocketHandler.second;		
 //			System.out.println("bbBet하시오 :"+whosturn );
-		}
 	}
 
 	public void showBetPan(){
@@ -835,19 +845,11 @@ public class GameManager {
 
 			if(uu.PlayStatus == 1 && betablecount > 1)
 			{					
-				System.out.println("uu.PlayStatus == 1");			
 				return false;
 			}										
 			
 			if( uu.betmoney < money)
 			{										
-				System.out.println("uu.betmoney < money");
-				System.out.println("seat");
-				System.out.println(uu.seat);
-				System.out.println(uu.betmoney);
-				System.out.println(money);
-				System.out.println(uu.PlayStatus);
-				System.out.println(uu.die);
 				return false;//배팅금액이 다르다
 			}												
 			extrap++;
@@ -876,7 +878,6 @@ public class GameManager {
 
 			if(uu.betmoney != preTotalBetmoney)
 			{			
-				System.out.println("uu.betmoney != preTotalBetmoney");
 				return false;
 			}
 		}	
@@ -914,7 +915,7 @@ public class GameManager {
 	}
 
 	public void bet(User u, int betkind){			
-		//System.out.println("========= whosturnUseridx:"+whosturnUseridx +" uidx:"+u.uidx+" u seat:"+u.seat);
+		System.out.println("BET CMD:"+betkind+" BetUserIDX:" +u.uidx + " u seat:"+u.seat);
 		if( whosturn != u.seat ){
 			System.out.println(whosturn+" 잘못된 유저의 BET 차례 "+u.seat);
 			return;
@@ -924,9 +925,6 @@ public class GameManager {
 		{ 
 			u.die = true;
 			u.PlayStatus = -1;
-			
-			System.out.println("die seat");
-			System.out.println(u.seat);
 		}
 		
 		Boolean isAllIn = false;
@@ -1025,6 +1023,7 @@ public class GameManager {
 		}
 				
 		turncnt++;
+		totalcnt++;
 		
 		nextTurn();					
 				
@@ -1113,7 +1112,8 @@ public class GameManager {
 		if( checkAbstention() ){
 			TheEnd();
 		}
-		else if( isBetEnd ){
+		else if( isBetEnd )
+		{
 			
 			for( User user : userlist )
 			{
@@ -1141,7 +1141,7 @@ public class GameManager {
 				TheEnd();
 			}
 			return;
-		}		
+		}
 	}
 	
 	
@@ -1789,7 +1789,7 @@ public class GameManager {
 		ArrayList<User> sortRank;
 		whosturn=0;
 		bbBetCount = 0;		
-		System.out.println("SHOW RESULT ");
+		System.out.println("SHOW RESULT 결과 계산 ");
 		//결과 계산하기
 		// 유저들의 카드 목록 2차원 배열 출력
 		int winSeat=-1,wlv=10000;
@@ -1914,7 +1914,6 @@ public class GameManager {
 				cnt++;
 		}
 		
-		System.out.println("---balanace-----");
 		long winnerpoint = 0;
 		for(User u : userlist){
 			if( winners.contains(u.seat) == true){
@@ -2038,7 +2037,15 @@ public class GameManager {
 				item.put("balance", userlist.get(i).balance);
 				item.put("amount", userlist.get(i).balance - userlist.get(i).prevamount);
 			}
+<<<<<<< Updated upstream
 			else if( room.UsedItem.equals("point") == true){				
+=======
+			else if( room.UsedItem.equals("point") == true){
+				
+//				System.out.println("point : " + userlist.get(i).point);
+//				System.out.println("prev : " + userlist.get(i).prevamount);
+
+>>>>>>> Stashed changes
 				item.put("balance", userlist.get(i).point);
 				item.put("amount", userlist.get(i).point - userlist.get(i).prevamount);
 			}									

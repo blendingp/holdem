@@ -67,7 +67,11 @@ public class RoomManager {
 			isPass = false;
 			return ;
 		}
+<<<<<<< Updated upstream
 		
+=======
+
+>>>>>>> Stashed changes
 		if( Room.GetRoomInfo(roomkey).useitem.equals("balance") == true){
 			if( user.balance < Room.GetRoomInfo(roomkey).ante * 3 ){
 				isPass = false;				
@@ -108,7 +112,11 @@ public class RoomManager {
 			return ;
 		}
 
+<<<<<<< Updated upstream
 		room.join(user, roomcount);		
+=======
+		room.join(user, room.ridx);		
+>>>>>>> Stashed changes
 	}
 
 	void GoldRoomQuickJoin(User user)

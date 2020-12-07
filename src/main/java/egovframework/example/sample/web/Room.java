@@ -63,12 +63,13 @@ public class Room {
 		title = random.nextInt(4);
 	}
 
+	/*
 	public void init() {
 		gameManager.init();		
 		roominfo.playcount = 0;
 		roominfo.totalbetamount = 0;
 		roominfo.totalwinamount = 0;
-	}
+	}*/
 
 	public boolean fullRoom() {
 
@@ -309,7 +310,6 @@ public class Room {
 
 		u.seat = gameManager.GetEmptySeat();		
 		gameManager.SetSeat(u.seat);
-		System.out.println(u.roomnum+"=========================> Roomnum:"+ridx);
 		u.roomnum = ridx;				
 		if( gameManager.GameMode == "대기" )
 		{						
@@ -422,16 +422,16 @@ public class Room {
 		{						
 			if(gameManager.userlist.get(nCount).uidx == user.uidx)
 			{											
-				//gameManager.userlist.get(nCount).die = true;				
+										//gameManager.userlist.get(nCount).die = true;				
 				gameManager.leaveuserlist.add(gameManager.userlist.get(nCount));				
-				gameManager.userlist.remove(gameManager.userlist.get(nCount));				
+				//gameManager.userlist.remove(gameManager.userlist.get(nCount));				
 
 				JSONObject obj = new JSONObject();
 
 				obj.put("cmd","reserve");				
 				obj.put("seat", user.seat);
 				gameManager.sendRoom(obj);		
-				
+				System.out.println("==================================SEND RESERVE  uidx: "+user.uidx+" seat:"+user.seat);
 				if( gameManager.checkAbstention() ){
 					gameManager.TheEnd();
 				}
@@ -460,8 +460,14 @@ public class Room {
 	public void checkSBorBBfirstOut(User u)
 	{//나간 유저가   SB or BB 유저이면 임시 기록해두는 함수.
 		if( u.seat == gameManager.SearchUserBySeat( gameManager.getDealerSeatOffset(1) ).seat )
+		{
 			gameManager.outSBUser = u;
+			System.out.println("SB 유저가 강제 접속 종료됨");
+		}
 		if( u.seat == gameManager.SearchUserBySeat( gameManager.getDealerSeatOffset(2) ).seat )
+		{
 			gameManager.outBBUser = u;
+			System.out.println("BB 유저가 강제 접속 종료됨");
+		}
 	}
 }
