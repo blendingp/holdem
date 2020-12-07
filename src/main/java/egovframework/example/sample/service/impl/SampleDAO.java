@@ -17,12 +17,17 @@ package egovframework.example.sample.service.impl;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+
 import egovframework.example.sample.service.SampleDefaultVO;
 import egovframework.example.sample.service.SampleVO;
-
 import egovframework.rte.psl.dataaccess.EgovAbstractDAO;
-
-import org.springframework.stereotype.Repository;
 
 /**
  * @Class Name : SampleDAO.java
@@ -43,7 +48,65 @@ import org.springframework.stereotype.Repository;
 
 @Repository("sampleDAO")
 public class SampleDAO extends EgovAbstractDAO {
+	@Resource(name="txManager")
+	protected DataSourceTransactionManager txManager;
 
+	public int update(String str , Object parameterObject){		
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus txStatus=txManager.getTransaction(def);
+		int rt=0;
+		try{
+			rt = super.update(str,parameterObject);
+			txManager.commit(txStatus);
+		}catch(Exception e){
+			txManager.rollback(txStatus);
+		}
+		return rt;
+	}
+
+	public Object insert(String str , Object parameterObject){		
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus txStatus=txManager.getTransaction(def);
+		Object rt=null;
+		try{
+			rt = super.insert(str,parameterObject);
+			txManager.commit(txStatus);
+		}catch(Exception e){
+			txManager.rollback(txStatus);
+		}
+		return rt;
+	}
+
+	public Object select(String str , Object parameterObject){		
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus txStatus=txManager.getTransaction(def);
+		Object rt=null;
+		try{
+			rt = super.select(str,parameterObject);
+			txManager.commit(txStatus);
+		}catch(Exception e){
+			txManager.rollback(txStatus);
+		}
+		return rt;
+	}
+
+
+	public int delete(String str , Object parameterObject){		
+		DefaultTransactionDefinition def = new DefaultTransactionDefinition();
+		def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+		TransactionStatus txStatus=txManager.getTransaction(def);
+		int rt=0;
+		try{
+			rt = super.delete(str,parameterObject);
+			txManager.commit(txStatus);
+		}catch(Exception e){
+			txManager.rollback(txStatus);
+		}
+		return rt;
+	}
 	/**
 	 * 글을 등록한다.
 	 * @param vo - 등록할 정보가 담긴 SampleVO

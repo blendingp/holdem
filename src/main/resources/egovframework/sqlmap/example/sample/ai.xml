@@ -11,6 +11,7 @@
         <![CDATA[
         	select * 
         	from member_info
+        	order by midx desc
         	limit #first# , #record#
         ]]>
 	</select>
@@ -29,5 +30,39 @@
         	where midx = #idx#
         ]]>
 	</update>
+	
+	<select id="selectMemberById" resultClass="EgovMap">
+        <![CDATA[
+        	select * from member
+        	where muserid = #id#
+        	limit 1
+        ]]>
+	</select>
+	
+	<insert id="insertMemberInfo" parameterClass="EgovMap">
+        <![CDATA[
+        	insert into member_info 
+        	(midx , nickname , ai)
+        	values (#midx# , #nickname# , #ai#)
+        ]]>
+	</insert>
+	
+	<insert id="insertMemberItem" parameterClass="EgovMap">
+        <![CDATA[
+				INSERT INTO item
+					( midx, type, amount )
+				VALUES 
+				( #midx#, 'avata1', 0 ),
+				( #midx#, 'avata2', 0 ),
+				( #midx#, 'avata3', 0 ),
+				( #midx#, 'avata4', 0 ),
+				( #midx#, 'balance', 100000000 ),
+				( #midx#, 'cash', 0 ),
+				( #midx#, 'point', 100000000 ),
+				( #midx#, 'safe_balance', 0 ),
+				( #midx#, 'safe_point', 0 ),
+				( #midx#, 'bank', 0 );
+        ]]>
+	</insert>
 	
 </sqlMap>

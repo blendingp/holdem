@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import egovframework.example.sample.service.impl.SampleDAO;
+import egovframework.example.sample.web.SocketHandler;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
@@ -65,5 +66,51 @@ public class AiController {
 		return obj.toJSONString();
 	}
 
+	@RequestMapping(value="/aiUserCreate.do")
+	public String aiUserCreate() {
+		return "admin/aiUserCreate";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/aiCreateProcess.do", produces="application/json; charset=utf8;")
+	public String aiCreateProcess(HttpServletRequest request)throws Exception {
+		JSONObject obj = new JSONObject();
+		EgovMap in = new EgovMap();
+		String result = "success";
+		int num = Integer.parseInt(""+request.getParameter("num"));
+		int cnt = 0;
+		String firstNm = ""+request.getParameter("firstNm");
+		for(int numCnt=0; numCnt < num; numCnt ++) {
+			cnt++;
+			String id = firstNm+cnt;
+			if(sampleDAO.select("selectMemberById",id)== null)
+			{
+				try {
+					in.put("muserid", id);
+					in.put("muserpw", "1234");
+					in.put("socail", "");
+					sampleDAO.insert("InsertUser" , in); // 회원 추가 
+					EgovMap ed = (EgovMap)sampleDAO.select("Login", in);
+					in.put("midx", ""+ed.get("midx"));
+					in.put("nickname", id);
+					in.put("ai", "1");
+					sampleDAO.insert("insertMemberInfo" , in); // ai설정 추가 
+					sampleDAO.insert("insertMemberItem" , in); // AI item 추가 
+				} catch (Exception e) {
+					result = "fail";
+					obj.put("result", result);
+					return obj.toJSONString();
+				}
+			}
+			else
+			{
+				numCnt --;
+			}
+		}
+		obj.put("result", result);
+		return obj.toJSONString();
+	}
+	
+	
 }
 
