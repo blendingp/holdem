@@ -43,7 +43,9 @@ public class RoomManager {
 		return null;
 	}	
 
-	void joinRoom(User user, String roomkey){
+	void joinRoom(User user, String roomkey)
+	{
+		boolean isPass = true;
 		if( user.IsAuth() == false )
 		{
 			ObjectMapper mapper = new ObjectMapper();
@@ -62,31 +64,50 @@ public class RoomManager {
 				e.printStackTrace();
 			}
 
+			isPass = false;
 			return ;
 		}
-
-		System.out.println(roomkey);
+		
 		if( Room.GetRoomInfo(roomkey).useitem.equals("balance") == true){
 			if( user.balance < Room.GetRoomInfo(roomkey).ante * 3 ){
-				return ;
+				isPass = false;				
 			}
 		}
 		else if( Room.GetRoomInfo(roomkey).useitem.equals("point") == true){
 			if( user.point < Room.GetRoomInfo(roomkey).ante * 3 ){
-				return ;
+				isPass = false;
 			}
-		}	
+		}			
 
-		System.out.println(roomkey);
 		Room room = findbykey(roomkey);
-		if( room == null )
+		if( room == null && isPass == true)
 		{
 			++roomcount;
 			room = new Room(roomcount, roomkey);			
 			roomList.add(room);
 		}		
+		else if( room != null )
+		{
+			if( room.isPrivate() == true)
+			{
+				if( Room.GetRoomInfo(roomkey).useitem.equals("balance") == true){
+					if( user.balance > 0 ){
+						isPass = true;
+					}
+				}
+				else if( Room.GetRoomInfo(roomkey).useitem.equals("point") == true){
+					if( user.point > 0 ){
+						isPass = true;
+					}
+				}	
+			}
+		}
 
-		System.out.println(roomcount);
+		if( isPass == false )
+		{
+			return ;
+		}
+
 		room.join(user, roomcount);		
 	}
 
@@ -224,10 +245,15 @@ public class RoomManager {
 			return false;
 		}
 
-		if( user.balance < roominfo.setting.ante * 3 )
-		{
+		if( roominfo.setting.isprivate == false && user.balance < roominfo.setting.ante * 3)
+		{			
 			return false;
-		}
+		}		
+
+		if( roominfo.setting.isprivate == true && user.balance <= 0)
+		{			
+			return false;
+		}		
 
 		++roomcount;
 		Room room = new Room(roomcount, roominfo.roomkey);			

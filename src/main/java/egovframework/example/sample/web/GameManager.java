@@ -211,17 +211,30 @@ public class GameManager {
 			u.betmoney = 0;
 			u.cardarr.clear();
 			u.wlv = 99;
+			long usermoney = 0;			
+			usermoney = room.defaultmoney;
 			if( room.UsedItem.equals("balance") == true){
 				u.prevamount = u.balance;
-				u.balance -= room.defaultmoney;				
+				u.balance -= room.defaultmoney;		
+				
+				if( u.balance < 0 )
+				{
+					usermoney = u.balance;
+					u.balance = 0;
+				}
 			}			
 			else if( room.UsedItem.equals("point") == true){
 				u.prevamount = u.point;
-				u.point -= room.defaultmoney;
+				u.point -= room.defaultmoney;				
 				u.todayprofile.gaingold -= room.defaultmoney;
+				if( u.point < 0 )
+				{
+					usermoney = u.point;
+					u.point = 0;
+				}
 			}	
 
-			ante += room.defaultmoney;
+			ante += usermoney;
 
 			if( u.memberInfo.expire < System.currentTimeMillis() )
 			{
@@ -460,14 +473,21 @@ public class GameManager {
 			}
 
 			if( room.UsedItem.equals("balance") == true){
-				if( u.balance < room.defaultmoney * 3){
+				
+				if( room.isPrivate() == false && u.balance < room.defaultmoney * 3){
 					rmlist.add(u);
 				}
+				else if( room.isPrivate() == true && u.balance <= 0){
+					rmlist.add(u);
+				}
+
 			}			
 			else if( room.UsedItem.equals("point") == true){
+				
 				if( u.point < room.defaultmoney * 3){
 					rmlist.add(u);
 				}
+
 				if( Math.abs(u.todayprofile.gaingold) >= u._info.limit && u.todayprofile.gaingold < 0)
 				{					
 					BanModel ban = new BanModel();
@@ -814,8 +834,7 @@ public class GameManager {
 				System.out.println(uu.PlayStatus);
 				System.out.println(uu.die);
 				return false;//배팅금액이 다르다
-			}								
-				
+			}												
 			extrap++;
 			lastp = uu;				
 					
@@ -846,6 +865,17 @@ public class GameManager {
 				return false;
 			}
 		}	
+
+		if( room.isPrivate() == true )
+		{
+			for( User user : userlist)
+			{
+				if(user.PlayStatus == 1)
+				{
+					return false;
+				}
+			}
+		}
 								
 		return true;//배팅금액이 똑같은경우 배팅끝
 	}
@@ -1017,27 +1047,52 @@ public class GameManager {
 			obj.put("betEnd", "0");//마지막 베팅인지 체크
 
 		timer = SocketHandler.second;
-		
-		if( GetAbleBettingUserCount() <= 1 && isBetEnd == true)
-		{
-			JSONArray j = new JSONArray();
-			for(int i=0; i < userlist.size(); i++){
-				JSONObject item = new JSONObject();
-				item.put("seat",userlist.get(i).seat);			
-				item.put("card1",userlist.get(i).card1.cardcode);
-				item.put("card2",userlist.get(i).card2.cardcode);
-				if( room.UsedItem.equals("balance") == true){					
-					item.put("balance", userlist.get(i).balance);
-				}
-				else if( room.UsedItem.equals("point") == true){					
-					item.put("balance", userlist.get(i).point);
-				}				
-				item.put("die",userlist.get(i).die);
-				j.add(item);
-			}
-			obj.put("cardlist", j);	
-		}
 
+		if( room.isPrivate() == false)
+		{
+			if( GetAbleBettingUserCount() <= 1 && isBetEnd == true)
+			{
+				JSONArray j = new JSONArray();
+				for(int i=0; i < userlist.size(); i++){
+					JSONObject item = new JSONObject();
+					item.put("seat",userlist.get(i).seat);			
+					item.put("card1",userlist.get(i).card1.cardcode);
+					item.put("card2",userlist.get(i).card2.cardcode);
+					if( room.UsedItem.equals("balance") == true){					
+						item.put("balance", userlist.get(i).balance);
+					}
+					else if( room.UsedItem.equals("point") == true){					
+						item.put("balance", userlist.get(i).point);
+					}				
+					item.put("die",userlist.get(i).die);
+					j.add(item);
+				}
+				obj.put("cardlist", j);	
+			}			
+		}
+		else
+		{
+			if( GetAbleBettingUserCount() <= 1)
+			{
+				JSONArray j = new JSONArray();
+				for(int i=0; i < userlist.size(); i++){
+					JSONObject item = new JSONObject();
+					item.put("seat",userlist.get(i).seat);			
+					item.put("card1",userlist.get(i).card1.cardcode);
+					item.put("card2",userlist.get(i).card2.cardcode);
+					if( room.UsedItem.equals("balance") == true){					
+						item.put("balance", userlist.get(i).balance);
+					}
+					else if( room.UsedItem.equals("point") == true){					
+						item.put("balance", userlist.get(i).point);
+					}				
+					item.put("die",userlist.get(i).die);
+					j.add(item);
+				}
+				obj.put("cardlist", j);	
+			}
+		}
+					
 		sendRoom(obj);//베팅 성공 정보를 전송					
 		
 		if( checkAbstention() ){
@@ -1847,7 +1902,7 @@ public class GameManager {
 		System.out.println("---balanace-----");
 		long winnerpoint = 0;
 		for(User u : userlist){
-			if( winners.contains(u.seat)){
+			if( winners.contains(u.seat) == true){
 				u.totalprofile.win++;
 				u.todayprofile.win++;
 
@@ -1861,6 +1916,10 @@ public class GameManager {
 
 				if( room.UsedItem.equals("balance") == true){	
 					long getamount = (long)((betMoney + ((cnt*SearchUserBySeat(u.seat).betmoney) + (ante))) / winners.size());
+					if( room.isPrivate() == true )
+					{
+						getamount = (long)((totalmoney + ante) / winners.size());
+					}
 					winnerpoint = (long)(getamount * ( 1 - u.memberInfo.commission));
 					SearchUserBySeat(u.seat).balance += winnerpoint;
 
@@ -1879,6 +1938,7 @@ public class GameManager {
 					long amount = (long)(getamount * u.memberInfo.gold_cashback);
 					u.bankamount = amount;
 					u.bank += amount;
+
 					if( u.bank > u.memberInfo.bank_gold )
 					{
 						u.bank = u.memberInfo.bank_gold;
@@ -1914,14 +1974,16 @@ public class GameManager {
 				u.todayprofile.lose++;
 				Task.IncreaseTask(u, 2, 1);
 				Task.UpdateDB(u);			
-
-				if(SearchUserBySeat(winSeat).betmoney < u.betmoney){
-					if( room.UsedItem.equals("balance") == true){
-						u.balance += u.betmoney - SearchUserBySeat(winSeat).betmoney;
+				if( room.isPrivate() == false )
+				{
+					if(SearchUserBySeat(winSeat).betmoney < u.betmoney){
+						if( room.UsedItem.equals("balance") == true){
+							u.balance += u.betmoney - SearchUserBySeat(winSeat).betmoney;
+						}
+						else if( room.UsedItem.equals("point") == true){
+							u.point += u.betmoney - SearchUserBySeat(winSeat).betmoney;
+						}					
 					}
-					else if( room.UsedItem.equals("point") == true){
-						u.point += u.betmoney - SearchUserBySeat(winSeat).betmoney;
-					}					
 				}
 			}
 			
@@ -1961,11 +2023,7 @@ public class GameManager {
 				item.put("balance", userlist.get(i).balance);
 				item.put("amount", userlist.get(i).balance - userlist.get(i).prevamount);
 			}
-			else if( room.UsedItem.equals("point") == true){
-				
-				System.out.println("point : " + userlist.get(i).point);
-				System.out.println("prev : " + userlist.get(i).prevamount);
-
+			else if( room.UsedItem.equals("point") == true){				
 				item.put("balance", userlist.get(i).point);
 				item.put("amount", userlist.get(i).point - userlist.get(i).prevamount);
 			}									

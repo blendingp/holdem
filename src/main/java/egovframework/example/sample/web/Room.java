@@ -272,18 +272,37 @@ public class Room {
 		}
 	}
 
+	public boolean isPrivate()
+	{
+		return _isPrivate;
+	}
+
 	public boolean join(User u, int ridx ) {
 		
-		if( this.UsedItem.equals("balance") == true){
-			if( u.balance < defaultmoney * 3 ){
-				return false;
+		if( _isPrivate == false )
+		{
+			if( this.UsedItem.equals("balance") == true){
+				if( u.balance < defaultmoney * 3 ){
+					return false;
+				}
 			}
-		}
-		else if( this.UsedItem.equals("point") == true){
-			if( u.point < defaultmoney * 3 ){
-				return false;
-			}
+			else if( this.UsedItem.equals("point") == true){
+				if( u.point < defaultmoney * 3 ){
+					return false;
+				}
+			}		
 		}		
+		else
+		{
+			if( this.UsedItem.equals("balance") == true){
+				if( u.balance <= 0 ){
+					return false;
+				}
+			}
+			else if( this.UsedItem.equals("point") == true){
+				return false;
+			}		
+		}
 
 		if( gameManager.GetEmptySeat() < 0 )
 		{
