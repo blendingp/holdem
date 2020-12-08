@@ -1,5 +1,6 @@
 package egovframework.example.sample.web;
- 
+
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -159,15 +160,48 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         		EgovMap in = new EgovMap();
         		in.put("muserid", obj.get("userid"));
         		in.put("muserpw", obj.get("userpw"));
-    			System.out.println("login id:"+obj.get("userid")+" pw:"+obj.get("userpw"));
+				//System.out.println("login id:"+obj.get("userid")+" pw:"+obj.get("userpw"));
+				
+				JSONObject cobj = new JSONObject();
+				cobj.put("cmd", "loginfail");				
+
+				if( session == null )
+				{
+					return ;
+				}
+
+				if( session.isOpen() == false )
+				{
+					return ;
+				}				
+
         		EgovMap ed = (EgovMap)sampleDAO.select("Login", in);
-        		if(ed==null){
-        			System.out.println("로그인실패");
+        		if(ed==null){					
+					//System.out.println("로그인실패");
+					cobj.put("code", 1);
+
+					ObjectMapper mapper = new ObjectMapper();
+
+					try {
+						session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
         			break;
 				}
 				if( usermanager.findFromUseridx((int)ed.get("midx")) != null)				
 				{
-					System.out.println("중복 로그인");
+					//System.out.println("중복 로그인");
+					cobj.put("code", 2);
+
+					ObjectMapper mapper = new ObjectMapper();
+
+					try {
+						session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
 					break;
 				}
 

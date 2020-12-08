@@ -939,8 +939,7 @@ public class UserManager {
 		JSONObject cobj = new JSONObject();
 		cobj.put("cmd", "itemused");
 		cobj.put("point", user.point);
-		cobj.put("consumableItem", user.consumableItem);
-		cobj.put("todayprofile", user.todayprofile);
+		cobj.put("consumableItem", user.consumableItem);		
 
 		if( User.CheckSendPacket(user) == false)
 		{

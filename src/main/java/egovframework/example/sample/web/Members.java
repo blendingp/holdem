@@ -76,11 +76,32 @@ public class Members {
             user.memberInfo.expire = System.currentTimeMillis() + shopinfo.effect.expire;            
         }
 
+        InBox avatainbox = InBox.MakeInBox("payment_avata_"+user.memberInfo.grade, user.uidx, 3, "admin");
+        Item avatapayment = new Item();
+        avatapayment.Type = "avata";
+        avatapayment.Amount = 1;
+        avatainbox.ItemList.add(avatapayment);
+        avatainbox.Expire = System.currentTimeMillis() + 604800000;
+
+        try {
+            EgovMap paymentin = new EgovMap();
+            paymentin.put("uid", avatainbox.UID);
+            paymentin.put("midx", avatainbox.Midx);
+            paymentin.put("type", avatainbox.Type);
+            paymentin.put("title", avatainbox.Title);
+            paymentin.put("body", mapper.writeValueAsString(avatainbox.ItemList));
+            paymentin.put("expire", avatainbox.Expire);
+
+            SocketHandler.sk.sampleDAO.insert("AddInbox", paymentin);
+        } catch (IOException e) {
+
+        }
+
         InBox payment = InBox.MakeInBox("payment_"+user.memberInfo.grade, user.uidx, 3, "admin");
         for( Item item : shopinfo.payitem )
         {
             payment.ItemList.add(item);    
-        }        
+        }                
 
         payment.Expire = System.currentTimeMillis() + 604800000;
 

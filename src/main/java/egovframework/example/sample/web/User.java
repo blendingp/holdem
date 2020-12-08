@@ -399,9 +399,7 @@ public class User {
 			buyitem.Amount = amount;
 			boolean constains = false;
 			for( Item consum : consumableItem )
-			{
-				System.out.println(String.format("type : %s\namount : %d", consum.Type, consum.Amount));
-				System.out.println(consum.Type.equals(item));
+			{				
 				if( consum.Type.equals(item) == true )
 				{
 					buyitem.Amount = consum.Amount + amount;
@@ -695,7 +693,7 @@ public class User {
 		{//ai유저이면 인증 통과
 			return true;
 		}
-		/*
+		
 		if( auth == null )
 		{
 			return false;
@@ -709,7 +707,7 @@ public class User {
 		if( auth.authtick + 31536000000L < System.currentTimeMillis())
 		{
 			return false;
-		}*/
+		}
 		
 		return true;		
 	}
@@ -754,7 +752,7 @@ public class User {
 			Random random = new Random();
 			String avata = String.format("avata%d", random.nextInt(4) + 1);
 			if (avatalist.contains(avata) == true) {
-				return false;
+				return true;
 			}
 
 			avatalist.add(avata);
@@ -936,12 +934,7 @@ public class User {
 	}
 
 	public void UseItem(String type)
-	{
-		if( todayprofile.chiprefillcount <= 0 )
-		{
-			return ;
-		}
-
+	{		
 		long amount = 0;
 		for( Item consum : consumableItem )
 		{		
@@ -983,9 +976,7 @@ public class User {
 		{
 			point += 200000000000l;	
 		}
-
-		todayprofile.chiprefillcount--;
-		ProfileManager.UpdateTodayProfile(todayprofile);
+		
 		ApplyBalanace("point");
 	}
 
