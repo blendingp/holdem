@@ -1052,6 +1052,8 @@ public class GameManager {
 		obj.put("betkind", betkind);
 		obj.put("seat", u.seat);//금방배팅한 사람
 		obj.put("nextwho", whosturn );//이제 배팅할 사람의 번호
+
+		/*
 		if( preTotalBetmoney >= room.maxmoney)
 		{
 			obj.put("betenable", "0,1,0,1,0,0,0,0");//체크/폴드/삥/콜/따당/하프/풀/맥스
@@ -1059,7 +1061,9 @@ public class GameManager {
 		else
 		{
 			obj.put("betenable", "0,1,0,1,1,1,1,1");//체크/폴드/삥/콜/따당/하프/풀/맥스	
-		}		
+		}*/
+		
+		
 		obj.put("gu", gu );
 		if( isBetEnd )
 			obj.put("betEnd", "1");//마지막 베팅인지 체크
