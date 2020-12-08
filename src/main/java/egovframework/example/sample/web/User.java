@@ -159,7 +159,15 @@ public class User {
 						consumableItem.add(item);
 					}
 				}
-				else if (ed.get(nCount).get("type").toString().equals("refill2000") == true) {
+				else if (ed.get(nCount).get("type").toString().equals("chiprefill2000") == true) {
+					if ((long) ed.get(nCount).get("amount") > 0) {
+						Item item = new Item();
+						item.Type = ed.get(nCount).get("type").toString();
+						item.Amount = (long) ed.get(nCount).get("amount");
+						consumableItem.add(item);
+					}
+				}
+				else if (ed.get(nCount).get("type").toString().equals("nickname") == true) {
 					if ((long) ed.get(nCount).get("amount") > 0) {
 						Item item = new Item();
 						item.Type = ed.get(nCount).get("type").toString();
@@ -310,16 +318,40 @@ public class User {
 				in.put("type", "cash");
 			}
 				break;
-			case "refill500":
+			case "chiprefill500":
 				if (this.cash >= 40) 
 				{
 					item = product;
+					this.cash -= 40;
+					in.put("amount", this.cash);
+					in.put("type", "cash");
 				}
 				break;
-			case "refill1000":
-				if (this.cash >= 40) 
+			case "chiprefill1000":
+				if (this.cash >= 80) 
 				{
 					item = product;
+					this.cash -= 80;
+					in.put("amount", this.cash);
+					in.put("type", "cash");
+				}
+				break;
+			case "chiprefill2000":
+				if (this.cash >= 160) 
+				{
+					item = product;
+					this.cash -= 160;
+					in.put("amount", this.cash);
+					in.put("type", "cash");
+				}
+				break;
+			case "nickname":
+				if (this.cash >= 240) 
+				{
+					item = product;
+					this.cash -= 240;
+					in.put("amount", this.cash);
+					in.put("type", "cash");
 				}
 				break;
 			case "Avata0":
@@ -357,10 +389,36 @@ public class User {
 
 		if (item.isEmpty() == false) {			
 
+			long amount = 10;
+			if( item.equals("nickname") == true )
+			{
+				amount = 1;
+			}
+			Item buyitem = new Item();
+			buyitem.Type = item;
+			buyitem.Amount = amount;
+			boolean constains = false;
+			for( Item consum : consumableItem )
+			{
+				System.out.println(String.format("type : %s\namount : %d", consum.Type, consum.Amount));
+				System.out.println(consum.Type.equals(item));
+				if( consum.Type.equals(item) == true )
+				{
+					buyitem.Amount = consum.Amount + amount;
+					consum.Amount = buyitem.Amount;
+					constains = true;
+				}
+			}
+
+			if( constains== false )
+			{
+				consumableItem.add(buyitem);
+			}
+			
 			EgovMap balancein = new EgovMap();
 			balancein.put("midx", uidx);
-			balancein.put("amount", 10);
-			balancein.put("type", item);
+			balancein.put("amount", buyitem.Amount);
+			balancein.put("type", buyitem.Type);
 
 			SocketHandler.sk.sampleDAO.update("updateItemAmont", balancein);
 
@@ -542,6 +600,7 @@ public class User {
 		info.avatalist = avatalist;
 		info.memberinfo = _info;
 		info.totalpayment = totalpayment;
+		info.consumableItem = consumableItem;
 
 		return info;
 	}
@@ -808,12 +867,51 @@ public class User {
 	}
 
 	public boolean SetNickName(String name)
-	{
+	{		
 		_info.nickname = name;
 		nickname = name;
 		UpdateMemberInfo();
 
 		return true;
+	}
+
+	public String ReNickName(String name)
+	{
+		long amount = 0;
+		for( Item consum : consumableItem )
+		{		
+			if( consum.Type.equals("nickname") == true )
+			{
+				amount = consum.Amount;
+			}
+		}
+
+		if( amount <= 0 )
+		{
+			return _info.nickname;
+		}
+
+		for( Item consum : consumableItem )
+		{		
+			if( consum.Type.equals("nickname") == true )
+			{
+				consum.Amount = amount - 1;
+			}
+		}
+
+		_info.nickname = name;
+		nickname = name;
+
+		EgovMap balancein = new EgovMap();
+		balancein.put("midx", uidx);
+		balancein.put("amount", amount - 1);
+		balancein.put("type", "nickname");
+
+		SocketHandler.sk.sampleDAO.update("updateItemAmont", balancein);		
+
+		UpdateMemberInfo();
+
+		return name;
 	}
 
 	public boolean GetNickNameEmpty()
@@ -836,6 +934,61 @@ public class User {
 		
 		this.img = _info.avata;		
 	}
+
+	public void UseItem(String type)
+	{
+		if( todayprofile.chiprefillcount <= 0 )
+		{
+			return ;
+		}
+
+		long amount = 0;
+		for( Item consum : consumableItem )
+		{		
+			if( consum.Type.equals(type) == true )
+			{
+				amount = consum.Amount;
+			}
+		}
+
+		if( amount <= 0 )
+		{
+			return ;
+		}
+
+		for( Item consum : consumableItem )
+		{		
+			if( consum.Type.equals(type) == true )
+			{
+				consum.Amount = amount - 1;
+			}
+		}
+
+		EgovMap balancein = new EgovMap();
+		balancein.put("midx", uidx);
+		balancein.put("amount", amount - 1);
+		balancein.put("type", type);
+
+		SocketHandler.sk.sampleDAO.update("updateItemAmont", balancein);
+
+		if( type.equals("chiprefill500") == true)
+		{
+			point += 50000000000l;
+		}
+		else if( type.equals("chiprefill1000") == true)
+		{
+			point += 100000000000l;
+		}
+		else if( type.equals("chiprefill2000") == true)
+		{
+			point += 200000000000l;	
+		}
+
+		todayprofile.chiprefillcount--;
+		ProfileManager.UpdateTodayProfile(todayprofile);
+		ApplyBalanace("point");
+	}
+
 	public void sendMe(JSONObject obj)
 	{
 		if( session == null )
@@ -858,3 +1011,4 @@ public class User {
 		}
 	}
 }
+

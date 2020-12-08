@@ -70,15 +70,13 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     	if( u == null)
     		return;
 		
-		int seat = u.seat;		
+		int idx = u.uidx;		
 		System.out.println("강제 접속끊김 발생  uidx:"+u.uidx);    	    		
     	
     	if( u.roomnum != -1){			
 			Room room = roommanager.find(u.roomnum);					
 						//room.leave(u);			
-						//room.notifyLeaveUser(seat);
-			
-			room.checkSBorBBfirstOut(u);
+						//room.notifyLeaveUser(seat);					
 
 			room.LeaveReserve(u);
 
@@ -90,12 +88,14 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			{				
 				Task.IncreaseTask(u, 2, 1);
 				Task.UpdateDB(u);				
-			}			
+			}		
+			
+			room.checkSBorBBfirstOut(u);
 		}
 		
 		for( int nCount = 0; nCount < usermanager.userlist.size(); ++nCount)
 		{
-			if( usermanager.userlist.get(nCount).uidx == u.uidx )
+			if( usermanager.userlist.get(nCount).uidx == idx )
 			{
 				usermanager.userlist.remove(usermanager.userlist.get(nCount));
 				break;
@@ -342,11 +342,20 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 					usermanager.connect(session, user);
 				}				
 			}break;
+			case "renickname":
+			{
+				usermanager.ReSetNickName(session, ""+obj.get("nickname"));
+		
+			}break;
 			case "getroominfo":
 			{
 				User user = usermanager.find(session);        		        		
 				int roomidx = user.roomnum;
 				roommanager.find(roomidx).GetRoomInfo(session);
+			}break;
+			case "useitem":
+			{
+				usermanager.UseItem(session, ""+obj.get("type"));
 			}break;
 		}
     }

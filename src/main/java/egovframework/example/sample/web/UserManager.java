@@ -132,6 +132,7 @@ public class UserManager {
 		cobj.put("budget", find(session).budget);
 		cobj.put("members", find(session).memberInfo);
 		cobj.put("totalpayment", find(session).totalpayment);
+		cobj.put("consumableItem", find(session).consumableItem);
 
 		if( session == null )
 		{
@@ -880,6 +881,80 @@ public class UserManager {
 		user.SetNickName(nickname);
 
 		return user;
+	}
+
+	public void ReSetNickName(WebSocketSession session, String nickname)
+	{
+		EgovMap in = new EgovMap();
+		in.put("nickname", nickname);
+
+		EgovMap ed = (EgovMap) SocketHandler.sk.sampleDAO.select("ExsitNickName", in);		
+
+		JSONObject cobj = new JSONObject();
+		cobj.put("cmd", "exsitnickname");
+		cobj.put("exsit", ed != null);
+
+		ObjectMapper mapper = new ObjectMapper();
+		User user = find(session);
+
+		if(User.CheckSendPacket(user) == false)
+		{
+			return ;
+		}
+
+		try {
+			user.session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		if( ed != null )
+		{			
+			return ;			
+		}
+	
+		JSONObject jsonobj = new JSONObject();
+		jsonobj.put("cmd", "changednickname");
+		jsonobj.put("name", user.ReNickName(nickname));		
+		jsonobj.put("consumableItem", user.consumableItem);		
+
+		if(User.CheckSendPacket(user) == false)
+		{
+			return ;
+		}
+
+		try {
+			user.session.sendMessage(new TextMessage(mapper.writeValueAsString(jsonobj)));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public void UseItem(WebSocketSession session, String type)
+	{
+		User user = find(session);
+		user.UseItem(type);			
+
+		JSONObject cobj = new JSONObject();
+		cobj.put("cmd", "itemused");
+		cobj.put("point", user.point);
+		cobj.put("consumableItem", user.consumableItem);
+		cobj.put("todayprofile", user.todayprofile);
+
+		if( User.CheckSendPacket(user) == false)
+		{
+			return ;
+		}
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		try {
+			session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public boolean ExsitID(String id)

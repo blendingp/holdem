@@ -23,6 +23,7 @@ public class UserInfo {
     public ProfileModel todayprofile;
     public ArrayList<TaskModel> tasklist;
     public ArrayList<String> avatalist;
+    public ArrayList<Item> consumableItem;
     public MemberInfo memberinfo;
     public AuthSelf auth;
     
