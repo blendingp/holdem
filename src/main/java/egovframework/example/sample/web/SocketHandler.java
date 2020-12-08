@@ -73,6 +73,15 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 		
 		int idx = u.uidx;		
 		System.out.println("강제 접속끊김 발생  uidx:"+u.uidx);    	    		
+
+		for( int nCount = 0; nCount < usermanager.userlist.size(); ++nCount)
+		{			
+			if( usermanager.userlist.get(nCount).uidx == idx )
+			{
+				usermanager.userlist.remove(usermanager.userlist.get(nCount));
+				break;
+			}			
+		}    	
     	
     	if( u.roomnum != -1){			
 			Room room = roommanager.find(u.roomnum);					
@@ -92,16 +101,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			}		
 			
 			room.checkSBorBBfirstOut(u);
-		}
-		
-		for( int nCount = 0; nCount < usermanager.userlist.size(); ++nCount)
-		{
-			if( usermanager.userlist.get(nCount).uidx == idx )
-			{
-				usermanager.userlist.remove(usermanager.userlist.get(nCount));
-				break;
-			}			
-		}    	
+		}		
     }
  
     @Override
