@@ -117,7 +117,10 @@ public class GameManager {
 	public void EmptySeat(int seat)
 	{		
 		System.out.println("=============EmptySeat seat:"+seat);
-		seats[seat] = -1;
+		if( seat >= 0 )
+		{
+			seats[seat] = -1;
+		}		
 	}
 	
 	void resetGuBetmoney(){
@@ -844,12 +847,14 @@ public class GameManager {
 			}
 
 			if(uu.PlayStatus == 1 && betablecount > 1)
-			{					
+			{			
+				System.out.println("uu.PlayStatus == 1 && betablecount > 1");		
 				return false;
 			}										
 			
 			if( uu.betmoney < money)
 			{										
+				System.out.println("uu.betmoney < money");		
 				return false;//배팅금액이 다르다
 			}												
 			extrap++;
@@ -878,6 +883,7 @@ public class GameManager {
 
 			if(uu.betmoney != preTotalBetmoney)
 			{			
+				System.out.println("uu.betmoney != preTotalBetmoney");		
 				return false;
 			}
 		}	
@@ -1029,7 +1035,7 @@ public class GameManager {
 				
 		boolean isBetEnd = isGuBetEnd();
 		obj.put("totalmoney", totalmoney + ante);
-		obj.put("prev", money);
+		obj.put("prev", prebetmoney);
 		obj.put("callmoney", "" + (preTotalBetmoney - u.betmoney) );
 		obj.put("prebetmoney", preTotalBetmoney );
 		obj.put("myBetMoney", u.betmoney );
