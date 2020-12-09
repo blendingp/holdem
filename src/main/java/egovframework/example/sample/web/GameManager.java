@@ -251,12 +251,6 @@ public class GameManager {
 			}	
 
 			ante += usermoney;
-
-			if( u.memberInfo.expire < System.currentTimeMillis() )
-			{
-				u.ExpireMembers();				
-			}
-
 			u.wincard.clear();
 
 			JackpotManager.SendJackpotMessage(u);
@@ -967,7 +961,7 @@ public class GameManager {
 		}
 		
 		
-		if( u.betmoney+tmo >= room.maxmoney ){//맥스 베팅인지 체크
+		if( u.betmoney + tmo >= room.maxmoney ){//맥스 베팅인지 체크
 			tmo = room.maxmoney - u.betmoney;
 		}
 		
@@ -1046,10 +1040,22 @@ public class GameManager {
 		totalcnt++;
 		
 		nextTurn();					
+		long prev = tmo;
+
+		if( room.isPrivate() == true )
+		{
+			for( User user : userlist )
+			{
+				if( user.PlayStatus == 0 )
+				{
+					prev = 1;
+				}
+			}
+		}		
 				
 		boolean isBetEnd = isGuBetEnd();
 		obj.put("totalmoney", totalmoney + ante);
-		obj.put("prev", tmo);
+		obj.put("prev", prev);
 		obj.put("callmoney", "" + (preTotalBetmoney - u.betmoney) );
 		obj.put("prebetmoney", preTotalBetmoney );
 		obj.put("myBetMoney", u.betmoney );
@@ -1940,12 +1946,12 @@ public class GameManager {
 					SearchUserBySeat(u.seat).balance += winnerpoint;
 
 					room.roominfo.EndGame(u.nickname, winnerpoint);
-
+/*
 					if( SearchUserBySeat(u.seat).balance > SearchUserBySeat(u.seat).memberInfo.limit_gold )
 					{
 						SearchUserBySeat(u.seat).balance = SearchUserBySeat(u.seat).memberInfo.limit_gold;						
 					}
-
+*/
 					if( u.totalprofile.highgaingold < winnerpoint )
 					{
 						u.totalprofile.highgaingold = winnerpoint;
@@ -1970,10 +1976,11 @@ public class GameManager {
 					long getamount = (long)((betMoney + ((cnt*SearchUserBySeat(u.seat).betmoney) + (ante))) / winners.size());
 					winnerpoint = (long)(getamount * ( 1 - u.memberInfo.commission));
 					SearchUserBySeat(u.seat).point += winnerpoint;
+					/*
 					if( SearchUserBySeat(u.seat).point > SearchUserBySeat(u.seat).memberInfo.limit_point )
 					{
 						SearchUserBySeat(u.seat).point = SearchUserBySeat(u.seat).memberInfo.limit_point;
-					}
+					}*/
 
 					u.todayprofile.gaingold += winnerpoint;
 					room.roominfo.EndGame(u.nickname, winnerpoint);

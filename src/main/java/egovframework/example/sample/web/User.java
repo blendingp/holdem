@@ -582,6 +582,7 @@ public class User {
 
 	public UserInfo MakeUserInfo() {
 		Task.Expired(this);
+		ExpireMembers();
 
 		UserInfo info = new UserInfo();
 		info.balance = balance;
