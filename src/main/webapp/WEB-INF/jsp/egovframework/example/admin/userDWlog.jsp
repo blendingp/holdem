@@ -14,7 +14,7 @@
 	<script>
 		function fn_egov_link_page(pageNo) {
 			document.listForm.pageIndex.value = pageNo;
-			document.listForm.action = "<c:url value='/admin/user.do'/>";
+			document.listForm.action = "<c:url value='/admin/userDWlog.do'/>";
 			document.listForm.submit();
 		}
 	</script>
@@ -32,15 +32,26 @@
 					<div class="panel panel-default">
 						<div class="panel-body">
 							<div>
-								<form action="/holdem/admin/user.do" name="listForm" id="listForm">
+								<form action="/holdem/admin/userDWlog.do" name="listForm" id="listForm">
 									<input type="hidden" name="pageIndex" value="1" />
 									<div class="row">
 										<div class="col-lg-2">
 											<div class="form-group">
-												<select class="form-control" name="uKind" onchange="fn_egov_link_page(1)">
-													<option value="all"<c:if test="${uKind == 'all' }">selected="selected"</c:if>>전체</option>
-													<option value="normal"<c:if test="${uKind == 'normal' }">selected="selected"</c:if>>일반유저</option>
-													<option value="ai"<c:if test="${uKind == 'ai' }">selected="selected"</c:if>>AI유저</option>
+												<label>골드/칩</label>
+												<select class="form-control" name="mKind" onchange="fn_egov_link_page(1)">
+													<option value="all"<c:if test="${mKind == 'all'}">selected="selected"</c:if>>전체</option>
+													<option value="balance"<c:if test="${mKind == 'balance'}">selected="selected"</c:if>>골드</option>
+													<option value="point"<c:if test="${mKind == 'point'}">selected="selected"</c:if>>칩</option>
+												</select>
+											</div>
+										</div>
+										<div class="col-lg-2">
+											<div class="form-group">
+												<label>입금/출금</label>
+												<select class="form-control" name="dwKind" onchange="fn_egov_link_page(1)">
+													<option value="all"<c:if test="${dwKind == 'all'}">selected="selected"</c:if>>전체</option>
+													<option value="deposit"<c:if test="${dwKind == 'deposit'}">selected="selected"</c:if>>입금</option>
+													<option value="withdrawal"<c:if test="${dwKind == 'withdrawal'}">selected="selected"</c:if>>출금</option>
 												</select>
 											</div>
 										</div>
@@ -51,28 +62,36 @@
 										<tr>
 											<th>아이디</th>
 											<th>닉네임</th>
-											<th>소셜가입</th>
-											<th>AI구분</th>
-											<th>골드</th>
-											<th>칩</th>
+											<th>골드/칩</th>
+											<th>입금/출금</th>
+											<th>날짜</th>
 										</tr>
 									</thead>
 									<tbody>
 										<c:forEach var="item" items="${list}">
-											<tr style="cursor:pointer" onclick="location.href='/holdem/admin/userInfo.do?idx=${item.midx}'">
-												<td>${item.muserid}</td>
-												<td>${item.nickname}</td>
-												<td>${item.socail}</td>
+											<tr>
 												<td>
-													<c:if test="${item.ai == 1}">
-														AI 유저		
+													<c:if test="${empty item.userId}">${item.socail }</c:if>
+													<c:if test="${!empty item.userId}">${item.userId }</c:if>
+												</td>
+												<td>${item.userNick}</td>
+												<td>
+													<c:if test="${item.product.split('_')[1] == 'balance'}">
+														골드		
 													</c:if>
-													<c:if test="${item.ai != 1}">
-														일반 유저 
+													<c:if test="${item.product.split('_')[1] == 'point'}">
+														칩
 													</c:if>
 												</td>
-												<td><fmt:formatNumber value="${item.balance}" pattern="#,###"/></td>
-												<td><fmt:formatNumber value="${item.point}" pattern="#,###"/></td>
+												<td>
+													<c:if test="${item.product.split('_')[2] == 'deposit'}">
+														입금
+													</c:if>
+													<c:if test="${item.product.split('_')[2] == 'withdrawal'}">
+														출금
+													</c:if>
+												</td>
+												<td><fmt:formatDate value="${item.date}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 											</tr>
 										</c:forEach>
 									</tbody>

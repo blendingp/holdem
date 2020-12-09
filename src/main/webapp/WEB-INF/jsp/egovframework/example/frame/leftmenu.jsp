@@ -57,7 +57,12 @@
 				<li><a href="/holdem/admin/etcB/company.do?type=C"><i class="fa fa-building fa-fw"></i> 회사소개</a></li>
 				<li><a href="/holdem/admin/etcB/provision.do?type=P"><i class="fa fa-file-text fa-fw"></i> 약관</a></li>
 				<li><a href="/holdem/admin/etcB/privacy.do?type=V"><i class="fa fa-lock fa-fw"></i> 개인정보처리방침</a></li>
-				<li><a href="#" onclick="alert('준비중입니다.');return false;"><i class="fa fa-won fa-fw"></i> 정산 페이지</a></li>
+				<li>
+					<a href="#"><i class="fa fa-won fa-fw"></i> 정산 페이지<span class="fa arrow"></span></a>
+					<ul class="nav nav-second-level">
+						<li><a href="/holdem/admin/userDWlog.do"><i class="fa fa-ruble fa-fw"></i> 유저 입출금로그</a></li>
+					</ul>
+				</li>
 			</ul>
 		</div>
 	</div>
