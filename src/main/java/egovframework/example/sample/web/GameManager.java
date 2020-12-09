@@ -222,24 +222,32 @@ public class GameManager {
 			long usermoney = 0;			
 			usermoney = room.defaultmoney;
 			if( room.UsedItem.equals("balance") == true){
-				u.prevamount = u.balance;
-				u.balance -= room.defaultmoney;		
+				u.prevamount = u.balance;					
 				
-				if( u.balance < 0 )
+				if( u.balance < room.defaultmoney )
 				{
 					usermoney = u.balance;
 					u.balance = 0;
 				}
+				else
+				{
+					u.balance -= room.defaultmoney;	
+				}
 			}			
 			else if( room.UsedItem.equals("point") == true){
-				u.prevamount = u.point;
-				u.point -= room.defaultmoney;				
-				u.todayprofile.gaingold -= room.defaultmoney;
-				if( u.point < 0 )
+				u.prevamount = u.point;								
+
+				if( u.point < room.defaultmoney )
 				{
 					usermoney = u.point;
 					u.point = 0;
 				}
+				else
+				{
+					u.point -= room.defaultmoney;	
+				}
+
+				u.todayprofile.gaingold -= usermoney;
 			}	
 
 			ante += usermoney;
@@ -941,14 +949,20 @@ public class GameManager {
 			if( u.balance <= tmo ){//올인인지 체크.
 				tmo = u.balance;//올인 머니 셋팅
 				isAllIn = true;
-				allincount++;
+				if( tmo > 0 )
+				{
+					allincount++;
+				}				
 			}
 		}
 		else if( room.UsedItem.equals("point") == true){
 			if( u.point <= tmo ){//올인인지 체크.
 				tmo = u.point;//올인 머니 셋팅
 				isAllIn = true;
-				allincount++;
+				if( tmo > 0 )
+				{
+					allincount++;
+				}			
 			}
 		}
 		
@@ -1035,7 +1049,7 @@ public class GameManager {
 				
 		boolean isBetEnd = isGuBetEnd();
 		obj.put("totalmoney", totalmoney + ante);
-		obj.put("prev", prebetmoney);
+		obj.put("prev", tmo);
 		obj.put("callmoney", "" + (preTotalBetmoney - u.betmoney) );
 		obj.put("prebetmoney", preTotalBetmoney );
 		obj.put("myBetMoney", u.betmoney );
@@ -1093,29 +1107,7 @@ public class GameManager {
 				}
 				obj.put("cardlist", j);	
 			}			
-		}
-		else
-		{
-			if( GetAbleBettingUserCount() <= 1)
-			{
-				JSONArray j = new JSONArray();
-				for(int i=0; i < userlist.size(); i++){
-					JSONObject item = new JSONObject();
-					item.put("seat",userlist.get(i).seat);			
-					item.put("card1",userlist.get(i).card1.cardcode);
-					item.put("card2",userlist.get(i).card2.cardcode);
-					if( room.UsedItem.equals("balance") == true){					
-						item.put("balance", userlist.get(i).balance);
-					}
-					else if( room.UsedItem.equals("point") == true){					
-						item.put("balance", userlist.get(i).point);
-					}				
-					item.put("die",userlist.get(i).die);
-					j.add(item);
-				}
-				obj.put("cardlist", j);	
-			}
-		}
+		}		
 					
 		sendRoom(obj);//베팅 성공 정보를 전송					
 		
