@@ -3,7 +3,7 @@
         "type":0,
         "max": 3,
         "reward" : {
-            "Type":"chip",
+            "Type":"point",
             "Amount": 10000000
         }
     },
@@ -11,7 +11,7 @@
         "type":0,
         "max": 10,
         "reward" : {
-            "Type":"chip",
+            "Type":"point",
             "Amount": 100000000
         }
     },

@@ -612,6 +612,7 @@ public class UserManager {
 		if( inbox != null)
 		{
 			cobj.put("reward", inbox.ItemList);			
+			cobj.put("avatalist", find(session).avatalist);
 		}					
 
 		if( session == null )
