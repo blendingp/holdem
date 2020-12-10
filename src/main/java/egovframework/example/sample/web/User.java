@@ -355,9 +355,9 @@ public class User {
 				}
 				break;
 			case "Avata0":
-			if (this.cash >= 55) 
+			if (this.cash >= 550) 
 			{				
-				this.cash -= 55;
+				this.cash -= 550;
 				in.put("amount", this.cash);
 				in.put("type", "cash");
 
@@ -365,27 +365,27 @@ public class User {
 			}
 			break;
 			case "Avata1":
-			if (this.cash >= 110) 
+			if (this.cash >= 1100) 
 			{				
-				this.cash -= 110;
+				this.cash -= 1100;
 				in.put("amount", this.cash);
 				in.put("type", "cash");
 
 				Avata.Buy(product, uidx);
 			}break;
 			case "Avata2":
-			if (this.cash >= 220) 
+			if (this.cash >= 2200) 
 			{				
-				this.cash -= 220;
+				this.cash -= 2200;
 				in.put("amount", this.cash);
 				in.put("type", "cash");
 
 				Avata.Buy(product, uidx);
 			}break;
 			case "Avata3": 
-			if (this.cash >= 330) 
+			if (this.cash >= 3300) 
 			{				
-				this.cash -= 330;
+				this.cash -= 3300;
 				in.put("amount", this.cash);
 				in.put("type", "cash");
 
