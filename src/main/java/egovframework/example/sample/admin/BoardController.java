@@ -553,5 +553,63 @@ public class BoardController {
 		}
 	}
 
+	@RequestMapping("/userDWlog.do")
+	public String userDWlog(HttpServletRequest request , ModelMap model) {
+		String mKind = request.getParameter("mKind");
+		String dwKind = request.getParameter("dwKind");
+		PaginationInfo paginationInfo = new PaginationInfo();
+		if (request.getParameter("pageIndex") == null || request.getParameter("pageIndex").equals("")) 
+		{
+			paginationInfo.setCurrentPageNo(1);
+		} 
+		else 
+		{
+			paginationInfo.setCurrentPageNo(Integer.parseInt("" + request.getParameter("pageIndex")));
+		}
+		paginationInfo.setRecordCountPerPage(15);
+		paginationInfo.setPageSize(10);
+		EgovMap in = new EgovMap();
+		in.put("first", paginationInfo.getFirstRecordIndex());
+		in.put("record", paginationInfo.getRecordCountPerPage());
+		if(mKind == null || mKind.equals("") || mKind.equals("all"))
+		{
+			if(dwKind == null || dwKind.equals("") || dwKind.equals("all"))
+			{
+				in.put("kind1", "ad_point_deposit");
+				in.put("kind2", "ad_point_withdrawal");
+				in.put("kind3", "ad_balance_deposit");
+				in.put("kind4", "ad_balance_withdrawal");
+				mKind = "all";
+				dwKind = "all";
+			}
+			else
+			{
+				mKind = "all";
+				in.put("kind1", "ad_point_"+dwKind);
+				in.put("kind2", "ad_balance_"+dwKind);
+			}
+		}
+		else
+		{
+			if(dwKind == null || dwKind.equals("") || dwKind.equals("all"))
+			{
+				dwKind = "all";
+				in.put("kind1", "ad_"+mKind+"_withdrawal");
+				in.put("kind2", "ad_"+mKind+"_deposit");
+			}
+			else
+			{
+				in.put("kind1", "ad_"+mKind+"_"+dwKind);
+				in.put("kind2", "ad_"+mKind+"_"+dwKind);
+			}
+		}
+		List<?> list = (List<?>)sampleDAO.list("selectUserDwListByAdmin" , in);
+		paginationInfo.setTotalRecordCount((int)sampleDAO.select("selectUserDwListByAdminTot" ,in));
+		model.addAttribute("list", list);
+		model.addAttribute("pi", paginationInfo);
+		model.addAttribute("mKind", mKind);
+		model.addAttribute("dwKind", dwKind);
+		return "admin/userDWlog";
+	}
 }
 

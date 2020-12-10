@@ -384,4 +384,54 @@
 		]]>
 	</update>
 	
+	<select id="selectUserDwListByAdmin" resultClass="EgovMap">
+		<![CDATA[
+			select * , (select nickname from member_info where midx = payment_log.midx) userNick ,
+					 (select muserid from member where midx = payment_log.midx) userId ,
+					 (select socail from member where midx = payment_log.midx) socail 
+		 	from payment_log
+		 	where product in ( 
+		]]>
+			<isNotEmpty property = "kind1">
+				#kind1#
+			</isNotEmpty>
+			<isNotEmpty property = "kind2">
+				,#kind2#
+			</isNotEmpty>
+			<isNotEmpty property = "kind3">
+				,#kind3#
+			</isNotEmpty>
+			<isNotEmpty property = "kind4">
+				,#kind4#
+			</isNotEmpty>
+		<![CDATA[
+			)
+			order by date desc 
+			limit #first# , #record#
+		]]>
+	</select>
+    
+	<select id="selectUserDwListByAdminTot" resultClass="int">
+		<![CDATA[
+			select count(*) 
+			from payment_log 
+		 	where product in ( 
+		]]>
+			<isNotEmpty property = "kind1">
+				#kind1#
+			</isNotEmpty>
+			<isNotEmpty property = "kind2">
+				,#kind2#
+			</isNotEmpty>
+			<isNotEmpty property = "kind3">
+				,#kind3#
+			</isNotEmpty>
+			<isNotEmpty property = "kind4">
+				,#kind4#
+			</isNotEmpty>
+		<![CDATA[
+			)
+		]]>
+	</select>
+    
 </sqlMap>
