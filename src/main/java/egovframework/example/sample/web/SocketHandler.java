@@ -391,6 +391,10 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			{
 				usermanager.UseItem(session, ""+obj.get("type"));
 			}break;
+			case "changelostlimit":
+			{				
+				usermanager.find(session).ChangeLostLimit(Long.parseLong(""+obj.get("amount")));
+			}break;
 		}
     }
  

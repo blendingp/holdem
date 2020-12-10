@@ -292,9 +292,9 @@
 	<update id="UpdateMemberInfo" parameterClass="egovMap">	
         <![CDATA[
             INSERT INTO member_info
-					( midx, exp, nickname, avata, ban )
-				VALUES ( #midx#, #exp#, #nickname#, #avata#, #ban# )
-				ON DUPLICATE KEY UPDATE exp=#exp#, nickname=#nickname#, avata=#avata#, ban=#ban#
+					( midx, `exp`, nickname, avata, ban, `limit` )
+				VALUES ( #midx#, #exp#, #nickname#, #avata#, #ban#, #limit# )
+				ON DUPLICATE KEY UPDATE `exp`=#exp#, nickname=#nickname#, avata=#avata#, ban=#ban#, `limit`=#limit#
         ]]>
 	</update>
 

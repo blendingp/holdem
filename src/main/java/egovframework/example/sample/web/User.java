@@ -355,22 +355,42 @@ public class User {
 				}
 				break;
 			case "Avata0":
-				price = 5500;
-			case "Avata1":
-				price = 11000;
-			case "Avata2":
-				price = 22000;
-			case "Avata3": {
-				price = 33000;
-				iscash = 1;
-				if( totalpayment + price > 500000 )
-				{
-					return 0;
-				}
+			if (this.cash >= 55) 
+			{				
+				this.cash -= 55;
+				in.put("amount", this.cash);
+				in.put("type", "cash");
+
 				Avata.Buy(product, uidx);
-				in = null;
 			}
-				break;
+			break;
+			case "Avata1":
+			if (this.cash >= 110) 
+			{				
+				this.cash -= 110;
+				in.put("amount", this.cash);
+				in.put("type", "cash");
+
+				Avata.Buy(product, uidx);
+			}break;
+			case "Avata2":
+			if (this.cash >= 220) 
+			{				
+				this.cash -= 220;
+				in.put("amount", this.cash);
+				in.put("type", "cash");
+
+				Avata.Buy(product, uidx);
+			}break;
+			case "Avata3": 
+			if (this.cash >= 330) 
+			{				
+				this.cash -= 330;
+				in.put("amount", this.cash);
+				in.put("type", "cash");
+
+				Avata.Buy(product, uidx);
+			}break;
 			default:
 				in = null;
 				this.cash += 0;
@@ -916,6 +936,22 @@ public class User {
 	public boolean GetNickNameEmpty()
 	{
 		return _info.nickname.isEmpty();
+	}
+
+	public void ChangeLostLimit(long amount)
+	{
+		if( amount < 1000000000000l ||  amount > 5000000000000l)
+		{
+			return ;
+		}
+
+		if( _info.limit == amount )
+		{
+			return ;
+		}
+
+		_info.limit = amount;
+		UpdateMemberInfo();
 	}
 
 	public void UpdateMemberInfo()

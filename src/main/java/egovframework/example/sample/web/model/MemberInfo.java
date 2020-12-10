@@ -9,7 +9,7 @@ public class MemberInfo {
     public String nickname = "";
     public String avata = "";
     public String ban = "";
-    public long limit = 50000000000000l;
+    public long limit = 5000000000000l;
     public int ai=0;
 
     public void RecordBan(int type, long expire) {
