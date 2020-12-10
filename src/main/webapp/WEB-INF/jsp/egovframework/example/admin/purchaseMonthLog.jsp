@@ -14,7 +14,7 @@
 	<script>
 		function fn_egov_link_page(pageNo) {
 			document.listForm.pageIndex.value = pageNo;
-			document.listForm.action = "<c:url value='/admin/userDWlog.do'/>";
+			document.listForm.action = "<c:url value='/admin/purchaseMonthLog.do'/>";
 			document.listForm.submit();
 		}
 	</script>
@@ -24,36 +24,43 @@
 		<div id="page-wrapper">
 			<div class="row">
 				<div class="col-lg-12">
-					<h1 class="page-header">유저 입출금 내역</h1>
+					<h1 class="page-header">아이템 월별 구매내역</h1>
 				</div>
 			</div>
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="panel panel-default">
-						<div class="panel-heading">관리자가 유저에게 골드/칩을 입금/출금한 내역입니다</div>
 						<div class="panel-body">
 							<div>
-								<form action="/holdem/admin/userDWlog.do" name="listForm" id="listForm">
+								<form action="/holdem/admin/purchaseMonthLog.do" name="listForm" id="listForm">
 									<input type="hidden" name="pageIndex" value="1" />
 									<div class="row">
 										<div class="col-lg-2">
 											<div class="form-group">
-												<label>골드/칩</label>
-												<select class="form-control" name="mKind" onchange="fn_egov_link_page(1)">
-													<option value="all"<c:if test="${mKind == 'all'}">selected="selected"</c:if>>전체</option>
-													<option value="balance"<c:if test="${mKind == 'balance'}">selected="selected"</c:if>>골드</option>
-													<option value="point"<c:if test="${mKind == 'point'}">selected="selected"</c:if>>칩</option>
+												<label>년도 선택</label>
+												<select class="form-control" name="year" onchange="fn_egov_link_page(1)">
+													<jsp:useBean id="now" class="java.util.Date" />
+													<fmt:formatDate value="${now}" pattern="yyyy" var="yearStart"/>
+								                    <c:forEach begin="0" end="${yearStart - 2019}" var="result" step="1">
+								                        <option value="${yearStart-result}" <c:if test="${yearStart-result == year}">selected</c:if> >${yearStart-result}년</option>
+								                    </c:forEach>
 												</select>
 											</div>
 										</div>
 										<div class="col-lg-2">
 											<div class="form-group">
-												<label>입금/출금</label>
-												<select class="form-control" name="dwKind" onchange="fn_egov_link_page(1)">
-													<option value="all"<c:if test="${dwKind == 'all'}">selected="selected"</c:if>>전체</option>
-													<option value="deposit"<c:if test="${dwKind == 'deposit'}">selected="selected"</c:if>>입금</option>
-													<option value="withdrawal"<c:if test="${dwKind == 'withdrawal'}">selected="selected"</c:if>>출금</option>
+												<label>월 선택</label>
+												<select class="form-control" name="month" onchange="fn_egov_link_page(1)">
+													<c:forEach var="monthStart" begin="1" end="12">
+														<option value="${monthStart}"<c:if test="${monthStart == month}">selected</c:if>>${monthStart}월</option>
+													</c:forEach>
 												</select>
+											</div>
+										</div>
+										<div class="col-lg-2">
+											<div class="form-group">
+												<label>${year}년 ${month}월 총 구매가격</label>
+												<pre style="padding:7.5px"><fmt:formatNumber value="${sumCharge}" pattern="#,###"/></pre>
 											</div>
 										</div>
 									</div>
@@ -62,36 +69,20 @@
 									<thead>
 										<tr>
 											<th>아이디</th>
-											<th>닉네임</th>
-											<th>골드/칩</th>
-											<th>입금/출금</th>
-											<th>날짜</th>
+											<th>아이템</th>
+											<th>가격</th>
+											<th>구매날짜</th>
 										</tr>
 									</thead>
 									<tbody>
 										<c:forEach var="item" items="${list}">
 											<tr>
 												<td>
-													<c:if test="${empty item.userId}">${item.socail }</c:if>
-													<c:if test="${!empty item.userId}">${item.userId }</c:if>
+													<c:if test="${empty item.muserid}">${item.socail }</c:if>
+													<c:if test="${!empty item.muserid}">${item.muserid }</c:if>
 												</td>
-												<td>${item.userNick}</td>
-												<td>
-													<c:if test="${item.product.split('_')[1] == 'balance'}">
-														골드		
-													</c:if>
-													<c:if test="${item.product.split('_')[1] == 'point'}">
-														칩
-													</c:if>
-												</td>
-												<td>
-													<c:if test="${item.product.split('_')[2] == 'deposit'}">
-														입금
-													</c:if>
-													<c:if test="${item.product.split('_')[2] == 'withdrawal'}">
-														출금
-													</c:if>
-												</td>
+												<td>${item.productNm}</td>
+												<td><fmt:formatNumber value="${item.price}" pattern="#,###"/></td>
 												<td><fmt:formatDate value="${item.date}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 											</tr>
 										</c:forEach>

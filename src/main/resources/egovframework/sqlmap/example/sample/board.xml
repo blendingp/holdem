@@ -434,4 +434,117 @@
 		]]>
 	</select>
     
+	<select id="selectUserPurchaseLog" resultClass="EgovMap">
+		<![CDATA[
+			select * ,(select muserid from member where midx = payment_log.midx) muserid ,(select socail from member where midx = payment_log.midx) socail 
+			from payment_log
+			where product not in ('ad_point_deposit' ,'ad_point_withdrawal' , 'ad_balance_deposit','ad_balance_withdrawal' )
+			and isCash = 1
+		]]>
+		<isNotEmpty property = "year">
+			and year = #year#
+		</isNotEmpty>
+		<isNotEmpty property = "month">
+			and month = #month#
+		</isNotEmpty>
+		<isNotNull property = "orderKind">
+			<isEqual property="orderKind" compareValue="recent">
+				order by date desc 
+			</isEqual>
+			<isEqual property="orderKind" compareValue="high">
+				order by price desc 
+			</isEqual>
+			<isEqual property="orderKind" compareValue="low">
+				order by price  
+			</isEqual>
+		</isNotNull>
+		<isNull property = "orderKind">
+			order by date desc
+		</isNull>	
+		<![CDATA[
+			limit #first# , #record#
+		]]>
+	</select>
+    
+	<select id="selectUserPurchaseLogTot" resultClass="int">
+		<![CDATA[
+			select count(*) 
+			from payment_log
+			where product not in ('ad_point_deposit' ,'ad_point_withdrawal' , 'ad_balance_deposit','ad_balance_withdrawal' )
+			and isCash = 1
+		]]>
+		<isNotEmpty property = "year">
+			and year = #year#
+		</isNotEmpty>
+		<isNotEmpty property = "month">
+			and month = #month#
+		</isNotEmpty>
+		
+	</select>
+    
+	<select id="selectUserPurchaseSum" resultClass="int">
+		<![CDATA[
+			select ifnull(sum(price),0) sumCharge 
+			from payment_log
+			where product not in ('ad_point_deposit' ,'ad_point_withdrawal' , 'ad_balance_deposit','ad_balance_withdrawal' )
+			and isCash = 1
+		]]>
+		<isNotEmpty property = "year">
+			and year = #year#
+		</isNotEmpty>
+		<isNotEmpty property = "month">
+			and month = #month#
+		</isNotEmpty>
+		
+	</select>
+    
+    
+	<select id="selectGoldFeeLog" resultClass="EgovMap">
+		<![CDATA[
+			select * ,(select muserid from member where midx = goldfeelog.uidx) muserid
+			,(select socail from member where midx = goldfeelog.uidx) socail
+			from goldfeelog
+			where 1=1
+		]]>
+		<isNotEmpty property = "year">
+			and year(gdate) = #year#
+		</isNotEmpty>
+		<isNotEmpty property = "month">
+			and month(gdate) = #month#
+		</isNotEmpty>
+		
+		<![CDATA[
+			order by gdate desc , gidx desc
+			limit #first# , #record#
+		]]>
+	</select>
+    
+	<select id="selectGoldFeeLogTot" resultClass="int">
+		<![CDATA[
+			select count(*) 
+			from goldfeelog
+			where 1=1
+		]]>
+		<isNotEmpty property = "year">
+			and year(gdate) = #year#
+		</isNotEmpty>
+		<isNotEmpty property = "month">
+			and month(gdate) = #month#
+		</isNotEmpty>
+	</select>
+	
+	<select id="selectGoldFeeSum" resultClass="int">
+		<![CDATA[
+			select ifnull(sum(fee),0) sumFee 
+			from goldfeelog
+			where 1=1
+		]]>
+		<isNotEmpty property = "year">
+			and year(gdate) = #year#
+		</isNotEmpty>
+		<isNotEmpty property = "month">
+			and month(gdate) = #month#
+		</isNotEmpty>
+	</select>
+    
 </sqlMap>
