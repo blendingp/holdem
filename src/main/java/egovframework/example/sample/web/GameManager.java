@@ -425,6 +425,7 @@ public class GameManager {
 			setWorkTime();
 			try {
 				showResult();
+				System.out.println("showResult End");
 				room.BroadCasetUser();
 			}catch(Exception e) {
 				System.out.println("error log: showResult 계산시 에러 발생================"+e.toString() );
@@ -1797,7 +1798,6 @@ public class GameManager {
 		ArrayList<User> sortRank;
 		whosturn=0;
 		bbBetCount = 0;		
-		System.out.println("SHOW RESULT 결과 계산 ");
 		//결과 계산하기
 		// 유저들의 카드 목록 2차원 배열 출력
 		int winSeat=-1,wlv=10000;
@@ -1883,6 +1883,7 @@ public class GameManager {
 	        });
 			
 		}
+		System.out.println("SHOW RESULT DBG 1 ");
 			
 		winSeat=sortRank.get(0).seat;// 이게 유저 자리 번호 맞나? 확인하기 2020 09 10		
 
@@ -1922,6 +1923,7 @@ public class GameManager {
 				cnt++;
 		}
 		
+		System.out.println("SHOW RESULT DBG 2 ");
 		long winnerpoint = 0;
 		for(User u : userlist){
 			if( winners.contains(u.seat) == true){
@@ -2014,6 +2016,7 @@ public class GameManager {
 			
 			JackpotManager.SendJackpotMessage(u);
 			u.ApplyBalanace(room.UsedItem);
+			System.out.println("SHOW RESULT DBG 3 :"+ u);
 			ProfileManager.UpdateProfile(u.totalprofile);
 			ProfileManager.UpdateTodayProfile(u.todayprofile);
 		}	

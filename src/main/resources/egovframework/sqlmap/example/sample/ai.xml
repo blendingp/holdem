@@ -56,9 +56,9 @@
 				( #midx#, 'avata2', 0 ),
 				( #midx#, 'avata3', 0 ),
 				( #midx#, 'avata4', 0 ),
-				( #midx#, 'balance', 100000000 ),
+				( #midx#, 'balance', #balance# ),
 				( #midx#, 'cash', 0 ),
-				( #midx#, 'point', 100000000 ),
+				( #midx#, 'point', #point# ),
 				( #midx#, 'safe_balance', 0 ),
 				( #midx#, 'safe_point', 0 ),
 				( #midx#, 'bank', 0 );

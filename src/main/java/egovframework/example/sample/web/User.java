@@ -463,7 +463,13 @@ public class User {
 		}
 		in.put("type", useitem);
 
-		int rt = SocketHandler.sk.sampleDAO.update("updateItemAmont", in);
+		int rt= -1;
+		try {
+			rt = SocketHandler.sk.sampleDAO.update("updateItemAmont", in);
+		}catch(Exception e)
+		{
+			System.out.println("ApplyBalanace errcheck:"+e.toString() );
+		}
 
 		return rt;
 	}

@@ -60,7 +60,11 @@
 				<li>
 					<a href="#"><i class="fa fa-won fa-fw"></i> 정산 페이지<span class="fa arrow"></span></a>
 					<ul class="nav nav-second-level">
-						<li><a href="/holdem/admin/userDWlog.do"><i class="fa fa-ruble fa-fw"></i> 유저 입출금로그</a></li>
+						<li><a href="/holdem/admin/userDWlog.do"><i class="fa fa-ruble fa-fw"></i> 유저 입출금내역</a></li>
+						<li><a href="/holdem/admin/purchaseLog.do"><i class="fa fa-gift fa-fw"></i> 아이템 일별 구매내역</a></li>
+						<li><a href="/holdem/admin/purchaseMonthLog.do"><i class="fa fa-gift fa-fw"></i> 아이템 월별 구매내역</a></li>
+						<li><a href="/holdem/admin/goldFeeLog.do"><i class="fa fa-google fa-fw"></i> 골드수수료 일별 내역</a></li>
+						<li><a href="/holdem/admin/goldFeeMonthLog.do"><i class="fa fa-google fa-fw"></i> 골드수수료 월별 내역</a></li>
 					</ul>
 				</li>
 			</ul>
