@@ -31,8 +31,16 @@
 											<input id="firstNm" name="firstNm" class="form-control" >
 										</div>
 										<div class="form-group">
-											<label>개수</label> 
+											<label>생성 개수</label> 
 											<input id="num" name="num" class="form-control"  placeholder="숫자만 입력" onkeyup="SetNum(this);">
+										</div>
+										<div class="form-group">
+											<label>골드</label> 
+											<input id="balance" name="balance" class="form-control"  placeholder="숫자만 입력" onkeyup="SetNum(this);">
+										</div>
+										<div class="form-group">
+											<label>칩</label> 
+											<input id="point" name="point" class="form-control"  placeholder="숫자만 입력" onkeyup="SetNum(this);">
 										</div>
 									</form>
 								</div>
@@ -54,6 +62,8 @@
 		function aiCreate(){
 			var firstNm = $("#firstNm").val();
 			var num = $("#num").val();
+			var balance = $("#balance").val();
+			var point = $("#point").val();
 			if(firstNm == ""){
 				alert("초기문자를 입력해주세요.");
 				return;
@@ -62,11 +72,19 @@
 				alert("생성 개수를 입력해주세요.");
 				return;
 			}
-			if(num > 100){
-				alert("AI 생성 최대 개수는 100개입니다.");
+			if(num > 1000){
+				alert("AI 생성 최대 개수는 1000개입니다.");
 				return;
 			}
-			var param = {"firstNm" : firstNm , "num" : num};
+			if(balance == "" || balance < 0 ){
+				alert("골드를 입력해주세요.");
+				return;
+			}
+			if(point == "" || point < 0 ){
+				alert("칩을 입력해주세요.");
+				return;
+			}
+			var param = {"firstNm" : firstNm , "num" : num , "balance" : balance , "point" : point};
 			$.ajax({
 				type:'post',
 				data:param,

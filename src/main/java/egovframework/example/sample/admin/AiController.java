@@ -78,6 +78,8 @@ public class AiController {
 		EgovMap in = new EgovMap();
 		String result = "success";
 		int num = Integer.parseInt(""+request.getParameter("num"));
+		int balance = Integer.parseInt(""+request.getParameter("balance"));
+		int point = Integer.parseInt(""+request.getParameter("point"));
 		int cnt = 0;
 		String firstNm = ""+request.getParameter("firstNm");
 		for(int numCnt=0; numCnt < num; numCnt ++) {
@@ -94,6 +96,8 @@ public class AiController {
 					in.put("midx", ""+ed.get("midx"));
 					in.put("nickname", id);
 					in.put("ai", "1");
+					in.put("balance", balance);
+					in.put("point", point);
 					sampleDAO.insert("insertMemberInfo" , in); // ai설정 추가 
 					sampleDAO.insert("insertMemberItem" , in); // AI item 추가 
 				} catch (Exception e) {
