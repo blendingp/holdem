@@ -12,7 +12,7 @@
 	<properties>
 	    <spring.maven.artifact.version>4.1.2.RELEASE</spring.maven.artifact.version>
 		<egovframework.rte.version>3.6.0</egovframework.rte.version>
-		<org.springframework-version>4.1.7.RELEASE</org.springframework-version>
+		<org.springframework-version>4.2.2.RELEASE</org.springframework-version>
         <jackson.version>2.11.2</jackson.version> 
 	</properties>
 
