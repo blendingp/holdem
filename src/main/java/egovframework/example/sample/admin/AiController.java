@@ -115,6 +115,34 @@ public class AiController {
 		return obj.toJSONString();
 	}
 	
+	@RequestMapping(value="/aiSetMoney.do")
+	public String aiSetMoney() {
+		return "admin/aiSetMoney";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/aiSetMoneyProcess.do", produces="application/json; charset=utf8;")
+	public String aiSetMoneyProcess(HttpServletRequest request)throws Exception {
+		JSONObject obj = new JSONObject();
+		EgovMap in = new EgovMap();
+		String result = "success";
+		int balance = Integer.parseInt(""+request.getParameter("balance"));
+		int point = Integer.parseInt(""+request.getParameter("point"));
+		try {
+			in.put("type", "balance");
+			in.put("amount", balance);
+			sampleDAO.update("updateAiSetMoney",in);
+			in.put("type", "point");
+			in.put("amount", point);
+			sampleDAO.update("updateAiSetMoney",in);
+			obj.put("result", result);
+			return obj.toJSONString();
+		} catch (Exception e) {
+			result = "fail";
+			obj.put("result", result);
+			return obj.toJSONString();
+		}
+	}
 	
 }
 

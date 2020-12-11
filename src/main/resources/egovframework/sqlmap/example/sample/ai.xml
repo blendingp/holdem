@@ -64,5 +64,13 @@
 				( #midx#, 'bank', 0 );
         ]]>
 	</insert>
+	<update id="updateAiSetMoney" parameterClass="EgovMap">
+        <![CDATA[
+			update item i 
+			left join member_info mi on mi.ai = 1
+			set amount = #amount# 
+			where i.midx = mi.midx and i.type = #type#
+        ]]>
+	</update>
 	
 </sqlMap>
