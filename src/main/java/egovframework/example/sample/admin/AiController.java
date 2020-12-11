@@ -120,6 +120,7 @@ public class AiController {
 		return "admin/aiSetMoney";
 	}
 	
+	
 	@ResponseBody
 	@RequestMapping(value = "/aiSetMoneyProcess.do", produces="application/json; charset=utf8;")
 	public String aiSetMoneyProcess(HttpServletRequest request)throws Exception {
