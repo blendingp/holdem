@@ -129,7 +129,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         JSONParser p = new JSONParser();
         JSONObject obj = (JSONObject)p.parse(msg);
         
-        System.out.println(obj.toJSONString());
         switch(""+ obj.get("protocol"))
 		{
         	case "requestprofile"://클라이언트가 자신의 프로필 정보를 요청한 것에 대한 응답.
@@ -140,12 +139,11 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     		{    			    			
     			User u = usermanager.find(session);    			
 				int roomidx = Integer.parseInt(""+obj.get("roomidx"));
-				System.out.println("leave roomnum :"+u.roomnum);
     			roommanager.leaveRoom(u.roomnum, u);    	    			
     			//AI일경우 자동 재충전 처리
-    			if(u.isAI == true)
+    			if(u.isAI == true && u.point < 10000000)
     			{
-    				u.point += 20000000;
+    				u.point += 10000000;
     				// insertLog 머니로그 남겨야 함 !!!
     				JSONObject chgobj=new JSONObject();
     				chgobj.put("cmd", "aiautocharge");
@@ -153,7 +151,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     				chgobj.put("currentbalance",""+u.balance);
     				u.sendMe(chgobj);
     			}
-    			System.out.println("leave dbg 5");
     		}break;
         	case "connect":
         	{        	
@@ -436,7 +433,8 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 						roommanager.checkTimerGame();
 						JackpotManager.Update();
                     } catch (InterruptedException e) {
-                        e.printStackTrace();
+                        
+                        System.out.println( "socektThread \n"+e.getMessage() );
                         break;
                     }
                 }

@@ -44,7 +44,14 @@ public class UserManager {
 		// 없다면 얜 아직 로긴한 애가 아니니까 스킵
 
 		Map<String, Object> m = session.getAttributes();
-		int uidx = Integer.parseInt("" + m.get("useridx"));
+		int uidx = -1;
+		try {
+			uidx = Integer.parseInt("" + m.get("useridx"));
+		}catch(Exception e)
+		{
+			System.out.println("User find error:"+e.getMessage() );
+			return null;
+		}
 
 		for (User a : userlist) {
 			if (a.uidx == uidx) {
@@ -635,12 +642,14 @@ public class UserManager {
 	}
 
 	public void GetUserInfo(WebSocketSession session) {
-
+		
 		find(session).CheckExpireTodayRecord();
 
 		JSONObject cobj = new JSONObject();
 		cobj.put("cmd", "userinfo");							
-		cobj.put("info", find(session).MakeUserInfo());		
+		cobj.put("info", find(session).MakeUserInfo());
+		
+		System.out.println("GetUserInfo:"+find(session).point );
 
 		JSONObject jackpot = new JSONObject();
 		jackpot.put("cmd", "jackpot");							

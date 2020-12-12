@@ -825,7 +825,6 @@ public class User {
 				if( (""+ed.get("ai")).compareTo("1") == 0 ) 
 				{
 					this.isAI = true;
-					System.out.println("ai 유저 로긴:"+_info.nickname );
 				}
 			}catch(Exception e) 
 			{
