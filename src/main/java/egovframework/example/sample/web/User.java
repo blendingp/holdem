@@ -262,7 +262,7 @@ public class User {
 				{
 					return 0;
 				}
-				this.cash += 110;
+				this.cash += 11;
 				in.put("amount", this.cash);
 				in.put("type", "cash");
 				iscash = 1;					
@@ -273,7 +273,7 @@ public class User {
 				{
 					return 0;
 				}
-				this.cash += 550;
+				this.cash += 55;
 				in.put("amount", this.cash);
 				in.put("type", "cash");
 				iscash = 1;				
@@ -284,7 +284,7 @@ public class User {
 				{
 					return 0;
 				}
-				this.cash += 1100;
+				this.cash += 110;
 				in.put("amount", this.cash);
 				in.put("type", "cash");
 				iscash = 1;					
@@ -295,11 +295,11 @@ public class User {
 				{
 					return 0;
 				}
-				this.cash += 2200;
+				this.cash += 220;
 				in.put("amount", this.cash);
 				in.put("type", "cash");
 				iscash = 1;				
-				break;			
+				break;					
 			case "silver": {
 				Members.BuyMembers(this, 1);
 				in.put("amount", this.cash);
