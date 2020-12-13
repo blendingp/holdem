@@ -9,8 +9,8 @@
 <%
     NiceID.Check.CPClient niceCheck = new  NiceID.Check.CPClient();
     
-    String sSiteCode = "BS429";            // NICE로부터 부여받은 사이트 코드
-    String sSitePassword = "QyPjnDjRKQle";        // NICE로부터 부여받은 사이트 패스워드
+    String sSiteCode = "BT276";            // NICE로부터 부여받은 사이트 코드
+    String sSitePassword = "vaw41BsXMN8v";        // NICE로부터 부여받은 사이트 패스워드
     
     String sRequestNumber = "REQ0000000001";            // 요청 번호, 이는 성공/실패후에 같은 값으로 되돌려주게 되므로 
                                                         // 업체에서 적절하게 변경하여 쓰거나, 아래와 같이 생성한다.

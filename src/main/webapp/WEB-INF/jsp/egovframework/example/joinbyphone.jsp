@@ -6,8 +6,8 @@
 
     String sEncodeData = requestReplace(request.getParameter("EncodeData"), "encodeData");
 
-    String sSiteCode = "BS429";			// NICE로부터 부여받은 사이트 코드
-    String sSitePassword = "QyPjnDjRKQle";		// NICE로부터 부여받은 사이트 패스워드
+    String sSiteCode = "BT276";			// NICE로부터 부여받은 사이트 코드
+    String sSitePassword = "vaw41BsXMN8v";		// NICE로부터 부여받은 사이트 패스워드
 
     String sCipherTime = "";			// 복호화한 시간
     String sRequestNumber = "";			// 요청 번호
@@ -88,10 +88,10 @@
                     success : function(data) {
                     	obj = data;                         	
                     	var aa = obj.aa;                    	
-                    	opener.parent.getphone(mobile, sBirthDate, idnum, sName, sDupInfo, 0, aa);                    	
+                    	//opener.parent.getphone(mobile, sBirthDate, idnum, sName, sDupInfo, 0, aa);                    	
                     },
                      complete : function(data) {
-                        alert("인증 완료 창을 닫아주세요");
+                        //alert("인증 완료 창을 닫아주세요");
                     	 self.close(); 
                      },
                      error : function(xhr, status , error){console.log("ajax ERROR!!! : " );}
@@ -174,13 +174,13 @@
 
 <html>
 <head>
-    <title>ALLRENT</title>
+    <title>WinGame</title>
 </head>
 <body>
  	<center>
     <p><p><p><p>
-    본인인증이 완료 되었습니다.<br>
-     <table border=1>
+    본인인증이 완료 되었습니다.<br>인증 완료 창을 닫아주세요.
+     <%-- <table border=1>
         <tr>
             <td>복호화한 시간</td>
             <td><%= sCipherTime %> (YYMMDDHHMMSS)</td>
@@ -233,7 +233,7 @@
 			<td colspan="2">인증 후 결과값은 내부 설정에 따른 값만 리턴받으실 수 있습니다. <br>
 			일부 결과값이 null로 리턴되는 경우 관리담당자 또는 계약부서(02-2122-4615)로 문의바랍니다.</td>
 		</tr>
-		</table><br><br>       
+		</table><br><br>   --%>     
     <%= sMessage %><br> 
     </center>  
 </body>

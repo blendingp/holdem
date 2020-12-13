@@ -4,9 +4,11 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import egovframework.example.sample.service.impl.SampleDAO;
@@ -40,7 +42,7 @@ public class NiceController {
 	}	
 	
 	@ResponseBody
-	@RequestMapping(value = "/insertAuth.do")
+	@RequestMapping(value = "/insertAuth.do", method = RequestMethod.POST ,produces = "application/json; charset=utf8" )
 	public String insertAuth(HttpServletRequest request, ModelMap model) throws Exception {
 		String midx = request.getParameter("midx");
 		String birthDate = request.getParameter("birthDate");
@@ -54,7 +56,9 @@ public class NiceController {
 		in.put("uid", uid);
 		in.put("autchTick", autchTick);
 		sampleDAO.insert("insertAuthSelf",in);
-		
-		return "ok";
+		System.out.println("post insertAuth End");
+		JSONObject obj = new JSONObject();
+		obj.put("result", "ok");
+		return obj.toJSONString();
 	}
 }
