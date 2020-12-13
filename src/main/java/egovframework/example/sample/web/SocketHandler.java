@@ -128,6 +128,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         String msg = ""+message.getPayload();
         JSONParser p = new JSONParser();
         JSONObject obj = (JSONObject)p.parse(msg);
+        System.out.println("cmd:"+msg);
         
         switch(""+ obj.get("protocol"))
 		{

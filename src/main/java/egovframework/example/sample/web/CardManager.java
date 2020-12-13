@@ -6,6 +6,8 @@ import java.util.Collections;
 
 import org.springframework.web.socket.WebSocketSession;
 
+import egovframework.example.sample.admin.CardTestController;
+
 public class CardManager {
 	ArrayList<Card> cardlist = new ArrayList<Card>();
 	int popcard = 0;
@@ -25,16 +27,16 @@ public class CardManager {
 	}
 	public void shuffleCard(){
 		tmidx = 0;
-		SocketHandler.jokbotest = 0;//테스트 할때만 풀어서 쓰자.
-		switch(SocketHandler.jokbotest){
+		switch( CardTestController.jokbotest ){
 		case 0:
 		case -1:Collections.shuffle(cardlist);
 			break;
-		case 1://트리플 커뮤니티에 두장 깔고, 한장은 개인 카드로 주기 (첫번째 사람)
-			cv(0,5);cv(1,8);
-			cv(3,5);cv(2,2);
-			cv(3,3);cv(0,7);
-			cv(2,5);cv(1,5);cv(3,7);cv(3,10);cv(3,11);break;
+		case 1:{
+			for(int i=0;i<CardTestController.cards.length;i++)
+			{
+				cv(CardTestController.cards[i]/13,CardTestController.cards[i]%13);
+			}
+		}break;
 		case 2://원페어   커뮤니티에 한장 깔고, 한장은 개인 카드로 주기 (첫번째 사람)
 			cv(0,5);cv(0,7);
 			cv(1,2);cv(1,3);

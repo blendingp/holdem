@@ -255,6 +255,7 @@
 	
 	<form action="/holdem/admin/gameDetailLogp.do" name="listForm" id="listForm">
 		<input type="hidden" name="pageIndex" value="1"/>
+		<input type="hidden" name="gameid" value="${gameid}"/>
 	</form>	
 
    <jsp:include page="../frame/adminbottom.jsp" flush="true" />
