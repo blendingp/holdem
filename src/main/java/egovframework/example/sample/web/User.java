@@ -631,7 +631,10 @@ public class User {
 
 	public UserInfo MakeUserInfo() {
 		Task.Expired(this);
-		ExpireMembers();
+		if( memberInfo.grade > 0 && memberInfo.expire < System.currentTimeMillis() )
+		{
+			ExpireMembers();
+		}		
 
 		UserInfo info = new UserInfo();
 		info.balance = balance;

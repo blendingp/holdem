@@ -985,7 +985,10 @@ public class GameManager {
 		u.betmoney += tmo ;//나의 배팅금액 현재돈+배팅금액
 		money = prebetmoney;
 		
-		prebetmoney = tmo;
+		if( betkind != 8 )
+		{
+			prebetmoney = tmo;
+		}		
 		
 		if( preTotalBetmoney < u.betmoney)
 		{
@@ -1062,7 +1065,7 @@ public class GameManager {
 		totalcnt++;
 		
 		nextTurn();					
-		long prev = tmo;
+		long prev = prebetmoney;
 
 		if( room.isPrivate() == true )
 		{
