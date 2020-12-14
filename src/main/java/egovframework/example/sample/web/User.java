@@ -515,7 +515,9 @@ public class User {
 
 			rt[0] = SocketHandler.sk.sampleDAO.update("updateItemAmont", in[0]);
 			rt[1] = SocketHandler.sk.sampleDAO.update("updateItemAmont", in[1]);
-		} else {
+		} 
+		else if( item == 1 ) 
+		{
 			if (action == 0) {
 				if (this.balance < amount) {
 					return 0;
@@ -544,6 +546,27 @@ public class User {
 			in[0].put("type", "balance");
 			in[1].put("amount", this.safe_balance);
 			in[1].put("type", "safe_balance");
+
+			rt[0] = SocketHandler.sk.sampleDAO.update("updateItemAmont", in[0]);
+			rt[1] = SocketHandler.sk.sampleDAO.update("updateItemAmont", in[1]);
+		}
+		else
+		{
+			if (this.bank < amount) {
+				return 0;
+			}
+
+			if (this.balance + amount > this.memberInfo.limit_gold) {
+				return 0;
+			}
+
+			this.bank -= amount;
+			this.balance += amount;
+
+			in[0].put("amount", this.balance);
+			in[0].put("type", "balance");
+			in[1].put("amount", this.bank);
+			in[1].put("type", "bank");
 
 			rt[0] = SocketHandler.sk.sampleDAO.update("updateItemAmont", in[0]);
 			rt[1] = SocketHandler.sk.sampleDAO.update("updateItemAmont", in[1]);
