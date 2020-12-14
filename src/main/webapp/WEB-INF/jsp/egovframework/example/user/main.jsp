@@ -85,8 +85,8 @@
 							<a href="/holdemM.zip" class="googleplay_btn w-inline-block" download>
 								<img src="/holdem/webflow/images/googleplay_button.png" loading="lazy" alt="" class="googleplay_btnicon">
 							</a> 
-							<%-- <a href="/holdem.zip" class="pcdownload_btn w-inline-block" download>--%>
-							<a href="/holdem/user/ldPlayerGuide.do" class="pcdownload_btn w-inline-block">
+							<a href="/holdem.zip" class="pcdownload_btn w-inline-block" download>
+							<%-- <a href="/holdem/user/ldPlayerGuide.do" class="pcdownload_btn w-inline-block">--%>
 								<img src="/holdem/webflow/images/pc_button.png" loading="lazy" alt="" class="pcdownload_btnicon">
 							</a>
 						</div>

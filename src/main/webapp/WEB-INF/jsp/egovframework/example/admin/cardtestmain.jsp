@@ -74,11 +74,14 @@ var card=[];
 	}
 	function sendcard(){
 		let value='';
-		$("#cardpan div").each(function(){
+		$("#cardpan>.card").each(function(){
+			
 			let v = $(this).attr('value');
+			console.log("v:"+v);
 			if( value.length != 0 ) value+=",";
 			value+=v;
 		});
+		console.log("send:"+value);
 		jQuery.ajax({
 			type:"POST",
 			url :"/holdem/cardtest/change.do?mode=1&cards=" +value,
