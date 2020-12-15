@@ -53,7 +53,7 @@
 
 	<select id="GetTodayProfileData" resultClass="EgovMap">
         <![CDATA[
-            SELECT totalgame, win, lose, gaingold, putallin, goldrefillcount, chiprefillcount, expire
+            SELECT totalgame, win, lose, gaingold, gainbalance, putallin, goldrefillcount, chiprefillcount, expire
             FROM profile_holdem_today
             WHERE midx=#midx#
         ]]>
