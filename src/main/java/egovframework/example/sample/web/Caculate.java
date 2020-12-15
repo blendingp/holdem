@@ -51,7 +51,7 @@ public class Caculate {
 	{
 		for(int winnercnt=0; winnercnt<NRanks.size(); winnercnt++)
 		{
-			long amount = winnermoney * (NRanks.get(winnercnt).betmoney / NRanksTotalmoney);
+			long amount = (long)(winnermoney * (NRanks.get(winnercnt).betmoney / (float)NRanksTotalmoney));
 			long winnerpoint = (long)(amount * ( 1 - NRanks.get(winnercnt).memberInfo.commission));
 			//<===== *** 여기에 수수료 로그 남겨야 함.
 			NRanks.get(winnercnt).totalprofile.win++;
