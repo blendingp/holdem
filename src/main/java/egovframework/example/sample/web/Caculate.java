@@ -62,6 +62,8 @@ public class Caculate {
 			if( isGoldMode == true) 
 			{
 				NRanks.get(winnercnt).balance += winnerpoint; 
+				NRanks.get(winnercnt).todayprofile.gainbalance += winnerpoint;
+				
 				if( NRanks.get(winnercnt).totalprofile.highgaingold < winnerpoint )
 				{
 					NRanks.get(winnercnt).totalprofile.highgaingold = winnerpoint;

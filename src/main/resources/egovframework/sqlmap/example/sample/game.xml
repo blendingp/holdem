@@ -260,9 +260,9 @@
 	<update id="UpdateTodayProfileData" parameterClass="egovMap">	
         <![CDATA[
             INSERT INTO profile_holdem_today
-					( midx, totalgame, win, lose, gaingold, putallin, goldrefillcount, chiprefillcount, expire )
-				VALUES ( #midx#, #totalgame#, #win#, #lose#, #gaingold#, #putallin#, #goldrefillcount#, #chiprefillcount#, #expire# )
-				ON DUPLICATE KEY UPDATE totalgame=#totalgame#, win=#win#, lose=#lose#, gaingold=#gaingold#, putallin=#putallin#, goldrefillcount=#goldrefillcount#, chiprefillcount=#chiprefillcount#, expire=#expire#
+					( midx, totalgame, win, lose, gaingold, gainbalance, putallin, goldrefillcount, chiprefillcount, expire )
+				VALUES ( #midx#, #totalgame#, #win#, #lose#, #gaingold#, #gainbalance#, #putallin#, #goldrefillcount#, #chiprefillcount#, #expire# )
+				ON DUPLICATE KEY UPDATE totalgame=#totalgame#, win=#win#, lose=#lose#, gaingold=#gaingold#, gainbalance=#gainbalance#, putallin=#putallin#, goldrefillcount=#goldrefillcount#, chiprefillcount=#chiprefillcount#, expire=#expire#
         ]]>
 	</update>
 

@@ -237,6 +237,8 @@ public class GameManager {
 				{
 					u.balance -= room.defaultmoney;	
 				}
+
+				u.todayprofile.gainbalance -= usermoney;
 			}			
 			else if( room.UsedItem.equals("point") == true){
 				u.prevamount = u.point;								
@@ -1019,7 +1021,8 @@ public class GameManager {
 		}
 		
 		//배팅한 사람 돈 차감 시키기!!!
-		if( room.UsedItem.equals("balance") == true){			
+		if( room.UsedItem.equals("balance") == true){		
+			u.todayprofile.gainbalance -= tmo;	
 			u.balance -= tmo;				
 
 			JackpotManager.AccumulateJackpot(tmo);
