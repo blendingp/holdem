@@ -499,6 +499,19 @@ public class GameManager {
 					rmlist.add(u);
 				}
 
+
+				if( u.balance <= 0 && u.todayprofile.goldrefillcount > 0)
+				{
+					u.todayprofile.goldrefillcount = 0;
+					u.balance = 500;
+					u.ApplyBalanace("balance");
+					ProfileManager.UpdateTodayProfile(u.todayprofile);
+					JSONObject goldrefill = new JSONObject();
+					goldrefill.put("cmd","goldrefill");
+
+					u.sendMe(goldrefill);
+				}
+
 			}			
 			else if( room.UsedItem.equals("point") == true){
 				
