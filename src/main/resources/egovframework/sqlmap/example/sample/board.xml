@@ -328,10 +328,12 @@
      <select id="selectUserListByAdmin" resultClass="EgovMap">
         <![CDATA[
 			select m.midx , m.muserid , mi.nickname  , m.socail, mi.ai  , ifnull(i.amount,0) balance  , ifnull(ii.amount,0) point
+				, ifnull(iii.amount ,0) cash
 			from member m
 			left join member_info mi on mi.midx = m.midx 
 			left join item i on i.midx = m.midx and i.type = 'balance' 
 			left join item ii on ii.midx = m.midx and ii.type = 'point'
+			left join item iii on iii.midx = m.midx and iii.type = 'cash'	
         ]]>
         	<isNotEqual property="uKind" compareValue="all">
         		<isEqual property="uKind" compareValue="normal">where mi.ai = 0 or mi.ai is null</isEqual>
@@ -350,6 +352,7 @@
 			left join member_info mi on mi.midx = m.midx 
 			left join item i on i.midx = m.midx and i.type = 'balance' 
 			left join item ii on ii.midx = m.midx and ii.type = 'point'
+			left join item iii on iii.midx = m.midx and iii.type = 'cash'	
         ]]>
         	<isNotEqual property="uKind" compareValue="all">
         		<isEqual property="uKind" compareValue="normal">where mi.ai = 0 or mi.ai is null</isEqual>
@@ -359,11 +362,13 @@
     
      <select id="selectUserInfoByAdmin" resultClass="EgovMap">
         <![CDATA[
-			select m.midx , m.muserid , mi.nickname  , m.socail, mi.ai  , ifnull(i.amount,0) balance  , ifnull(ii.amount,0) point
+			select m.midx , m.muserid , mi.nickname  , m.socail, mi.ai  , ifnull(i.amount,0) balance  , 
+						ifnull(ii.amount,0) point, ifnull(iii.amount ,0) cash
 			from member m
 			left join member_info mi on mi.midx = m.midx 
 			left join item i on i.midx = m.midx and i.type = 'balance' 
 			left join item ii on ii.midx = m.midx and ii.type = 'point'
+			left join item iii on iii.midx = m.midx and iii.type = 'cash'			
 			where m.midx = #idx#
         ]]>
     </select>
