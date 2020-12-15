@@ -55,6 +55,7 @@
 											<th>AI구분</th>
 											<th>골드</th>
 											<th>칩</th>
+											<th>보석</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -73,6 +74,7 @@
 												</td>
 												<td><fmt:formatNumber value="${item.balance}" pattern="#,###"/></td>
 												<td><fmt:formatNumber value="${item.point}" pattern="#,###"/></td>
+												<td><fmt:formatNumber value="${item.cash}" pattern="#,###"/></td>
 											</tr>
 										</c:forEach>
 									</tbody>

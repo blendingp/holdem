@@ -100,6 +100,26 @@
 												</div>											
 											</div>
 										</div>
+										<div class="row">
+											<div class="col-lg-6">
+												<div class="form-group">
+													<label>보석</label> 
+													<pre><fmt:formatNumber value="${info.cash}" pattern="#,###"/></pre>
+												</div>
+											</div>
+											<div class="col-lg-6">
+												<label>보석 추가 / 삭제</label> 
+												<div class="form-group input-group">
+													<span class="input-group-btn">
+														<button type="button" onclick="javascript:updateMoney('cash','deposit')" class="btn btn-primary">추가</button>
+													</span>
+													<input name="cash" class="form-control" placeholder="숫자만 입력" id="cash" onkeyup="SetNum(this);"/>
+													<span class="input-group-btn">
+														<button type="button" onclick="javascript:updateMoney('cash','withdrawal')" class="btn btn-danger">삭제</button>
+													</span>
+												</div>											
+											</div>
+										</div>
 									</form>
 								</div>
 							</div>
@@ -133,7 +153,14 @@
 					}
 					else if (data.result == 'noMoney')
 					{
-						alert("출금할 금액이 부족합니다.");
+						if(kind == 'balance' || kind == 'point')
+						{
+							alert("금액이 부족합니다.");
+						}
+						else
+						{
+							alert("개수가 부족합니다.");
+						}
 					}
 					else
 					{
