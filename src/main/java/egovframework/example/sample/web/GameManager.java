@@ -1656,6 +1656,7 @@ public class GameManager {
 			JSONObject win = MakeWinCard(level, cards);
 			currentUser.wincard.add(win);
 			if(tempInfo1 == 0)tempInfo1 = 13;
+			if(tempInfo3 == 0)tempInfo3 = 13;
 			return true;
 		}
 		
