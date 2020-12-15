@@ -342,7 +342,7 @@ public class Room {
 		gameManager.watchinguserlist.remove(u);
 		
 		u.clear();
-		System.out.println("<< Room . leave >>");
+		System.out.println("<< Room . leave >> :"+ u.nickname);
 	}
 
 
