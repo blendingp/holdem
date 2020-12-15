@@ -360,7 +360,7 @@
 				INSERT INTO item
 					( midx, type, amount )
 				VALUES 
-				( #midx#, 'balance', 0 ),
+				( #midx#, 'balance', 500 ),
 				( #midx#, 'cash', 0 ),
 				( #midx#, 'budget', 0 ),
 				( #midx#, 'point', #point# ),
