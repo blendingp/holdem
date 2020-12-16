@@ -214,7 +214,8 @@ public class GameManager {
 			{
 				continue;
 			}
-			
+
+			SocketHandler.insertLog(getGameId(), "join", u.uidx , u.balance , u.seat , "참가머니", room.defaultmoney , -1);
 			u.init();
 			u.PlayStatus = 1;
 			u.jokbocode = 0;
@@ -270,7 +271,6 @@ public class GameManager {
 			ProfileManager.UpdateTodayProfile(u.todayprofile);
 			totalmoney += usermoney;
 			outSBUser = outBBUser = null;
-			SocketHandler.insertLog(getGameId(), "join", u.uidx , u.balance , u.seat , "참가머니", usermoney , -1);
 		}			
 		
 		allincount = 0;		
@@ -394,13 +394,21 @@ public class GameManager {
 		}
 		
 		if(GameMode.compareTo("twoCard")==0)
-		{
+		{			
 			if(  checkCmdTime(2)   ){
-				setWorkTime();
-				drawCard();
-				resetGuBetmoney();
-				changeGameMode("sbBet");
-				whosturn = getDealerSeatOffset(1); // 첫 베팅 하는 사람은 딜러 다음 사람
+
+				if( userlist.size() <= 1 )
+				{
+					changeGameMode("showResult");
+				}
+				else
+				{
+					setWorkTime();
+					drawCard();
+					resetGuBetmoney();
+					changeGameMode("sbBet");
+					whosturn = getDealerSeatOffset(1); // 첫 베팅 하는 사람은 딜러 다음 사람
+				}				
 			}
 
 		}
@@ -615,7 +623,7 @@ public class GameManager {
 		JSONObject obj = new JSONObject();					
 		obj.put("cmd","startGame");
 		obj.put("gameid", gameId);
-		obj.put("smoney",  totalmoney );
+		obj.put("smoney",  room.defaultmoney * userlist.size() );
 		obj.put("maxmoney", room.maxmoney);
 		obj.put("roompeople", userlist.size() );
 		obj.put("dealer", getDealerSeat() );
@@ -1834,22 +1842,20 @@ public class GameManager {
 		ArrayList<Integer> winners = new ArrayList<>();
 		
 		//승자정산하기 전에 콜을 못받은 머니는 환불해줌.
-		if( room.isPrivate() != true || userlist.size() != 2)
+		if( lastcallbackmoney > 0 )
 		{
-			if( lastcallbackmoney > 0 )
+			if( room.UsedItem.equals("balance") == true)
 			{
-				if( room.UsedItem.equals("balance") == true)
-				{
-					SearchUserBySeat(lastbetuser).balance += lastcallbackmoney;
-				}else
-				{
-					SearchUserBySeat(lastbetuser).point += lastcallbackmoney;
-				}
-				SearchUserBySeat(lastbetuser).betmoney -= lastcallbackmoney;			
-				totalmoney -= lastcallbackmoney;
-				SocketHandler.insertLog(getGameId(), "Payback", -1, lastcallbackmoney, -1, "노콜머니 환불" , -1, -1);
+				SearchUserBySeat(lastbetuser).balance += lastcallbackmoney;
+			}else
+			{
+				SearchUserBySeat(lastbetuser).point += lastcallbackmoney;
 			}
+			SearchUserBySeat(lastbetuser).betmoney -= lastcallbackmoney;			
+			totalmoney -= lastcallbackmoney;
+			SocketHandler.insertLog(getGameId(), "Payback", -1, lastcallbackmoney, -1, "노콜머니 환불" , -1, -1);
 		}
+		
 		//기권승시 족보계산안함 ,이긴사람 돈줌 
 		if( this.checkAbstention() ){
 			sortRank=new ArrayList<User>();
