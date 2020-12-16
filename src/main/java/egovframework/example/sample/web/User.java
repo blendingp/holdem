@@ -631,10 +631,7 @@ public class User {
 
 	public UserInfo MakeUserInfo() {
 		Task.Expired(this);
-		if( memberInfo.grade > 0 && memberInfo.expire < System.currentTimeMillis() )
-		{
-			ExpireMembers();
-		}		
+		CheckOver();
 
 		UserInfo info = new UserInfo();
 		info.balance = balance;
@@ -658,6 +655,90 @@ public class User {
 
 	public void ExpireMembers() {
 		memberInfo = new MembersInfo();
+		long goldamount = 0;
+		long chipamount = 0;
+
+		long overgold = balance - memberInfo.limit_gold;
+		long oversafegold = safe_balance - memberInfo.limit_safe_gold;
+		long overchip = point - memberInfo.limit_point;
+		long oversafechip = safe_point - memberInfo.limit_safe_point;
+
+		goldamount += (overgold > 0) ? overgold : 0;
+		goldamount += (oversafegold > 0) ? oversafegold : 0;
+		chipamount += (overchip > 0) ? overchip : 0;
+		chipamount += (oversafechip > 0) ? oversafechip : 0;
+
+		if (overgold > 0) {
+			this.balance = memberInfo.limit_gold;
+			ApplyBalanace("balance");
+		}
+
+		if (oversafegold > 0) {
+			this.safe_balance = memberInfo.limit_safe_gold;
+			ApplyBalanace("safe_balance");
+		}
+
+		if (overchip > 0) {
+			this.point = memberInfo.limit_point;
+			ApplyBalanace("point");
+		}
+
+		if (oversafechip > 0) {
+			this.safe_point = memberInfo.limit_safe_point;
+			ApplyBalanace("safe_point");
+		}
+
+		ObjectMapper mapper = new ObjectMapper();
+
+		if (goldamount > 0) {
+			InBox inbox = InBox.MakeInBox("goldover", uidx, 4, "admin");
+			Item item = new Item();
+			item.Type = "balance";
+			item.Amount = goldamount;
+			inbox.ItemList.add(item);
+			inbox.Expire = System.currentTimeMillis() + 604800000;
+
+			try {
+				EgovMap refundin = new EgovMap();
+				refundin.put("uid", inbox.UID);
+				refundin.put("midx", inbox.Midx);
+				refundin.put("type", inbox.Type);
+				refundin.put("title", inbox.Title);
+				refundin.put("body", mapper.writeValueAsString(inbox.ItemList));
+				refundin.put("expire", inbox.Expire);
+
+				SocketHandler.sk.sampleDAO.insert("AddInbox", refundin);
+			} catch (IOException e) {
+
+			}
+		}
+
+		if (chipamount > 0) {
+			InBox inbox = InBox.MakeInBox("chipover", uidx, 4, "admin");
+			Item item = new Item();
+			item.Type = "point";
+			item.Amount = chipamount;
+			inbox.ItemList.add(item);
+			inbox.Expire = System.currentTimeMillis() + 604800000;
+
+			try {
+				EgovMap refundin = new EgovMap();
+				refundin.put("uid", inbox.UID);
+				refundin.put("midx", inbox.Midx);
+				refundin.put("type", inbox.Type);
+				refundin.put("title", inbox.Title);
+				refundin.put("body", mapper.writeValueAsString(inbox.ItemList));
+				refundin.put("expire", inbox.Expire);
+
+				SocketHandler.sk.sampleDAO.insert("AddInbox", refundin);
+			} catch (IOException e) {
+
+			}
+		}
+	}
+
+	public void CheckOver()
+	{
 		long goldamount = 0;
 		long chipamount = 0;
 
