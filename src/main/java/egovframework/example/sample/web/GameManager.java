@@ -801,7 +801,7 @@ public class GameManager {
 		}
 		else if(kind==5){// 풀
 			long tc = preTotalBetmoney - mybetmoney;
-			return tc + totalmoney ;
+			return tc + (totalmoney+tc) ;
 		}
 		else if(kind==6)// 맥스
 			return room.maxmoney;
