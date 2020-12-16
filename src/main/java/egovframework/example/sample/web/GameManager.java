@@ -1018,7 +1018,7 @@ public class GameManager {
 		
 		if( u.seat != lastbetuser )
 		{
-			if( lastbetmoney < u.betmoney )
+			if( lastbetmoney <= u.betmoney )
 			{
 				lastcallbackmoney = u.betmoney - lastbetmoney;
 				lastbetmoney = u.betmoney;
