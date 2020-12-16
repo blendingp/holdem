@@ -2,6 +2,8 @@ package egovframework.example.sample.web;
 
 import java.util.ArrayList;
 
+import egovframework.rte.psl.dataaccess.util.EgovMap;
+
 public class Caculate {
 	
 	ArrayList<User> NRanks;//n등 공동우승자 seat번호 모아두는 배열
@@ -9,10 +11,12 @@ public class Caculate {
 	long NRanksTotalmoney;//n등들의 totalmoney		
 	public boolean isGoldMode=false;//true면 골드머니, false이면 칩머니
 	public Room room=null;	
+	long total=0;
 	
 	public void init(long totalmoney,Room r) {
 		NRanks=new ArrayList<User>();
 		tempTotal=totalmoney;
+		total = totalmoney;
 		NRanksTotalmoney=0;
 		room = r;		
 	}
@@ -53,6 +57,7 @@ public class Caculate {
 		{
 			long amount = (long)(winnermoney * (NRanks.get(winnercnt).betmoney / (float)NRanksTotalmoney));
 			long winnerpoint = (long)(amount * ( 1 - NRanks.get(winnercnt).memberInfo.commission));
+			if(total ==  NRanksTotalmoney) winnerpoint = amount;
 			//<===== *** 여기에 수수료 로그 남겨야 함.
 			NRanks.get(winnercnt).totalprofile.win++;
 			NRanks.get(winnercnt).todayprofile.win++;
@@ -99,6 +104,12 @@ public class Caculate {
 			SocketHandler.insertLog(room.gameManager.getGameId(), "result", NRanks.get(winnercnt).uidx , NRanks.get(winnercnt).balance, NRanks.get(winnercnt).point
 					, "승리금:"+winnerpoint , NRanks.get(winnercnt).jokbocode , -1 );
 			
+			EgovMap in = new EgovMap();
+			in.put("uidx", ""+NRanks.get(winnercnt).uidx);
+			in.put("gameid", room.gameManager.getGameId());
+			in.put("winmoney", ""+amount);
+			in.put("fee", ""+(amount-winnerpoint) );
+			SocketHandler.sk.sampleDAO.insert("insertCommission", in);
 			NRanks.get(winnercnt).PlayStatus = 1;
 			JackpotManager.SendJackpotMessage(NRanks.get(winnercnt));
 			NRanks.get(winnercnt).ApplyBalanace(room.UsedItem);

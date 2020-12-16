@@ -377,4 +377,20 @@
 			]]>
 	</insert>
 
+	<insert id="insertCommission">
+		<![CDATA[
+			INSERT INTO goldfeelog
+				( uidx
+				  , gameid
+				  , gdate
+				  , winmoney
+				  , fee
+				  )
+			VALUES ( #uidx#
+				  , #gameid#
+				  , now()
+				  , #winmoney#
+				  , #fee#)
+		]]>
+</insert>
 </sqlMap>
