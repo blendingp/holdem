@@ -395,14 +395,15 @@ public class GameManager {
 		
 		if(GameMode.compareTo("twoCard")==0)
 		{
-			if(  checkCmdTime(2)   ){
+			if (userlist.size() <= 1) {
+				changeGameMode("showResult");
+			} else {
 				setWorkTime();
 				drawCard();
 				resetGuBetmoney();
 				changeGameMode("sbBet");
 				whosturn = getDealerSeatOffset(1); // 첫 베팅 하는 사람은 딜러 다음 사람
 			}
-
 		}
 
 		if(GameMode.compareTo("sbBet")==0)
