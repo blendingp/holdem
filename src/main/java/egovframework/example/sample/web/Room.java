@@ -142,6 +142,7 @@ public class Room {
 			} else if (this.UsedItem.equals("point") == true) {
 				item.put("balance", user.point);
 			}
+			item.put("members", user.memberInfo.grade);
 			item.put("isdie", user.die);
 			item.put("nickname", "" + user.nickname);
 			item.put("profile", user.todayprofile);
@@ -159,6 +160,7 @@ public class Room {
 			} else if (this.UsedItem.equals("point") == true) {
 				item.put("balance", user.point);
 			}
+			item.put("members", user.memberInfo.grade);
 			item.put("isdie", user.die);
 			item.put("nickname", "" + user.nickname);
 			item.put("profile", user.todayprofile);
@@ -198,6 +200,7 @@ public class Room {
 			} else if (this.UsedItem.equals("point") == true) {
 				item.put("balance", user.point);
 			}
+			item.put("members", user.memberInfo.grade);
 			item.put("isdie", user.die);
 			item.put("nickname", "" + user.nickname);
 			item.put("profile", user.todayprofile);
@@ -215,6 +218,7 @@ public class Room {
 			} else if (this.UsedItem.equals("point") == true) {
 				item.put("balance", user.point);
 			}
+			item.put("members", user.memberInfo.grade);
 			item.put("isdie", user.die);
 			item.put("nickname", "" + user.nickname);
 			item.put("profile", user.todayprofile);
