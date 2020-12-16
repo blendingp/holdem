@@ -1,12 +1,13 @@
 package egovframework.example.sample.web;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.annotation.Resource;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -19,6 +20,8 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import egovframework.example.sample.service.impl.SampleDAO;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
  
@@ -27,6 +30,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 	@Resource(name = "sampleDAO") SampleDAO sampleDAO;
 	
 	public static int gameidIdx = -1;
+	public static String gameIdentifier = "";
     private final Logger logger = LogManager.getLogger(getClass());
     private Set<WebSocketSession> sessionSet = new HashSet<WebSocketSession>();
 
@@ -37,10 +41,11 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     static public int jokbotest = -1;
     
 	public static SocketHandler sk=null; 
-	public static Object insertLog(int gameid,String gkind,int useridx, long value1, long value2, String value3, long value4,long value5){
+	public static Object insertLog(int gameid, String gameIdentifier, String gkind,int useridx, long value1, long value2, String value3, long value4,long value5){
 		Object rt=null;
 		EgovMap in=new EgovMap();
 		in.put("gameid", gameid);
+		in.put("gameIdentifier", gameIdentifier);
 		in.put("gkind", gkind);
 		in.put("useridx", useridx);
 		in.put("value1", value1);
@@ -58,6 +63,10 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 		return gameidIdx;
 	}
 	
+	public static String getGameIdentifier() throws NoSuchAlgorithmException{				
+		//return BytesToHex( Sha256(""+gameidIdx) );
+		return (""+(new Date()).getTime())+gameidIdx;
+	}
     
     public SocketHandler GetHandl(){return sk;}
     public SocketHandler() {
@@ -425,9 +434,11 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     @Override
     public void afterPropertiesSet() throws Exception {
     	gameidIdx = 0;
-    	EgovMap gameId = (EgovMap) sampleDAO.select("selectLastGameId");
+    	EgovMap gameId = (EgovMap) sampleDAO.select("selectLastGameId");    	
     	if(gameId!=null)
     		gameidIdx = Integer.parseInt(""+gameId.get("gameid"));
+    	
+    	gameIdentifier = BytesToHex( Sha256(""+gameidIdx) );
     	
     	chatmention.setDAO(sampleDAO);
 		chatmention.uploding();
@@ -487,4 +498,21 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
                }
           }
     }    
+
+    private static byte[] Sha256(String password) throws NoSuchAlgorithmException {
+        MessageDigest messagediegest = MessageDigest.getInstance("SHA-256");
+        messagediegest.update(password.getBytes());
+        messagediegest.update((""+System.currentTimeMillis()).getBytes());
+        return messagediegest.digest();
+    }
+    
+    private static String BytesToHex(byte[] bytes) {
+        StringBuilder builder = new StringBuilder();
+
+        for (byte b: bytes) {
+          builder.append(String.format("%02x", b));
+        }
+        
+        return builder.toString();
+    }	    
 }

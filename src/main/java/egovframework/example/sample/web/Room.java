@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -355,7 +356,12 @@ public class Room {
 	}	
 
 	public void checkStartGame(){
-		gameManager.checkStartGame();
+		try {
+			gameManager.checkStartGame();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}	
 
 	public void checkTimerGame(){

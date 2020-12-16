@@ -44,6 +44,7 @@
 			INSERT INTO gamelog
 				( gkind
 				  , gameid
+				  , gameIdentifier
 				  , gvalue1
 				  , gvalue2
 				  , gvalue3
@@ -53,6 +54,7 @@
 				  , guseridx)
 			VALUES ( #gkind#
 				  , #gameid#
+				  , #gameIdentifier#
 				  , #value1#
 				  , #value2#
 				  , #value3#

@@ -48,7 +48,7 @@
         <div id="page-wrapper">
             <div class="row">
                 <div class="col-lg-12">
-                    <h1 class="page-header">${gameid } - Game Detail Log</h1>
+                    <h1 class="page-header">${gameId } - Game Detail Log</h1>
                 </div>
                 <!-- /.col-lg-12 -->
             </div>
@@ -255,7 +255,8 @@
 	
 	<form action="/holdem/admin/gameDetailLogp.do" name="listForm" id="listForm">
 		<input type="hidden" name="pageIndex" value="1"/>
-		<input type="hidden" name="gameid" value="${gameid}"/>
+		<input type="hidden" name="gameId" value="${gameid}"/>
+		<input type="hidden" name="gameIdentifier" value="${gameIdentifier}"/>
 	</form>	
 
    <jsp:include page="../frame/adminbottom.jsp" flush="true" />

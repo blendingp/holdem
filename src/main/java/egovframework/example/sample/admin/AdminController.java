@@ -127,11 +127,13 @@ public class AdminController {
 		paginationInfo.setRecordCountPerPage(100);
 		paginationInfo.setPageSize(7);
 		
-		String gameid = ""+request.getParameter("gameid");
-		model.addAttribute("gameid", gameid);
+		String gameIdentifier = ""+request.getParameter("gameIdentifier");
+		String gameId = ""+request.getParameter("gameId");		
+		model.addAttribute("gameId", gameId);
+		model.addAttribute("gameIdentifier", gameIdentifier);
 		//인자생성
 		EgovMap in = new EgovMap();
-		in.put("gameid", gameid);
+		in.put("gameIdentifier", gameIdentifier);
 		in.put("firstindex", "" + paginationInfo.getFirstRecordIndex());
 		in.put("recordperpage", "" + paginationInfo.getRecordCountPerPage());
 		List<?> list = (List<?>) sampleDAO.list("GameNumberDetailPaging", in);
