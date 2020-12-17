@@ -385,6 +385,12 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 				usermanager.ReSetNickName(session, ""+obj.get("nickname"));
 		
 			}break;
+			case "reserveleave":
+			{
+				User user = usermanager.find(session);        		        		
+				int roomidx = user.roomnum;
+				roommanager.find(roomidx).BraodCastLeaveReserve(user, Boolean.parseBoolean(""+obj.get("state")));
+			}break;
 			case "getroominfo":
 			{
 				User user = usermanager.find(session);        		        		

@@ -1001,7 +1001,7 @@ public class GameManager {
 		u.betmoney += tmo ;//나의 배팅금액 현재돈+배팅금액
 		money = prebetmoney;
 		
-		if( betkind != 8 )
+		if( betkind != 8 && betkind != 0)
 		{
 			prebetmoney = tmo;
 		}		
