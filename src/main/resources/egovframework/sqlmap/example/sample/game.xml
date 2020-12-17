@@ -130,6 +130,13 @@
         ]]>
 	</select>
 
+	<select id="GetUserName" resultClass="EgovMap">
+        <![CDATA[
+            SELECT nickname FROM member_info
+            WHERE midx=#midx#
+        ]]>
+	</select>
+
 	<select id="GetUserBalance" resultClass="EgovMap">
         <![CDATA[
             SELECT amount
@@ -140,8 +147,8 @@
 
 	<select id="SearchUser" resultClass="EgovMap">
         <![CDATA[
-            SELECT midx FROM member
-            WHERE muserid=#muserid#
+            SELECT midx FROM member_info
+            WHERE nickname=#muserid#
         ]]>
 	</select>
 

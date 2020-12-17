@@ -1001,7 +1001,7 @@ public class GameManager {
 		u.betmoney += tmo ;//나의 배팅금액 현재돈+배팅금액
 		money = prebetmoney;
 		
-		if( betkind != 8 )
+		if( betkind != 8 && betkind != 0)
 		{
 			prebetmoney = tmo;
 		}		
@@ -1018,7 +1018,7 @@ public class GameManager {
 		
 		if( u.seat != lastbetuser )
 		{
-			if( lastbetmoney < u.betmoney )
+			if( lastbetmoney <= u.betmoney )
 			{
 				lastcallbackmoney = u.betmoney - lastbetmoney;
 				lastbetmoney = u.betmoney;

@@ -144,9 +144,9 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 						int roomidx = Integer.parseInt(""+obj.get("roomidx"));	    			
 		    			roommanager.leaveRoom(u.roomnum, u);    	    				    			
 		    			//AI일경우 자동 재충전 처리
-		    			if(u.isAI == true && u.point < 10000000)
+		    			if(u.isAI == true && u.point < 1000000000)
 		    			{
-		    				u.point += 10000000;
+		    				u.point += 1000000000;
 		    				// insertLog 머니로그 남겨야 함 !!!
 		    				JSONObject chgobj=new JSONObject();
 		    				chgobj.put("cmd", "aiautocharge");
@@ -384,6 +384,12 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			{
 				usermanager.ReSetNickName(session, ""+obj.get("nickname"));
 		
+			}break;
+			case "reserveleave":
+			{
+				User user = usermanager.find(session);        		        		
+				int roomidx = user.roomnum;
+				roommanager.find(roomidx).BraodCastLeaveReserve(user, Boolean.parseBoolean(""+obj.get("state")));
 			}break;
 			case "getroominfo":
 			{

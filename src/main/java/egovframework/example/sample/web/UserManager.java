@@ -294,7 +294,7 @@ public class UserManager {
 		{
 			JSONObject item = new JSONObject();
 			item.put("uid", requestlist.get(nCount).UID);			
-			item.put("name", requestlist.get(nCount).GetUserID(requestlist.get(nCount).Midx));			
+			item.put("name", requestlist.get(nCount).GetUserName(requestlist.get(nCount).Midx));			
 			item.put("midx", requestlist.get(nCount).Midx);			
 			item.put("balance", requestlist.get(nCount).GetUserBalance(requestlist.get(nCount).Midx));
 			item.put("friendidx", requestlist.get(nCount).Friendidx);			
@@ -342,7 +342,7 @@ public class UserManager {
 
 			JSONObject item = new JSONObject();
 			item.put("uid", requestlist.get(nCount).UID);			
-			item.put("name", requestlist.get(nCount).GetUserID(requestlist.get(nCount).Midx));							
+			item.put("name", requestlist.get(nCount).GetUserName(requestlist.get(nCount).Midx));							
 			item.put("balance", requestlist.get(nCount).GetUserBalance(requestlist.get(nCount).Midx));			
 			item.put("createdtime", requestlist.get(nCount).Createtime);			
 			item.put("status", requestlist.get(nCount).Status);			
@@ -358,7 +358,7 @@ public class UserManager {
 
 			JSONObject item = new JSONObject();
 			item.put("uid", friendlist.get(nCount).UID);			
-			item.put("name", friendlist.get(nCount).GetUserID(friendlist.get(nCount).Friendidx));								
+			item.put("name", friendlist.get(nCount).GetUserName(friendlist.get(nCount).Friendidx));								
 			item.put("balance", friendlist.get(nCount).GetUserBalance(friendlist.get(nCount).Friendidx));				
 			item.put("createdtime", friendlist.get(nCount).Createtime);			
 			item.put("status", friendlist.get(nCount).Status);			

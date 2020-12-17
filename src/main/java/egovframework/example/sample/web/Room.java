@@ -429,18 +429,23 @@ public class Room {
 										//gameManager.userlist.get(nCount).die = true;				
 				gameManager.leaveuserlist.add(gameManager.userlist.get(nCount));				
 				//gameManager.userlist.remove(gameManager.userlist.get(nCount));				
-
-				JSONObject obj = new JSONObject();
-
-				obj.put("cmd","reserve");				
-				obj.put("seat", user.seat);
-				gameManager.sendRoom(obj);		
+				
+				BraodCastLeaveReserve(user, true);
 				System.out.println("==================================SEND RESERVE  uidx: "+user.uidx+" seat:"+user.seat);
 				if( gameManager.checkAbstention() ){
 					gameManager.TheEnd();
 				}
 			}
 		}		
+	}
+
+	public void BraodCastLeaveReserve(User user, Boolean isreserve)
+	{
+		JSONObject obj = new JSONObject();
+		obj.put("cmd","reserve");		
+		obj.put("state", isreserve);
+		obj.put("seat", user.seat);
+		gameManager.sendRoom(obj);		
 	}
 
 	private void SetRoomInfo(String key)
