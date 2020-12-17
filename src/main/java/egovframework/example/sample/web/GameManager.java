@@ -396,6 +396,7 @@ public class GameManager {
 		if(GameMode.compareTo("twoCard")==0)
 		{
 			if (userlist.size() <= 1) {
+				setWorkTime();
 				changeGameMode("showResult");
 			} else {
 				setWorkTime();
