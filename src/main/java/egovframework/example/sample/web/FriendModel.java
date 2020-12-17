@@ -52,6 +52,16 @@ public class FriendModel {
         return ed.get("muserid").toString();
     }
 
+    public String GetUserName(int idx)
+    {
+        EgovMap searchin = new EgovMap();
+        searchin.put("midx", idx);
+
+        EgovMap ed = (EgovMap) SocketHandler.sk.sampleDAO.select("GetUserName", searchin);
+
+        return ed.get("nickname").toString();
+    }
+
     public long GetUserBalance(int idx)
     {
         EgovMap searchin = new EgovMap();
@@ -89,7 +99,7 @@ public class FriendModel {
 
         ObjectMapper mapper = new ObjectMapper();
 
-        String name = this.GetUserID(idx);
+        String name = this.GetUserName(idx);
         InBox inbox = InBox.MakeInBox(this.UID, idx, 10, name);
         Item item = new Item();
         item.Type = "balance";
