@@ -557,8 +557,13 @@ public class GameManager {
 						if(User.CheckSendPacket(u) == true)
 						{
 							u.session.sendMessage(new TextMessage(mapper.writeValueAsString(obj)));
-						}						
-						SocketHandler.sk.disconnect(u.session);
+						}
+				    	synchronized(SocketHandler.sk.disconnectlist) {
+				    		if( SocketHandler.sk.disconnectlist.contains(u.session) != true) {
+				    			SocketHandler.sk.disconnectlist.add(u.session);
+				    		}
+				    	}
+						SocketHandler.sk.disconnect();
 						u.session.close();						
 					} catch (IOException e) {
 						e.printStackTrace();
