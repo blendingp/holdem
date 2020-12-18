@@ -397,12 +397,19 @@ public class GameManager {
 	}
 
 	void checkStartGame() throws NoSuchAlgorithmException{
-		if(GameMode.compareTo("checkstart")==0){
-			startSetting();
-			DealerSeatSetting();
-			notifyGameStart();
-			cardManager.init();
-			changeGameMode("twoCard");
+		if(GameMode.compareTo("checkstart")==0 ){
+			 if(isPlayable() )
+			 {
+				startSetting();
+				DealerSeatSetting();
+				notifyGameStart();
+				cardManager.init();
+				changeGameMode("twoCard");
+			 }else
+			 {
+				 changeGameMode("대기");
+				 setWorkTime();
+			 }
 		}
 		
 		if(GameMode.compareTo("twoCard")==0)
@@ -637,22 +644,82 @@ public class GameManager {
 		obj.put("bigblind", getDealerSeatOffset(2));
 		sendRoom(obj);
 	}
+	
+	void preJockboCheck() {
+		ArrayList<User> tuserlist=(ArrayList<User>) userlist.clone();
+		ArrayList<User> tsortRank;
+		tsortRank=(ArrayList<User>) tuserlist.clone();
+
+		int ci = 0;
+		int ui = -1;
+		for( User user : tuserlist )
+		{
+			ui++;
+			currentUser = user;
+			int []card = new int[7]; 		
+
+			
+			card[0] =  cardManager.cardlist.get(ui*2+0).cardcode;
+			card[1] =  cardManager.cardlist.get(ui*2+1).cardcode;
+			for(int i = 0; i < 5; i++){				
+				card[2+i] = cardManager.cardlist.get(tuserlist.size()*2 + i).cardcode ;
+			}
+			
+			//3포카드 7트리플 8투페어 9페어			
+			
+			//스트레이트 플러시 2
+			if(checkStraightFlush(card)==true){//
+				currentUser.wlv = 9;
+				currentUser.jokbocode=0x9000000+tempInfo1;
+				currentUser.balance += JackpotManager.GetJackpotAmount();
+				JackpotManager.WithdrawJackpot();
+			}else if(checkFourCard(card) == true ){// 포카드 *
+				currentUser.wlv = 8;
+				currentUser.jokbocode=0x8000000+tempInfo1*0x10 + tempInfo3;
+			}else if(checkFullHouse(card)==true){//풀하우스 *
+				currentUser.wlv = 7;
+				currentUser.jokbocode=0x7000000+tempInfo1*0x10+tempInfo2;
+			}else if(checkFlush(card)==true){//플러시 모양 *
+				currentUser.wlv = 6;
+				currentUser.jokbocode=0x6000000+tempInfo3;
+			}else if(checkStraight(card)==true){//스트레이트숫자 *?
+				currentUser.wlv = 5;
+				currentUser.jokbocode=0x5000000+tempInfo1;
+			}else if(checkThree(card)==true){//트리플*
+				currentUser.wlv = 4;
+				currentUser.jokbocode=0x4000000+tempInfo1*0x100+tempInfo3;
+			}else if(checkTwoPair(card)==true){//투페어*
+				currentUser.wlv = 3;
+				currentUser.jokbocode=0x3000000+tempInfo1*0x100+tempInfo2*0x10+tempInfo3; 
+			}else if(checkPair(card)==true){//원페어 *
+				currentUser.wlv = 2;
+				currentUser.jokbocode= 0x2000000+tempInfo1*0x1000 + tempInfo3;
+			}else {//탑카드 
+				currentUser.wlv = 1;
+				checkTopCard(card);
+				currentUser.jokbocode= 0x1000000 + tempInfo3; 
+			}
+			
+//			SocketHandler.insertLog(getGameId(), "card", currentUser.uidx , currentUser.jokbocode , -1, ""+cardForDebug , -1 , -1 );
+		}
+
+		//유저  족보 순위 정렬
+		tsortRank=(ArrayList<User>) tuserlist.clone();
+		Collections.sort(tsortRank, new Comparator<User>() {
+            @Override public int compare(User s1, User s2) {
+            	return s2.jokbocode - s1.jokbocode;
+            }
+        });
+		cardManager.popcard=0;
+	}
 
 	public void drawCard(){
 		cardManager.shuffleCard();
-		/*cardManager.cardlist.clear();
-		cardManager.cardlist.add(new Card(45));
-		cardManager.cardlist.add(new Card(7));
-		cardManager.cardlist.add(new Card(19));
-		cardManager.cardlist.add(new Card(21));
-		cardManager.cardlist.add(new Card(6));
-		cardManager.cardlist.add(new Card(49));
-		cardManager.cardlist.add(new Card(4));
-		cardManager.cardlist.add(new Card(0));
-		cardManager.cardlist.add(new Card(30));*/
+
+		preJockboCheck();
 
 		JSONObject obj = new JSONObject();
-		//JSONArray j = new JSONArray();
+
 		//카드 두장씩 세팅
 		for(int k =0; k<userlist.size(); k++){
 			userlist.get(k).setCard(cardManager.popCard(), cardManager.popCard());
