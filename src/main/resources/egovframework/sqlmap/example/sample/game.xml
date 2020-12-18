@@ -194,7 +194,7 @@
 	</insert>	
 	<select id="GetAttendance" resultClass="EgovMap">
         <![CDATA[
-            SELECT count, nexttick FROM attendance
+            SELECT count, get, nexttick FROM attendance
             WHERE midx=#midx#
         ]]>
 	</select>
@@ -208,7 +208,7 @@
 	<update id="UpdateAttendance" parameterClass="egovMap">
 		<![CDATA[
 			UPDATE attendance SET
-				count = #count#, nexttick = #nexttick#
+				count = #count#, get = #get#, nexttick = #nexttick#
 				WHERE midx=#midx#
 		]]>
 	</update>
