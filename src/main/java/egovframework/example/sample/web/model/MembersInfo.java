@@ -10,7 +10,7 @@ public class MembersInfo {
     public long limit_safe_gold = 300000;
     public long chiprefill = 0;      
     public long bank_gold = 300000;
-    public float commission = 0.05f;    
+    public float commission = 0.06f;    
     public float gold_cashback = 0.002f;
     public long expire = 0;            
 }

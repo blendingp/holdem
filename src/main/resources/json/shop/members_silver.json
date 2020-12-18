@@ -13,11 +13,11 @@
         "limit_safe_point":500000000000000,
         "limit_gold":10000000,
         "limit_safe_gold":5000000,
-        "commission":0.046,
+        "commission":0.058,
         "chiprefill": 100000000000,
         "avata": 1,
         "bank_gold":5000000,
-        "gold_cashback": 0.0035,
+        "gold_cashback": 0.007,
         "expire":2592000000
     }
 }
