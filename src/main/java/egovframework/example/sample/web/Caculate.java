@@ -101,7 +101,7 @@ public class Caculate {
 			Task.IncreaseTask(NRanks.get(winnercnt), 1, 1);
 			Task.UpdateDB(NRanks.get(winnercnt));
 			
-			SocketHandler.insertLog(room.gameManager.getGameId(), "result", NRanks.get(winnercnt).uidx , NRanks.get(winnercnt).balance, NRanks.get(winnercnt).point
+			SocketHandler.insertLog(room.gameManager.getGameId(), room.gameManager.getGameIdentifier(), "result", NRanks.get(winnercnt).uidx , NRanks.get(winnercnt).balance, NRanks.get(winnercnt).point
 					, "승리금:"+winnerpoint , NRanks.get(winnercnt).jokbocode , -1 );
 			
 			EgovMap in = new EgovMap();

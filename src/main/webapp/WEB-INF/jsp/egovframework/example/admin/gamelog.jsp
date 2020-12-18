@@ -36,8 +36,9 @@
 									<thead>
 										<tr>
 											<th>#</th>
-											<th>번호</th>
+											<th>번호</th>											
 											<th>보기</th>
+											<th>날짜</th>
 										</tr>
 									</thead>
 									<tbody>
@@ -45,11 +46,14 @@
 											<tr>
 												<td>${result.gidx}</td>
 												<td>${result.gameid}</td>
+												
+												
 												<td>
 													<button type="button"
-														onClick="location.href='/holdem/admin/gameDetailLogp.do?gameid=${result.gameid}'"
+														onClick="location.href='/holdem/admin/gameDetailLogp.do?gameIdentifier=${result.gameIdentifier}&gameId=${result.gameid}'"
 														class="btn btn-primary btn-sm">보기</button>
 												</td>
+												<td>${result.gdate}</td>
 											</tr>
 										</c:forEach>
 									</tbody>

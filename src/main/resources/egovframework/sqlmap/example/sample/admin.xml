@@ -43,7 +43,7 @@
              SELECT 
                 *
             FROM gamelog
-            WHERE gameid=#gameid#
+            WHERE gameIdentifier=#gameIdentifier#
             limit $firstindex$, $recordperpage$
         ]]>
     </select>
@@ -51,7 +51,7 @@
         <![CDATA[
             SELECT count(*) num
             FROM gamelog
-            WHERE gameid=#gameid#
+            WHERE gameIdentifier=#gameIdentifier#
         ]]>
     </select>  
     

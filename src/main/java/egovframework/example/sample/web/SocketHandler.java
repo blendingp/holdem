@@ -1,12 +1,14 @@
 package egovframework.example.sample.web;
 
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import javax.annotation.Resource;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -19,7 +21,10 @@ import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import egovframework.example.sample.service.impl.SampleDAO;
+import egovframework.example.sample.web.model.UserMsg;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
  
 public class SocketHandler extends TextWebSocketHandler implements InitializingBean {
@@ -27,8 +32,11 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 	@Resource(name = "sampleDAO") SampleDAO sampleDAO;
 	
 	public static int gameidIdx = -1;
+	public static String gameIdentifier = "";
     private final Logger logger = LogManager.getLogger(getClass());
     private Set<WebSocketSession> sessionSet = new HashSet<WebSocketSession>();
+	public LinkedList<UserMsg> msglist = new LinkedList<UserMsg>();	
+
 
     UserManager usermanager = new UserManager();
     RoomManager roommanager = new RoomManager();
@@ -37,10 +45,11 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     static public int jokbotest = -1;
     
 	public static SocketHandler sk=null; 
-	public static Object insertLog(int gameid,String gkind,int useridx, long value1, long value2, String value3, long value4,long value5){
+	public static Object insertLog(int gameid, String gameIdentifier, String gkind,int useridx, long value1, long value2, String value3, long value4,long value5){
 		Object rt=null;
 		EgovMap in=new EgovMap();
 		in.put("gameid", gameid);
+		in.put("gameIdentifier", gameIdentifier);
 		in.put("gkind", gkind);
 		in.put("useridx", useridx);
 		in.put("value1", value1);
@@ -58,6 +67,10 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 		return gameidIdx;
 	}
 	
+	public static String getGameIdentifier() throws NoSuchAlgorithmException{				
+		//return BytesToHex( Sha256(""+gameidIdx) );
+		return (""+(new Date()).getTime())+gameidIdx;
+	}
     
     public SocketHandler GetHandl(){return sk;}
     public SocketHandler() {
@@ -120,12 +133,31 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
   
         this.logger.info("add session! id: " + session.getId());
     }
- 
     @Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-    
     	super.handleMessage(session, message);
         String msg = ""+message.getPayload();
+        synchronized(msglist) {
+            msglist.add(new UserMsg(session,msg));
+        }
+    }
+ 
+    public void cmdProcess() throws Exception {
+    
+    	//================================================={ msg
+    	UserMsg um = null;
+        synchronized(msglist) {
+        	if( msglist.size()>0)
+        	{
+        		um = msglist.pop();
+        	}
+        }
+        if( um == null)
+        	return;
+        WebSocketSession session=um.session;
+        String msg=um.msg;
+        //=================================================} msg
+        
         JSONParser p = new JSONParser();
         JSONObject obj = (JSONObject)p.parse(msg);
         System.out.println("cmd:"+msg);
@@ -421,13 +453,15 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         return super.supportsPartialMessages();
     }
  
-    public static int second = 0;   
+    public static int second = 0,sect=0;   
     @Override
     public void afterPropertiesSet() throws Exception {
     	gameidIdx = 0;
-    	EgovMap gameId = (EgovMap) sampleDAO.select("selectLastGameId");
+    	EgovMap gameId = (EgovMap) sampleDAO.select("selectLastGameId");    	
     	if(gameId!=null)
     		gameidIdx = Integer.parseInt(""+gameId.get("gameid"));
+    	
+    	gameIdentifier = BytesToHex( Sha256(""+gameidIdx) );
     	
     	chatmention.setDAO(sampleDAO);
 		chatmention.uploding();
@@ -440,15 +474,21 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
             public void run() {
                 while (true) {
                     try {
-                        Thread.sleep(500);
-                        second++;                        
+                        Thread.sleep(50);
+                        sect++;
+                        if(sect>=10) {
+                        	second++;
+                        	sect=0;
+                        }
+                        cmdProcess();
                         roommanager.checkStartGame();
 						roommanager.checkTimerGame();
 						JackpotManager.Update();
                     } catch (InterruptedException e) {
-                        
-                        System.out.println( "socektThread \n"+e.getMessage() );
-                        break;
+                        System.out.println( "socketThread \n"+e.getMessage() );
+                    }catch(Exception e)
+                    {
+                    	System.out.println( "other errors lg \n"+e.getMessage() );
                     }
                 }
             }
@@ -479,12 +519,44 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
  
     }
     public synchronized void sendMessage(WebSocketSession session,String message) {
-         if (session.isOpen()) {
-              try {
-                  session.sendMessage(new TextMessage(message));
-               } catch (Exception ignored) {
-                  this.logger.error("fail to send message!", ignored);
-               }
-          }
-    }    
+        if (session != null && session.isOpen()) {
+       	 synchronized( session)
+       	 {
+             try {
+                 session.sendMessage(new TextMessage(message));
+              } catch (Exception ignored) {
+                 this.logger.error("fail to send message!", ignored);
+              }
+       	 }
+         }
+   }    
+    static public void sendMessages(WebSocketSession session,String message) {
+        if (session != null && session.isOpen()) {
+       	 synchronized( session)
+       	 {
+             try {
+                 session.sendMessage(new TextMessage(message));
+              } catch (Exception ignored) {
+                 System.out.println("static fail to send message!" );
+              }
+       	 }
+         }
+   }    
+
+    private static byte[] Sha256(String password) throws NoSuchAlgorithmException {
+        MessageDigest messagediegest = MessageDigest.getInstance("SHA-256");
+        messagediegest.update(password.getBytes());
+        messagediegest.update((""+System.currentTimeMillis()).getBytes());
+        return messagediegest.digest();
+    }
+    
+    private static String BytesToHex(byte[] bytes) {
+        StringBuilder builder = new StringBuilder();
+
+        for (byte b: bytes) {
+          builder.append(String.format("%02x", b));
+        }
+        
+        return builder.toString();
+    }	    
 }
