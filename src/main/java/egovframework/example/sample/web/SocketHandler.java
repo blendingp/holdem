@@ -36,6 +36,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     private final Logger logger = LogManager.getLogger(getClass());
     private Set<WebSocketSession> sessionSet = new HashSet<WebSocketSession>();
 	public LinkedList<UserMsg> msglist = new LinkedList<UserMsg>();	
+	public LinkedList<WebSocketSession> disconnectlist = new LinkedList<WebSocketSession>();	
 
 
     UserManager usermanager = new UserManager();
@@ -79,7 +80,22 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         sk =this;
     }
     
-    void disconnect(WebSocketSession session){
+    void disconnect()
+    {
+        WebSocketSession session=null;
+        synchronized(disconnectlist) 
+        {
+        	if( disconnectlist.size() > 0 )
+        	{
+            	session = disconnectlist.pop();
+        	}
+        }
+        
+        if(session == null)
+        {
+        	return;
+        }
+        
     	User u = usermanager.find(session);
     	if( u == null)
     		return;
@@ -120,11 +136,27 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
     	super.afterConnectionClosed(session, status);
-    	disconnect(session);
+    	synchronized(disconnectlist) {
+    		if( disconnectlist.contains(session) != true) {
+    			disconnectlist.add(session);
+    		}
+    	}
         sessionSet.remove(session);
         
         this.logger.info("remove session!");
     }
+    @Override
+    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+    	//System.out.println("접속에러\n" + exception.getMessage());
+    	synchronized(disconnectlist) {
+    		if( disconnectlist.contains(session) != true) {
+    			disconnectlist.add(session);
+    		}
+    	}
+        this.logger.error("web socket error!", exception);
+    }
+ 
+    
  
     @Override
     public void afterConnectionEstablished(WebSocketSession session)throws Exception {
@@ -441,13 +473,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     }
  
     @Override
-    public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
-    	//System.out.println("접속에러\n" + exception.getMessage());
-		disconnect(session);		
-        this.logger.error("web socket error!", exception);
-    }
- 
-    @Override
     public boolean supportsPartialMessages() {
         this.logger.info("call method!");
         return super.supportsPartialMessages();
@@ -476,11 +501,13 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
                     try {
                         Thread.sleep(50);
                         sect++;
-                        if(sect>=10) {
+                        if(sect>=10) 
+                        {
                         	second++;
                         	sect=0;
                         }
-                        cmdProcess();
+                   		disconnect();			// 강종 유저 처리		
+                        cmdProcess(); 			// 클라로 부터 받은 메세지 처리
                         roommanager.checkStartGame();
 						roommanager.checkTimerGame();
 						JackpotManager.Update();
