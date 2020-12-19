@@ -53,9 +53,16 @@ public class Caculate {
 	
 	public void giveWinMoney(int Rank, long winnermoney, int allincount)
 	{
+		int tempwin=0;
 		for(int winnercnt=0; winnercnt<NRanks.size(); winnercnt++)
-		{
-			long amount = (long)(winnermoney * (NRanks.get(winnercnt).betmoney / (float)NRanksTotalmoney));
+		{			
+			long amount = (long)(winnermoney * NRanks.get(winnercnt).betmoney / NRanksTotalmoney);
+			if(NRanks.size() - winnercnt == 1)
+				amount = winnermoney - tempwin;
+			else
+				tempwin += amount;
+			
+			System.out.println("amount:"+amount);
 			long winnerpoint = (long)(amount * ( 1 - NRanks.get(winnercnt).memberInfo.commission));
 			if(total ==  NRanksTotalmoney) winnerpoint = amount;
 			//<===== *** 여기에 수수료 로그 남겨야 함.
