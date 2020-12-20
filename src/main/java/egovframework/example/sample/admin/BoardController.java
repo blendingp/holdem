@@ -478,6 +478,7 @@ public class BoardController {
 	@RequestMapping(value = "/user.do")
 	public String user(HttpServletRequest request, ModelMap model) {
 		String uKind = "all";
+		String search = request.getParameter("search");
 		PaginationInfo paginationInfo = new PaginationInfo();
 		if (request.getParameter("pageIndex") == null || request.getParameter("pageIndex").equals("")) {
 			paginationInfo.setCurrentPageNo(1);
@@ -493,11 +494,13 @@ public class BoardController {
 		in.put("first", paginationInfo.getFirstRecordIndex());
 		in.put("record", paginationInfo.getRecordCountPerPage());
 		in.put("uKind", uKind);
+		in.put("search", search);
 		List<?> list = (List<?>) sampleDAO.list("selectUserListByAdmin", in);
 		paginationInfo.setTotalRecordCount((int) sampleDAO.select("selectUserListByAdminTot", in));
 		model.addAttribute("list", list);
 		model.addAttribute("pi", paginationInfo);
 		model.addAttribute("uKind", uKind);
+		model.addAttribute("search", search);
 		return "admin/user";
 	}
 
@@ -548,6 +551,7 @@ public class BoardController {
 
 	@RequestMapping("/userDWlog.do")
 	public String userDWlog(HttpServletRequest request, ModelMap model) {
+		String search = request.getParameter("search");
 		String mKind = request.getParameter("mKind");
 		String dwKind = request.getParameter("dwKind");
 		PaginationInfo paginationInfo = new PaginationInfo();
@@ -561,6 +565,7 @@ public class BoardController {
 		EgovMap in = new EgovMap();
 		in.put("first", paginationInfo.getFirstRecordIndex());
 		in.put("record", paginationInfo.getRecordCountPerPage());
+		in.put("search", search);
 		if (mKind == null || mKind.equals("") || mKind.equals("all")) {
 			if (dwKind == null || dwKind.equals("") || dwKind.equals("all")) {
 				in.put("kind1", "ad_point_deposit");
@@ -590,12 +595,14 @@ public class BoardController {
 		model.addAttribute("pi", paginationInfo);
 		model.addAttribute("mKind", mKind);
 		model.addAttribute("dwKind", dwKind);
+		model.addAttribute("search", search);
 		return "admin/userDWlog";
 	}
 
 	@RequestMapping(value = "/purchaseLog.do")
 	public String purchaseLog(HttpServletRequest request, ModelMap model) {
 		productJson(); // product JSON 정보 
+		String search = request.getParameter("search");
 		String orderKind = request.getParameter("orderKind");
 		if(orderKind == null || orderKind.equals(""))
 		{
@@ -613,6 +620,7 @@ public class BoardController {
 		in.put("first", paginationInfo.getFirstRecordIndex());
 		in.put("record", paginationInfo.getRecordCountPerPage());
 		in.put("orderKind", orderKind);
+		in.put("search", search);
 		
 		List<EgovMap> list = (List<EgovMap>) sampleDAO.list("selectUserPurchaseLog", in);
 		for(int listCnt=0; listCnt < list.size(); listCnt++) 
@@ -629,6 +637,7 @@ public class BoardController {
 		model.addAttribute("list", list);
 		model.addAttribute("pi", paginationInfo);		 
 		model.addAttribute("orderKind", orderKind);		 
+		model.addAttribute("search", search);		 
 
 		return "admin/purchaseLog";
 	}
@@ -636,6 +645,7 @@ public class BoardController {
 	@RequestMapping(value = "/purchaseMonthLog.do")
 	public String purchaseMonthLog(HttpServletRequest request, ModelMap model) {
 		productJson(); // product JSON 정보 
+		String search = request.getParameter("search");
 		String year = request.getParameter("year");
 		String month = request.getParameter("month");
 		Calendar cal = Calendar.getInstance();
@@ -660,6 +670,7 @@ public class BoardController {
 		in.put("record", paginationInfo.getRecordCountPerPage());
 		in.put("year", year);
 		in.put("month", month);
+		in.put("search", search);
 		List<EgovMap> list = (List<EgovMap>) sampleDAO.list("selectUserPurchaseLog", in);
 		for(int listCnt=0; listCnt < list.size(); listCnt++) 
 		{
@@ -677,11 +688,13 @@ public class BoardController {
 		model.addAttribute("pi", paginationInfo);	
 		model.addAttribute("year", year);
 		model.addAttribute("month", month);
+		model.addAttribute("search", search);		
 		return "admin/purchaseMonthLog";
 	}
 
 	@RequestMapping(value = "/goldFeeLog.do")
 	public String goldFeeLog(HttpServletRequest request, ModelMap model) {
+		String search = request.getParameter("search");
 		PaginationInfo paginationInfo = new PaginationInfo();
 		if (request.getParameter("pageIndex") == null || request.getParameter("pageIndex").equals("")) {
 			paginationInfo.setCurrentPageNo(1);
@@ -693,15 +706,18 @@ public class BoardController {
 		EgovMap in = new EgovMap();
 		in.put("first", paginationInfo.getFirstRecordIndex());
 		in.put("record", paginationInfo.getRecordCountPerPage());
+		in.put("search", search);
 		List<EgovMap> list = (List<EgovMap>) sampleDAO.list("selectGoldFeeLog", in);
 		paginationInfo.setTotalRecordCount((int) sampleDAO.select("selectGoldFeeLogTot", in));
 		model.addAttribute("list", list);
-		model.addAttribute("pi", paginationInfo);		 
+		model.addAttribute("pi", paginationInfo);
+		model.addAttribute("search", search);
 		return "admin/goldFeeLog";
 	}
 	
 	@RequestMapping(value = "/goldFeeMonthLog.do")
 	public String goldFeeMonthLog(HttpServletRequest request, ModelMap model) {
+		String search = request.getParameter("search");
 		String year = request.getParameter("year");
 		String month = request.getParameter("month");
 		Calendar cal = Calendar.getInstance();
@@ -726,6 +742,7 @@ public class BoardController {
 		in.put("record", paginationInfo.getRecordCountPerPage());
 		in.put("year", year);
 		in.put("month", month);
+		in.put("search", search);
 		List<EgovMap> list = (List<EgovMap>) sampleDAO.list("selectGoldFeeLog", in);
 		paginationInfo.setTotalRecordCount((int) sampleDAO.select("selectGoldFeeLogTot", in));
 		model.addAttribute("list", list);
@@ -733,6 +750,7 @@ public class BoardController {
 		model.addAttribute("pi", paginationInfo);	
 		model.addAttribute("year", year);
 		model.addAttribute("month", month);
+		model.addAttribute("search", search);
 		return "admin/goldFeeMonthLog";
 	}
 

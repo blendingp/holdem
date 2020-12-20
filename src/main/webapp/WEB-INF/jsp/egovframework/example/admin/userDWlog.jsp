@@ -56,6 +56,17 @@
 												</select>
 											</div>
 										</div>
+										<div class="col-lg-2">
+											<div class="form-group input-group">
+												<label>검색어 입력</label>
+												<div style="display:flex">
+													<input placeholder="아이디 혹은 닉네임" style="display:block;" class="form-control idinput" name="search" id="search" value="${search}">
+													<span class="input-group-btn">
+														<button type="submit" class="btn btn-default">검색</button>
+													</span>
+												</div>
+											</div>
+										</div>
 									</div>
 								</form>
 								<table class="table table-hover">
@@ -65,6 +76,7 @@
 											<th>닉네임</th>
 											<th>골드/칩</th>
 											<th>입금/출금</th>
+											<th>입출금액</th>
 											<th>날짜</th>
 										</tr>
 									</thead>
@@ -92,6 +104,7 @@
 														출금
 													</c:if>
 												</td>
+												<td><fmt:formatNumber value="${item.price}" pattern="#,###"/></td>
 												<td><fmt:formatDate value="${item.date}" pattern="yyyy-MM-dd HH:mm:ss"/></td>
 											</tr>
 										</c:forEach>
