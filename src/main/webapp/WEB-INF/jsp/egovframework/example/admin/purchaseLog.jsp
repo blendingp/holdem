@@ -46,6 +46,12 @@
 											</div>
 										</div>
 										<div class="col-lg-2">
+											<div class="form-group">
+												<label>총 구매가격</label>
+												<pre style="padding:7.5px"><fmt:formatNumber value="${sumCharge}" pattern="#,###"/></pre>
+											</div>
+										</div>										
+										<div class="col-lg-2">
 											<div class="form-group input-group">
 												<label>검색어 입력</label>
 												<div style="display:flex">
