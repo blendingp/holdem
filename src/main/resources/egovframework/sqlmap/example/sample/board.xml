@@ -315,6 +315,21 @@
 		]]>
 	</update>
 	
+	<update id="updateDwPrice">
+		<![CDATA[
+			update payment_log
+			set price = #price#
+			where uid=#uid#
+		]]>
+	</update>
+	
+	<delete id="deleteDwLog">
+		<![CDATA[
+			delete from payment_log
+			where uid=#uid#
+		]]>
+	</delete>
+	
 	<select id="selectNoticeUserTop" resultClass="egovMap">
 		<![CDATA[
 			select *

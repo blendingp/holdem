@@ -599,6 +599,42 @@ public class BoardController {
 		return "admin/userDWlog";
 	}
 
+	@ResponseBody
+	@RequestMapping(value="/userDWlogEdit.do" , produces = "application/json; charset=utf8")
+	public String userDWlogEdit(HttpServletRequest request) {
+		String type = request.getParameter("type");
+		String uid = request.getParameter("uid");
+		JSONObject obj = new JSONObject();
+		EgovMap in = new EgovMap();
+		in.put("uid", uid);
+		if(type.equals("e"))
+		{ // 편집
+			int price = Integer.parseInt(""+request.getParameter("price"));
+			in.put("price", price);
+			try {
+				sampleDAO.update("updateDwPrice" ,in);
+				obj.put("result" , "success");
+				return obj.toJSONString();
+			} catch (Exception e) {
+				obj.put("result" , "fail");
+				return obj.toJSONString();
+			}
+		}
+		else 
+		{// 삭제
+			try {
+				sampleDAO.delete("deleteDwLog",in);
+				obj.put("result" , "success");
+				return obj.toJSONString();
+			} catch (Exception e) {
+				obj.put("result" , "fail");
+				return obj.toJSONString();
+			}
+			
+		}
+	}
+	
+	
 	@RequestMapping(value = "/purchaseLog.do")
 	public String purchaseLog(HttpServletRequest request, ModelMap model) {
 		productJson(); // product JSON 정보 
