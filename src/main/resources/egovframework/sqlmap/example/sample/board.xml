@@ -540,7 +540,6 @@
 		<isNotEmpty property="search">
        		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
        	</isNotEmpty>
-		
 	</select>
     
     

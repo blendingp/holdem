@@ -635,6 +635,7 @@ public class BoardController {
 		}
 		paginationInfo.setTotalRecordCount((int) sampleDAO.select("selectUserPurchaseLogTot", in));
 		model.addAttribute("list", list);
+		model.addAttribute("sumCharge", (int)sampleDAO.select("selectUserPurchaseSum" , in));
 		model.addAttribute("pi", paginationInfo);		 
 		model.addAttribute("orderKind", orderKind);		 
 		model.addAttribute("search", search);		 
@@ -710,6 +711,7 @@ public class BoardController {
 		List<EgovMap> list = (List<EgovMap>) sampleDAO.list("selectGoldFeeLog", in);
 		paginationInfo.setTotalRecordCount((int) sampleDAO.select("selectGoldFeeLogTot", in));
 		model.addAttribute("list", list);
+		model.addAttribute("sumFee", (int)sampleDAO.select("selectGoldFeeSum" , in));
 		model.addAttribute("pi", paginationInfo);
 		model.addAttribute("search", search);
 		return "admin/goldFeeLog";
