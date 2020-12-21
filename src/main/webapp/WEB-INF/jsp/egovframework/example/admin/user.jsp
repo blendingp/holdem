@@ -37,11 +37,23 @@
 									<div class="row">
 										<div class="col-lg-2">
 											<div class="form-group">
+												<label>정렬 조건</label>
 												<select class="form-control" name="uKind" onchange="fn_egov_link_page(1)">
 													<option value="all"<c:if test="${uKind == 'all' }">selected="selected"</c:if>>전체</option>
 													<option value="normal"<c:if test="${uKind == 'normal' }">selected="selected"</c:if>>일반유저</option>
 													<option value="ai"<c:if test="${uKind == 'ai' }">selected="selected"</c:if>>AI유저</option>
 												</select>
+											</div>
+										</div>
+										<div class="col-lg-2">
+											<div class="form-group input-group">
+												<label>검색어 입력</label>
+												<div style="display:flex">
+													<input placeholder="아이디 혹은 닉네임" style="display:block;" class="form-control idinput" name="search" id="search" value="${search}">
+													<span class="input-group-btn">
+														<button type="submit" class="btn btn-default">검색</button>
+													</span>
+												</div>
 											</div>
 										</div>
 									</div>

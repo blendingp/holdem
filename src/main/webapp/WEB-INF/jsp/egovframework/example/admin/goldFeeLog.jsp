@@ -34,11 +34,25 @@
 							<div>
 								<form action="/holdem/admin/goldFeeLog.do" name="listForm" id="listForm">
 									<input type="hidden" name="pageIndex" value="1" />
+									<div class="row">
+										<div class="col-lg-2">
+											<div class="form-group input-group">
+												<label>검색어 입력</label>
+												<div style="display:flex">
+													<input placeholder="아이디 혹은 닉네임" style="display:block;" class="form-control idinput" name="search" id="search" value="${search}">
+													<span class="input-group-btn">
+														<button type="submit" class="btn btn-default">검색</button>
+													</span>
+												</div>
+											</div>
+										</div>
+									</div>
 								</form>
 								<table class="table table-hover">
 									<thead>
 										<tr>
 											<th>아이디</th>
+											<th>닉네임</th>
 											<th>게임회차</th>
 											<th>상금</th>
 											<th>수수료</th>
@@ -52,6 +66,7 @@
 													<c:if test="${empty item.muserid}">${item.socail }</c:if>
 													<c:if test="${!empty item.muserid}">${item.muserid }</c:if>
 												</td>
+												<td>${item.nickname}</td>
 												<td>
 													${item.gameid} &nbsp;&nbsp;
 													<button type="button"

@@ -333,12 +333,16 @@
 			left join member_info mi on mi.midx = m.midx 
 			left join item i on i.midx = m.midx and i.type = 'balance' 
 			left join item ii on ii.midx = m.midx and ii.type = 'point'
-			left join item iii on iii.midx = m.midx and iii.type = 'cash'	
+			left join item iii on iii.midx = m.midx and iii.type = 'cash'
+			where 1=1 	
         ]]>
         	<isNotEqual property="uKind" compareValue="all">
-        		<isEqual property="uKind" compareValue="normal">where mi.ai = 0 or mi.ai is null</isEqual>
-        		<isEqual property="uKind" compareValue="ai">where mi.ai = 1</isEqual>
+        		<isEqual property="uKind" compareValue="normal">and  mi.ai = 0 or mi.ai is null</isEqual>
+        		<isEqual property="uKind" compareValue="ai">and  mi.ai = 1</isEqual>
         	</isNotEqual>
+        	<isNotEmpty property="search">
+        		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
+        	</isNotEmpty>
         <![CDATA[
 			order by m.midx desc
 			limit #first# , #record#
@@ -352,12 +356,16 @@
 			left join member_info mi on mi.midx = m.midx 
 			left join item i on i.midx = m.midx and i.type = 'balance' 
 			left join item ii on ii.midx = m.midx and ii.type = 'point'
-			left join item iii on iii.midx = m.midx and iii.type = 'cash'	
+			left join item iii on iii.midx = m.midx and iii.type = 'cash'
+			where 1=1 		
         ]]>
         	<isNotEqual property="uKind" compareValue="all">
-        		<isEqual property="uKind" compareValue="normal">where mi.ai = 0 or mi.ai is null</isEqual>
-        		<isEqual property="uKind" compareValue="ai">where mi.ai = 1</isEqual>
+        		<isEqual property="uKind" compareValue="normal">and mi.ai = 0 or mi.ai is null</isEqual>
+        		<isEqual property="uKind" compareValue="ai">and mi.ai = 1</isEqual>
         	</isNotEqual>
+        	<isNotEmpty property="search">
+        		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
+        	</isNotEmpty>
     </select>
     
      <select id="selectUserInfoByAdmin" resultClass="EgovMap">
@@ -391,10 +399,10 @@
 	
 	<select id="selectUserDwListByAdmin" resultClass="EgovMap">
 		<![CDATA[
-			select * , (select nickname from member_info where midx = payment_log.midx) userNick ,
-					 (select muserid from member where midx = payment_log.midx) userId ,
-					 (select socail from member where midx = payment_log.midx) socail 
-		 	from payment_log
+			select payment_log.* , m.muserid userId , mi.nickname userNick , m.socail 
+			from payment_log
+			left join member m on payment_log.midx = m.midx
+			left join member_info mi on payment_log.midx = mi.midx
 		 	where product in ( 
 		]]>
 			<isNotEmpty property = "kind1">
@@ -411,6 +419,11 @@
 			</isNotEmpty>
 		<![CDATA[
 			)
+		]]>
+       	<isNotEmpty property="search">
+       		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
+       	</isNotEmpty>
+		<![CDATA[
 			order by date desc 
 			limit #first# , #record#
 		]]>
@@ -418,8 +431,12 @@
     
 	<select id="selectUserDwListByAdminTot" resultClass="int">
 		<![CDATA[
-			select count(*) 
-			from payment_log 
+		select count(*) 
+		from (
+			select payment_log.* , m.muserid userId , mi.nickname userNick , m.socail 
+			from payment_log
+			left join member m on payment_log.midx = m.midx
+			left join member_info mi on payment_log.midx = mi.midx
 		 	where product in ( 
 		]]>
 			<isNotEmpty property = "kind1">
@@ -437,12 +454,20 @@
 		<![CDATA[
 			)
 		]]>
+       	<isNotEmpty property="search">
+       		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
+       	</isNotEmpty>
+		<![CDATA[
+			) A
+		]]>
 	</select>
     
 	<select id="selectUserPurchaseLog" resultClass="EgovMap">
 		<![CDATA[
-			select * ,(select muserid from member where midx = payment_log.midx) muserid ,(select socail from member where midx = payment_log.midx) socail 
+			select payment_log.* , m.muserid , mi.nickname , m.socail 
 			from payment_log
+			left join member m on payment_log.midx = m.midx
+			left join member_info mi on payment_log.midx = mi.midx
 			where product not in ('ad_point_deposit' ,'ad_point_withdrawal' , 'ad_balance_deposit','ad_balance_withdrawal' )
 			and isCash = 1
 		]]>
@@ -452,6 +477,9 @@
 		<isNotEmpty property = "month">
 			and month = #month#
 		</isNotEmpty>
+       	<isNotEmpty property="search">
+       		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
+       	</isNotEmpty>
 		<isNotNull property = "orderKind">
 			<isEqual property="orderKind" compareValue="recent">
 				order by date desc 
@@ -473,8 +501,12 @@
     
 	<select id="selectUserPurchaseLogTot" resultClass="int">
 		<![CDATA[
-			select count(*) 
+		select count(*) 
+		from(
+			select payment_log.* , m.muserid userId , mi.nickname userNick , m.socail 
 			from payment_log
+			left join member m on payment_log.midx = m.midx
+			left join member_info mi on payment_log.midx = mi.midx
 			where product not in ('ad_point_deposit' ,'ad_point_withdrawal' , 'ad_balance_deposit','ad_balance_withdrawal' )
 			and isCash = 1
 		]]>
@@ -484,13 +516,18 @@
 		<isNotEmpty property = "month">
 			and month = #month#
 		</isNotEmpty>
-		
+		<isNotEmpty property="search">
+       		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
+       	</isNotEmpty>
+		) A 
 	</select>
     
 	<select id="selectUserPurchaseSum" resultClass="int">
 		<![CDATA[
 			select ifnull(sum(price),0) sumCharge 
 			from payment_log
+			left join member m on payment_log.midx = m.midx
+			left join member_info mi on payment_log.midx = mi.midx
 			where product not in ('ad_point_deposit' ,'ad_point_withdrawal' , 'ad_balance_deposit','ad_balance_withdrawal' )
 			and isCash = 1
 		]]>
@@ -500,15 +537,19 @@
 		<isNotEmpty property = "month">
 			and month = #month#
 		</isNotEmpty>
+		<isNotEmpty property="search">
+       		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
+       	</isNotEmpty>
 		
 	</select>
     
     
 	<select id="selectGoldFeeLog" resultClass="EgovMap">
 		<![CDATA[
-			select * ,(select muserid from member where midx = goldfeelog.uidx) muserid
-			,(select socail from member where midx = goldfeelog.uidx) socail
+			select goldfeelog.* , m.muserid , mi.nickname , m.socail 			
 			from goldfeelog
+			left join member m on goldfeelog.uidx = m.midx
+			left join member_info mi on goldfeelog.uidx = mi.midx
 			where 1=1
 		]]>
 		<isNotEmpty property = "year">
@@ -517,7 +558,9 @@
 		<isNotEmpty property = "month">
 			and month(gdate) = #month#
 		</isNotEmpty>
-		
+		<isNotEmpty property="search">
+       		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
+       	</isNotEmpty>
 		<![CDATA[
 			order by gdate desc , gidx desc
 			limit #first# , #record#
@@ -526,8 +569,12 @@
     
 	<select id="selectGoldFeeLogTot" resultClass="int">
 		<![CDATA[
-			select count(*) 
+		select count(*)
+		from (
+			select goldfeelog.* , m.muserid , mi.nickname , m.socail 			
 			from goldfeelog
+			left join member m on goldfeelog.uidx = m.midx
+			left join member_info mi on goldfeelog.uidx = mi.midx
 			where 1=1
 		]]>
 		<isNotEmpty property = "year">
@@ -536,12 +583,18 @@
 		<isNotEmpty property = "month">
 			and month(gdate) = #month#
 		</isNotEmpty>
+		<isNotEmpty property="search">
+       		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
+       	</isNotEmpty>
+		)A
 	</select>
 	
 	<select id="selectGoldFeeSum" resultClass="int">
 		<![CDATA[
 			select ifnull(sum(fee),0) sumFee 
 			from goldfeelog
+			left join member m on goldfeelog.uidx = m.midx
+			left join member_info mi on goldfeelog.uidx = mi.midx
 			where 1=1
 		]]>
 		<isNotEmpty property = "year">
@@ -550,6 +603,10 @@
 		<isNotEmpty property = "month">
 			and month(gdate) = #month#
 		</isNotEmpty>
+		<isNotEmpty property="search">
+       		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
+       	</isNotEmpty>
+		
 	</select>
     
 </sqlMap>
