@@ -14,7 +14,7 @@
 	<div class="frame">
 		<div class="bg">
 			<jsp:include page="../frame/userMenu.jsp"></jsp:include>
-			<div class="body-top" style="width:100%;">
+			<div class="body-top">
 				<img src="/holdem/webflow/images/top_logo.png" loading="lazy"
 					sizes="(max-width: 767px) 92vw, 100vw"
 					srcset="/holdem/webflow/images/top_logo-p-500.png 500w, /holdem/webflow/images/top_logo-p-800.png 800w, /holdem/webflow/images/top_logo-p-1080.png 1080w, /holdem/webflow/images/top_logo-p-1600.png 1600w, /holdem/webflow/images/top_logo.png 1867w"
@@ -23,7 +23,7 @@
 					srcset="/holdem/webflow/images/line-p-500.png 500w, /holdem/webflow/images/line-p-800.png 800w, /holdem/webflow/images/line-p-1080.png 1080w, /holdem/webflow/images/line-p-1600.png 1600w, /holdem/webflow/images/line.png 1920w"
 					alt="" class="line">
 			</div>
-			<div class="body-bot" style="width:100%;">
+			<div class="body-bot">
 				<div class="chipsbg">
 					<img src="/holdem/webflow/images/holdem_text.png" loading="lazy" alt="" class="holdemicon">
 					<img src="/holdem/webflow/images/middle_text.png" loading="lazy" sizes="(max-width: 767px) 66vw, 766px"
