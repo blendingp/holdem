@@ -63,6 +63,27 @@ public class UserManager {
 	}
 
 	public void connect(WebSocketSession session, User user) {
+		
+		if( user.IsAuth() == false )
+		{
+			ObjectMapper mapper = new ObjectMapper();
+
+			JSONObject cobj = new JSONObject();
+			cobj.put("cmd", "auth");
+			cobj.put("result", false);
+
+			try {
+				if(User.CheckSendPacket(user) == true)
+				{
+					user.session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+				}				
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return ;
+		}
 
 		// 닉네임 설정이 안되어 있으면 닉네임 설정 될떄까지 다음으로 안넘김		
 		if( user.GetNickNameEmpty() == true )  		
