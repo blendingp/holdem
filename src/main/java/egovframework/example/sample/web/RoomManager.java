@@ -302,10 +302,6 @@ public class RoomManager {
 		Room room = find(user.roomnum);					
 		room.notifyLeaveUser(user.seat);		
 		room.leave(user);				
-		if( room.gameManager.userlist.size() <= 0 )
-		{
-			roomList.remove(room);
-		}
 	}
 	
 	void checkStartGame(){
