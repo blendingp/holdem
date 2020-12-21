@@ -442,10 +442,14 @@ public class GameManager {
 		if(GameMode.compareTo("THEEND")==0){
 			setWorkTime();
 			try {
-				showResult();
-				room.BroadCasetUser();
+				showResult();				
 			}catch(Exception e) {
 				System.out.println("error log: showResult 계산시 에러 발생================"+e.toString() );
+			}
+			try {				
+				room.BroadCasetUser();
+			}catch(Exception e) {
+				System.out.println("error log: BroadCasetUser 에러 발생================"+e.toString() );
 			}
 			changeGameMode("showResult");
 		}
