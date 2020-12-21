@@ -42,11 +42,10 @@ public class Room {
 		try {
 			Path path = Paths.get(resource.getURI());
 			String content = Files.readString(path);
-			// System.out.println(content);
 			RoomSetting setting = mapper.readValue(content, RoomSetting.class);
 			return setting;
 		} catch (IOException e) {
-			System.out.println(e.getMessage());
+			System.out.println("RoomSetting getRoominfo error:"+e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -95,7 +94,6 @@ public class Room {
 		myobj.put("cmd", "RoomUsers");
 		// 방에 참여중인 모든 사람 불러오기
 		JSONArray j = new JSONArray();
-		System.out.println("notifyRoomUsers");
 		for (int i = 0; i < gameManager.userlist.size(); i++) {
 			JSONObject item = new JSONObject();
 			item.put("useridx", gameManager.userlist.get(i).uidx);
@@ -432,12 +430,9 @@ public class Room {
 		{						
 			if(gameManager.userlist.get(nCount).uidx == user.uidx)
 			{											
-										//gameManager.userlist.get(nCount).die = true;				
 				gameManager.leaveuserlist.add(gameManager.userlist.get(nCount));				
-				//gameManager.userlist.remove(gameManager.userlist.get(nCount));				
 				
 				BraodCastLeaveReserve(user, true);
-				System.out.println("==================================SEND RESERVE  uidx: "+user.uidx+" seat:"+user.seat);
 				if( gameManager.checkAbstention() ){
 					gameManager.TheEnd();
 				}
@@ -468,7 +463,7 @@ public class Room {
 			this.UsedItem = setting.useitem;			
 		}
 		catch (IOException e) {
-			System.out.println(e.getMessage());
+			System.out.println("SetRoomInfo err:"+e.getMessage());
 			e.printStackTrace();
 		}        
 	}	 

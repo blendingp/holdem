@@ -924,7 +924,7 @@ public class User {
 				}
 	
 			} catch (JsonProcessingException e) {
-				System.out.println(e.getMessage());
+				System.out.println("getmemberinfo err:"+e.getMessage());
 			}
 
 			this.img = _info.avata;			
@@ -961,10 +961,9 @@ public class User {
 
 			try {
 				String jsonstring = mapper.writeValueAsString(ed);		
-				System.out.println(jsonstring);		
 				auth = mapper.readValue(jsonstring, AuthSelf.class);			
 			} catch (JsonProcessingException e) {			
-				System.out.println(e.getMessage());
+				System.out.println("GetAutoInfo read err:"+e.getMessage());
 			}
 		}		
 	}

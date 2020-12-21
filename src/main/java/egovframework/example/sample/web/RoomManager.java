@@ -299,7 +299,6 @@ public class RoomManager {
 	}
 	
 	void leaveRoom(int roomNum , User user){
-		System.out.println("leave room dbg 1 roomnum:"+user.roomnum);
 		Room room = find(user.roomnum);					
 		room.notifyLeaveUser(user.seat);		
 		room.leave(user);				
@@ -307,8 +306,6 @@ public class RoomManager {
 		{
 			roomList.remove(room);
 		}
-
-		System.out.println("<< leave user >>");
 	}
 	
 	void checkStartGame(){

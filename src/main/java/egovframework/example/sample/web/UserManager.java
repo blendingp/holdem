@@ -270,8 +270,6 @@ public class UserManager {
 			return ;
 		}
 
-		//System.out.println(cobj.toJSONString());
-
 		try {
 			session.sendMessage(new TextMessage(cobj.toJSONString()));
 		} catch (IOException e) {

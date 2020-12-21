@@ -144,16 +144,12 @@ public class Friend {
                 JSONObject cobj = new JSONObject();		
                 cobj.put("model", model);            
 
-                System.out.println(cobj.toJSONString());
-
                 friendmodellist.add(model);
             }   
         }
 
         JSONObject cobj = new JSONObject();		
         cobj.put("list", friendmodellist);            
-
-        System.out.println(cobj.toJSONString());
 
         return friendmodellist;
 

@@ -109,13 +109,11 @@ public class ProfileManager {
 		try {
 			ObjectMapper mapper = new ObjectMapper();
 			String value = mapper.writeValueAsString(model);
-			System.out.println(value);
 			EgovMap jsonobject = mapper.readValue(value, EgovMap.class);
-			System.out.println(jsonobject.toString());
 
 			SocketHandler.sk.sampleDAO.update("UpdateTodayProfileData", jsonobject);
 		} catch (JsonProcessingException e) {
-			System.out.println(e.getMessage());			
+			System.out.println("UpdateTodayProfile err"+e.getMessage());			
 			e.printStackTrace();
 			return false;
 		}			

@@ -376,17 +376,8 @@ public class GameManager {
 	
 	
 	void changeGameMode(String mode){
-//		System.out.println("GameMode:"+mode);
 		GameMode = mode;
 	}
-/*	void setRoomStartTime( int st){
-		startTime = st; 
-	}
-	void setRoomEndTime( int et){
-		endtime = et; 
-		System.out.println("대기시간 추가");
-	}
-	*/
 	void setWorkTime(){
 		workTime = SocketHandler.second; 
 	}
@@ -452,7 +443,6 @@ public class GameManager {
 			setWorkTime();
 			try {
 				showResult();
-//				System.out.println("showResult End");
 				room.BroadCasetUser();
 			}catch(Exception e) {
 				System.out.println("error log: showResult 계산시 에러 발생================"+e.toString() );
@@ -470,7 +460,6 @@ public class GameManager {
 		}
 		
 		if(GameMode.compareTo("대기")==0){
-			//System.out.println("isPlayable():"+isPlayable()+" checkCmdTime(6):"+checkCmdTime(6));
 			LeaveReserveUser();
 			if (isPlayable() && checkCmdTime(6) ){
 				setWorkTime();
@@ -639,7 +628,7 @@ public class GameManager {
 		sendRoom(obj);
 	}
 	
-	void preJockboCheck() {
+	int preJockboCheck() {
 		ArrayList<User> tuserlist=(ArrayList<User>) userlist.clone();
 		ArrayList<User> tsortRank;
 		tsortRank=(ArrayList<User>) tuserlist.clone();
@@ -705,12 +694,13 @@ public class GameManager {
             }
         });
 		cardManager.popcard=0;
+		return tsortRank.get(0).seat;
 	}
 
 	public void drawCard(){
 		cardManager.shuffleCard();
 
-		preJockboCheck();
+		int winseat = preJockboCheck();
 
 		JSONObject obj = new JSONObject();
 
@@ -722,22 +712,19 @@ public class GameManager {
 			obj.put("seat", userlist.get(k).seat);
 			obj.put("card1", userlist.get(k).card1.cardcode);
 			obj.put("card2", userlist.get(k).card2.cardcode);
-			//j.add(item);
-			//System.out.println("userlist.size() 의 값 : " + userlist.size());
-			//System.out.println("userlist.get(k).uidx 의 값 : " + userlist.get(k).uidx);
-			//System.out.println(k + "번 째 유저가 받은 2장의 카드");
-			//System.out.println(userlist.get(k).card1.cardcode);
-			//System.out.println(userlist.get(k).card2.cardcode);
-
+			if( userlist.get(k).isAI == true )
+			{
+				if( winseat == userlist.get(k).seat)
+					obj.put("wr", "1");
+				else
+					obj.put("wr", "2");
+			}else
+			{
+				obj.put("wr", "-1");
+			}
 			userlist.get(k).cardarr.add(userlist.get(k).card1.cardcode);
 			userlist.get(k).cardarr.add(userlist.get(k).card2.cardcode);
-
-			//cardarr[k][0] = userlist.get(k).card1.cardcode;
-			//cardarr[k][1] =userlist.get(k).card2.cardcode;
 			SocketHandler.insertLog(getGameId(), getGameIdentifier(), "twoCard", userlist.get(k).uidx, userlist.get(k).card1.cardcode, userlist.get(k).card2.cardcode, "", -1, -1);
-			//System.out.println( k + "번 째 유저의 0 번 째 카드 : " + cardarr[k][0]);
-			//System.out.println( k + "번 째 유저의 1 번 째 카드 : " + cardarr[k][1]);
-
 
 			try {
 				if(User.CheckSendPacket(userlist.get(k)) == true)
@@ -745,13 +732,10 @@ public class GameManager {
 					userlist.get(k).session.sendMessage(new TextMessage(obj.toJSONString()));	
 				}				
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
 		}
-		//obj.put("twocardlist", j);
-
 	}
 
 	public int getWhoTurn(){
@@ -762,37 +746,12 @@ public class GameManager {
 			{				
 				if( checkDieturn((whosturn + nCount)%this.seats.length) == true )
 				{
-//					System.out.println("--die--");
-//					System.out.println((whosturn + nCount)%this.seats.length);
 					if( SearchUserBySeat((whosturn + nCount)%this.seats.length) != null )
 					{
 						SearchUserBySeat((whosturn + nCount)%this.seats.length).PlayStatus = -1;	
 					}					
 					continue;					
 				}
-/*				if( checkLeave((whosturn + nCount)%this.seats.length) == true )
-				{
-//					System.out.println("--die--");
-//					System.out.println((whosturn + nCount)%this.seats.length);
-				//	continue;			
-				}*/
-				/*
-				if( SearchUserBySeat((whosturn + nCount)%this.seats.length).balance <= 0 )
-				{
-					System.out.println("--balance--");
-					System.out.println((whosturn + nCount)%this.seats.length);
-					SearchUserBySeat((whosturn + nCount)%this.seats.length).PlayStatus = 0;
-					continue;
-				}
-				
-				if( SearchUserBySeat((whosturn + nCount)%this.seats.length).betmoney >= room.maxmoney )
-				{
-					System.out.println("--betmoney--");
-					System.out.println((whosturn + nCount)%this.seats.length);
-					SearchUserBySeat((whosturn + nCount)%this.seats.length).PlayStatus = 0;
-					continue;
-				}*/
-					
 				whosturn = (whosturn + nCount)%this.seats.length;
 				return whosturn;
 			}			
@@ -807,9 +766,7 @@ public class GameManager {
 		obj.put("whosturn", whosturn );
 		obj.put("prebetmoney", preTotalBetmoney );
 		obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
-//			obj.put("whosturn",userlist.get(whosturn).uidx);
 		sendRoom(obj);
-//			System.out.println("sbBet하시오 :"+whosturn );
 	}
 
 	public void bbBet(){
@@ -822,7 +779,6 @@ public class GameManager {
 		obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
 		sendRoom(obj);
 		timer = SocketHandler.second;		
-//			System.out.println("bbBet하시오 :"+whosturn );
 	}
 
 	public void showBetPan(){
@@ -944,13 +900,11 @@ public class GameManager {
 
 			if(uu.PlayStatus == 1 && betablecount > 1)
 			{			
-//				System.out.println("uu.PlayStatus == 1 && betablecount > 1");		
 				return false;
 			}										
 			
 			if( uu.betmoney < money)
 			{										
-//				System.out.println("uu.betmoney < money");		
 				return false;//배팅금액이 다르다
 			}												
 			extrap++;
@@ -979,7 +933,6 @@ public class GameManager {
 
 			if(uu.betmoney != preTotalBetmoney)
 			{			
-//				System.out.println("uu.betmoney != preTotalBetmoney");		
 				return false;
 			}
 		}	
@@ -1000,24 +953,13 @@ public class GameManager {
 	
 	public void  nextTurn(){
 		whosturn += this.seats.length - 1;//다음사람배팅
-		//int k=0;		
 		if( getWhoTurn() < 0 )
 		{			
 			SocketHandler.insertLog(getGameId(), getGameIdentifier(), "error", -1, -1, -1, "DieTurnCheckError", -1, -1);
 		}
-		/*
-		while( checkDieturn(getWhoTurn()) ){
-			k++;
-			if( k>10){//9명이상이니 여기에 들어오면 에러 무한루프 체크
-				SocketHandler.insertLog(getGameId(), "error", -1, -1, -1, "DieTurnCheckError", -1, -1);
-				break;
-			}
-			whosturn++;			
-		}*/
 	}
 
 	public void bet(User u, int betkind){			
-//		System.out.println("BET CMD:"+betkind+" BetUserIDX:" +u.uidx + " u seat:"+u.seat);
 		if( whosturn != u.seat ){
 			System.out.println(whosturn+" 잘못된 유저의 BET 차례 "+u.seat);
 			return;
@@ -1085,9 +1027,6 @@ public class GameManager {
 			preTotalBetmoney = u.betmoney;	
 		}
 		
-		//System.out.println("{ tmo:"+tmo +" u.betmoney:"+u.betmoney+" prebetmoney:"+prebetmoney+" preTotalBetmoney:"+preTotalBetmoney);
-		//System.out.println("dbg6 u.betmoney:"+u.betmoney);
-
 		totalmoney += tmo;
 		
 		if( u.seat != lastbetuser )
@@ -1097,14 +1036,12 @@ public class GameManager {
 				lastcallbackmoney = u.betmoney - lastbetmoney;
 				lastbetmoney = u.betmoney;
 				lastbetuser  = u.seat;
-				System.out.println("작은 lastcallbackmoney:"+lastcallbackmoney+" lastbetmoney:"+lastbetmoney+" lastbetuser:"+lastbetuser+" u.betmoney:"+u.betmoney);
 			}else
 			{
 				if( lastcallbackmoney  >  lastbetmoney - u.betmoney )
 				{
 					lastcallbackmoney = lastbetmoney - u.betmoney ;
 				}
-				System.out.println("큰 lastcallbackmoney:"+lastcallbackmoney+" lastbetmoney:"+lastbetmoney+" lastbetuser:"+lastbetuser+" u.betmoney:"+u.betmoney);
 			}
 		}
 		
@@ -1122,7 +1059,6 @@ public class GameManager {
 				
 		u.ApplyBalanace(room.UsedItem);
 		
-		//System.out.println("BET whosturn: "+whosturn+"("+getWhoTurn()+") Game:"+GameMode+" betkind:"+betkind+" totalmoney:"+totalmoney+" 잔액:"+u.balance +"   :::" + "{ tmo:"+tmo +" u.betmoney:"+u.betmoney+" prebetmoney:"+prebetmoney+" preTotalBetmoney:"+preTotalBetmoney);
 		if( room.UsedItem.equals("balance") == true){
 			SocketHandler.insertLog(getGameId(), getGameIdentifier(),"bet", u.uidx , u.betmoney , u.balance , "배팅액:"+tmo+", total:"+(totalmoney) , betkind, whosturn );
 		}
@@ -1341,17 +1277,9 @@ public class GameManager {
 		obj.put("betend", isBetEnd);
 		SocketHandler.insertLog(getGameId(), getGameIdentifier(), "THEFLOP", -1, card1.cardcode, card2.cardcode, "", card3.cardcode, -1);
 		for(int k =0; k<userlist.size(); k++){
-			//cardarr[k][2] = card1.cardcode;
-			//cardarr[k][3] = card2.cardcode;
-			//cardarr[k][4] = card3.cardcode;
-
 			userlist.get(k).cardarr.add(card1.cardcode);
 			userlist.get(k).cardarr.add(card2.cardcode);
 			userlist.get(k).cardarr.add(card3.cardcode);
-
-			//System.out.println( k + "번 째 유저의 2 번 째 카드 : " + cardarr[k][2]);
-			//System.out.println( k + "번 째 유저의 3 번 째 카드 : " + cardarr[k][3]);
-			//System.out.println( k + "번 째 유저의 4 번 째 카드 : " + cardarr[k][4]);
 		}
 		sendRoom( obj);
 	}
@@ -1380,9 +1308,7 @@ public class GameManager {
 		obj.put("betend", isBetEnd);
 		SocketHandler.insertLog(getGameId(), getGameIdentifier(), "THETURN", -1, card4.cardcode, -1, "", -1, -1);
 		for(int k =0; k<userlist.size(); k++){
-			//cardarr[k][5] = card4.cardcode;
 			userlist.get(k).cardarr.add(card4.cardcode);
-			//System.out.println( k + "번 째 유저의 4 번 째 카드 : " + cardarr[k][5]);
 		}
 		sendRoom(obj);
 	}
@@ -1390,15 +1316,11 @@ public class GameManager {
 	public void TheRiver(){
 		timer = SocketHandler.second;
 		turncnt = 0;
-		//System.out.println("theriver================ 마지막 카드 공개");
-		//timer=-1;
 		whosturn=getDealerSeat();
 		nextTurn();
 
 		JSONObject obj = new JSONObject();
 		GameMode = "THERIVER";
-	    /*카드변경******/
-	    //card5=cardManager.popCard(34);   
 		card5=cardManager.popCard();	
 		
 		boolean isBetEnd = isGuBetEnd();
@@ -1412,9 +1334,7 @@ public class GameManager {
 		obj.put("betend", isBetEnd);
 		SocketHandler.insertLog(getGameId(), getGameIdentifier(), "THERIVER", -1, card5.cardcode, -1, "", -1, -1);
 		for(int k =0; k<userlist.size(); k++){
-			//cardarr[k][6] = card5.cardcode;
 			userlist.get(k).cardarr.add(card5.cardcode);
-			//System.out.println( k + "번 째 유저의 6 번 째 카드 : " + cardarr[k][6]);
 		}
 		sendRoom(obj);
 	}
@@ -2100,8 +2020,6 @@ public class GameManager {
 		//==========================} 승리금 정산
 		
 		setDealerSeat();		
-		
-		//System.out.println("승자 족보레벨:"+ (sortRank.get(0).wlv) +" 승자id:"+sortRank.get(0).nickname + " card:"+sortRank.get(0).wincard.toString() );
 				
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","showResult");

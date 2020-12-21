@@ -192,7 +192,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         
         JSONParser p = new JSONParser();
         JSONObject obj = (JSONObject)p.parse(msg);
-        System.out.println("cmd:"+msg);
+//        System.out.println("cmd:"+msg);
         
         switch(""+ obj.get("protocol"))
 		{
@@ -206,17 +206,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 	    			User u = usermanager.find(session);    				    			
 					int roomidx = Integer.parseInt(""+obj.get("roomidx"));	    			
 	    			roommanager.leaveRoom(u.roomnum, u);    	    				    			
-	    			//AI일경우 자동 재충전 처리
-	    			if(u.isAI == true && u.point < 1000000000)
-	    			{
-	    				u.point += 1000000000;
-	    				// insertLog 머니로그 남겨야 함 !!!
-	    				JSONObject chgobj=new JSONObject();
-	    				chgobj.put("cmd", "aiautocharge");
-	    				chgobj.put("currentpoint",""+u.point);
-	    				chgobj.put("currentbalance",""+u.balance);
-	    				u.sendMe(chgobj);
-	    			}
     			}catch(Exception e) {
     				System.out.println("나가는중 에러 감지 :"+e.getMessage() );
     			}
@@ -277,6 +266,30 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         		usermanager.connect(session, user);
         		break;
         	}
+        	case "getAutoCharge":
+        	{
+    			try {
+	    			User u = usermanager.find(session);    				    			
+	    			//AI일경우 자동 재충전 처리
+	    			if(u.isAI == true )
+	    			{
+	    				if( u.point < 1000000000)
+	    					u.point += 1000000000;
+	    				if( u.balance < 1000000 )
+	    					u.balance += 1000000;
+	    				
+	    				// insertLog 머니로그 남겨야 함 !!!
+	    				JSONObject chgobj=new JSONObject();
+	    				chgobj.put("cmd", "aiautocharge");
+	    				chgobj.put("currentpoint",""+u.point);
+	    				chgobj.put("currentbalance",""+u.balance);
+	    				u.sendMe(chgobj);
+	    			}
+	    			System.out.println("AI user 자동 충전 point:"+u.point+" gold:"+u.balance );
+    			}catch(Exception e) {
+    				System.out.println("getAutoCharge 에러 감지 :"+e.getMessage() );
+    			}
+        	}break;
         	case "joinRoom":
         	{
              	User u = usermanager.find(session);
@@ -340,7 +353,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 	        break;
         	case "beg":
         	{        		
-        		System.out.println(obj.toJSONString());
         		usermanager.Beg(session);
         	}        	
 	        break;	        

@@ -148,8 +148,6 @@ public class FriendModel {
 
         SocketHandler.sk.sampleDAO.insert("AddInbox", inboxin);        
 
-        //System.out.println(mapper.writeValueAsString(inbox));
-            
         return true;
 
     }

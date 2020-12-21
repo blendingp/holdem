@@ -26,7 +26,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		System.out.println("===================       START       ===================");
 		HttpSession session = request.getSession();
 		String url = request.getRequestURI();
 		String[] urlArr = request.getRequestURI().split("/");
@@ -52,7 +51,6 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 	@Override
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
-		System.out.println("===================       END       ===================");
 		// TODO Auto-generated method stub
 		super.postHandle(request, response, handler, modelAndView);
 	}
