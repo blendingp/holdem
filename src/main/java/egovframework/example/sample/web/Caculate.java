@@ -81,9 +81,16 @@ public class Caculate {
 					NRanks.get(winnercnt).totalprofile.highgaingold = winnerpoint;
 				}	
 				
-				long gamount = (long)(amount * NRanks.get(winnercnt).memberInfo.gold_cashback);
-				NRanks.get(winnercnt).bankamount = gamount;
-				NRanks.get(winnercnt).bank += gamount;
+				long gamount = (long)(amount * NRanks.get(winnercnt).memberInfo.gold_cashback);				
+				NRanks.get(winnercnt).bank += gamount;				
+				if( NRanks.get(winnercnt).bank + gamount > NRanks.get(winnercnt).memberInfo.bank_gold )
+				{
+					NRanks.get(winnercnt).bankamount = NRanks.get(winnercnt).memberInfo.bank_gold - NRanks.get(winnercnt).bank;
+				}
+				else
+				{
+					NRanks.get(winnercnt).bankamount = gamount;
+				}
 
 				if( NRanks.get(winnercnt).bank > NRanks.get(winnercnt).memberInfo.bank_gold )
 				{

@@ -119,15 +119,11 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 
 			room.LeaveReserve(u);
 
-			if( room.gameManager.userlist.size() <= 0 )
+			if( room.gameManager.userlist.size() > 0 )
 			{
-				roommanager.roomList.remove(room);
-			}
-			else
-			{				
 				Task.IncreaseTask(u, 2, 1);
-				Task.UpdateDB(u);				
-			}		
+				Task.UpdateDB(u);			
+			}
 			
 			room.checkSBorBBfirstOut(u);
 		}		

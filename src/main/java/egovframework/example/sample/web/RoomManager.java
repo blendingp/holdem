@@ -326,6 +326,10 @@ public class RoomManager {
 			}
 			
 			r.checkTimerGame();
+			if( r.gameManager.userlist.size() + r.gameManager.watchinguserlist.size() <= 0 )
+			{
+				roomList.remove(r);
+			}
 		}
 	}
 	
