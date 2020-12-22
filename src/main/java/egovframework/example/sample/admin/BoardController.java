@@ -687,8 +687,8 @@ public class BoardController {
 		}
 		paginationInfo.setTotalRecordCount((int) sampleDAO.select("selectUserPurchaseLogTot", in));
 		model.addAttribute("list", list);
-		model.addAttribute("sumCharge", (int)sampleDAO.select("selectUserPurchaseSum" , in));
-		model.addAttribute("sumChargeAll", (int)sampleDAO.select("selectUserPurchaseSumAll" , in));
+		model.addAttribute("sumCharge", (long)sampleDAO.select("selectUserPurchaseSum" , in));
+		model.addAttribute("sumChargeAll", (long)sampleDAO.select("selectUserPurchaseSumAll" , in));
 		model.addAttribute("pi", paginationInfo);		 
 		model.addAttribute("orderKind", orderKind);		 
 		model.addAttribute("search", search);
@@ -739,7 +739,7 @@ public class BoardController {
 		}
 		paginationInfo.setTotalRecordCount((int) sampleDAO.select("selectUserPurchaseLogTot", in));
 		model.addAttribute("list", list);
-		model.addAttribute("sumCharge", (int)sampleDAO.select("selectUserPurchaseSum" , in));
+		model.addAttribute("sumCharge", (long)sampleDAO.select("selectUserPurchaseSum" , in));
 		model.addAttribute("pi", paginationInfo);	
 		model.addAttribute("year", year);
 		model.addAttribute("month", month);
@@ -779,8 +779,8 @@ public class BoardController {
 		List<EgovMap> list = (List<EgovMap>) sampleDAO.list("selectGoldFeeLog", in);
 		paginationInfo.setTotalRecordCount((int) sampleDAO.select("selectGoldFeeLogTot", in));
 		model.addAttribute("list", list);
-		model.addAttribute("sumFee", (int)sampleDAO.select("selectGoldFeeSum" , in));
-		model.addAttribute("sumFeeAll", (int)sampleDAO.select("selectGoldFeeSumAll" , in));
+		model.addAttribute("sumFee", (long)sampleDAO.select("selectGoldFeeSum" , in));
+		model.addAttribute("sumFeeAll", (long)sampleDAO.select("selectGoldFeeSumAll" , in));
 		model.addAttribute("pi", paginationInfo);
 		model.addAttribute("search", search);
 		model.addAttribute("startD", startD);
@@ -819,7 +819,7 @@ public class BoardController {
 		List<EgovMap> list = (List<EgovMap>) sampleDAO.list("selectGoldFeeLog", in);
 		paginationInfo.setTotalRecordCount((int) sampleDAO.select("selectGoldFeeLogTot", in));
 		model.addAttribute("list", list);
-		model.addAttribute("sumFee", (int)sampleDAO.select("selectGoldFeeSum" , in));
+		model.addAttribute("sumFee", (long)sampleDAO.select("selectGoldFeeSum" , in));
 		model.addAttribute("pi", paginationInfo);	
 		model.addAttribute("year", year);
 		model.addAttribute("month", month);

@@ -543,7 +543,7 @@
 		) A 
 	</select>
     
-	<select id="selectUserPurchaseSum" resultClass="int">
+	<select id="selectUserPurchaseSum" resultClass="long">
 		<![CDATA[
 			select ifnull(sum(price),0) sumCharge 
 			from payment_log
@@ -566,7 +566,7 @@
        	</isNotEmpty>
 	</select>
 	
-	<select id="selectUserPurchaseSumAll" resultClass="int">
+	<select id="selectUserPurchaseSumAll" resultClass="long">
 		<![CDATA[
 			select ifnull(sum(price),0) sumCharge 
 			from payment_log
@@ -631,7 +631,7 @@
 		)A
 	</select>
 	
-	<select id="selectGoldFeeSum" resultClass="int">
+	<select id="selectGoldFeeSum" resultClass="long">
 		<![CDATA[
 			select ifnull(sum(fee),0) sumFee 
 			from goldfeelog
@@ -653,7 +653,7 @@
        	</isNotEmpty>
 		
 	</select>
-	<select id="selectGoldFeeSumAll" resultClass="int">
+	<select id="selectGoldFeeSumAll" resultClass="long">
 		<![CDATA[
 			select ifnull(sum(fee),0) sumFee 
 			from goldfeelog
