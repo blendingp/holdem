@@ -348,9 +348,32 @@ public class Room {
 		
 		gameManager.EmptySeat(u.seat);
 		u.die = false;
-		gameManager.userlist.remove(u);
-		gameManager.leaveuserlist.remove(u);
-		gameManager.watchinguserlist.remove(u);
+		for( int nCount = 0; nCount < gameManager.userlist.size(); nCount++ )
+		{
+			if( gameManager.userlist.get(nCount).uidx == u.uidx)
+			{
+				gameManager.userlist.remove(nCount);
+				break;
+			}			
+		}
+
+		for( int nCount = 0; nCount < gameManager.leaveuserlist.size(); nCount++ )
+		{
+			if( gameManager.leaveuserlist.get(nCount).uidx == u.uidx)
+			{
+				gameManager.leaveuserlist.remove(nCount);
+				break;
+			}			
+		}
+
+		for( int nCount = 0; nCount < gameManager.watchinguserlist.size(); nCount++ )
+		{
+			if( gameManager.watchinguserlist.get(nCount).uidx == u.uidx)
+			{
+				gameManager.watchinguserlist.remove(nCount);
+				break;
+			}			
+		}
 		
 		u.clear();
 		System.out.println("<< Room . leave >> :"+ u.nickname);
