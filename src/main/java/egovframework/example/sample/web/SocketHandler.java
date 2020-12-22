@@ -265,7 +265,8 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         	case "getAutoCharge":
         	{
     			try {
-	    			User u = usermanager.find(session);    				    			
+	    			User u = usermanager.find(session);
+	    			if( u == null )return;
 	    			//AI일경우 자동 재충전 처리
 	    			if(u.isAI == true )
 	    			{
@@ -527,6 +528,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
                         cmdProcess(); 			// 클라로 부터 받은 메세지 처리
                         roommanager.checkStartGame();
 						roommanager.checkTimerGame();
+						roommanager.checkErrorGamingRoom();
 						JackpotManager.Update();
                     } catch (InterruptedException e) {
                         System.out.println( "socketThread \n"+e.getMessage() );

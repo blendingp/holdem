@@ -369,9 +369,11 @@ public class Room {
 	public void checkErrorGamingRoom() {
 		if( gameManager.GameMode.compareTo("대기") !=0  &&  gameManager.lastcmdtime +30000 < (new Date()).getTime() ) 
 		{//
+			gameManager.lastcmdtime = (new Date()).getTime();
 			//30초이상 명령 진행이 안되고 있으면 에러난 방이므로 에러 로그를 기록하고 결과 처리한다. 해당 방 번호를 기록.,추가로 에러로그 기록
 			gameManager.setWorkTime();
 			gameManager.changeGameMode("showResult");
+			System.out.println("===================게임 멈춤 문제발생====");
 			SocketHandler.insertLog(gameManager.getGameId(), gameManager.getGameIdentifier(), "stopERROR", -1, -1, -1, "", -1, -1);
 		}
 	}

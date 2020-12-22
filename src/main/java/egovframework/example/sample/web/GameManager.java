@@ -376,6 +376,7 @@ public class GameManager {
 	
 	
 	void changeGameMode(String mode){
+		System.out.println(GameMode+" => "+mode);
 		GameMode = mode;
 	}
 	void setWorkTime(){
@@ -467,6 +468,7 @@ public class GameManager {
 			LeaveReserveUser();
 			if (isPlayable() && checkCmdTime(6) ){
 				setWorkTime();
+				lastcmdtime =( new Date()).getTime();
 				changeGameMode("checkstart");
 			}
 		}
@@ -641,41 +643,28 @@ public class GameManager {
 			
 			//스트레이트 플러시 2
 			if(checkStraightFlush(card)==true){//
-				currentUser.wlv = 9;
 				currentUser.jokbocode=0x9000000+tempInfo1;
 				currentUser.balance += JackpotManager.GetJackpotAmount();
 				JackpotManager.WithdrawJackpot();
 			}else if(checkFourCard(card) == true ){// 포카드 *
-				currentUser.wlv = 8;
 				currentUser.jokbocode=0x8000000+tempInfo1*0x10 + tempInfo3;
 			}else if(checkFullHouse(card)==true){//풀하우스 *
-				currentUser.wlv = 7;
 				currentUser.jokbocode=0x7000000+tempInfo1*0x10+tempInfo2;
 			}else if(checkFlush(card)==true){//플러시 모양 *
-				currentUser.wlv = 6;
 				currentUser.jokbocode=0x6000000+tempInfo3;
 			}else if(checkStraight(card)==true){//스트레이트숫자 *?
-				currentUser.wlv = 5;
 				currentUser.jokbocode=0x5000000+tempInfo1;
 			}else if(checkThree(card)==true){//트리플*
-				currentUser.wlv = 4;
 				currentUser.jokbocode=0x4000000+tempInfo1*0x100+tempInfo3;
 			}else if(checkTwoPair(card)==true){//투페어*
-				currentUser.wlv = 3;
 				currentUser.jokbocode=0x3000000+tempInfo1*0x100+tempInfo2*0x10+tempInfo3; 
 			}else if(checkPair(card)==true){//원페어 *
-				currentUser.wlv = 2;
 				currentUser.jokbocode= 0x2000000+tempInfo1*0x1000 + tempInfo3;
 			}else {//탑카드 
-				currentUser.wlv = 1;
 				checkTopCard(card);
 				currentUser.jokbocode= 0x1000000 + tempInfo3; 
 			}
-			
-//			SocketHandler.insertLog(getGameId(), "card", currentUser.uidx , currentUser.jokbocode , -1, ""+cardForDebug , -1 , -1 );
 		}
-
-		//유저  족보 순위 정렬
 		tsortRank=(ArrayList<User>) tuserlist.clone();
 		Collections.sort(tsortRank, new Comparator<User>() {
             @Override public int compare(User s1, User s2) {
