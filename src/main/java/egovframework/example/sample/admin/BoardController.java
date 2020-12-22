@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -638,6 +640,18 @@ public class BoardController {
 	@RequestMapping(value = "/purchaseLog.do")
 	public String purchaseLog(HttpServletRequest request, ModelMap model) {
 		productJson(); // product JSON 정보 
+		Date today = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String startD = request.getParameter("startD");
+		String endD = request.getParameter("endD");
+		if(startD == null)
+		{
+			startD = sdf.format(today); 
+		}
+		if(endD == null)
+		{
+			endD = sdf.format(today);
+		}
 		String search = request.getParameter("search");
 		String orderKind = request.getParameter("orderKind");
 		if(orderKind == null || orderKind.equals(""))
@@ -657,7 +671,8 @@ public class BoardController {
 		in.put("record", paginationInfo.getRecordCountPerPage());
 		in.put("orderKind", orderKind);
 		in.put("search", search);
-		
+		in.put("startD", startD+" 00:00:00");
+		in.put("endD", endD+" 23:59:59");
 		List<EgovMap> list = (List<EgovMap>) sampleDAO.list("selectUserPurchaseLog", in);
 		for(int listCnt=0; listCnt < list.size(); listCnt++) 
 		{
@@ -672,10 +687,12 @@ public class BoardController {
 		paginationInfo.setTotalRecordCount((int) sampleDAO.select("selectUserPurchaseLogTot", in));
 		model.addAttribute("list", list);
 		model.addAttribute("sumCharge", (int)sampleDAO.select("selectUserPurchaseSum" , in));
+		model.addAttribute("sumChargeAll", (int)sampleDAO.select("selectUserPurchaseSumAll" , in));
 		model.addAttribute("pi", paginationInfo);		 
 		model.addAttribute("orderKind", orderKind);		 
-		model.addAttribute("search", search);		 
-
+		model.addAttribute("search", search);
+		model.addAttribute("startD", startD);
+		model.addAttribute("endD", endD);
 		return "admin/purchaseLog";
 	}
 	
@@ -731,6 +748,18 @@ public class BoardController {
 
 	@RequestMapping(value = "/goldFeeLog.do")
 	public String goldFeeLog(HttpServletRequest request, ModelMap model) {
+		Date today = new Date();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String startD = request.getParameter("startD");
+		String endD = request.getParameter("endD");
+		if(startD == null)
+		{
+			startD = sdf.format(today); 
+		}
+		if(endD == null)
+		{
+			endD = sdf.format(today);
+		}
 		String search = request.getParameter("search");
 		PaginationInfo paginationInfo = new PaginationInfo();
 		if (request.getParameter("pageIndex") == null || request.getParameter("pageIndex").equals("")) {
@@ -744,12 +773,17 @@ public class BoardController {
 		in.put("first", paginationInfo.getFirstRecordIndex());
 		in.put("record", paginationInfo.getRecordCountPerPage());
 		in.put("search", search);
+		in.put("startD", startD+" 00:00:00");
+		in.put("endD", endD+" 23:59:59");
 		List<EgovMap> list = (List<EgovMap>) sampleDAO.list("selectGoldFeeLog", in);
 		paginationInfo.setTotalRecordCount((int) sampleDAO.select("selectGoldFeeLogTot", in));
 		model.addAttribute("list", list);
 		model.addAttribute("sumFee", (int)sampleDAO.select("selectGoldFeeSum" , in));
+		model.addAttribute("sumFeeAll", (int)sampleDAO.select("selectGoldFeeSumAll" , in));
 		model.addAttribute("pi", paginationInfo);
 		model.addAttribute("search", search);
+		model.addAttribute("startD", startD);
+		model.addAttribute("endD", endD);
 		return "admin/goldFeeLog";
 	}
 	

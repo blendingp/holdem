@@ -492,6 +492,9 @@
 		<isNotEmpty property = "month">
 			and month = #month#
 		</isNotEmpty>
+		<isNotEmpty property = "startD">
+			and date between #startD# and #endD#
+		</isNotEmpty>
        	<isNotEmpty property="search">
        		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
        	</isNotEmpty>
@@ -531,6 +534,9 @@
 		<isNotEmpty property = "month">
 			and month = #month#
 		</isNotEmpty>
+		<isNotEmpty property = "startD">
+			and date between #startD# and #endD#
+		</isNotEmpty>
 		<isNotEmpty property="search">
        		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
        	</isNotEmpty>
@@ -552,11 +558,27 @@
 		<isNotEmpty property = "month">
 			and month = #month#
 		</isNotEmpty>
+		<isNotEmpty property = "startD">
+			and date between #startD# and #endD#
+		</isNotEmpty>
 		<isNotEmpty property="search">
        		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
        	</isNotEmpty>
 	</select>
-    
+	
+	<select id="selectUserPurchaseSumAll" resultClass="int">
+		<![CDATA[
+			select ifnull(sum(price),0) sumCharge 
+			from payment_log
+			left join member m on payment_log.midx = m.midx
+			left join member_info mi on payment_log.midx = mi.midx
+			where product not in ('ad_point_deposit' ,'ad_point_withdrawal' , 'ad_balance_deposit','ad_balance_withdrawal' )
+			and isCash = 1
+		]]>
+		<isNotEmpty property="search">
+       		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
+       	</isNotEmpty>
+	</select>
     
 	<select id="selectGoldFeeLog" resultClass="EgovMap">
 		<![CDATA[
@@ -571,6 +593,9 @@
 		</isNotEmpty>
 		<isNotEmpty property = "month">
 			and month(gdate) = #month#
+		</isNotEmpty>
+		<isNotEmpty property = "startD">
+			and gdate between #startD# and #endD#
 		</isNotEmpty>
 		<isNotEmpty property="search">
        		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
@@ -597,6 +622,9 @@
 		<isNotEmpty property = "month">
 			and month(gdate) = #month#
 		</isNotEmpty>
+		<isNotEmpty property = "startD">
+			and gdate between #startD# and #endD#
+		</isNotEmpty>
 		<isNotEmpty property="search">
        		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
        	</isNotEmpty>
@@ -617,6 +645,22 @@
 		<isNotEmpty property = "month">
 			and month(gdate) = #month#
 		</isNotEmpty>
+		<isNotEmpty property = "startD">
+			and gdate between #startD# and #endD#
+		</isNotEmpty>
+		<isNotEmpty property="search">
+       		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
+       	</isNotEmpty>
+		
+	</select>
+	<select id="selectGoldFeeSumAll" resultClass="int">
+		<![CDATA[
+			select ifnull(sum(fee),0) sumFee 
+			from goldfeelog
+			left join member m on goldfeelog.uidx = m.midx
+			left join member_info mi on goldfeelog.uidx = mi.midx
+			where 1=1
+		]]>
 		<isNotEmpty property="search">
        		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
        	</isNotEmpty>
