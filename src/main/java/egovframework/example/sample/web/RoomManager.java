@@ -333,6 +333,17 @@ public class RoomManager {
 		}
 	}
 	
+	void checkErrorGamingRoom() {
+		for( Room r : roomList){
+			if( r == null )
+			{
+				continue;
+			}
+			
+			r.checkErrorGamingRoom();
+		}
+	}
+	
 	public void onMessage( JSONObject obj){
 		
 		/*if( (""+obj.get("cmd")).compareTo("joinroom") ==0){

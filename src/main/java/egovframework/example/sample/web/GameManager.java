@@ -5,16 +5,13 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-
-import javax.json.JsonObject;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Date;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.springframework.ui.Model;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import egovframework.example.sample.web.model.BanModel;
 
@@ -37,7 +34,8 @@ public class GameManager {
 	long money = 0;
 	long totalmoney = 0;
 	long prebetmoney =0 ;//이전 사람의 베팅머니
-	long preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.	
+	long preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.
+	long lastcmdtime=0;//게임 중일때 마지막 명령 시간을 기록, 방 오류난거 체킹용.
 	
 	int workTime=0;
 	
@@ -216,7 +214,8 @@ public class GameManager {
 		turncnt = 0;
 		totalmoney = 0;
 		prebetmoney =0 ;//이전 사람의 베팅머니
-		preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.		
+		preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.
+		lastcmdtime =( new Date()).getTime();
 
 		//cardarr = new int[userlist.size()][7];
 
@@ -377,6 +376,7 @@ public class GameManager {
 	
 	
 	void changeGameMode(String mode){
+		System.out.println(GameMode+" => "+mode);
 		GameMode = mode;
 	}
 	void setWorkTime(){
@@ -468,6 +468,7 @@ public class GameManager {
 			LeaveReserveUser();
 			if (isPlayable() && checkCmdTime(6) ){
 				setWorkTime();
+				lastcmdtime =( new Date()).getTime();
 				changeGameMode("checkstart");
 			}
 		}
@@ -642,41 +643,28 @@ public class GameManager {
 			
 			//스트레이트 플러시 2
 			if(checkStraightFlush(card)==true){//
-				currentUser.wlv = 9;
 				currentUser.jokbocode=0x9000000+tempInfo1;
 				currentUser.balance += JackpotManager.GetJackpotAmount();
 				JackpotManager.WithdrawJackpot();
 			}else if(checkFourCard(card) == true ){// 포카드 *
-				currentUser.wlv = 8;
 				currentUser.jokbocode=0x8000000+tempInfo1*0x10 + tempInfo3;
 			}else if(checkFullHouse(card)==true){//풀하우스 *
-				currentUser.wlv = 7;
 				currentUser.jokbocode=0x7000000+tempInfo1*0x10+tempInfo2;
 			}else if(checkFlush(card)==true){//플러시 모양 *
-				currentUser.wlv = 6;
 				currentUser.jokbocode=0x6000000+tempInfo3;
 			}else if(checkStraight(card)==true){//스트레이트숫자 *?
-				currentUser.wlv = 5;
 				currentUser.jokbocode=0x5000000+tempInfo1;
 			}else if(checkThree(card)==true){//트리플*
-				currentUser.wlv = 4;
 				currentUser.jokbocode=0x4000000+tempInfo1*0x100+tempInfo3;
 			}else if(checkTwoPair(card)==true){//투페어*
-				currentUser.wlv = 3;
 				currentUser.jokbocode=0x3000000+tempInfo1*0x100+tempInfo2*0x10+tempInfo3; 
 			}else if(checkPair(card)==true){//원페어 *
-				currentUser.wlv = 2;
 				currentUser.jokbocode= 0x2000000+tempInfo1*0x1000 + tempInfo3;
 			}else {//탑카드 
-				currentUser.wlv = 1;
 				checkTopCard(card);
 				currentUser.jokbocode= 0x1000000 + tempInfo3; 
 			}
-			
-//			SocketHandler.insertLog(getGameId(), "card", currentUser.uidx , currentUser.jokbocode , -1, ""+cardForDebug , -1 , -1 );
 		}
-
-		//유저  족보 순위 정렬
 		tsortRank=(ArrayList<User>) tuserlist.clone();
 		Collections.sort(tsortRank, new Comparator<User>() {
             @Override public int compare(User s1, User s2) {
@@ -959,7 +947,9 @@ public class GameManager {
 		}
 	}
 
-	public void bet(User u, int betkind){			
+	public void bet(User u, int betkind){		
+		lastcmdtime =( new Date()).getTime();
+		
 		if( whosturn != u.seat ){
 			System.out.println(whosturn+" 잘못된 유저의 BET 차례 "+u.seat);
 			return;
