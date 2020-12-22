@@ -81,7 +81,7 @@
 								<span class="text-span">윈게임<strong class="bold-text-3">홀덤</strong></span>
 							</div>
 						</div>
-						<div>
+						<div style="width: 50%;display: flex;">
 							<a href="/holdemM.zip" class="googleplay_btn w-inline-block" download>
 								<img src="/holdem/webflow/images/googleplay_button.png" loading="lazy" alt="" class="googleplay_btnicon">
 							</a> 
