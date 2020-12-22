@@ -1,6 +1,6 @@
 {    
     "useitem":"cash",
-    "amount":360,
+    "amount":320,
     "payitem":[
         {
             "Type":"point",
