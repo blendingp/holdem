@@ -218,7 +218,7 @@ public class RoomManager {
 			return false;
 		}
 
-		room.join(user, roomcount);
+		room.join(user, number);
 
 		return true;
 	}
@@ -302,10 +302,10 @@ public class RoomManager {
 		
 	}
 	
-	void leaveRoom(int roomNum , User user){
-		Room room = find(user.roomnum);					
-		room.notifyLeaveUser(user.seat);		
-		room.leave(user);				
+	void leaveRoom(int roomNum , User user){		
+		Room room = find(user.roomnum);				
+		room.notifyLeaveUser(user.seat);				
+		room.leave(user);						
 	}
 	
 	void checkStartGame(){
