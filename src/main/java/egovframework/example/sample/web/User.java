@@ -302,28 +302,6 @@ public class User {
 				in.put("type", "cash");
 				iscash = 1;				
 				break;					
-			case "Gem4":
-				price = 55000;			
-				if( totalpayment + price > 500000 )
-				{
-					return 0;
-				}
-				this.cash += 550;
-				in.put("amount", this.cash);
-				in.put("type", "cash");
-				iscash = 1;				
-				break;		
-			case "Gem5":
-				price = 99000;			
-				if( totalpayment + price > 500000 )
-				{
-					return 0;
-				}
-				this.cash += 990;
-				in.put("amount", this.cash);
-				in.put("type", "cash");
-				iscash = 1;				
-				break;		
 			case "silver": {
 				Members.BuyMembers(this, 1);
 				in.put("amount", this.cash);
@@ -343,37 +321,37 @@ public class User {
 			}
 				break;
 			case "chiprefill500":
-				if (this.cash >= 10) 
+				if (this.cash >= 40) 
 				{
 					item = product;
-					this.cash -= 10;
+					this.cash -= 40;
 					in.put("amount", this.cash);
 					in.put("type", "cash");
 				}
 				break;
 			case "chiprefill1000":
-				if (this.cash >= 18) 
+				if (this.cash >= 80) 
 				{
 					item = product;
-					this.cash -= 18;
+					this.cash -= 80;
 					in.put("amount", this.cash);
 					in.put("type", "cash");
 				}
 				break;
 			case "chiprefill2000":
-				if (this.cash >= 35) 
+				if (this.cash >= 160) 
 				{
 					item = product;
-					this.cash -= 35;
+					this.cash -= 160;
 					in.put("amount", this.cash);
 					in.put("type", "cash");
 				}
 				break;
 			case "nickname":
-				if (this.cash >= 50) 
+				if (this.cash >= 240) 
 				{
 					item = product;
-					this.cash -= 50;
+					this.cash -= 240;
 					in.put("amount", this.cash);
 					in.put("type", "cash");
 				}
