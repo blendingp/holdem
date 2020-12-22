@@ -5,16 +5,13 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-
-import javax.json.JsonObject;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Date;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.springframework.ui.Model;
 import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import egovframework.example.sample.web.model.BanModel;
 
@@ -37,7 +34,8 @@ public class GameManager {
 	long money = 0;
 	long totalmoney = 0;
 	long prebetmoney =0 ;//이전 사람의 베팅머니
-	long preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.	
+	long preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.
+	long lastcmdtime=0;//게임 중일때 마지막 명령 시간을 기록, 방 오류난거 체킹용.
 	
 	int workTime=0;
 	
@@ -216,7 +214,8 @@ public class GameManager {
 		turncnt = 0;
 		totalmoney = 0;
 		prebetmoney =0 ;//이전 사람의 베팅머니
-		preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.		
+		preTotalBetmoney=0;//이전 사람의 현재 구의 총 배팅머니/ 콜금액 계산용.
+		lastcmdtime =( new Date()).getTime();
 
 		//cardarr = new int[userlist.size()][7];
 
@@ -959,7 +958,9 @@ public class GameManager {
 		}
 	}
 
-	public void bet(User u, int betkind){			
+	public void bet(User u, int betkind){		
+		lastcmdtime =( new Date()).getTime();
+		
 		if( whosturn != u.seat ){
 			System.out.println(whosturn+" 잘못된 유저의 BET 차례 "+u.seat);
 			return;

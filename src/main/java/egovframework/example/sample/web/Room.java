@@ -5,20 +5,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.Random;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.apache.commons.lang3.RandomUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import egovframework.example.sample.web.model.RoomInfoModel;
 
@@ -314,7 +311,7 @@ public class Room {
 		u.seat = gameManager.GetEmptySeat();		
 		gameManager.SetSeat(u.seat);
 		u.roomnum = ridx;				
-		if( gameManager.GameMode == "대기" )
+		if( gameManager.GameMode.compareTo("대기") == 0)
 		{						
 			gameManager.userlist.add( u );		
 			gameManager.startCheck(u, gameManager.userlist);			
@@ -365,6 +362,15 @@ public class Room {
 	public void checkTimerGame(){
 		gameManager.checkTimerGame();
 	}	
+	public void checkErrorGamingRoom() {
+		if( gameManager.GameMode.compareTo("대기") !=0  &&  gameManager.lastcmdtime +30000 < (new Date()).getTime() ) 
+		{//
+			//30초이상 명령 진행이 안되고 있으면 에러난 방이므로 에러 로그를 기록하고 결과 처리한다. 해당 방 번호를 기록.,추가로 에러로그 기록
+			gameManager.setWorkTime();
+			gameManager.changeGameMode("showResult");
+			SocketHandler.insertLog(gameManager.getGameId(), gameManager.getGameIdentifier(), "stopERROR", -1, -1, -1, "", -1, -1);
+		}
+	}
 
 	public Room GetRoomByKey(String key)
 	{
