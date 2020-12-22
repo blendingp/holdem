@@ -293,7 +293,7 @@
 
 	<select id="GetMemberInfo" resultClass="EgovMap">
         <![CDATA[
-            SELECT midx, `exp`, nickname, avata, ban, `limit` , ai FROM member_info
+            SELECT midx, `exp`, lastlevel, nickname, avata, ban, `limit` , ai FROM member_info
             WHERE midx=#midx#
         ]]>
 	</select>
@@ -301,9 +301,9 @@
 	<update id="UpdateMemberInfo" parameterClass="egovMap">	
         <![CDATA[
             INSERT INTO member_info
-					( midx, `exp`, nickname, avata, ban, `limit` )
-				VALUES ( #midx#, #exp#, #nickname#, #avata#, #ban#, #limit# )
-				ON DUPLICATE KEY UPDATE `exp`=#exp#, nickname=#nickname#, avata=#avata#, ban=#ban#, `limit`=#limit#
+					( midx, `exp`, lastlevel, nickname, avata, ban, `limit` )
+				VALUES ( #midx#, #exp#, #lastlevel#, #nickname#, #avata#, #ban#, #limit# )
+				ON DUPLICATE KEY UPDATE `exp`=#exp#, lastlevel=#lastlevel#, nickname=#nickname#, avata=#avata#, ban=#ban#, `limit`=#limit#
         ]]>
 	</update>
 
@@ -394,5 +394,17 @@
 				  , #winmoney#
 				  , #fee#)
 		]]>
-</insert>
+	</insert>
+	<select id="ExsitGifLog" resultClass="EgovMap">
+        <![CDATA[
+			SELECT level FROM member_info WHERE midx=#midx#
+        ]]>
+	</select>
+	<insert id="InsertGifLog" parameterClass="egovMap">
+        <![CDATA[
+				INSERT INTO member
+					( midx, level, product, date )
+				VALUES ( #midx#, #level#, #product#, now() )
+			]]>
+	</insert>
 </sqlMap>

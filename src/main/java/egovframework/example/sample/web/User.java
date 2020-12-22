@@ -1,6 +1,7 @@
 package egovframework.example.sample.web;
 
 import java.io.IOException;
+import java.lang.System.Logger.Level;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Random;
@@ -30,6 +31,7 @@ public class User {
 	public String nickname = "";
 	public int seat = -1;
 	public int roomnum = -1;
+	public int timeoutstack = 0;
 	public long betmoney = 0;
 	public long prevamount = 0;
 	public long balance = 0;
@@ -1080,6 +1082,13 @@ public class User {
 		
 		this.img = _info.avata;		
 	}
+
+	public void IncreaseExp(int amount)
+	{
+		_info.exp += amount;	
+		LevelGift.CheckLevelGift(_info, uidx);
+		UpdateMemberInfo();
+	}	
 
 	public void UseItem(String type)
 	{		

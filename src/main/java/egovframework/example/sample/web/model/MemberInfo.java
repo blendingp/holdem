@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class MemberInfo {
     public int midx;
     public long exp = 0;
+    public int lastlevel = 1;
     public String nickname = "";
     public String avata = "";
     public String ban = "";

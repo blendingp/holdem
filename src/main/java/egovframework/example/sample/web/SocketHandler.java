@@ -316,10 +316,17 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			}break;
         	case "bet":
         	{             	
-        		User u1 = usermanager.find(session);
+				User u1 = usermanager.find(session);
+				u1.timeoutstack = 0;
              	int betkind = Integer.parseInt(""+obj.get("betkind"));
              	int roomidx = Integer.parseInt(""+obj.get("roomidx"));             
-             	roommanager.find(roomidx).gameManager.bet(u1, betkind);
+				roommanager.find(roomidx).gameManager.bet(u1, betkind);				 
+        		break;
+			}
+			case "timeout":
+        	{             	
+        		User u1 = usermanager.find(session);             	
+             	roommanager.find(u1.roomnum).gameManager.timeout(u1);
         		break;
         	}
         	case "sbBet":
