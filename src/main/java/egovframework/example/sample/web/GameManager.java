@@ -570,7 +570,7 @@ public class GameManager {
 				for(User u : userlist){					
 					if(u.seat == whosturn ){						
 						timer = SocketHandler.second;							
-						bet(u, 0);	
+						timeout(u);	
 						break;									
 					}
 				}										
@@ -953,6 +953,10 @@ public class GameManager {
 	{
 		bet(u, 0);
 		u.timeoutstack++;
+		if( u.timeoutstack >= 2 )
+		{
+			room.LeaveReserve(u);
+		}
 	}
 
 	public void bet(User u, int betkind){			
