@@ -530,7 +530,8 @@ public class BoardController {
 			// 기존 정보 가져옴
 			EgovMap info = (EgovMap) sampleDAO.select("selectUserInfoByAdmin", idx);
 			// 기존 머니
-			int beforeM = Integer.parseInt("" + info.get(type));
+			long beforeM = Long.parseLong(""+info.get(type));
+			//int beforeM = (int)info.get(type);
 			// 입금인지 출금인지 확인하여 업데이트
 			if (kind.equals("deposit")) { // 입금
 				sampleDAO.update("updateUserMoneyDeposit", in);
