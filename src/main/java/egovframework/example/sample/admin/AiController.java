@@ -78,8 +78,8 @@ public class AiController {
 		EgovMap in = new EgovMap();
 		String result = "success";
 		int num = Integer.parseInt(""+request.getParameter("num"));
-		int balance = Integer.parseInt(""+request.getParameter("balance"));
-		int point = Integer.parseInt(""+request.getParameter("point"));
+		long balance = Long.parseLong(""+request.getParameter("balance"));
+		long point = Long.parseLong(""+request.getParameter("point"));
 		int cnt = 0;
 		String firstNm = ""+request.getParameter("firstNm");
 		for(int numCnt=0; numCnt < num; numCnt ++) {

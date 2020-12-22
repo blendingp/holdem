@@ -37,6 +37,18 @@
 									<div class="row">
 										<div class="col-lg-2">
 											<div class="form-group">
+												<label>일별 총 구매가격</label>
+												<pre style="padding:7.5px"><fmt:formatNumber value="${sumCharge}" pattern="#,###"/></pre>
+											</div>
+										</div>										
+										<div class="col-lg-2">
+											<div class="form-group">
+												<label>전체 총 구매가격</label>
+												<pre style="padding:7.5px"><fmt:formatNumber value="${sumChargeAll}" pattern="#,###"/></pre>
+											</div>
+										</div>										
+										<div class="col-lg-2">
+											<div class="form-group">
 												<label>정렬</label>
 												<select class="form-control" name="orderKind" onchange="fn_egov_link_page(1)">
 													<option value="recent"<c:if test="${orderKind == 'recent'}">selected</c:if>>최신순</option>
@@ -45,19 +57,25 @@
 												</select>
 											</div>
 										</div>
-										<div class="col-lg-2">
+									</div>
+									<div class="row">
+										<div class="col-lg-4">
 											<div class="form-group">
-												<label>총 구매가격</label>
-												<pre style="padding:7.5px"><fmt:formatNumber value="${sumCharge}" pattern="#,###"/></pre>
+												<label>기간검색</label>
+												<div style="display:flex">
+													<input type="date" class="form-control" name="startD" value="${startD}" id="startD"/>
+													&nbsp;~&nbsp;
+													<input type="date" class="form-control" name="endD" value="${endD}" id="endD"/>
+												</div> 
 											</div>
-										</div>										
+										</div>
 										<div class="col-lg-2">
 											<div class="form-group input-group">
 												<label>검색어 입력</label>
 												<div style="display:flex">
 													<input placeholder="아이디 혹은 닉네임" style="display:block;" class="form-control idinput" name="search" id="search" value="${search}">
 													<span class="input-group-btn">
-														<button type="submit" class="btn btn-default">검색</button>
+														<button type="button" onclick="btnSearch()" class="btn btn-default">검색</button>
 													</span>
 												</div>
 											</div>
@@ -103,7 +121,18 @@
 			</div>
 		</div>
 	</div>
-
 	<jsp:include page="../frame/adminbottom.jsp" flush="true" />
 </body>
+<script>
+	function btnSearch(){
+		var startD = $("#startD").val();
+		var endD = $("#endD").val();
+		if(endD < startD)
+		{
+			alert("조회종료기간이 조회시작기간보다 작을 수 없습니다.");
+			return;
+		}
+		document.listForm.submit();
+	}
+</script>
 </html>

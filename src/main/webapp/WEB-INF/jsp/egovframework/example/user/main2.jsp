@@ -81,15 +81,25 @@
 								<span class="text-span">윈게임<strong class="bold-text-3">홀덤</strong></span>
 							</div>
 						</div>
-						<div>
+						<div class="div-block-13">
+							<a href="/holdemM.zip" class="googleplay_btn w-inline-block" download>
+								<img src="/holdem/webflow/images/googleplay_button1.png" loading="lazy" alt="" class="playbtnlmage">
+								<div class="playbtntext">Google Play 다운로드<br> <span class="playbtntext2">Download</span></div> 
+							</a> 
+							<a href="/holdem.zip" class="googleplay_btn w-inline-block" download>
+								<img src="/holdem/webflow/images/pc_button2.png" loading="lazy" alt="" class="playbtnlmage-2">
+								<div class="playbtntext">PC 다운로드<br><span class="playbtntext2">Download</span></div> 
+							</a>
+						</div>
+						<%-- <div>
 							<a href="/holdemM.zip" class="googleplay_btn w-inline-block" download>
 								<img src="/holdem/webflow/images/googleplay_button.png" loading="lazy" alt="" class="googleplay_btnicon">
 							</a> 
 							<a href="/holdem.zip" class="pcdownload_btn w-inline-block" download>  
-							     <!-- <a href="/holdem/user/ldPlayerGuide.do" class="pcdownload_btn w-inline-block"> -->
+							     <a href="/holdem/user/ldPlayerGuide.do" class="pcdownload_btn w-inline-block">
 								<img src="/holdem/webflow/images/pc_button.png" loading="lazy" alt="" class="pcdownload_btnicon">
 							</a>
-						</div>
+						</div> --%>
 					</div>
 				</div>
 			</div>

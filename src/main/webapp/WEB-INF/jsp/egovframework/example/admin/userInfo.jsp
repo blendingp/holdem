@@ -139,6 +139,11 @@
 		function updateMoney(type , kind){
 			var idx = $("#idx").val();
 			var money = $("#"+type).val();
+			if(money == '')
+			{
+				alert("숫자를 입력해주세요.")
+				return;
+			}
 			var param = {"idx" : idx , "type" : type , "kind" : kind , "money" : money};
 			$.ajax({
 				type:'post',
