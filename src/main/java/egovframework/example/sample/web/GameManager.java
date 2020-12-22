@@ -228,6 +228,7 @@ public class GameManager {
 			}
 			
 			u.init();
+			u.IncreaseExp(1);
 			u.PlayStatus = 1;
 			u.jokbocode = 0;
 			money = 0;
@@ -273,14 +274,14 @@ public class GameManager {
 			JackpotManager.SendJackpotMessage(u);
 
 			Task.IncreaseTask(u, 0, 1);
-			Task.UpdateDB(u);			
+			Task.UpdateDB(u);						
 			
 			u.CheckExpireTodayRecord();
 			u.totalprofile.totalgame++;
 			u.todayprofile.totalgame++;
 			ProfileManager.UpdateProfile(u.totalprofile);
 			ProfileManager.UpdateTodayProfile(u.todayprofile);
-			totalmoney += usermoney;
+			totalmoney += usermoney;			
 			outSBUser = outBBUser = null;
 			SocketHandler.insertLog(getGameId(), getGameIdentifier(), "join", u.uidx , u.balance , u.seat , "참가머니", usermoney , -1);
 		}			
@@ -488,22 +489,7 @@ public class GameManager {
 		//돈이 없는 유저 내보내기
 		ArrayList<User> rmlist=new ArrayList<User>();
 		for(User u : userlist) 
-		{
-			if( u == null )
-			{
-				continue ;
-			}
-
-			if( u.session == null )
-			{
-				continue ;
-			}
-
-			if( u.session.isOpen() == false )
-			{
-				continue ;
-			}
-
+		{			
 			if( room.UsedItem.equals("balance") == true){
 				
 				if( room.isPrivate() == false && u.balance < room.defaultmoney * 3){
@@ -961,6 +947,12 @@ public class GameManager {
 		{			
 			SocketHandler.insertLog(getGameId(), getGameIdentifier(), "error", -1, -1, -1, "DieTurnCheckError", -1, -1);
 		}
+	}
+
+	public void timeout(User u)
+	{
+		bet(u, 0);
+		u.timeoutstack++;
 	}
 
 	public void bet(User u, int betkind){			
@@ -1859,6 +1851,7 @@ public class GameManager {
 					winSeat = cnt;
 					sortRank.add(u);
 					winners.add(u.seat);
+					u.IncreaseExp(1);
 					//u.prevamount -= u.lastbetmoney; 이거 확실친 않음 빼는게 맞을거 같은데 테스트 해보기, 마지막 베팅이 콜을 못받으면 그만큼 반환해줘야 하는데 그게 잘 되면 이거 빼는게 맞음.
 					u.jokbocode = 99;
 				}
@@ -1967,6 +1960,7 @@ public class GameManager {
 				if( wlv != 99 )
 				{
 					winners.add(user.seat);
+					user.IncreaseExp(1);
 				}				
 
 				for( JSONObject card : user.wincard )
