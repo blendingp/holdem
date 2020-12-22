@@ -52,6 +52,7 @@ public class RoomManager {
 
 			JSONObject cobj = new JSONObject();
 			cobj.put("cmd", "auth");
+			cobj.put("midx", user.uidx);
 			cobj.put("result", false);
 
 			try {
@@ -117,6 +118,7 @@ public class RoomManager {
 
 			JSONObject cobj = new JSONObject();
 			cobj.put("cmd", "auth");
+			cobj.put("midx", user.uidx);
 			cobj.put("result", false);
 
 			try {
@@ -190,6 +192,7 @@ public class RoomManager {
 
 			JSONObject cobj = new JSONObject();
 			cobj.put("cmd", "auth");
+			cobj.put("midx", user.uidx);
 			cobj.put("result", false);
 
 			try {
@@ -228,6 +231,7 @@ public class RoomManager {
 
 			JSONObject cobj = new JSONObject();
 			cobj.put("cmd", "auth");
+			cobj.put("midx", user.uidx);
 			cobj.put("result", false);
 
 			try {

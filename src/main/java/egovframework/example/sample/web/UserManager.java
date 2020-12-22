@@ -70,6 +70,7 @@ public class UserManager {
 
 			JSONObject cobj = new JSONObject();
 			cobj.put("cmd", "auth");
+			cobj.put("midx", user.uidx);
 			cobj.put("result", false);
 
 			try {
@@ -728,6 +729,14 @@ public class UserManager {
 		} catch (IOException e) {			
 			e.printStackTrace();
 		}
+	}
+
+	public void GetUserAuth(WebSocketSession session, int midx)
+	{		
+		session.getAttributes().put("useridx", midx);
+		User user = new User(midx, session);        		
+        		
+        connect(session, user);		
 	}
 
 	public void SignUp(WebSocketSession session, String id, String pass)

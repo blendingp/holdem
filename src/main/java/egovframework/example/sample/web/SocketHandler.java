@@ -430,6 +430,10 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			{
 				usermanager.GetUserAuth(session);
 			}break;
+			case "checkloginauth":
+			{
+				usermanager.GetUserAuth(session, Integer.parseInt(""+obj.get("midx")));
+			}break;
 			case "signup":
 			{
 				if( (""+obj.get("social")).isEmpty() == true )
