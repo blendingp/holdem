@@ -125,6 +125,10 @@ public class Room {
 		myobj.put("dealer", gameManager.getDealerSeat() );
 		myobj.put("smallblind", gameManager.getDealerSeatOffset(1) );
 		myobj.put("bigblind", gameManager.getDealerSeatOffset(2));
+		if( isPrivate() == true )
+		{
+			myobj.put("roominfo", roominfo);
+		}
 
 		JSONArray j = new JSONArray();
 
@@ -418,9 +422,12 @@ public class Room {
 	public void SetGoldRoom(GoldRoom roominfo)
 	{
 		this.defaultmoney = roominfo.ante;
-		this.maxmoney = (int)roominfo.maxbetvalue;
+		this.maxmoney = roominfo.maxbetvalue;
 		this.maxusersize = roominfo.maxplayer;		
 		_isPrivate = roominfo.isprivate;
+		this.roominfo.ante = roominfo.ante;
+		this.roominfo.max = roominfo.maxbetvalue;
+		this.roominfo.maxuser = roominfo.maxplayer;		
 	}
 
 	public void LeaveReserve(User user)
