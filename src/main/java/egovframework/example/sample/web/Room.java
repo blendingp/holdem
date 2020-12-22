@@ -315,19 +315,31 @@ public class Room {
 			return false;
 		}
 
-		u.seat = gameManager.GetEmptySeat();		
-		gameManager.SetSeat(u.seat);
+		if(gameManager.userlist.contains(u) == false 
+			&& gameManager.watchinguserlist.contains(u) == false
+			&& gameManager.leaveuserlist.contains(u) == false)
+		{
+			u.seat = gameManager.GetEmptySeat();		
+			gameManager.SetSeat(u.seat);
+		}
+		
 		u.roomnum = ridx;				
 		if( gameManager.GameMode == "대기" )
-		{						
-			gameManager.userlist.add( u );		
+		{			
+			if(gameManager.userlist.contains(u) == false)
+			{
+				gameManager.userlist.add( u );		
+			}						
 			gameManager.startCheck(u, gameManager.userlist);			
 			
 			gameManager.setWorkTime( );//새로 한명 들어올때마다 대기 시간을 증가시켜서 여러명이 들어올 여지를 둔다.			
 		}
 		else
 		{
-			gameManager.InsertWatchingUser(u);
+			if( gameManager.watchinguserlist.contains(u) == false )
+			{
+				gameManager.InsertWatchingUser(u);
+			}			
 		}
 
 		notifyJoinUser(u);
