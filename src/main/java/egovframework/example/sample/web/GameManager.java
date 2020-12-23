@@ -1977,17 +1977,6 @@ public class GameManager {
 				sortRank.get(n).todayprofile.lose++;
 				Task.IncreaseTask(sortRank.get(n), 2, 1);
 				Task.UpdateDB(sortRank.get(n));			
-				if( room.isPrivate() == false )
-				{
-					if(SearchUserBySeat(winSeat).betmoney < sortRank.get(n).betmoney){
-						if( room.UsedItem.equals("balance") == true){
-							sortRank.get(n).balance += sortRank.get(n).betmoney - SearchUserBySeat(winSeat).betmoney;
-						}
-						else if( room.UsedItem.equals("point") == true){
-							sortRank.get(n).point += sortRank.get(n).betmoney - SearchUserBySeat(winSeat).betmoney;
-						}					
-					}
-				}
 				sortRank.get(n).PlayStatus = 1;
 				JackpotManager.SendJackpotMessage(sortRank.get(n));
 				sortRank.get(n).ApplyBalanace(room.UsedItem);
