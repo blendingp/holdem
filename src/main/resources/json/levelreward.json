@@ -7,16 +7,7 @@
                 "Amount": 1
             }
         ]
-    },
-    {
-        "level": 3,
-        "reward": [
-            {
-                "Type": "avata",
-                "Amount": 1
-            }
-        ]
-    },
+    },    
     {
         "level": 5,
         "reward": [
