@@ -70,7 +70,7 @@ public class Room {
 
 	public boolean fullRoom() {
 
-		if (gameManager.userlist.size() >= maxusersize) {
+		if (gameManager.userlist.size() + gameManager.watchinguserlist.size() + gameManager.leaveuserlist.size() >= maxusersize) {
 			return true;
 		}
 
@@ -79,7 +79,7 @@ public class Room {
 	}
 
 	public boolean emptyRoom() {
-		if (gameManager.userlist.size() == 0)
+		if (gameManager.userlist.size() + gameManager.watchinguserlist.size() + gameManager.leaveuserlist.size() == 0)
 			return true;
 		return false;
 	}
