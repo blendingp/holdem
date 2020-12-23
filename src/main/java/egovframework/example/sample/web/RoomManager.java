@@ -69,12 +69,12 @@ public class RoomManager {
 			return ;
 		}
 		if( Room.GetRoomInfo(roomkey).useitem.equals("balance") == true){
-			if( user.balance < Room.GetRoomInfo(roomkey).ante * 3 ){
+			if( user.balance < Room.GetRoomInfo(roomkey).ante * 100 ){
 				isPass = false;				
 			}
 		}
 		else if( Room.GetRoomInfo(roomkey).useitem.equals("point") == true){
-			if( user.point < Room.GetRoomInfo(roomkey).ante * 3 ){
+			if( user.point < Room.GetRoomInfo(roomkey).ante * 100 ){
 				isPass = false;
 			}
 		}			
@@ -135,12 +135,12 @@ public class RoomManager {
 		}
 
 		if( Room.GetRoomInfo("goldroom10").useitem.equals("balance") == true){
-			if( user.balance < Room.GetRoomInfo("goldroom10").ante * 3 ){
+			if( user.balance < Room.GetRoomInfo("goldroom10").ante * 100 ){
 				return ;
 			}
 		}
 		else if( Room.GetRoomInfo("goldroom10").useitem.equals("point") == true){
-			if( user.point < Room.GetRoomInfo("goldroom10").ante * 3 ){
+			if( user.point < Room.GetRoomInfo("goldroom10").ante * 100 ){
 				return ;
 			}
 		}
@@ -247,7 +247,7 @@ public class RoomManager {
 			return false;
 		}
 
-		if( roominfo.setting.isprivate == false && user.balance < roominfo.setting.ante * 3)
+		if( roominfo.setting.isprivate == false && user.balance < roominfo.setting.ante * 100)
 		{			
 			return false;
 		}		

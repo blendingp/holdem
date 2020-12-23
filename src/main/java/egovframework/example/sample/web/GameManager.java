@@ -493,7 +493,7 @@ public class GameManager {
 		{			
 			if( room.UsedItem.equals("balance") == true){
 				
-				if( room.isPrivate() == false && u.balance < room.defaultmoney * 3){
+				if( room.isPrivate() == false && u.balance < room.defaultmoney * 100){
 					rmlist.add(u);
 				}
 				else if( room.isPrivate() == true && u.balance <= 0){
@@ -516,7 +516,7 @@ public class GameManager {
 			}			
 			else if( room.UsedItem.equals("point") == true){
 				
-				if( u.point < room.defaultmoney * 3){
+				if( u.point < room.defaultmoney * 100){
 					rmlist.add(u);
 				}
 

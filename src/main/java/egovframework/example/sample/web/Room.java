@@ -248,7 +248,7 @@ public class Room {
 
 		roominfo.roomidx = ridx;
 		roominfo.ante = defaultmoney;
-		roominfo.lowerlimit = defaultmoney * 3;
+		roominfo.lowerlimit = defaultmoney * 100;
 		roominfo.max = maxmoney;
 		roominfo.maxuser = maxusersize;
 
@@ -285,12 +285,12 @@ public class Room {
 		if( _isPrivate == false )
 		{
 			if( this.UsedItem.equals("balance") == true){
-				if( u.balance < defaultmoney * 3 ){
+				if( u.balance < defaultmoney * 100 ){
 					return false;
 				}
 			}
 			else if( this.UsedItem.equals("point") == true){
-				if( u.point < defaultmoney * 3 ){
+				if( u.point < defaultmoney * 100 ){
 					return false;
 				}
 			}		
