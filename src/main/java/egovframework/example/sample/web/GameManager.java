@@ -566,7 +566,7 @@ public class GameManager {
 				|| GameMode.compareTo("showBetPan")==0 || GameMode.compareTo("THEFLOP")==0				
 				|| GameMode.compareTo("THETURN")==0 || GameMode.compareTo("THERIVER")==0)
 		{
-			if(timer!=-1 && SocketHandler.second - timer > 20)// 자기턴 타임아웃 시간 8초로.
+			if(timer!=-1 && SocketHandler.second - timer > 15)// 자기턴 타임아웃 시간 8초로.
 			{ 				
 				for(User u : userlist){					
 					if(u.seat == whosturn ){						
