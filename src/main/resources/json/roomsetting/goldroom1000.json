@@ -1,6 +1,6 @@
 {
     "ante": 1000,
-    "max": 5000000,
+    "max": 500000,
     "maxplayer": 9,
     "useitem": "balance"
 }
