@@ -26,5 +26,6 @@ public class UserInfo {
     public ArrayList<Item> consumableItem;
     public MemberInfo memberinfo;
     public AuthSelf auth;
+    public boolean checkattendance;
     
 }

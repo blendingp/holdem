@@ -673,6 +673,7 @@ public class User {
 		info.memberinfo = _info;
 		info.totalpayment = totalpayment;
 		info.consumableItem = consumableItem;
+		info.checkattendance = attendance.NextTick <= System.currentTimeMillis();
 
 		return info;
 	}
