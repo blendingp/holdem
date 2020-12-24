@@ -16,8 +16,7 @@
 			<jsp:include page="../frame/userMenu.jsp"></jsp:include>
 			<div class="body-top">
 				<img src="/holdem/webflow/images/top_logo.png" loading="lazy"
-					sizes="(max-width: 767px) 92vw, 100vw"
-					srcset="/holdem/webflow/images/top_logo-p-500.png 500w, /holdem/webflow/images/top_logo-p-800.png 800w, /holdem/webflow/images/top_logo-p-1080.png 1080w, /holdem/webflow/images/top_logo-p-1600.png 1600w, /holdem/webflow/images/top_logo.png 1867w"
+					sizes="(max-width: 767px) 92vw, 100vw"					
 					alt="" class="toplogoicon"><img src="/holdem/webflow/images/line.png"
 					loading="lazy" sizes="(max-width: 1920px) 100vw, 1920px"
 					srcset="/holdem/webflow/images/line-p-500.png 500w, /holdem/webflow/images/line-p-800.png 800w, /holdem/webflow/images/line-p-1080.png 1080w, /holdem/webflow/images/line-p-1600.png 1600w, /holdem/webflow/images/line.png 1920w"
