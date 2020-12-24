@@ -133,6 +133,8 @@ public class Attendance {
                 count = (this.Count + 1);            
             }            
 
+            this.Count = count;
+
         }
         catch (IOException e) {
 			e.printStackTrace();
