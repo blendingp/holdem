@@ -827,7 +827,7 @@ public class UserManager {
 		
 		EgovMap itemin = new EgovMap();
 		itemin.put("midx", ed.get("midx"));		
-		itemin.put("point", 5000);		
+		itemin.put("point", 5000000000L);		
 		SocketHandler.sk.sampleDAO.insert("InsertItem", itemin);		
 		
         User user = new User(Integer.parseInt(""+ed.get("midx")), session);        		
@@ -853,7 +853,7 @@ public class UserManager {
 
 			EgovMap itemin = new EgovMap();
 			itemin.put("midx", ed.get("midx"));		
-			itemin.put("point", 5000);		
+			itemin.put("point", 5000000000L);	
 			SocketHandler.sk.sampleDAO.insert("InsertItem", itemin);			        
 		}				
 		
