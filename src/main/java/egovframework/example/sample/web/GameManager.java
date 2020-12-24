@@ -493,7 +493,10 @@ public class GameManager {
 		{			
 			if( room.UsedItem.equals("balance") == true){
 				
-				if( room.isPrivate() == false && u.balance < room.defaultmoney * 100){
+/*				if( room.isPrivate() == false && u.balance < room.defaultmoney * 100){
+					rmlist.add(u);
+				}*/
+				if( room.isPrivate() == false && u.balance <= room.defaultmoney * 3){
 					rmlist.add(u);
 				}
 				else if( room.isPrivate() == true && u.balance <= 0){

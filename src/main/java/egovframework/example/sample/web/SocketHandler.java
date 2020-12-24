@@ -82,6 +82,21 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     
     void disconnect()
     {
+    	long ctime = (new Date()).getTime();
+		for( int nCount = 0; nCount < usermanager.userlist.size(); ++nCount)
+		{			
+			if( usermanager.userlist.get(nCount).lastcmdtime != -1 && usermanager.userlist.get(nCount).lastcmdtime + 60*1000*3 < ctime )
+			{
+		    	synchronized(disconnectlist) {
+		    		if( disconnectlist.contains(usermanager.userlist.get(nCount).session) != true) {
+		    			disconnectlist.add(usermanager.userlist.get(nCount).session);
+		    		}
+		    	}
+
+			}			
+		}    	
+
+    	
         WebSocketSession session=null;
         synchronized(disconnectlist) 
         {
@@ -127,6 +142,11 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			
 			room.checkSBorBBfirstOut(u);
 		}		
+    	try {
+    		session.close();
+    	}catch(Exception e) {
+    		System.out.println("접속끊김 에러처리");
+    	}
     }
  
     @Override
@@ -189,6 +209,11 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         JSONParser p = new JSONParser();
         JSONObject obj = (JSONObject)p.parse(msg);
 //        System.out.println("cmd:"+msg);
+        User ltu = usermanager.find(session);  
+        if(ltu != null) 
+        {
+        	ltu.lastcmdtime = (new Date()).getTime();
+        }
         
         switch(""+ obj.get("protocol"))
 		{
@@ -243,6 +268,15 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 				if( usermanager.findFromUseridx((int)ed.get("midx")) != null)				
 				{
 					//System.out.println("중복 로그인");
+					/*
+					User tu =usermanager.findFromUseridx((int)ed.get("midx"));
+			    	synchronized(disconnectlist) {
+			    		if( disconnectlist.contains(tu.session) != true) {
+			    			disconnectlist.add(tu.session);
+			    		}
+			    	}
+			    	this.disconnect();*/
+
 					cobj.put("code", 2);
 
 					ObjectMapper mapper = new ObjectMapper();

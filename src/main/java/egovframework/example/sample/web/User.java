@@ -61,6 +61,7 @@ public class User {
 	public ArrayList<String> avatalist = new ArrayList<>();
 	public ArrayList<Integer> cardarr = new ArrayList<>();
 	public ArrayList<Item> consumableItem = new ArrayList<>();
+	public long lastcmdtime= -1;
 	
 	public void betmoneycopy() {
 		betmoney2 = betmoney;
