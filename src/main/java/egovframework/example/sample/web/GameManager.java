@@ -571,16 +571,18 @@ public class GameManager {
 		{
 			if(timer!=-1 && SocketHandler.second - timer > 15)// 자기턴 타임아웃 시간 8초로.
 			{ 				
+				System.out.println("here");
 				for(User u : userlist){					
 					if(u.seat == whosturn ){						
 						timer = SocketHandler.second;							
+						System.out.println("here 2");
 						timeout(u);	
 						break;									
 					}
 				}										
 			}
 						
-			for( User user : leaveuserlist )
+			for( User user : userlist )
 			{
 				if( user.die == true )
 				{
@@ -589,20 +591,20 @@ public class GameManager {
 
 				if(user.seat == whosturn )
 				{
-					if( totalcnt ==0 && this.outSBUser != null)
+					if( totalcnt ==0 )
 					{
-						System.out.println("SB 유저가 강종되어 서버가 대신 SB 베팅을 시도 해줌. uidx :"+outSBUser.uidx);
-						bet(outSBUser,1);
+						System.out.println(" 서버가 대신 SB 베팅을 시도 해줌. uidx :"+user.uidx);
+						bet(user,1);
 					}
-					else if( totalcnt ==1 && this.outBBUser != null)
+					else if( totalcnt ==1 )
 					{
-						System.out.println("BB 유저가 강종되어 서버가 대신 BB 베팅을 시도 해줌. uidx :"+outBBUser.uidx);
-						bet(outBBUser,3);
+						System.out.println(" 서버가 대신 BB 베팅을 시도 해줌. uidx :"+user.uidx);
+						bet(user,3);
 					}
-					else {
+					/*else {
 						System.out.println("예약 유저 다이처리=================== whosturn: "+whosturn);
 						bet(user, 0);
-					}
+					}*/
 					break;
 				}
 			}
@@ -744,7 +746,8 @@ public class GameManager {
 		JSONObject obj = new JSONObject();
 		whosturn = getDealerSeatOffset(1);
 		obj.put("cmd","sbBet");
-		obj.put("whosturn", whosturn );
+//		obj.put("whosturn", whosturn );
+		obj.put("whosturn", "-1" );
 		obj.put("prebetmoney", preTotalBetmoney );
 		obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
 		sendRoom(obj);
@@ -755,7 +758,8 @@ public class GameManager {
 		bbBetCount++;
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","bbBet");
-		obj.put("whosturn", whosturn );
+//		obj.put("whosturn", whosturn );
+		obj.put("whosturn", "-1" );
 		obj.put("prebetmoney", preTotalBetmoney );
 		obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
 		sendRoom(obj);
