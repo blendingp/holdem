@@ -733,9 +733,29 @@ public class UserManager {
 
 	public void GetUserAuth(WebSocketSession session, int midx)
 	{		
-		session.getAttributes().put("useridx", midx);
 		User user = new User(midx, session);        		
-        		
+		if( user.IsAuth() == false )
+		{
+			ObjectMapper mapper = new ObjectMapper();
+			
+			JSONObject cobj = new JSONObject();
+			cobj.put("cmd", "authresult");							
+			cobj.put("result", false);		
+
+			try {
+				if(User.CheckSendPacket(user) == true)
+				{
+					user.session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+				}				
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return ;
+		}
+
+		session.getAttributes().put("useridx", midx);	        		
         connect(session, user);		
 	}
 
