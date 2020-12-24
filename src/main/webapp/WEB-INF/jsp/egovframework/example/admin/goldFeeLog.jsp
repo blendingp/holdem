@@ -37,8 +37,8 @@
 									<div class="row">
 										<div class="col-lg-2">
 											<div class="form-group">
-												<label>일별 총 수수료</label>
-												<pre style="padding:7.5px"><fmt:formatNumber value="${sumFee}" pattern="#,###"/></pre>
+												<label>일별 총 수수료(적립금제외)</label>
+												<pre style="padding:7.5px"><fmt:formatNumber value="${sumFee}" pattern="#,###"/>(<fmt:formatNumber value="${sumFee-sumGold}" pattern="#,###"/>)</pre>
 											</div>
 										</div>
 										<div class="col-lg-2">

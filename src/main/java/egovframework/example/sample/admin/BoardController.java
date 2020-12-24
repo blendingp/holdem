@@ -781,6 +781,7 @@ public class BoardController {
 		model.addAttribute("list", list);
 		model.addAttribute("sumFee", (long)sampleDAO.select("selectGoldFeeSum" , in));
 		model.addAttribute("sumFeeAll", (long)sampleDAO.select("selectGoldFeeSumAll" , in));
+		model.addAttribute("sumGold", (long)sampleDAO.select("selectGoldBackSum" , in));
 		model.addAttribute("pi", paginationInfo);
 		model.addAttribute("search", search);
 		model.addAttribute("startD", startD);

@@ -650,9 +650,31 @@
 		</isNotEmpty>
 		<isNotEmpty property="search">
        		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
-       	</isNotEmpty>
-		
+       	</isNotEmpty>		
 	</select>
+
+	<select id="selectGoldBackSum" resultClass="long">
+		<![CDATA[
+			select ifnull(sum(goldback),0) sumFee 
+			from goldfeelog
+			left join member m on goldfeelog.uidx = m.midx
+			left join member_info mi on goldfeelog.uidx = mi.midx
+			where 1=1
+		]]>
+		<isNotEmpty property = "year">
+			and year(gdate) = #year#
+		</isNotEmpty>
+		<isNotEmpty property = "month">
+			and month(gdate) = #month#
+		</isNotEmpty>
+		<isNotEmpty property = "startD">
+			and gdate between #startD# and #endD#
+		</isNotEmpty>
+		<isNotEmpty property="search">
+       		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
+       	</isNotEmpty>		
+	</select>
+		
 	<select id="selectGoldFeeSumAll" resultClass="long">
 		<![CDATA[
 			select ifnull(sum(fee),0) sumFee 

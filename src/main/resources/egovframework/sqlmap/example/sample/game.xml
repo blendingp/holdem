@@ -387,12 +387,14 @@
 				  , gdate
 				  , winmoney
 				  , fee
+				  , goldback
 				  )
 			VALUES ( #uidx#
 				  , #gameid#
 				  , now()
 				  , #winmoney#
-				  , #fee#)
+				  , #fee#
+				  , #goldback#)
 		]]>
 	</insert>
 	<select id="ExsitGifLog" resultClass="EgovMap">

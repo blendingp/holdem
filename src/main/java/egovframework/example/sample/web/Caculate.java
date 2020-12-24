@@ -121,6 +121,7 @@ public class Caculate {
 				in.put("gameid", room.gameManager.getGameId());
 				in.put("winmoney", ""+amount);
 				in.put("fee", ""+(amount-winnerpoint) );
+				in.put("goldback", ""+gamount );
 				SocketHandler.sk.sampleDAO.insert("insertCommission", in);
 			}
 			else // 칩
