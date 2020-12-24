@@ -645,6 +645,7 @@ public class User {
 		die = false;		
 		currentGuBetMoney = 0;		
 		wincard.clear();
+		timeoutstack = 0;
 
 		card1.clear();
 		card2.clear();
