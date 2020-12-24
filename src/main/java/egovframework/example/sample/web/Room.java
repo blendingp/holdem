@@ -437,7 +437,7 @@ public class Room {
 			info.ante = defaultmoney;
 			info.maxbet = maxmoney;
 			info.maxusersize = maxusersize;
-			info.currentcount = gameManager.userlist.size();
+			info.currentcount = gameManager.userlist.size() + gameManager.watchinguserlist.size() + gameManager.leaveuserlist.size();
 			info.title = title;
 			return info;
 		}
