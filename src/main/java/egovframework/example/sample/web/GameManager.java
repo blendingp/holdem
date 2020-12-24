@@ -279,7 +279,7 @@ public class GameManager {
 			u.totalprofile.totalgame++;
 			u.todayprofile.totalgame++;
 			ProfileManager.UpdateProfile(u.totalprofile);
-			ProfileManager.UpdateTodayProfile(u.todayprofile);
+			ProfileManager.UpdateTodayProfileNoExpire(u.todayprofile);
 			totalmoney += usermoney;			
 			outSBUser = outBBUser = null;
 			SocketHandler.insertLog(getGameId(), getGameIdentifier(), "join", u.uidx , u.balance , u.seat , "참가머니", usermoney , -1);
@@ -509,7 +509,7 @@ public class GameManager {
 					u.todayprofile.goldrefillcount = 0;
 					u.balance = 500;
 					u.ApplyBalanace("balance");
-					ProfileManager.UpdateTodayProfile(u.todayprofile);
+					ProfileManager.UpdateTodayProfileNoExpire(u.todayprofile);
 					JSONObject goldrefill = new JSONObject();
 					goldrefill.put("cmd","goldrefill");
 
@@ -1990,7 +1990,7 @@ public class GameManager {
 				JackpotManager.SendJackpotMessage(sortRank.get(n));
 				sortRank.get(n).ApplyBalanace(room.UsedItem);
 				ProfileManager.UpdateProfile(sortRank.get(n).totalprofile);
-				ProfileManager.UpdateTodayProfile(sortRank.get(n).todayprofile);
+				ProfileManager.UpdateTodayProfileNoExpire(sortRank.get(n).todayprofile);
 			}else 
 			{
 				//동점자 계산 관련, n등중에 제일큰 배팅금액 찾기			

@@ -104,6 +104,7 @@ public class ProfileManager {
 		return true;
 	}
 
+
 	public static Boolean UpdateTodayProfile(ProfileModel model)
 	{
 		try {
@@ -120,4 +121,21 @@ public class ProfileManager {
 
 		return true;
 	}
+	
+	public static Boolean UpdateTodayProfileNoExpire(ProfileModel model)
+	{
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			String value = mapper.writeValueAsString(model);
+			EgovMap jsonobject = mapper.readValue(value, EgovMap.class);
+
+			SocketHandler.sk.sampleDAO.update("UpdateTodayProfileDataNoExpire", jsonobject);
+		} catch (JsonProcessingException e) {
+			System.out.println("UpdateTodayProfile err"+e.getMessage());			
+			e.printStackTrace();
+			return false;
+		}			
+
+		return true;
+	}	
 }

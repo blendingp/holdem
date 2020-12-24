@@ -274,7 +274,16 @@
 				ON DUPLICATE KEY UPDATE totalgame=#totalgame#, win=#win#, lose=#lose#, gaingold=#gaingold#, gainbalance=#gainbalance#, putallin=#putallin#, goldrefillcount=#goldrefillcount#, chiprefillcount=#chiprefillcount#, expire=#expire#
         ]]>
 	</update>
-
+	
+	<update id="UpdateTodayProfileDataNoExpire" parameterClass="egovMap">	
+        <![CDATA[
+            INSERT INTO profile_holdem_today
+					( midx, totalgame, win, lose, gaingold, gainbalance, putallin, goldrefillcount, chiprefillcount )
+				VALUES ( #midx#, #totalgame#, #win#, #lose#, #gaingold#, #gainbalance#, #putallin#, #goldrefillcount#, #chiprefillcount# )
+				ON DUPLICATE KEY UPDATE totalgame=#totalgame#, win=#win#, lose=#lose#, gaingold=#gaingold#, gainbalance=#gainbalance#, putallin=#putallin#, goldrefillcount=#goldrefillcount#, chiprefillcount=#chiprefillcount#
+        ]]>
+	</update>
+	
 	<select id="GetTaskList" resultClass="EgovMap">
         <![CDATA[
             SELECT uid, type, payed, current, max, expire FROM task

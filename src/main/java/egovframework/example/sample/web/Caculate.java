@@ -142,7 +142,7 @@ public class Caculate {
 			JackpotManager.SendJackpotMessage(NRanks.get(winnercnt));
 			NRanks.get(winnercnt).ApplyBalanace(room.UsedItem);
 			ProfileManager.UpdateProfile(NRanks.get(winnercnt).totalprofile);
-			ProfileManager.UpdateTodayProfile(NRanks.get(winnercnt).todayprofile);
+			ProfileManager.UpdateTodayProfileNoExpire(NRanks.get(winnercnt).todayprofile);
 			
 		}		
 	}
