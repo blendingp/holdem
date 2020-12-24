@@ -647,8 +647,8 @@ public class GameManager {
 			//스트레이트 플러시 2
 			if(checkStraightFlush(card)==true){//
 				currentUser.jokbocode=0x9000000+tempInfo1;
-				currentUser.balance += JackpotManager.GetJackpotAmount();
-				JackpotManager.WithdrawJackpot();
+//				currentUser.balance += JackpotManager.GetJackpotAmount();
+//				JackpotManager.WithdrawJackpot();
 			}else if(checkFourCard(card) == true ){// 포카드 *
 				currentUser.jokbocode=0x8000000+tempInfo1*0x10 + tempInfo3;
 			}else if(checkFullHouse(card)==true){//풀하우스 *
@@ -1889,8 +1889,8 @@ public class GameManager {
 				if(checkStraightFlush(card)==true){//
 					currentUser.wlv = 9;
 					currentUser.jokbocode=0x9000000+tempInfo1;
-					currentUser.balance += JackpotManager.GetJackpotAmount();
-					JackpotManager.WithdrawJackpot();
+//					currentUser.balance += JackpotManager.GetJackpotAmount();
+//					JackpotManager.WithdrawJackpot();
 				}else if(checkFourCard(card) == true ){// 포카드 *
 					currentUser.wlv = 8;
 					currentUser.jokbocode=0x8000000+tempInfo1*0x10 + tempInfo3;

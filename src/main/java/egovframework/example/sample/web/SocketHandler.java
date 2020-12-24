@@ -82,7 +82,8 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     
     void disconnect()
     {
-    	long ctime = (new Date()).getTime();
+/*    	
+  		long ctime = (new Date()).getTime(); 
 		for( int nCount = 0; nCount < usermanager.userlist.size(); ++nCount)
 		{			
 			if( usermanager.userlist.get(nCount).lastcmdtime != -1 && usermanager.userlist.get(nCount).lastcmdtime + 60*1000*3 < ctime )
@@ -94,7 +95,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 		    	}
 
 			}			
-		}    	
+		}    	*/
 
     	
         WebSocketSession session=null;
@@ -268,6 +269,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 				if( usermanager.findFromUseridx((int)ed.get("midx")) != null)				
 				{
 					//System.out.println("중복 로그인");
+					
 					/*
 					User tu =usermanager.findFromUseridx((int)ed.get("midx"));
 			    	synchronized(disconnectlist) {
@@ -276,6 +278,23 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			    		}
 			    	}
 			    	this.disconnect();*/
+					
+					try {
+						User tu =usermanager.findFromUseridx((int)ed.get("midx"));
+				  		long ctime = (new Date()).getTime(); 
+				  		if( tu.lastcmdtime != -1 && tu.lastcmdtime + 60*1000 < ctime ) {
+					    	synchronized(disconnectlist) {
+					    		if( disconnectlist.contains( tu.session) != true) {
+					    			disconnectlist.add( tu.session );
+					    		}
+					    	}
+				  		}
+				  		disconnect();
+				  		tu.session.close();
+					}catch(Exception e) {
+						System.out.println("중복접속 강제 종료 처리중 에러");
+					}
+
 
 					cobj.put("code", 2);
 
