@@ -43,10 +43,13 @@ public class Caculate {
 		long winnermoney = 0;//winner가 가져가는 돈		
 		for(int n=nowrank; n<sortRank.size(); n++)
 		{
-			if( sortRank.get(n).betmoney < maxbetmoney)	
+			if( sortRank.get(n).betmoney < maxbetmoney) {	
 				winnermoney += sortRank.get(n).betmoney;
-			else
-				winnermoney += maxbetmoney;			
+				sortRank.get(n).betmoney = 0;
+			}else {
+				winnermoney += maxbetmoney;
+				sortRank.get(n).betmoney -= maxbetmoney;
+			}
 		}	
 		return winnermoney;
 	}
