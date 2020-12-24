@@ -1833,7 +1833,7 @@ public class GameManager {
 				}
 				SearchUserBySeat(lastbetuser).betmoney -= lastcallbackmoney;			
 				totalmoney -= lastcallbackmoney;
-				SocketHandler.insertLog(getGameId(), getGameIdentifier(), "Payback", -1, lastcallbackmoney, -1, "노콜머니 환불" , -1, -1);
+				SocketHandler.insertLog(getGameId(), getGameIdentifier(), "Payback", -1, lastcallbackmoney, -1, "노콜머니 환불 "+lastbetuser , -1, -1);
 			}
 		}
 		//기권승시 족보계산안함 ,이긴사람 돈줌 
@@ -1969,6 +1969,8 @@ public class GameManager {
 		cal.isGoldMode = false;
 		if( room.UsedItem.equals("balance") == true)
 			cal.isGoldMode = true;
+		for(int n=0; n<sortRank.size(); n++)
+			sortRank.get(n).betmoneycopy();
 		for(int n=0; n<sortRank.size(); n++)//이긴사람 정산 , 올인팟 사이드머니들 처리, 공동우승 포함.
 		{
 			if(cal.tempTotal  <= 0) 
@@ -1987,15 +1989,24 @@ public class GameManager {
 				//동점자 계산 관련, n등중에 제일큰 배팅금액 찾기			
 				long maxbetmoney = cal.findSameScore( sortRank.get(n).jokbocode, sortRank );
 				
+				long betmoney2=0;
+				for(int a=n+cal.NRanks.size();a<sortRank.size();a++) 
+				{
+					if( sortRank.get(a).betmoney2 > betmoney2) {
+						betmoney2 =sortRank.get(a).betmoney2;//노콜머니계산용
+					}
+				}
 				//나머지 사람에게 징수한다 
 				long winnermoney = cal.takeOutMoney(sortRank, n, maxbetmoney);//n번쨰와 같은 순위가 가져가는돈이다 
 				if( room.isPrivate() == true && sortRank.size() == 2)
 				{//비밀방이고 총인원이 2명이면 모든 올인상관없이 모든 금액을 승리자가 갖게 한다.
 					winnermoney = totalmoney;
 				}
-				cal.giveWinMoney(n, winnermoney, allincount); //n번째와 같은 순위들에게 winnermoney분배하기
+				cal.giveWinMoney(n, winnermoney, allincount , betmoney2 ); //n번째와 같은 순위들에게 winnermoney분배하기
 				n += (cal.NRanks.size() -1);
 				cal.NRanks = new ArrayList<User>();
+				for(int b=0; b < sortRank.size(); b++)
+					sortRank.get(b).betmoneycopy();
 			}
 		}		
 		//==========================} 승리금 정산

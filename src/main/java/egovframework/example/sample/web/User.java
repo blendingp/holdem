@@ -33,6 +33,7 @@ public class User {
 	public int roomnum = -1;
 	public int timeoutstack = 0;
 	public long betmoney = 0;
+	public long betmoney2 = 0;//결과 계산시에 활용하기 위해 여벌로 만듬
 	public long prevamount = 0;
 	public long balance = 0;
 	public long point = 0;
@@ -60,6 +61,10 @@ public class User {
 	public ArrayList<String> avatalist = new ArrayList<>();
 	public ArrayList<Integer> cardarr = new ArrayList<>();
 	public ArrayList<Item> consumableItem = new ArrayList<>();
+	
+	public void betmoneycopy() {
+		betmoney2 = betmoney;
+	}
 
 	AuthSelf auth = null;
 	MemberInfo _info;
