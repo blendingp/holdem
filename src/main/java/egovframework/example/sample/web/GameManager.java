@@ -2006,12 +2006,19 @@ public class GameManager {
 					}
 				}
 				//나머지 사람에게 징수한다 
-				long winnermoney = cal.takeOutMoney(sortRank, n, maxbetmoney);//n번쨰와 같은 순위가 가져가는돈이다 
-				if( room.isPrivate() == true && sortRank.size() == 2)
-				{//비밀방이고 총인원이 2명이면 모든 올인상관없이 모든 금액을 승리자가 갖게 한다.
-					winnermoney = totalmoney;
+				// maxgbetmoney가 없거나 ntotalranks 머니가 0이거나 하면 2등이 이미 올인으로 돈을 다 빼앗긴 상태이므로 얘는 컨티뉴 하면 된다.
+				if( maxbetmoney <=0 || cal.NRanksTotalmoney <= 0 )
+				{
+
+				}else 
+				{
+					long winnermoney = cal.takeOutMoney(sortRank, n, maxbetmoney);//n번쨰와 같은 순위가 가져가는돈이다 
+					if( room.isPrivate() == true && sortRank.size() == 2)
+					{//비밀방이고 총인원이 2명이면 모든 올인상관없이 모든 금액을 승리자가 갖게 한다.
+						winnermoney = totalmoney;
+					}
+					cal.giveWinMoney(n, winnermoney, allincount , betmoney2 ); //n번째와 같은 순위들에게 winnermoney분배하기
 				}
-				cal.giveWinMoney(n, winnermoney, allincount , betmoney2 ); //n번째와 같은 순위들에게 winnermoney분배하기
 				n += (cal.NRanks.size() -1);
 				cal.NRanks = new ArrayList<User>();
 				for(int b=0; b < sortRank.size(); b++)

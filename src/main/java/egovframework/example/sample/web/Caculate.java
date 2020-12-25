@@ -58,7 +58,7 @@ public class Caculate {
 	{
 		int tempwin=0;
 		for(int winnercnt=0; winnercnt<NRanks.size(); winnercnt++)
-		{			
+		{
 			long amount = (long)(winnermoney * NRanks.get(winnercnt).betmoney2 / NRanksTotalmoney);
 			if(NRanks.size() - winnercnt == 1)
 				amount = winnermoney - tempwin;
