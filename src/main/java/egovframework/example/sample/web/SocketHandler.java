@@ -413,13 +413,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         		usermanager.Beg(session);
         	}        	
 	        break;	        
-        	case "JokboTestPacket":
-        	{        		
-        		System.out.println("JokboTestPacket:"+ obj.toJSONString());
-        		jokbotest = Integer.parseInt(""+obj.get("jokbokind"));
-        		System.out.println("jokbotest:"+jokbotest);
-        	}        	
-	        break;	        	        
         	case "emoticon":
         	{
         		User user = usermanager.find(session);        		        		

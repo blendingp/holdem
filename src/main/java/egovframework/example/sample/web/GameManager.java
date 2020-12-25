@@ -569,19 +569,6 @@ public class GameManager {
 				|| GameMode.compareTo("showBetPan")==0 || GameMode.compareTo("THEFLOP")==0				
 				|| GameMode.compareTo("THETURN")==0 || GameMode.compareTo("THERIVER")==0)
 		{
-			if(timer!=-1 && SocketHandler.second - timer > 15)// 자기턴 타임아웃 시간 8초로.
-			{ 				
-				System.out.println("here");
-				for(User u : userlist){					
-					if(u.seat == whosturn ){						
-						timer = SocketHandler.second;							
-						System.out.println("here 2");
-						timeout(u);	
-						break;									
-					}
-				}										
-			}
-						
 			for( User user : userlist )
 			{
 				if( user.die == true )
@@ -608,6 +595,19 @@ public class GameManager {
 					break;
 				}
 			}
+			if(timer!=-1 && SocketHandler.second - timer > 15)// 자기턴 타임아웃 시간 8초로.
+			{ 				
+				System.out.println("here");
+				for(User u : userlist){					
+					if(u.seat == whosturn ){						
+						timer = SocketHandler.second;							
+						System.out.println("here 2");
+						timeout(u);	
+						break;									
+					}
+				}										
+			}
+			
 		}
 	}
 
@@ -1962,7 +1962,9 @@ public class GameManager {
 				{
 					winners.add(user.seat);
 					user.IncreaseExp(1);
-				}				
+				}else {
+					user.wincard.clear();
+				}
 
 				for( JSONObject card : user.wincard )
 				{

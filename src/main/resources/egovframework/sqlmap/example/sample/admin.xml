@@ -41,7 +41,7 @@
 	<select id="GameNumberDetailPaging" resultClass="EgovMap">
         <![CDATA[
              SELECT 
-                *
+                *, (select nickname from member_info where member_info.midx = gamelog.guseridx) nick
             FROM gamelog
             WHERE gameIdentifier=#gameIdentifier#
             limit $firstindex$, $recordperpage$

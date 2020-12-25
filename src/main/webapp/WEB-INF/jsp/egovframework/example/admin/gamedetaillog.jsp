@@ -61,7 +61,7 @@
                             <tr>
                                 <th>#</th>                                
                                 <th>kind</th>
-                                <th>useridx</th>
+                                <th>닉네임</th>
                                 <th>value1</th>
                                 <th>value2</th>
                                 <th>value3</th>
@@ -77,7 +77,7 @@
                                 <td>${result.gkind}</td>
                                 <td>
                                 	<c:if test="${result.guseridx ne -1}">
-                                	${result.guseridx}
+                                	${result.nick}
                                 	</c:if>                                
                                 </td>
                                 <td>
