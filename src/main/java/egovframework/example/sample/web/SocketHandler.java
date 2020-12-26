@@ -82,22 +82,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     
     void disconnect()
     {
-/*    	
-  		long ctime = (new Date()).getTime(); 
-		for( int nCount = 0; nCount < usermanager.userlist.size(); ++nCount)
-		{			
-			if( usermanager.userlist.get(nCount).lastcmdtime != -1 && usermanager.userlist.get(nCount).lastcmdtime + 60*1000*3 < ctime )
-			{
-		    	synchronized(disconnectlist) {
-		    		if( disconnectlist.contains(usermanager.userlist.get(nCount).session) != true) {
-		    			disconnectlist.add(usermanager.userlist.get(nCount).session);
-		    		}
-		    	}
-
-			}			
-		}    	*/
-
-    	
         WebSocketSession session=null;
         synchronized(disconnectlist) 
         {
@@ -117,7 +101,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     		return;
 		
 		int idx = u.uidx;		
-		System.out.println("강제 접속끊김 발생  uidx:"+u.uidx);    	    		
+		System.out.println("접속끊김 발생  uidx:"+u.uidx);    	    		
 
 		for( int nCount = 0; nCount < usermanager.userlist.size(); ++nCount)
 		{			
@@ -130,8 +114,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     	
     	if( u.roomnum != -1){			
 			Room room = roommanager.find(u.roomnum);					
-						//room.leave(u);			
-						//room.notifyLeaveUser(seat);					
 			System.out.println("LeaveReserve 호출전");
 			room.LeaveReserve(u);
 
@@ -209,7 +191,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         
         JSONParser p = new JSONParser();
         JSONObject obj = (JSONObject)p.parse(msg);
-//        System.out.println("cmd:"+msg);
+        System.out.println("cmd:"+msg);
         User ltu = usermanager.find(session);  
         if(ltu != null) 
         {
@@ -544,6 +526,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         return super.supportsPartialMessages();
     }
  
+    public static int debugi = 0;
     public static int second = 0,sect=0;   
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -559,7 +542,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 		JackpotManager.Init();
     	
         Thread thread = new Thread() {
-            int i = 0;
  
             @Override
             public void run() {
@@ -572,17 +554,22 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
                         	second++;
                         	sect=0;
                         }
-                   		disconnect();			// 강종 유저 처리		
+                   		disconnect();			// 강종 유저 처리
+                   		debugi=1;
                         cmdProcess(); 			// 클라로 부터 받은 메세지 처리
+                        debugi=2;
                         roommanager.checkStartGame();
+                        debugi=3;
 						roommanager.checkTimerGame();
+						debugi=4;
 						roommanager.checkErrorGamingRoom();
+						debugi=5;
 						JackpotManager.Update();
                     } catch (InterruptedException e) {
-                        System.out.println( "socketThread \n"+e.getMessage() );
+                        System.out.println( "socketThread \n"+e.getMessage() +" i:"+debugi);
                     }catch(Exception e)
                     {
-                    	System.out.println( "other errors lg \n"+e.getMessage() );
+                    	System.out.println( "other errors lg \n"+e.getMessage() +" i:"+debugi);
                     }
                 }
             }

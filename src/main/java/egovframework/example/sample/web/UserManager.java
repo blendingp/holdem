@@ -45,6 +45,8 @@ public class UserManager {
 
 		Map<String, Object> m = session.getAttributes();
 		int uidx = -1;
+		if( m.get("useridx") == null)
+			return null;
 		try {
 			uidx = Integer.parseInt("" + m.get("useridx"));
 		}catch(Exception e)

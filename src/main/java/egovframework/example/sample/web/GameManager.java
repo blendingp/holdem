@@ -564,49 +564,52 @@ public class GameManager {
 	}
 
 	void checkTimerGame(){
+		SocketHandler.debugi=78;
 		//배팅시간 지났음
 		if( GameMode.compareTo("sbBeted")==0 || GameMode.compareTo("bbBeted")==0 || GameMode.compareTo("nmBet")==0  
 				|| GameMode.compareTo("showBetPan")==0 || GameMode.compareTo("THEFLOP")==0				
 				|| GameMode.compareTo("THETURN")==0 || GameMode.compareTo("THERIVER")==0)
 		{
+			SocketHandler.debugi=79;
 			for( User user : userlist )
 			{
+				SocketHandler.debugi=80;
 				if( user.die == true )
 				{
 					continue;	
 				}
 
+				SocketHandler.debugi=81;
 				if(user.seat == whosturn )
 				{
 					if( totalcnt ==0 )
 					{
-						System.out.println(" 서버가 대신 SB 베팅을 시도 해줌. uidx :"+user.uidx);
+						System.out.println(" SB 베팅 해줌. uidx :"+user.uidx);
 						bet(user,1);
 					}
 					else if( totalcnt ==1 )
 					{
-						System.out.println(" 서버가 대신 BB 베팅을 시도 해줌. uidx :"+user.uidx);
+						System.out.println(" BB 베팅 해줌. uidx :"+user.uidx);
 						bet(user,3);
 					}
-					/*else {
-						System.out.println("예약 유저 다이처리=================== whosturn: "+whosturn);
-						bet(user, 0);
-					}*/
 					break;
 				}
 			}
+			SocketHandler.debugi=82;
 			if(timer!=-1 && SocketHandler.second - timer > 15)// 자기턴 타임아웃 시간 8초로.
 			{ 				
-				System.out.println("here");
+				//System.out.println("here "+GameMode +" whosturn:"+whosturn);
 				for(User u : userlist){					
+					System.out.println("here "+GameMode +" whosturn:"+whosturn +" u.seat:"+u.seat);
 					if(u.seat == whosturn ){						
 						timer = SocketHandler.second;							
-						System.out.println("here 2");
+						System.out.println("here 2 useat:"+u.seat );
 						timeout(u);	
 						break;									
 					}
 				}										
 			}
+			SocketHandler.debugi=83;
 			
 		}
 	}
