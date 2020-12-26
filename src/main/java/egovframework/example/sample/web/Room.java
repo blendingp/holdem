@@ -344,10 +344,28 @@ public class Room {
 				
 	}
 
+	
 	public void leave(User u) {		
 		
+		for( int nCount = 0; nCount < gameManager.watchinguserlist.size(); nCount++ )
+		{
+			if( gameManager.watchinguserlist.get(nCount).uidx == u.uidx)
+			{
+				gameManager.EmptySeat(u.seat);
+				gameManager.watchinguserlist.remove(nCount);
+				u.clear();
+				System.out.println("<<관전자 Room . leave >> :"+ u.nickname+" "+(new Date()).toLocaleString() );
+				return;
+			}			
+		}
+		
+		if( gameManager.GameMode.compareTo("대기") != 0 )
+		{
+			System.out.println("대기중에 나가기 시도함. "+u.uidx );
+			return;
+		}
+
 		gameManager.EmptySeat(u.seat);
-		u.die = false;
 		for( int nCount = 0; nCount < gameManager.userlist.size(); nCount++ )
 		{
 			if( gameManager.userlist.get(nCount).uidx == u.uidx)
@@ -366,15 +384,6 @@ public class Room {
 			}			
 		}
 
-		for( int nCount = 0; nCount < gameManager.watchinguserlist.size(); nCount++ )
-		{
-			if( gameManager.watchinguserlist.get(nCount).uidx == u.uidx)
-			{
-				gameManager.watchinguserlist.remove(nCount);
-				break;
-			}			
-		}
-		
 		u.clear();
 		System.out.println("<< Room . leave >> :"+ u.nickname);
 	}

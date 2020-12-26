@@ -306,11 +306,6 @@ public class RoomManager {
 		Room room = find(user.roomnum);		
 		if( room == null )
 			return;
-		if( room.gameManager.GameMode.compareTo("대기") != 0 )
-		{
-			System.out.println("대기중에 나가기 시도함. "+user.uidx );
-			return;
-		}
 		room.notifyLeaveUser(user.seat);				
 		room.leave(user);						
 	}
