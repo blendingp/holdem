@@ -1833,13 +1833,17 @@ public class GameManager {
 			{
 				if( room.UsedItem.equals("balance") == true)
 				{
+					SearchUserBySeat(lastbetuser).todayprofile.gainbalance += lastcallbackmoney;
 					SearchUserBySeat(lastbetuser).balance += lastcallbackmoney;
 				}else
 				{
+					SearchUserBySeat(lastbetuser).todayprofile.gaingold += lastcallbackmoney;
 					SearchUserBySeat(lastbetuser).point += lastcallbackmoney;
 				}
 				SearchUserBySeat(lastbetuser).betmoney -= lastcallbackmoney;			
 				totalmoney -= lastcallbackmoney;
+				
+
 				SocketHandler.insertLog(getGameId(), getGameIdentifier(), "Payback", -1, lastcallbackmoney, -1, "노콜머니 환불 "+lastbetuser , -1, -1);
 			}
 		}
@@ -2024,7 +2028,7 @@ public class GameManager {
 				for(int b=0; b < sortRank.size(); b++)
 					sortRank.get(b).betmoneycopy();
 			}
-		}		
+		}
 		//==========================} 승리금 정산
 		
 		setDealerSeat();		
