@@ -132,7 +132,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			Room room = roommanager.find(u.roomnum);					
 						//room.leave(u);			
 						//room.notifyLeaveUser(seat);					
-
+			System.out.println("LeaveReserve 호출전");
 			room.LeaveReserve(u);
 
 			if( room.gameManager.userlist.size() > 0 )
@@ -225,8 +225,10 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			case "leave":
     		{
     			try {
-	    			User u = usermanager.find(session);    				    			
-					int roomidx = Integer.parseInt(""+obj.get("roomidx"));	    			
+	    			User u = usermanager.find(session);  
+	    			if(u == null) break;
+					int roomidx = Integer.parseInt(""+obj.get("roomidx"));
+					if( roomidx < 0) break;
 	    			roommanager.leaveRoom(u.roomnum, u);    	    				    			
     			}catch(Exception e) {
     				System.out.println("나가는중 에러 감지 :"+e.getMessage() );

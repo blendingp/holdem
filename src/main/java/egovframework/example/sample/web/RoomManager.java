@@ -303,7 +303,9 @@ public class RoomManager {
 	}
 	
 	void leaveRoom(int roomNum , User user){		
-		Room room = find(user.roomnum);				
+		Room room = find(user.roomnum);		
+		if( room == null )
+			return;
 		room.notifyLeaveUser(user.seat);				
 		room.leave(user);						
 	}

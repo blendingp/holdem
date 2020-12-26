@@ -482,7 +482,9 @@ public class Room {
 				gameManager.leaveuserlist.add(gameManager.userlist.get(nCount));				
 				
 				BraodCastLeaveReserve(user, true);
+				System.out.println("THEEND 호출전 dbg1");
 				if( gameManager.checkAbstention() ){
+					System.out.println("THEEND 호출전 dbg2");
 					gameManager.TheEnd();
 				}
 			}
