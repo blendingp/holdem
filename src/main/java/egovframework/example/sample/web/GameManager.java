@@ -42,7 +42,6 @@ public class GameManager {
 	int timer = -1;
 	int dealerSeatNum = 0;//누가딜러인지 유저인덱스 저장
 	int lastCmdSecond=1000000;//마지막 명령을 받은 시간, 1분  이상 누구도 명령을 내리지 않은 상태인데 방이 대기 상태가 아니라면 에러난 상태이므로 방을 강제 초기화 시켜야 함.
-	User outSBUser= null,outBBUser=null;// 첫 베팅하기전에 sb, bb 유저가 나가면 해당 유저 객체를 저장해둔다. 대신 베팅 처리를 위해서.
 	long lastcallbackmoney=0,lastbetmoney=0;//마지막 콜 못받은 금액 환불처리하기위해 지정변수
 	int lastbetuser=0;
 	
@@ -281,7 +280,6 @@ public class GameManager {
 			ProfileManager.UpdateProfile(u.totalprofile);
 			ProfileManager.UpdateTodayProfileNoExpire(u.todayprofile);
 			totalmoney += usermoney;			
-			outSBUser = outBBUser = null;
 			SocketHandler.insertLog(getGameId(), getGameIdentifier(), "join", u.uidx , u.balance , u.seat , "참가머니", usermoney , -1);
 		}			
 		

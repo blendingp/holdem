@@ -527,17 +527,4 @@ public class Room {
 			e.printStackTrace();
 		}        
 	}	 
-	public void checkSBorBBfirstOut(User u)
-	{//나간 유저가   SB or BB 유저이면 임시 기록해두는 함수.
-		if( u.seat == gameManager.SearchUserBySeat( gameManager.getDealerSeatOffset(1) ).seat )
-		{
-			gameManager.outSBUser = u;
-			System.out.println("SB 유저가 강제 접속 종료됨");
-		}
-		if( u.seat == gameManager.SearchUserBySeat( gameManager.getDealerSeatOffset(2) ).seat )
-		{
-			gameManager.outBBUser = u;
-			System.out.println("BB 유저가 강제 접속 종료됨");
-		}
-	}
 }

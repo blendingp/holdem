@@ -112,7 +112,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			}			
 		}    	
     	
-    	if( u.roomnum != -1){			
+    	if( u.roomnum != -1){
 			Room room = roommanager.find(u.roomnum);					
 			System.out.println("LeaveReserve 호출전");
 			room.LeaveReserve(u);
@@ -122,8 +122,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 				Task.IncreaseTask(u, 2, 1);
 				Task.UpdateDB(u);			
 			}
-			
-			room.checkSBorBBfirstOut(u);
 		}		
     	try {
     		session.close();
