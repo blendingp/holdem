@@ -19,6 +19,7 @@ public class GameManager {
 	public ArrayList<User> userlist = new ArrayList<User>();	
 	public ArrayList<User> leaveuserlist = new ArrayList<User>();	
 	public ArrayList<User> watchinguserlist = new ArrayList<User>();	
+	public ArrayList<User> spareuserlist = new ArrayList<User>();	
 	public int[] seats = {-1, -1, -1, -1, -1, -1, -1, -1, -1};		
 	public CardManager cardManager = new CardManager();	
 	//public User reuser = new User();
@@ -451,32 +452,45 @@ public class GameManager {
 			}catch(Exception e) {
 				System.out.println("error log: showResult 계산시 에러 발생================"+e.toString() );
 			}
-			try {				
-				room.BroadCasetUser();
-			}catch(Exception e) {
-				System.out.println("error log: BroadCasetUser 에러 발생================"+e.toString() );
-			}
+			
 			changeGameMode("showResult");
 		}
 		
 		if(GameMode.compareTo("showResult")==0){
 			if( checkCmdTime(5) ){
-				changeGameMode("대기");
-				checkOutUser();
-				LeaveReserveUser();
-				setWorkTime(); 
+				try {				
+					changeGameMode("대기");
+					checkOutUser();
+					LeaveReserveUser();
+					room.unliveLeave();
+					watchinglistToUserlist();
+					room.BroadCasetUser();
+					setWorkTime(); 
+				}catch(Exception e) {
+					System.out.println("error log: showResult check 에러 발생================"+e.toString() );
+				}
 			}
 		}
 		
 		if(GameMode.compareTo("대기")==0){
 			LeaveReserveUser();
 			if (isPlayable() && checkCmdTime(6) ){
-				LeaveUnLiveUser();
 				setWorkTime();
 				lastcmdtime =( new Date()).getTime();
 				changeGameMode("checkstart");
 			}
 		}
+	}
+	void watchinglistToUserlist()
+	{
+		for( User u : watchinguserlist )
+		{
+			userlist.add(u);
+			u.live = true;
+		}
+
+		watchinguserlist.clear();
+
 	}
 
 	void LeaveReserveUser()
@@ -490,16 +504,6 @@ public class GameManager {
 		}
 
 		leaveuserlist.clear();
-	}
-	void LeaveUnLiveUser()
-	{
-		
-		for(User u : userlist ) {
-			if(u.live == false) {
-				room.leave(u);
-				//send network error msg
-			}
-		}
 	}
 	
 	void checkOutUser(){
@@ -2090,16 +2094,47 @@ public class GameManager {
 		obj.put("cardlist", j);
 		sendRoom(obj);
 
-		for( User u : watchinguserlist )
+	}
+	
+	public void InsertSpareUser(User user)
+	{
+		spareuserlist.add(user);
+		ArrayList<Integer> cardlist = new ArrayList<>();
+		if( card1 != null )
 		{
-			userlist.add(u);
-			u.live = true;
+			cardlist.add(card1.cardcode);
+		}
+		if( card2 != null )
+		{
+			cardlist.add(card2.cardcode);
+		}
+		if( card3 != null )
+		{
+			cardlist.add(card3.cardcode);
+		}		
+		if( card4 != null )
+		{
+			cardlist.add(card4.cardcode);
+		}
+		if( card5 != null )
+		{
+			cardlist.add(card5.cardcode);
 		}
 
-		watchinguserlist.clear();
-	}
+		JSONObject obj = new JSONObject();
+		obj.put("cmd","watching");
+		obj.put("cardlist", cardlist);
+		obj.put("totalbet", totalmoney );
 
-	
+		try {
+			if(User.CheckSendPacket(user) == true)
+			{
+				user.session.sendMessage(new TextMessage(obj.toJSONString()));
+			}			
+		} catch (IOException e) {
+			System.out.println("InsertSpareUser error:"+e.getMessage());
+		}
+	}
 	public void InsertWatchingUser(User user)
 	{
 		watchinguserlist.add(user);
@@ -2139,7 +2174,6 @@ public class GameManager {
 			System.out.println("InsertWatchingUser error:"+e.getMessage());
 		}
 	}
-	
 	private JSONObject MakeWinCard(int lv, ArrayList<Integer> cards) {
 		
 		JSONObject win = new JSONObject();

@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
@@ -60,26 +61,16 @@ public class Room {
 		title = random.nextInt(4);
 	}
 
-	/*
-	public void init() {
-		gameManager.init();		
-		roominfo.playcount = 0;
-		roominfo.totalbetamount = 0;
-		roominfo.totalwinamount = 0;
-	}*/
-
 	public boolean fullRoom() {
 
-		if (gameManager.userlist.size() + gameManager.watchinguserlist.size() + gameManager.leaveuserlist.size() >= maxusersize) {
+		if (gameManager.userlist.size() + gameManager.watchinguserlist.size() + gameManager.spareuserlist.size() >= maxusersize*2 ) {
 			return true;
 		}
-
 		return false;
-
 	}
 
 	public boolean emptyRoom() {
-		if (gameManager.userlist.size() + gameManager.watchinguserlist.size() + gameManager.leaveuserlist.size() == 0)
+		if (gameManager.userlist.size() + gameManager.watchinguserlist.size() + gameManager.spareuserlist.size() == 0)
 			return true;
 		return false;
 	}
@@ -235,11 +226,22 @@ public class Room {
 		JSONObject myobj = new JSONObject();
 		myobj.put("cmd", "RoomLeaveOk");
 		myobj.put("seat", seat);
+		myobj.put("neterror", false);
 		myobj.put("iswatching", (!gameManager.IsJoinGame(seat)));
 		// 방에 참여중인 모든 사람 불러오기
 		gameManager.sendRoom(myobj);
 	}
 
+	public void notifyLeaveUserNetError(int seat) {
+		JSONObject myobj = new JSONObject();
+		myobj.put("cmd", "RoomLeaveOk");
+		myobj.put("seat", seat);
+		myobj.put("neterror", true);
+		myobj.put("iswatching", (!gameManager.IsJoinGame(seat)));
+		// 방에 참여중인 모든 사람 불러오기
+		gameManager.sendRoom(myobj);
+	}
+	
 	public void GetRoomInfo(WebSocketSession session) {
 		if( session == null )
 		{
@@ -309,6 +311,11 @@ public class Room {
 
 		if( gameManager.GetEmptySeat() < 0 )
 		{
+			if( gameManager.spareuserlist.contains(u) == false )
+			{
+				gameManager.InsertSpareUser(u);
+			}			
+
 			return false;
 		}
 		if(gameManager.userlist.contains(u) == false 
@@ -341,7 +348,7 @@ public class Room {
 
 		return true;
 				
-	}
+	} 
 
 	
 	public void leave(User u) {		
@@ -389,7 +396,38 @@ public class Room {
 		System.out.println("<< Room . leave >> :"+ u.nickname);
 	}
 
+	public void unliveLeave() {		
+		
+		ArrayList<User> rmwatchlist = new ArrayList<User>();
+		for( int nCount = 0; nCount < gameManager.watchinguserlist.size(); nCount++ )
+		{
+			User u = gameManager.watchinguserlist.get(nCount);
+			if( u.live == false )
+			{
+				notifyLeaveUserNetError(u.seat);
+				gameManager.EmptySeat(u.seat);
+				rmwatchlist.add(u);
+				u.clear();
+				System.out.println("<<관전자 Room . leave >> :"+ u.nickname+" "+(new Date()).toLocaleString() );
+			}			
+		}
+		gameManager.watchinguserlist.removeAll(rmwatchlist);
 
+		ArrayList<User> rmuserlist = new ArrayList<User>();
+		for( int nCount = 0; nCount < gameManager.userlist.size(); nCount++ )
+		{
+			User u = gameManager.userlist.get(nCount);
+			if( u.live == false )
+			{
+				notifyLeaveUserNetError(u.seat);
+				gameManager.EmptySeat(u.seat);
+				rmuserlist.add(u);
+				u.clear();
+			}			
+		}
+		gameManager.userlist.removeAll(rmuserlist);
+	}
+	
 	public void postCheckStartRoom(User u) {
 		//gameManager.startCheck(u);
 	}	
@@ -447,7 +485,7 @@ public class Room {
 			info.ante = defaultmoney;
 			info.maxbet = maxmoney;
 			info.maxusersize = maxusersize;
-			info.currentcount = gameManager.userlist.size() + gameManager.watchinguserlist.size() + gameManager.leaveuserlist.size();
+			info.currentcount = gameManager.userlist.size() + gameManager.watchinguserlist.size() + gameManager.spareuserlist.size();
 			info.title = title;
 			return info;
 		}

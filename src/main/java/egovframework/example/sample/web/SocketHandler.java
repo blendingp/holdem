@@ -502,11 +502,9 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 				int roomidx = user.roomnum;
 				Room r = roommanager.find(roomidx);
 				boolean state = Boolean.parseBoolean(""+obj.get("state"));
-				System.out.println("Dbg  state:"+state);
 				if( r != null) {
 					if(state == true) {
-						System.out.println("dng 3=======================");
-						r.LeaveReserve(user);						
+						r.LeaveReserve(user);					
 					}
 					else {
 						r.gameManager.leaveuserlist.remove(user);
