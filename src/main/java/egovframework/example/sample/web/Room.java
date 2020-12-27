@@ -319,15 +319,14 @@ public class Room {
 			gameManager.SetSeat(u.seat);
 		}
 		
-		u.roomnum = ridx;				
-		if( gameManager.GameMode == "대기" )
+		u.roomnum = ridx;	
+		u.live = true;
+		if( gameManager.GameMode.compareTo("대기") == 0 )
 		{			
 			if(gameManager.userlist.contains(u) == false)
 			{
 				gameManager.userlist.add( u );		
 			}						
-			gameManager.startCheck(u, gameManager.userlist);			
-			
 			gameManager.setWorkTime( );//새로 한명 들어올때마다 대기 시간을 증가시켜서 여러명이 들어올 여지를 둔다.			
 		}
 		else
@@ -351,6 +350,7 @@ public class Room {
 		{
 			if( gameManager.watchinguserlist.get(nCount).uidx == u.uidx)
 			{
+				notifyLeaveUser(u.seat);
 				gameManager.EmptySeat(u.seat);
 				gameManager.watchinguserlist.remove(nCount);
 				u.clear();
@@ -365,6 +365,7 @@ public class Room {
 			return;
 		}
 
+		notifyLeaveUser(u.seat);
 		gameManager.EmptySeat(u.seat);
 		for( int nCount = 0; nCount < gameManager.userlist.size(); nCount++ )
 		{
@@ -479,7 +480,8 @@ public class Room {
 	{		
 		if( gameManager.IsJoinGame(user.seat) == false)
 		{
-			notifyLeaveUser(user.seat);
+			System.out.println("LeaveReserve first====================================");
+			//notifyLeaveUser(user.seat);
 			leave(user);
 			return ;
 		}
@@ -488,14 +490,8 @@ public class Room {
 		{						
 			if(gameManager.userlist.get(nCount).uidx == user.uidx)
 			{											
-				gameManager.leaveuserlist.add(gameManager.userlist.get(nCount));				
-				
-				BraodCastLeaveReserve(user, true);
-				System.out.println("THEEND 호출전 dbg1");
-				if( gameManager.checkAbstention() ){
-					System.out.println("THEEND 호출전 dbg2");
-					gameManager.TheEnd();
-				}
+				gameManager.leaveuserlist.add(gameManager.userlist.get(nCount));								
+				BraodCastLeaveReserve(user, true);				
 			}
 		}		
 	}

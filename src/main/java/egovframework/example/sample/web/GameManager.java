@@ -375,6 +375,12 @@ public class GameManager {
 	
 	void changeGameMode(String mode){
 		System.out.println(GameMode+" => "+mode);
+		if( mode.compareTo("대기") == 0 ) {
+			JSONObject obj=new JSONObject();
+			obj.put("cmd", "changemode");
+			obj.put("mode", mode );
+			sendRoom(obj);
+		}
 		GameMode = mode;
 	}
 	void setWorkTime(){
@@ -465,6 +471,7 @@ public class GameManager {
 		if(GameMode.compareTo("대기")==0){
 			LeaveReserveUser();
 			if (isPlayable() && checkCmdTime(6) ){
+				LeaveUnLiveUser();
 				setWorkTime();
 				lastcmdtime =( new Date()).getTime();
 				changeGameMode("checkstart");
@@ -477,11 +484,22 @@ public class GameManager {
 		while( leaveuserlist.size() > 0 )
 		{
 			User user = leaveuserlist.get(0);
-			room.notifyLeaveUser(user.seat);
+			System.out.println("LeaveReserve second====================================");
+			//room.notifyLeaveUser(user.seat);
 			room.leave(user);
 		}
 
 		leaveuserlist.clear();
+	}
+	void LeaveUnLiveUser()
+	{
+		
+		for(User u : userlist ) {
+			if(u.live == false) {
+				room.leave(u);
+				//send network error msg
+			}
+		}
 	}
 	
 	void checkOutUser(){
@@ -2075,6 +2093,7 @@ public class GameManager {
 		for( User u : watchinguserlist )
 		{
 			userlist.add(u);
+			u.live = true;
 		}
 
 		watchinguserlist.clear();

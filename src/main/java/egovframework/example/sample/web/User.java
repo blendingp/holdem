@@ -62,6 +62,7 @@ public class User {
 	public ArrayList<Integer> cardarr = new ArrayList<>();
 	public ArrayList<Item> consumableItem = new ArrayList<>();
 	public long lastcmdtime= -1;
+	boolean live = true;//초기값 true , 
 	
 	public void betmoneycopy() {
 		betmoney2 = betmoney;

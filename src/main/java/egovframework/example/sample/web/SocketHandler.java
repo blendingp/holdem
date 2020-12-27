@@ -205,6 +205,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			case "leave":
     		{
     			try {
+    				System.out.println("leave 패킷 받음===========================");
 	    			User u = usermanager.find(session);  
 	    			if(u == null) break;
 					int roomidx = Integer.parseInt(""+obj.get("roomidx"));
@@ -499,7 +500,19 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			{
 				User user = usermanager.find(session);        		        		
 				int roomidx = user.roomnum;
-				roommanager.find(roomidx).BraodCastLeaveReserve(user, Boolean.parseBoolean(""+obj.get("state")));
+				Room r = roommanager.find(roomidx);
+				boolean state = Boolean.parseBoolean(""+obj.get("state"));
+				System.out.println("Dbg  state:"+state);
+				if( r != null) {
+					if(state == true) {
+						System.out.println("dng 3=======================");
+						r.LeaveReserve(user);						
+					}
+					else {
+						r.gameManager.leaveuserlist.remove(user);
+						r.BraodCastLeaveReserve(user, state);
+					}
+				}
 			}break;
 			case "getroominfo":
 			{
@@ -514,6 +527,12 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			case "changelostlimit":
 			{				
 				usermanager.find(session).ChangeLostLimit(Long.parseLong(""+obj.get("amount")));
+			}break;
+			case "live":
+			{				
+        		User user = usermanager.find(session);        		        		
+        		if(user != null )
+        			user.live = true;
 			}break;
 		}
     }

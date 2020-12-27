@@ -306,8 +306,7 @@ public class RoomManager {
 		Room room = find(user.roomnum);		
 		if( room == null )
 			return;
-		room.notifyLeaveUser(user.seat);				
-		room.leave(user);						
+		room.leave(user);	
 	}
 	
 	void checkStartGame(){
