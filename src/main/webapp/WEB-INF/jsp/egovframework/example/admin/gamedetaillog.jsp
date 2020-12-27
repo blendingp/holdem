@@ -23,8 +23,8 @@
 		        function showCard( cd){
 		        	switch( parseInt(cd/13) ){
 		        		case 0: document.write("♣");break;
-		        		case 1: document.write("◆");break;
-		        		case 2: document.write("♥");break;
+		        		case 1: document.write("♥");break;
+		        		case 2: document.write("◆");break;
 		        		case 3: document.write("♠");break;
 		        	}
 		        	document.write(parseInt(cd) % 13 + 1);
@@ -33,8 +33,8 @@
 		        function showCard2( cd){
 		        	switch( parseInt(cd/13) ){
 		        		case 0: document.write("♣<br>");break;
-		        		case 1: document.write("◆<br>");break;
-		        		case 2: document.write("♥<br>");break;
+		        		case 1: document.write("♥<br>");break;
+		        		case 2: document.write("◆<br>");break;
 		        		case 3: document.write("♠<br>");break;
 		        	}
 		        	document.write(parseInt(cd) % 13 + 1);
