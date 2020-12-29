@@ -178,7 +178,7 @@ public class Room {
 		myobj.put("dealer", gameManager.getDealerSeat() );
 		myobj.put("smallblind", gameManager.getDealerSeatOffset(1) );
 		myobj.put("bigblind", gameManager.getDealerSeatOffset(2));
-
+		
 		JSONArray j = new JSONArray();
 
 		for (User user : gameManager.userlist) {
@@ -218,10 +218,16 @@ public class Room {
 		}
 
 		myobj.put("userlist", j);
-
 		gameManager.sendRoom(myobj);
 	}
-
+	
+	public void spareCount() {
+		JSONObject myobj = new JSONObject();
+		myobj.put("count", gameManager.spareuserlist.size());
+		myobj.put("cmd", "spareCount");
+		gameManager.sendRoom(myobj);
+	}
+	
 	public void notifyLeaveUser(int seat) {
 		JSONObject myobj = new JSONObject();
 		myobj.put("cmd", "RoomLeaveOk");
@@ -315,12 +321,14 @@ public class Room {
 			{
 				gameManager.InsertSpareUser(u);
 			}			
-
-			return false;
+			//spare패킷 보내기 
+			spareCount();
+//			return false;
 		}
 		if(gameManager.userlist.contains(u) == false 
-		&& gameManager.watchinguserlist.contains(u) == false
-		&& gameManager.leaveuserlist.contains(u) == false)
+			&& gameManager.watchinguserlist.contains(u) == false
+			&& gameManager.spareuserlist.contains(u) == false
+			&& gameManager.leaveuserlist.contains(u) == false)
 		{
 			u.seat = gameManager.GetEmptySeat();		
 			gameManager.SetSeat(u.seat);
@@ -328,20 +336,23 @@ public class Room {
 		
 		u.roomnum = ridx;	
 		u.live = true;
-		if( gameManager.GameMode.compareTo("대기") == 0 )
-		{			
-			if(gameManager.userlist.contains(u) == false)
-			{
-				gameManager.userlist.add( u );		
-			}						
-			gameManager.setWorkTime( );//새로 한명 들어올때마다 대기 시간을 증가시켜서 여러명이 들어올 여지를 둔다.			
-		}
-		else
+		if( u.seat >= 0 )
 		{
-			if( gameManager.watchinguserlist.contains(u) == false )
+			if( gameManager.GameMode.compareTo("대기") == 0 )
+			{			
+				if(gameManager.userlist.contains(u) == false)
+				{
+					gameManager.userlist.add( u );		
+				}						
+				gameManager.setWorkTime( );//새로 한명 들어올때마다 대기 시간을 증가시켜서 여러명이 들어올 여지를 둔다.			
+			}
+			else
 			{
-				gameManager.InsertWatchingUser(u);
-			}			
+				if( gameManager.watchinguserlist.contains(u) == false )
+				{
+					gameManager.InsertWatchingUser(u);
+				}			
+			}
 		}
 
 		notifyJoinUser(u);
@@ -353,8 +364,19 @@ public class Room {
 	
 	public void leave(User u) {		
 		
-		for( int nCount = 0; nCount < gameManager.watchinguserlist.size(); nCount++ )
+		for( int nCount = 0; nCount < gameManager.spareuserlist.size(); nCount++ )
 		{
+			if( gameManager.spareuserlist.get(nCount).uidx == u.uidx)
+			{							
+				gameManager.spareuserlist.remove(nCount);
+				spareCount();
+				System.out.println("<<spare Room . leave >> :"+ u.nickname+" "+(new Date()).toLocaleString() );
+				return;
+			}		
+		}
+		
+		for( int nCount = 0; nCount < gameManager.watchinguserlist.size(); nCount++ )
+		{			
 			if( gameManager.watchinguserlist.get(nCount).uidx == u.uidx)
 			{
 				notifyLeaveUser(u.seat);

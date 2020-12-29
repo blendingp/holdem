@@ -110,20 +110,23 @@ public class GameManager {
 	
 	public int GetEmptySeat()
 	{
-		for( int nCount = 0; nCount < seats.length; ++nCount)
+		for( int nCount = 0; nCount < seats.length && nCount < room.maxusersize ; ++nCount)
 		{
 			if( seats[nCount] < 0 )
 			{
 				return nCount;			
 			}
 		}
-		
+		System.out.println("NoEmpty");
 		return -1;
 	}
 	
 	public void SetSeat(int seat)
-	{		
-		seats[seat] = 0;
+	{
+		if( seat >= 0 && seat < room.maxusersize)
+		{
+			seats[seat] = 0;
+		}
 	}
 	
 	public void EmptySeat(int seat)
@@ -141,6 +144,7 @@ public class GameManager {
 	void sendRoom(JSONObject obj){
 		sendList(obj, userlist);
 		sendList(obj, watchinguserlist);
+		sendList(obj, spareuserlist);
 	}
 	void sendList(JSONObject obj, ArrayList<User> lst){
 
@@ -394,6 +398,7 @@ public class GameManager {
 	}
 
 	void checkStartGame() throws NoSuchAlgorithmException{
+		SocketHandler.debugi=21;
 		if(GameMode.compareTo("checkstart")==0 ){
 			 if(isPlayable() )
 			 {
@@ -408,7 +413,7 @@ public class GameManager {
 				 setWorkTime();
 			 }
 		}
-		
+		SocketHandler.debugi=22;
 		if(GameMode.compareTo("twoCard")==0)
 		{
 			if (userlist.size() <= 1) {
@@ -422,7 +427,7 @@ public class GameManager {
 				whosturn = getDealerSeatOffset(1); // 첫 베팅 하는 사람은 딜러 다음 사람
 			}
 		}
-
+		SocketHandler.debugi=23;
 		if(GameMode.compareTo("sbBet")==0)
 		{
 			// 2를 나중에 시스템 수치로 변경
@@ -432,12 +437,14 @@ public class GameManager {
 			}
 		}
 		//===================
+		SocketHandler.debugi=24;
 		if(GameMode.compareTo("bbBet")==0){			
 			if( checkCmdTime(1) ){
 				changeGameMode("bbBeted");
 				bbBet();
 			}
 		}
+		SocketHandler.debugi=25;
 
 		if(GameMode.compareTo("nmBet")==0){	
 			if(  checkCmdTime(1)  ){
@@ -445,6 +452,7 @@ public class GameManager {
 				showBetPan();
 			}
 		}
+		SocketHandler.debugi=26;
 		if(GameMode.compareTo("THEEND")==0){
 			setWorkTime();
 			try {
@@ -455,7 +463,7 @@ public class GameManager {
 			
 			changeGameMode("showResult");
 		}
-		
+		SocketHandler.debugi=27;
 		if(GameMode.compareTo("showResult")==0){
 			if( checkCmdTime(5) ){
 				try {				
@@ -464,14 +472,15 @@ public class GameManager {
 					LeaveReserveUser();
 					room.unliveLeave();
 					watchinglistToUserlist();
-					room.BroadCasetUser();
+					//room.BroadCasetUser();
+					room.spareCount();
 					setWorkTime(); 
 				}catch(Exception e) {
 					System.out.println("error log: showResult check 에러 발생================"+e.toString() );
 				}
 			}
 		}
-		
+		SocketHandler.debugi=28;
 		if(GameMode.compareTo("대기")==0){
 			LeaveReserveUser();
 			if (isPlayable() && checkCmdTime(6) ){
@@ -481,8 +490,10 @@ public class GameManager {
 			}
 		}
 	}
+	
+	//watching을 유저로 옮기고, spare도 user로 옮김 
 	void watchinglistToUserlist()
-	{
+	{		
 		for( User u : watchinguserlist )
 		{
 			userlist.add(u);
@@ -490,7 +501,24 @@ public class GameManager {
 		}
 
 		watchinguserlist.clear();
-
+		
+		//유저리스트에 자리가 남았으면 , 스페어에서 유저리스틀 보냄.
+		//그래도 남은 스페어가 있으면 그냥 두면 됨,
+		ArrayList<User> rmspare=new ArrayList<User>();
+		for(User u : spareuserlist )
+		{
+			int seat = GetEmptySeat();
+			if( seat < 0 )
+				break;
+			rmspare.add(u);
+			u.seat = seat;
+			SetSeat(u.seat);
+			userlist.add(u);
+			u.live = true;
+			room.notifyJoinUser(u);
+			
+		}
+		spareuserlist.removeAll(rmspare);
 	}
 
 	void LeaveReserveUser()
