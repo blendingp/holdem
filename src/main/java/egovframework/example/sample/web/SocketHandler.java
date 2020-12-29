@@ -41,7 +41,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 
     UserManager usermanager = new UserManager();
     RoomManager roommanager = new RoomManager();
-    ChatMention chatmention = new ChatMention();
     
     static public int jokbotest = -1;
     
@@ -202,7 +201,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         	{
         		
         	}break;
-			case "leave":
+			case "leave"://이패킷 지금 안쓰고 있음. 나가기 예약으로만 처리함
     		{
     			try {
     				System.out.println("leave 패킷 받음===========================");
@@ -552,8 +551,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
     	
     	gameIdentifier = BytesToHex( Sha256(""+gameidIdx) );
     	
-    	chatmention.setDAO(sampleDAO);
-		chatmention.uploding();
 		JackpotManager.Init();
     	
         Thread thread = new Thread() {
