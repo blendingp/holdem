@@ -13,6 +13,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.simple.JSONObject;
@@ -38,10 +39,87 @@ public class UserController {
 	private Properties fileProperties;
 
 	@RequestMapping(value="/main.do")
-	public String main(ModelMap model) {
+	public String main(HttpServletRequest request, ModelMap model) {
+		String re = request.getParameter("re");  
+		model.addAttribute("re", re);
 		model.addAttribute("youtube", sampleDAO.select("selectMainFileYoutube"));
 		model.addAttribute("imageList", sampleDAO.list("selectMainFileImageUser"));
 		return "user/main";
+	}
+	
+	@RequestMapping(value = "/loginprocess.do")
+	public String loginprocess(HttpServletRequest request, ModelMap model) throws Exception {
+		
+		String muserid = request.getParameter("muserid");
+		String muserpw = request.getParameter("muserpw");
+		
+		EgovMap in = new EgovMap();
+		in.put("muserid", muserid);
+		in.put("muserpw", muserpw);
+		EgovMap ed = (EgovMap) sampleDAO.select("login", in);
+		
+		if(ed!=null){
+			//로그인성공
+			HttpSession session = request.getSession();
+			session.setAttribute("midx", ed.get("midx"));
+			session.setAttribute("muserid", ed.get("muserid"));
+			session.setAttribute("muserpw", ed.get("muserpw"));
+		}
+		else{
+			//로그인실패
+			return "redirect:/user/main.do?re=1";
+		}
+
+		return "redirect:/user/main.do";		
+	}
+	
+	@RequestMapping(value = "/logoutprocess.do")
+	public String logoutprocess(HttpServletRequest request, ModelMap model) throws Exception {
+		HttpSession session = request.getSession();
+		session.setAttribute("midx", null);
+		session.setAttribute("muserid", null);
+		session.setAttribute("muserpw", null);
+		return "redirect:/user/main.do";	
+	}
+	
+	@RequestMapping(value = "/shop.do")
+	public String shop(HttpServletRequest request, ModelMap model) throws Exception {
+		return "user/shop";
+	}
+	
+	@RequestMapping(value = "/myinfo.do")
+	public String myinfo(HttpServletRequest request, ModelMap model) throws Exception {
+		HttpSession session = request.getSession();
+		String midx = ""+session.getAttribute("midx");
+		String result = request.getParameter("result");
+		model.addAttribute("result", result);
+		
+		EgovMap in = new EgovMap();
+		in.put("midx", midx);
+		EgovMap ed = (EgovMap) sampleDAO.select("selectinfo", in);
+		EgovMap ed2 = (EgovMap) sampleDAO.select("selectAuth", in);
+		model.addAttribute("item", ed);
+		model.addAttribute("item2", ed2);
+		
+		return "user/myinfo";
+	}
+	
+	@RequestMapping(value = "/myinfoupdate.do")
+	public String myinfoupdate(HttpServletRequest request, ModelMap model) throws Exception {
+		String midx = request.getParameter("midx");
+		String muserpw = request.getParameter("muserpw");
+		
+		EgovMap in = new EgovMap();
+		in.put("midx", midx);
+		in.put("muserpw", muserpw);
+		EgovMap ed = (EgovMap) sampleDAO.select("selectPw", in);
+		if(ed == null) return "redirect:/user/myinfo.do?result=1"; 
+		
+		String muserpw2 = request.getParameter("muserpw2");				
+		in.put("muserpw", muserpw2);
+		sampleDAO.update("updatemyinfo",in);
+		
+		return "redirect:/user/myinfo.do?result=0"; 
 	}
 	
 	@RequestMapping(value="/inquiry.do")

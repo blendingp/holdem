@@ -5,6 +5,45 @@
 
 	<typeAlias  alias="egovMap" type="egovframework.rte.psl.dataaccess.util.EgovMap"/>
 
+	<select id="login" resultClass="EgovMap">
+        <![CDATA[
+            SELECT *
+            FROM member
+            WHERE muserid=#muserid# and muserpw=#muserpw#
+        ]]>
+	</select>
+	
+	<select id="selectinfo" resultClass="EgovMap">
+        <![CDATA[
+            SELECT *
+            FROM member left join member_info on member.midx = member_info.midx
+            WHERE member.midx=#midx#
+        ]]>
+	</select>
+	
+	<select id="selectAuth" resultClass="EgovMap">
+        <![CDATA[
+            SELECT *
+            FROM auth_self
+            WHERE midx=#midx#
+        ]]>
+	</select>
+
+	<select id="selectPw" resultClass="EgovMap">
+        <![CDATA[
+            SELECT *
+            FROM member
+            WHERE midx=#midx# and muserpw = #muserpw#
+        ]]>
+	</select>
+		
+	<update id="updatemyinfo">
+		<![CDATA[
+			UPDATE member
+			SET muserpw=#muserpw#
+			WHERE midx=#midx#
+		]]>
+	</update>
 
 	<insert id="insertAuthSelf">
 		<![CDATA[
