@@ -662,7 +662,7 @@ public class UserManager {
 		}
 
 	}
-
+ 
 	public void GetUserInfo(WebSocketSession session) {
 		
 		find(session).CheckExpireTodayRecord();
