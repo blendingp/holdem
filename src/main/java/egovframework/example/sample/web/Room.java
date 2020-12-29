@@ -370,7 +370,8 @@ public class Room {
 		for( int nCount = 0; nCount < gameManager.spareuserlist.size(); nCount++ )
 		{
 			if( gameManager.spareuserlist.get(nCount).uidx == u.uidx)
-			{							
+			{					
+				notifyLeaveUser(u.seat);
 				gameManager.spareuserlist.remove(nCount);
 				spareCount();
 				System.out.println("<<spare Room . leave >> :"+ u.nickname+" "+(new Date()).toLocaleString() );
