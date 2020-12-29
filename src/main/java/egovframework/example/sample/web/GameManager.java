@@ -2236,6 +2236,25 @@ public class GameManager {
 
 		return false;
 	}
+	public boolean IsJoinRoom(int seat)
+	{
+		for( User user : userlist )
+		{	
+			if( user.seat == seat )
+			{
+				return true;				
+			}
+		}
+		for( User user : watchinguserlist)
+		{	
+			if( user.seat == seat )
+			{
+				return true;				
+			}
+		}
+
+		return false;
+	}
 	
 	private int GetAbleBettingUserCount()
 	{
