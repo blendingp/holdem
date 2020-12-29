@@ -473,7 +473,7 @@ public class GameManager {
 					room.unliveLeave();
 					watchinglistToUserlist();
 					//room.BroadCasetUser();
-					room.spareCount();
+					//room.spareCount();
 					setWorkTime(); 
 				}catch(Exception e) {
 					System.out.println("error log: showResult check 에러 발생================"+e.toString() );

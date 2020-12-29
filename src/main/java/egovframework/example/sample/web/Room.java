@@ -116,6 +116,8 @@ public class Room {
 		myobj.put("dealer", gameManager.getDealerSeat() );
 		myobj.put("smallblind", gameManager.getDealerSeatOffset(1) );
 		myobj.put("bigblind", gameManager.getDealerSeatOffset(2));
+		myobj.put("spareCount", gameManager.spareuserlist.size() );
+		
 		if( isPrivate() == true )
 		{
 			myobj.put("roominfo", roominfo);
@@ -178,6 +180,7 @@ public class Room {
 		myobj.put("dealer", gameManager.getDealerSeat() );
 		myobj.put("smallblind", gameManager.getDealerSeatOffset(1) );
 		myobj.put("bigblind", gameManager.getDealerSeatOffset(2));
+		myobj.put("spareCount", gameManager.spareuserlist.size() );
 		
 		JSONArray j = new JSONArray();
 
