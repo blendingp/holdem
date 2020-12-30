@@ -82,6 +82,47 @@ public class UserController {
 		return "redirect:/user/main.do";	
 	}
 	
+	@RequestMapping(value = "/join.do")
+	public String join(HttpServletRequest request, ModelMap model) throws Exception {
+		String muserid = request.getParameter("muserid");
+		String nickname = request.getParameter("nickname");
+		
+		String result = request.getParameter("result");
+		model.addAttribute("result", result);
+		
+		EgovMap in = new EgovMap();
+		in.put("muserid", muserid);
+		in.put("nickname", nickname);
+		
+		return "user/join";
+	}
+	
+	@RequestMapping(value = "/joinInsert.do")
+	public String joinInsert(HttpServletRequest request, ModelMap model) throws Exception {
+		String muserid = request.getParameter("muserid");
+		String muserpw = request.getParameter("muserpw");
+		String nickname = request.getParameter("nickname");
+		String birthY = request.getParameter("birthY");
+		String birthM = request.getParameter("birthM");
+		String birthD = request.getParameter("birthD");
+		
+		EgovMap in = new EgovMap();
+		in.put("muserid", muserid);
+		in.put("muserpw", muserpw);
+		in.put("nickname", nickname);
+		in.put("birthdate", birthY + birthM + birthD);
+		
+		EgovMap ed = (EgovMap) sampleDAO.select("selectId", in);
+		if(ed != null) return "redirect:/user/join.do?result=0";
+		EgovMap ed2 = (EgovMap) sampleDAO.select("selectNick", in);
+		if(ed2 != null) return "redirect:/user/join.do?result=1";
+		 
+
+		sampleDAO.insert("insertJoin",in);
+		
+		return "redirect:/user/main.do";
+	}
+	
 	@RequestMapping(value = "/shop.do")
 	public String shop(HttpServletRequest request, ModelMap model) throws Exception {
 		return "user/shop";
