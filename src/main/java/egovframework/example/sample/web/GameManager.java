@@ -538,23 +538,22 @@ public class GameManager {
 	}
 	
 	void checkOutUser(){
-		//돈이 없는 유저 내보내기
+		//돈이 없는 유저 내보내기 , 관전자 이동 유저 처리
 		ArrayList<User> rmlist=new ArrayList<User>();
+		ArrayList<User> resvlist=new ArrayList<User>();
 		for(User u : userlist) 
-		{			
+		{
+			if(u.sparefix == true)//이값이 셋팅되어 있으면 유저가 관전자 이동으로 예약한상태임
+			{
+				resvlist.add(u);
+			}
 			if( room.UsedItem.equals("balance") == true){
-				
-/*				if( room.isPrivate() == false && u.balance < room.defaultmoney * 100){
-					rmlist.add(u);
-				}*/
 				if( room.isPrivate() == false && u.balance <= room.defaultmoney * 3){
 					rmlist.add(u);
 				}
 				else if( room.isPrivate() == true && u.balance <= 0){
 					rmlist.add(u);
 				}
-
-
 				if( u.balance <= 0 && u.todayprofile.goldrefillcount > 0)
 				{
 					u.todayprofile.goldrefillcount = 0;
@@ -612,6 +611,13 @@ public class GameManager {
 		JSONObject obj2 = new JSONObject();
 		obj2.put("cmd","roomout");
 		sendList(obj2,rmlist);//나간 유저에게는 당신 돈 없어서 나갔다는 패킷 보내줌
+		
+		resvlist.removeAll(rmlist);//혹시라도 관전가려는 사람이 돈이 없다면 제외
+		JSONObject obj3 = new JSONObject();
+		
+		obj3.put("cmd","outAndReservejoin");
+		sendList(obj3,rmlist);//나간 유저에게는 당신 돈 없어서 나갔다는 패킷 보내줌
+		//<=== 얘 일단 작업 하다만 상태임 12.30
 	}
 
 	void checkTimerGame(){

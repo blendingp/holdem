@@ -598,12 +598,25 @@ public class Room {
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","reserveOnlyOk");
 		u.sendMe(obj);
+		System.out.println("게임중 관전 예약");
 	}
 	public void toReserveJoin(User u)
 	{
 		u.sparefix = false;
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","reserveJoinOk");
+		obj.put("count", reserveCount(u) );
 		u.sendMe(obj);
+	}
+	int reserveCount(User tu)
+	{
+		int c=0;
+		for(User u : gameManager.spareuserlist)
+		{
+			c++;
+			if(u.uidx == tu.uidx)
+				break;
+		}
+		return c;
 	}
 }

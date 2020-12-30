@@ -502,6 +502,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 				int roomidx = user.roomnum;
 				Room r = roommanager.find(roomidx);
 				r.toReserveOnly(user);
+				System.out.println("관전으로 변경");
 			}break;
 			case "reservejoin"://참가 예약으로 변경
 			{
@@ -509,6 +510,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 				int roomidx = user.roomnum;
 				Room r = roommanager.find(roomidx);
 				r.toReserveJoin(user);
+				System.out.println("참여예약으로 변경");
 			}break;
 			case "reserveleave"://나가기 예약
 			{
