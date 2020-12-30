@@ -428,6 +428,7 @@ public class Room {
 		for( int nCount = 0; nCount < gameManager.watchinguserlist.size(); nCount++ )
 		{
 			User u = gameManager.watchinguserlist.get(nCount);
+			System.out.println("u:"+ u.live);
 			if( u.live == false )
 			{
 				notifyLeaveUserNetError(u.seat);
@@ -443,8 +444,10 @@ public class Room {
 		for( int nCount = 0; nCount < gameManager.userlist.size(); nCount++ )
 		{
 			User u = gameManager.userlist.get(nCount);
+			System.out.println("u:"+ u.live);
 			if( u.live == false )
 			{
+				System.out.println("=================NetError====================");
 				notifyLeaveUserNetError(u.seat);
 				gameManager.EmptySeat(u.seat);
 				rmuserlist.add(u);

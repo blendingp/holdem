@@ -231,6 +231,7 @@ public class GameManager {
 			}
 			
 			u.init();
+			u.live = false;
 			u.IncreaseExp(1);
 			u.PlayStatus = 1;
 			u.jokbocode = 0;
