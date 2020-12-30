@@ -595,12 +595,15 @@ public class Room {
 		//게임중이라면 예약 가능
 		//게임중이 아니거나 , 게임중에 대기하는중이라면 바로 관전으로 이동
 		u.sparefix = true;
+		JSONObject obj = new JSONObject();
+		obj.put("cmd","reserveOnlyOk");
+		u.sendMe(obj);
 	}
 	public void toReserveJoin(User u)
 	{
-		//게임중이라면 예약 가능
-		//게임중이 아니거나 , 게임중에 대기하는중이라면 바로 관전으로 이동
 		u.sparefix = false;
-		//내 예약 순위가 몇명인지 보내줘야함. 
+		JSONObject obj = new JSONObject();
+		obj.put("cmd","reserveJoinOk");
+		u.sendMe(obj);
 	}
 }
