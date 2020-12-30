@@ -99,10 +99,10 @@
 		<div class="w-form">
 			<form action="/holdem/user/loginprocess.do" id="loginform" name="loginform">
 				<input type="hidden" value="${item.midx}" name="midx">
-				<c:if test="${re == 1 }">
+				<c:if test="${re != null }">
 					<div class="loginpop" id="loginpop" style="display:flex">
 				</c:if>
-				<c:if test="${re != 1 }">
+				<c:if test="${re == null }">
 					<div class="loginpop" id="loginpop" style="display:none">
 				</c:if>
 					<div class="login">
@@ -123,7 +123,7 @@
 						</div>
 						<div class="div-block-17"></div>
 						<div class="logincontent">WINGAME 회원이 아니신가요?</div>
-						<a href="#" class="loginjoinbtn w-button">회원가입</a>
+						<a href="/holdem/user/join.do" class="loginjoinbtn w-button">회원가입</a>
 						<a href="#" onclick="$('#loginpop').css('display','none');" class="link-block-20 w-inline-block">
 							<img src="/holdem/webflow/images/pngwing.com-4.png" loading="lazy" alt="" class="image-6">
 						</a>

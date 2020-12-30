@@ -19,7 +19,7 @@
 			<jsp:include page="../frame/userMenu.jsp"></jsp:include>
 			<div class="body">
 				<div class="w-form">
-					<form id="email-form" name="email-form" data-name="Email Form">
+					<form id="joinform" name="joinform">
 						<div class="notititlebox">
 							<img src="images/WINGAME.png" loading="lazy" alt="" class="notilogo">
 							<div class="notititle">
@@ -31,7 +31,7 @@
 						</div>
 						<div class="togbox">
 							<div class="listclick">
-								<a href="#" class="listhomelink w-inline-block">
+								<a href="/holdem/user/main.do" class="listhomelink w-inline-block">
 									<div class="listlink">HOME</div>
 								</a>
 								<div class="listhome">&gt;</div>
@@ -46,46 +46,51 @@
 									<div class="jtxt">아이디</div>
 								</div>
 								<div class="jnwrap">
-									<input type="text" class="jinput2 w-input" maxlength="256" name="field-2" placeholder="아이디를 입력해주세요" id="field-2" required="">
+									<input type="text" class="jinput2 w-input" maxlength="256" name="muserid" placeholder="아이디를 입력해주세요" id="muserid" required="">
 								</div>
-								<a href="#" class="overlapbtn w-button">중복확인</a>
-								<div class="jnotice">아이디를 재입력 해주세요.</div>
+								<a href="#" onclick="javascript:checkId()" class="overlapbtn w-button">중복확인</a>
+								<div class="jnotice" id="museridch" style="display:none;">아이디를 입력해주세요.</div>
+								<!-- <div class="jnotice" id="museridch2" style="display:none;">이미 존재하는 아이디입니다.</div>
+								<div class="jnotice2" id="museridch3" style="display:none;">사용가능한 아이디입니다.</div> -->
 							</div>
 							<div class="jrow">
 								<div class="jbox">
 									<div class="jtxt">비밀번호</div>
 								</div>
 								<div class="jnwrap">
-									<input type="text" class="jinput w-input" maxlength="256" name="field-2" placeholder="비밀번호를 입력해주세요 (8~15자리 영문,숫자,특수문자 조합)" id="field-2" required="">
-									<div class="jnotice2">일치하지않습니다.</div>
+									<input type="password" class="jinput w-input" maxlength="256" name="muserpw" placeholder="비밀번호를 입력해주세요 (8~15자리 영문,숫자,특수문자 조합)" id="muserpw" required="">
 								</div>
+								<div class="jnotice" id="muserpwch" style="display:none;">비밀번호를 입력해주세요.</div>
 							</div>
 							<div class="jrow">
 								<div class="jbox">
 									<div class="jtxt">닉네임</div>
 								</div>
 								<div class="jnwrap">
-									<input type="text" class="jinput2 w-input" maxlength="256" name="field-2" placeholder="닉네임을 입력해주세요" id="field-2" required="">
+									<input type="text" class="jinput2 w-input" maxlength="256" name="nickname" placeholder="닉네임을 입력해주세요" id="nickname" required="">
 								</div>
-								<a href="#" class="overlapbtn w-button">중복확인</a>
+								<a href="#" onclick="javascript:checkNick()" class="overlapbtn w-button">중복확인</a>
+								<div class="jnotice" id="nicknamech" style="display:none;">닉네임을 입력해주세요.</div>
+								<!-- <div class="jnotice" id="nicknamech2" style="display:none;">이미 존재하는 닉네임입니다.</div>
+								<div class="jnotice2" id="nicknamech3" style="display:none;">사용 가능한 닉네임입니다.</div> -->
 							</div>
 							<div class="jrow">
 								<div class="jbox">
 									<div class="jtxt">생년월일</div>
 								</div>
-								<select id="field-3" name="field-3" class="select-field-3 w-select">
+								<select id="birthY" name="birthY" class="select-field-3 w-select">
 									<option value="년">년</option>
 									<option value="First">First Choice</option>
 									<option value="Second">Second Choice</option>
 									<option value="Third">Third Choice</option>
 								</select>
-								<select id="field-3" name="field-3" class="select-field-3 w-select">
+								<select id="birthM" name="birthM" class="select-field-3 w-select">
 									<option value="월">월</option>
 									<option value="First">First Choice</option>
 									<option value="Second">Second Choice</option>
 									<option value="Third">Third Choice</option>
 								</select>
-								<select id="field-3" name="field-3" class="select-field-3 w-select">
+								<select id="birthD" name="birthD" class="select-field-3 w-select">
 									<option value="일">일</option>
 									<option value="First">First Choice</option>
 									<option value="Second">Second Choice</option>
@@ -94,7 +99,7 @@
 							</div>
 							<div class="notice">※ 회원님의 소중한 개인정보는 WINGAME 개인정보처리방침에 따라 안전하게 관리되고 있습니다.</div>
 						</div>
-						<a href="#" class="deletebtn-7 a w-inline-block">
+						<a href="#" onclick="javascript:checkContents()" class="deletebtn-7 a w-inline-block">
 							<div class="deletebtntext">가입하기</div>
 						</a>
 					</form>
@@ -103,5 +108,78 @@
 		</div>
 		<jsp:include page="../frame/userBottom.jsp"></jsp:include>
 	</div>
+	<script>
+	var result = "${result}";
+	if(result=="0") alert("이미 존재하는 아이디입니다.");
+	if(result=="1") alert("이미 존재하는 닉네임입니다.");
+
+		function checkId(){
+			var muserid = document.getElementById("muserid").value;
+			
+			if(muserid.length == 0)
+			{
+				$("#museridch").css("display","flex");
+				return;
+			}
+			if(muserid.length != 0)
+			{
+				$("#museridch").css("display","none");
+				return;
+			}
+		}
+		function checkNick(){
+			var nickname = document.getElementById("nickname").value;
+			
+			if(nickname.length == 0)
+			{
+				$("#nicknamech").css("display","flex");
+				return;
+			}
+			if(nickname.length != 0)
+			{
+				$("#nicknamech").css("display","none");
+				return;
+			}
+		}
+		function checkContents(){
+			var muserid = document.getElementById("muserid").value;
+			var muserpw = document.getElementById("muserpw").value;
+			var nickname = document.getElementById("nickname").value;
+			
+			if(muserid.length == 0)
+			{
+				$("#museridch").css("display","flex");
+			}
+			if(muserid.length != 0)
+			{
+				$("#museridch").css("display","none");
+			}
+			
+			if(muserpw.length == 0)
+			{
+				$("#muserpwch").css("display","flex");
+			}
+			if(muserpw.length != 0)
+			{
+				$("#muserpwch").css("display","none");
+			}
+			
+			if(nickname.length == 0)
+			{
+				$("#nicknamech").css("display","flex");
+				return;
+			}
+			if(nickname.length != 0)
+			{
+				$("#nicknamech").css("display","none");
+			}
+			
+			if(muserid.length != 0 && muserpw.length != 0 && nickname.length != 0)
+			{
+				var fm = document.getElementById('joinform');
+				fm.submit();
+			}
+		}
+	</script>
 </body>
 </html>

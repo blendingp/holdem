@@ -29,6 +29,22 @@
         ]]>
 	</select>
 
+	<select id="selectId" resultClass="EgovMap">
+        <![CDATA[
+            SELECT *
+            FROM member
+            WHERE muserid=#muserid#
+        ]]>
+	</select>
+	
+	<select id="selectNick" resultClass="EgovMap">
+        <![CDATA[
+            SELECT *
+            FROM member_info
+            WHERE nickname=#nickname#
+        ]]>
+	</select>
+
 	<select id="selectPw" resultClass="EgovMap">
         <![CDATA[
             SELECT *
@@ -36,6 +52,21 @@
             WHERE midx=#midx# and muserpw = #muserpw#
         ]]>
 	</select>
+	
+	<insert id="insertJoin">
+		<![CDATA[
+			INSERT INTO member left join member_info on member.midx = member_info.midx
+							   left join auth_self on member.midx = auth_self.midx
+				( muserid
+				  , muserpw
+				  , nickname
+				  , birthdate)
+			VALUES ( #muserid#
+				  , #muserpw#
+				  , #nickname#
+				  , #birthdate#)
+		]]>
+	</insert>
 		
 	<update id="updatemyinfo">
 		<![CDATA[

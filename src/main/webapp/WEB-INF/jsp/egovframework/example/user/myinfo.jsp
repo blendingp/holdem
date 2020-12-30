@@ -19,7 +19,7 @@
 			<jsp:include page="../frame/userMenu.jsp"></jsp:include>
 			<div class="body">
 				<div class="w-form">
-					<form id="infoform" name="infoform" action="/holdem/user/myinfoupdate.do">
+					<form action="/holdem/user/myinfoupdate.do" id="infoform" name="infoform">
 						<input type="hidden" value="${item.midx}" name="midx">
 						<input type="hidden" name="muserid" value="${item.muserid}" />
 						<div class="notititlebox">
@@ -65,7 +65,7 @@
 									<input type="password" class="jinput w-input" maxlength="256" name="muserpw" placeholder="비밀번호를 입력해주세요" id="muserpw" required="">
 									<div class="jnotice2" id="muserpwn" style="display:none">일치하지않습니다.</div>
 								</div>
-								<div class="jnotice" id="muserpwn2" style="display:none">비밀번호를 재입력 해주세요.</div>
+								<div class="jnotice" id="muserpwn2" style="display:none">비밀번호를 입력해주세요.</div>
 							</div>
 							<div class="jrow">
 								<div class="jbox">
@@ -73,7 +73,7 @@
 								</div>
 								<div class="jnwrap">
 									<input type="password" class="jinput w-input" maxlength="256" name="muserpw2" placeholder="새 비밀번호를 입력해주세요 (8~15자리 영문,숫자,특수문자 조합)" id="muserpw2" required="">
-									<div class="jnotice" id="muserpw2n" style="display:none">비밀번호를 재입력 해주세요.</div>
+									<div class="jnotice" id="muserpw2n" style="display:none">새 비밀번호를 입력해주세요.</div>
 								</div>
 							</div>
 							<div class="jrow">
@@ -84,7 +84,7 @@
 									<input type="password" class="jinput w-input" maxlength="256" name="muserpw3" placeholder="새 비밀번호를 재입력해주세요" id="muserpw3" required="">
 									<div class="jnotice2" id="muserpw3n">일치하지않습니다.</div>
 								</div>
-								<div class="jnotice" id="muserpw3n2" style="display:none">비밀번호를 재입력 해주세요.</div>
+								<div class="jnotice" id="muserpw3n2" style="display:none">새 비밀번호를 확인해주세요.</div>
 							</div>
 							<div class="jrow">
 								<div class="jbox">
@@ -105,26 +105,47 @@
 	</div>
 	<script>
 	var result = "${result}";
-	if(result=="1") alert("패스워드가 틀렸습니다");
-	if(result=="0") alert("패스워드가 변경되었습니다");
-		function updateMyinfo() {
+	if(result=="1") alert("비밀번호가 일치하지 않습니다");
+	if(result=="0") alert("비밀번호가 변경되었습니다");
+		
+		function updateMyinfo(){
 			var muserpw = document.getElementById("muserpw").value;
 			var muserpw2 = document.getElementById("muserpw2").value;
 			var muserpw3 = document.getElementById("muserpw3").value;
-	
-			if(muserpw.length == 0 || muserpw2.length == 0)
+			
+			if(muserpw.length == 0)
 			{
-				alert("비밀번호를 입력해주세요");
+				$("#muserpwn2").css("display","flex");
+			}
+			if(muserpw.length != 0)
+			{
+				$("#muserpwn2").css("display","none");
+			}
+			
+			if(muserpw2.length == 0)
+			{
+				$("#muserpw2n").css("display","flex");
+			}
+			if(muserpw2.length != 0)
+			{
+				$("#muserpw2n").css("display","none");
+			}
+			
+			if(muserpw3.length == 0)
+			{
+				$("#muserpw3n2").css("display","flex");
 				return;
 			}
-			if(muserpw3 != muserpw2)
+			if(muserpw3.length != 0)
 			{
-				alert("비밀번호가 일치하지 않습니다");
-				return;
+				$("#muserpw3n2").css("display","none");
 			}
-
-			var fm = document.getElementById('infoform');
-			fm.submit();
+			if(muserpw.length != 0 && muserpw2.length != 0 && muserpw3.length != 0)
+			{
+				var fm = document.getElementById('infoform');
+				fm.submit();				
+			}
+			
 		}
 	</script>
 </body>
