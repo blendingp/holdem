@@ -507,6 +507,8 @@ public class GameManager {
 		ArrayList<User> rmspare=new ArrayList<User>();
 		for(User u : spareuserlist )
 		{
+			if( u.sparefix == true)
+				continue;
 			int seat = GetEmptySeat();
 			if( seat < 0 )
 				break;

@@ -586,5 +586,18 @@ public class Room {
 			System.out.println("SetRoomInfo err:"+e.getMessage());
 			e.printStackTrace();
 		}        
-	}	 
+	}
+	public void toReserveOnly(User u)
+	{
+		//게임중이라면 예약 가능
+		//게임중이 아니거나 , 게임중에 대기하는중이라면 바로 관전으로 이동
+		u.sparefix = true;
+	}
+	public void toReserveJoin(User u)
+	{
+		//게임중이라면 예약 가능
+		//게임중이 아니거나 , 게임중에 대기하는중이라면 바로 관전으로 이동
+		u.sparefix = false;
+		//내 예약 순위가 몇명인지 보내줘야함. 
+	}
 }

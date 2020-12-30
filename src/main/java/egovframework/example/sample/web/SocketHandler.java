@@ -495,7 +495,22 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 				usermanager.ReSetNickName(session, ""+obj.get("nickname"));
 		
 			}break;
-			case "reserveleave":
+			
+			case "reserveonly"://관전온니로 변경 예약
+			{
+				User user = usermanager.find(session);        		        		
+				int roomidx = user.roomnum;
+				Room r = roommanager.find(roomidx);
+				r.toReserveOnly(user);
+			}break;
+			case "reservejoin"://참가 예약으로 변경
+			{
+				User user = usermanager.find(session);        		        		
+				int roomidx = user.roomnum;
+				Room r = roommanager.find(roomidx);
+				r.toReserveJoin(user);
+			}break;
+			case "reserveleave"://나가기 예약
 			{
 				User user = usermanager.find(session);        		        		
 				int roomidx = user.roomnum;

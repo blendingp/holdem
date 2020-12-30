@@ -63,6 +63,7 @@ public class User {
 	public ArrayList<Item> consumableItem = new ArrayList<>();
 	public long lastcmdtime= -1;
 	boolean live = true;//초기값 false, 
+	public boolean sparefix=false;//관전자 고정 or 참여예약상태
 	
 	public void betmoneycopy() {
 		betmoney2 = betmoney;
