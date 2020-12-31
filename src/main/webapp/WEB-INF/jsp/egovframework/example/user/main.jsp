@@ -96,7 +96,7 @@
 			</div>
 		</div>
 		<jsp:include page="../frame/userBottom.jsp"></jsp:include>
-		<div class="w-form">
+		<div class="w-form" style="margin:0px;">
 			<form action="/holdem/user/loginprocess.do" id="loginform" name="loginform">
 				<input type="hidden" value="${item.midx}" name="midx">
 				<c:if test="${re != null }">
