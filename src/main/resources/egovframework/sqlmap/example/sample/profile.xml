@@ -55,19 +55,16 @@
 	
 	<insert id="insertJoin">
 		<![CDATA[
-			INSERT INTO member left join member_info on member.midx = member_info.midx
-							   left join auth_self on member.midx = auth_self.midx
-				( muserid
-				  , muserpw
-				  , nickname
-				  , birthdate)
-			VALUES ( #muserid#
-				  , #muserpw#
-				  , #nickname#
-				  , #birthdate#)
+			insert into member (muserid , muserpw) values(#muserid# , #muserpw#)
 		]]>
 	</insert>
-		
+	<insert id="insertJoinAuth">
+		<![CDATA[
+		 insert into auth_self 
+		 values (#midx# , #birthdate# , #uid# ,#autchTick# )
+		]]>
+	</insert>
+	
 	<update id="updatemyinfo">
 		<![CDATA[
 			UPDATE member

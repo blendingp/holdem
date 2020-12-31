@@ -1,5 +1,4 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
 <div class="bottombg">
 	<div class="bottom_wrap">
 		<img src="/holdem/webflow/images/bottom_logo.png" loading="lazy" alt="" class="image-2">

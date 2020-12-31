@@ -84,43 +84,99 @@ public class UserController {
 	
 	@RequestMapping(value = "/join.do")
 	public String join(HttpServletRequest request, ModelMap model) throws Exception {
-		String muserid = request.getParameter("muserid");
-		String nickname = request.getParameter("nickname");
-		
-		String result = request.getParameter("result");
-		model.addAttribute("result", result);
-		
-		EgovMap in = new EgovMap();
-		in.put("muserid", muserid);
-		in.put("nickname", nickname);
-		
+		model.addAttribute("birthDate", request.getParameter("birthDate"));
+		model.addAttribute("uid", request.getParameter("uid"));
+		model.addAttribute("autchTick", request.getParameter("autchTick"));
 		return "user/join";
 	}
 	
+	@RequestMapping(value = "/verification.do")
+	public String verification(HttpServletRequest request, ModelMap model) throws Exception {
+		return "user/verification";
+	}
+	
+	@RequestMapping(value = "/joinNice.do")
+	public String joinNice(HttpServletRequest request, ModelMap model) throws Exception {
+		return "user/joinNice";
+	}
+	@RequestMapping(value = "/identifyresult.do")
+	public String identifyresult(HttpServletRequest request, ModelMap model) throws Exception {
+		return "user/joinbyphone";
+	}
+	
+	@ResponseBody
 	@RequestMapping(value = "/joinInsert.do")
 	public String joinInsert(HttpServletRequest request, ModelMap model) throws Exception {
 		String muserid = request.getParameter("muserid");
 		String muserpw = request.getParameter("muserpw");
 		String nickname = request.getParameter("nickname");
-		String birthY = request.getParameter("birthY");
-		String birthM = request.getParameter("birthM");
-		String birthD = request.getParameter("birthD");
+		String birthDate = request.getParameter("birthDate");
+		String uid = request.getParameter("uid");
+		String autchTick = request.getParameter("autchTick");
+//		String birthY = request.getParameter("birthY");
+//		String birthM = request.getParameter("birthM");
+//		String birthD = request.getParameter("birthD");
 		
 		EgovMap in = new EgovMap();
 		in.put("muserid", muserid);
 		in.put("muserpw", muserpw);
 		in.put("nickname", nickname);
-		in.put("birthdate", birthY + birthM + birthD);
-		
-		EgovMap ed = (EgovMap) sampleDAO.select("selectId", in);
-		if(ed != null) return "redirect:/user/join.do?result=0";
-		EgovMap ed2 = (EgovMap) sampleDAO.select("selectNick", in);
-		if(ed2 != null) return "redirect:/user/join.do?result=1";
-		 
-
+		//in.put("birthdate", birthY + birthM + birthD);
+		EgovMap id = (EgovMap) sampleDAO.select("selectId", muserid);
+		if(id != null) 
+		{
+			return "id";
+		}
+		EgovMap nick = (EgovMap) sampleDAO.select("selectNick", nickname);
+		if(nick != null) 
+		{
+			return "nick";
+		}
 		sampleDAO.insert("insertJoin",in);
-		
-		return "redirect:/user/main.do";
+		EgovMap info = (EgovMap)sampleDAO.select("Login", in);
+		in.put("midx", ""+info.get("midx"));
+		in.put("ai", "0");
+		in.put("balance", 0);
+		in.put("point", 1000000000);
+		in.put("birthdate", birthDate);
+		in.put("uid", uid);
+		in.put("autchTick", autchTick);
+		sampleDAO.insert("insertMemberItem" , in); // AI item 추가 
+		sampleDAO.insert("insertJoinAuth" , in); // 휴대폰인증 
+		sampleDAO.insert("insertMemberInfo" , in); // ai설정 추가 
+		return "success";
+		//return "redirect:/user/main.do";
+	}
+
+	@ResponseBody
+	@RequestMapping(value="/checkId.do")
+	public String checkId(HttpServletRequest request)
+	{
+		String muserid = request.getParameter("muserid");
+		EgovMap ed = (EgovMap) sampleDAO.select("selectId", muserid);
+		if(ed != null) 
+		{
+			return "fail";
+		}
+		else
+		{
+			return "success";
+		}
+	}
+	@ResponseBody
+	@RequestMapping(value="/checkNick.do")
+	public String checkNick(HttpServletRequest request)
+	{
+		String nickname = request.getParameter("nickname");
+		EgovMap ed = (EgovMap) sampleDAO.select("selectNick", nickname);
+		if(ed != null) 
+		{
+			return "fail";
+		}
+		else
+		{
+			return "success";
+		}
 	}
 	
 	@RequestMapping(value = "/shop.do")
