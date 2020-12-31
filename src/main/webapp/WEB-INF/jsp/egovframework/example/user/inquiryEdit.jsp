@@ -45,7 +45,7 @@
 									</div>
 									<input type="text" class="tinput-2 w-input" maxlength="100" name="title" id="title"  value="${inquiryDetail.title}">
 								</div>
-								<div class="trow2-2-copy">
+								<div class="trow2-2-copy" style="height:419px;">
 									<div class="twrap-2">
 										<div class="ttxt-3">문의내용</div>
 									</div>
