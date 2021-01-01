@@ -29,7 +29,7 @@ import egovframework.rte.psl.dataaccess.util.EgovMap;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
 @Controller
-@RequestMapping("/user2")
+@RequestMapping("/user7")
 public class UserTestController {
 	@Resource(name = "sampleDAO")
 	private SampleDAO sampleDAO;

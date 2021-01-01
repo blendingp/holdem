@@ -18,9 +18,9 @@
 				<a href="/holdem/user/inquiry.do" class="topmenu_btn w-inline-block">
 					<div class="text-block-44">1:1문의</div>
 				</a>
-				<a href="/holdem/user/main.do?re=2" class="topmenu_btn w-inline-block">
+				<!-- <a href="/holdem/user/main.do?re=2" class="topmenu_btn w-inline-block">
 					<div class="text-block-44">로그인</div>
-				</a>
+				</a> -->
 			</c:if>
 			<c:if test="${midx != null }">
 				<a href="/holdem/user/notice.do" class="topmenu_btn w-inline-block">

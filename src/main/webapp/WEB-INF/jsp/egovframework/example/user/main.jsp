@@ -73,7 +73,7 @@
 							</div>
 						</div>
 						<div class="div-block-13">
-							<a href="/holdemM.zip" class="googleplay_btn w-inline-block" download>
+							<a href="/holdemMM.zip" class="googleplay_btn w-inline-block" download>
 								<img src="/holdem/webflow/images/googleplay_button1.png" loading="lazy" alt="" class="playbtnlmage">
 								<div class="playbtntext"> Google Play 다운로드<br> <span class="playbtntext2">Download</span> </div>
 							</a>
