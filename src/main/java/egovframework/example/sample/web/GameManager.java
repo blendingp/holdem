@@ -3,6 +3,7 @@ package egovframework.example.sample.web;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -619,35 +620,49 @@ public class GameManager {
 		sendList(obj3,rmlist);//나간 유저에게는 당신 돈 없어서 나갔다는 패킷 보내줌
 		//<=== 얘 일단 작업 하다만 상태임 12.30
 	}
-
+	boolean checkAllpassState(User u) {//본인 빼고 모두 올인이나 맥스 벳 이거나 다이 상태인지 체크
+		int count=0;
+		long max=0;
+		for( User user : userlist )
+		{
+			if( user.betmoney > max ) max = user.betmoney;
+			if( user.uidx == u.uidx) continue;
+			if(
+				(room.UsedItem.equals("point")   == true && user.point<= 0) ||
+				(room.UsedItem.equals("balance") == true && user.balance<= 0)
+			)	continue;
+			if(user.betmoney  >= room.maxmoney ) continue;
+			count++;
+		}
+		if( count == 0) {
+			if( u.betmoney >= max )
+			return true;
+		}
+		return false;
+	}
 	void checkTimerGame(){
 		SocketHandler.debugi=78;
 		//배팅시간 지났음
 		if( GameMode.compareTo("sbBeted")==0 || GameMode.compareTo("bbBeted")==0 || GameMode.compareTo("nmBet")==0  
 				|| GameMode.compareTo("showBetPan")==0 || GameMode.compareTo("THEFLOP")==0				
 				|| GameMode.compareTo("THETURN")==0 || GameMode.compareTo("THERIVER")==0)
-		{
-			SocketHandler.debugi=79;
+		{SocketHandler.debugi=79;
 			for( User user : userlist )
-			{
-				SocketHandler.debugi=80;
+			{SocketHandler.debugi=80;
+				
 				if( user.die == true )
 				{
 					continue;	
-				}
-
-				SocketHandler.debugi=81;
+				}SocketHandler.debugi=81;
 				if(user.seat == whosturn )
 				{
 					if( totalcnt ==0 )
 					{
-						System.out.println(" SB 베팅 해줌. uidx :"+user.uidx);
-						bet(user,1);
+						bet(user,1);//sb 베팅해줌
 					}
 					else if( totalcnt ==1 )
 					{
-						System.out.println(" BB 베팅 해줌. uidx :"+user.uidx);
-						bet(user,3);
+						bet(user,3);//bb베팅해줌
 					}
 					break;
 				}
@@ -655,19 +670,40 @@ public class GameManager {
 			SocketHandler.debugi=82;
 			if(timer!=-1 && SocketHandler.second - timer > 15)// 자기턴 타임아웃 시간 8초로.
 			{ 				
-				//System.out.println("here "+GameMode +" whosturn:"+whosturn);
 				for(User u : userlist){					
-					System.out.println("here "+GameMode +" whosturn:"+whosturn +" u.seat:"+u.seat);
 					if(u.seat == whosturn ){						
-						timer = SocketHandler.second;							
-						System.out.println("here 2 useat:"+u.seat );
+						timer = SocketHandler.second;
+						System.out.println("here 2 useat:"+u.seat +" "+Calendar.getInstance().toString() );
 						timeout(u);	
 						break;									
 					}
-				}										
+				}
 			}
 			SocketHandler.debugi=83;
-			
+			if(totalcnt >1 && timer !=-1 && SocketHandler.second - timer > 2 )// 자동 패스 해줄 상황, 올인, 맥스 ,쇼다운시 해당 유저 대신 패스 
+			{
+				for(User u : userlist){		
+//					if( u.seat == whosturn )
+	//					System.out.println("seat:"+u.seat +" whosturn:"+whosturn+" u.betmoney:"+u.betmoney+" maxmoney:"+room.maxmoney +" checkvalue:"+(checkAllpassState(u)==true) );
+					
+					if( u.seat == whosturn && u.die != true &&
+						(
+							( //올인이거나
+									(room.UsedItem.equals("point")   == true && u.point<= 0) ||
+									(room.UsedItem.equals("balance") == true && u.balance<= 0) 
+							) &&
+							u.betmoney  >= room.maxmoney  //맥스 베팅상태이거나
+							|| checkAllpassState(u) == true //자기 빼고 모두 패스 이면서 자기가 제일 많이 배팅한 상황.
+						)
+					)
+					{
+						timer = SocketHandler.second;
+						System.out.println("autopass useat:"+u.seat );
+						bet(u, 8);
+						break;
+					}
+				}										
+			}
 		}
 	}
 
@@ -1016,6 +1052,7 @@ public class GameManager {
 
 	public void bet(User u, int betkind){		
 		lastcmdtime =( new Date()).getTime();
+		System.out.println("user:"+u.uidx +" seat:"+u.seat+" betkind:"+betkind );
 		
 		if( whosturn != u.seat ){
 			System.out.println(whosturn+" 잘못된 유저의 BET 차례 "+u.seat);
@@ -1126,13 +1163,11 @@ public class GameManager {
 		JSONObject obj = new JSONObject();
 		if(GameMode.compareTo("sbBeted")==0)	{
 			obj.put("cmd", "sbBetsuc");			
-			//System.out.println("sb가 자동베팅했습니다.");			
 			setWorkTime( );
 			changeGameMode("bbBet");
 		}
 		else if(GameMode.compareTo("bbBeted")==0)	{			
 			obj.put("cmd", "bbBetsuc");
-			//System.out.println("bb가 자동베팅했습니다.");
 			changeGameMode("nmBet");			
 		}
 		else{
@@ -1141,7 +1176,6 @@ public class GameManager {
 
 			}
 			obj.put("cmd", "betsuc");			
-			//System.out.println("<< 베팅 성공 >>");
 			u.PlayStatus = 0;
 		}
 				
@@ -1199,8 +1233,6 @@ public class GameManager {
 		else
 			obj.put("betEnd", "0");//마지막 베팅인지 체크
 
-		timer = SocketHandler.second;
-
 		if( room.isPrivate() == false)
 		{
 			if( GetAbleBettingUserCount() <= 1 && isBetEnd == true)
@@ -1224,8 +1256,9 @@ public class GameManager {
 			}			
 		}		
 					
-		sendRoom(obj);//베팅 성공 정보를 전송					
+		sendRoom(obj);//베팅 성공 정보를 전송
 		
+		timer = -1;
 		if( checkAbstention() ){
 			TheEnd();
 		}
@@ -1256,6 +1289,9 @@ public class GameManager {
 				TheEnd();
 			}
 			return;
+		}else
+		{
+			timer = SocketHandler.second;
 		}
 	}
 	
