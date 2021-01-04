@@ -72,7 +72,7 @@
 									<div class="jtxt">새 비밀번호</div>
 								</div>
 								<div class="jnwrap">
-									<input type="password" class="jinput w-input" maxlength="256" name="muserpw2" placeholder="새 비밀번호를 입력해주세요 (8~15자리 영문,숫자,특수문자 조합)" id="muserpw2" required="">
+									<input type="password" class="jinput w-input" maxlength="256" name="muserpw2" placeholder="새 비밀번호(8~15자리 영문,숫자,특수문자(~!@#$%^&*) 조합)" id="muserpw2" required="">
 									<div class="jnotice" id="muserpw2n" style="display:none">새 비밀번호를 입력해주세요.</div>
 								</div>
 							</div>
@@ -112,40 +112,42 @@
 			var muserpw = document.getElementById("muserpw").value;
 			var muserpw2 = document.getElementById("muserpw2").value;
 			var muserpw3 = document.getElementById("muserpw3").value;
-			
+			var pattern1 = /[0-9]/; // 숫자 
+			var pattern2 = /[a-zA-Z]/; // 문자 
+			var pattern3 = /[~!@#$%^&*]/;
+			$("#muserpwn2 , #muserpw2n , #muserpw3n2").css('display' , 'none');
 			if(muserpw.length == 0)
 			{
 				$("#muserpwn2").css("display","flex");
+				return;
 			}
-			if(muserpw.length != 0)
-			{
-				$("#muserpwn2").css("display","none");
-			}
-			
 			if(muserpw2.length == 0)
 			{
 				$("#muserpw2n").css("display","flex");
+				return;
 			}
-			if(muserpw2.length != 0)
+			if(muserpw2.length < 8 || muserpw2.length > 15)
 			{
-				$("#muserpw2n").css("display","none");
+				alert("비밀번호는 8~15자리로 입력해주세요.");
+				return;
 			}
-			
+ 			if(!pattern1.test(muserpw2) || !pattern2.test(muserpw2) || !pattern3.test(muserpw2))
+			{
+				alert("비밀번호는 영문 , 숫자 , 특수문자(~!@#$%^&*)를 포함해서 작성해야합니다.");
+				return;
+			} 
 			if(muserpw3.length == 0)
 			{
 				$("#muserpw3n2").css("display","flex");
 				return;
 			}
-			if(muserpw3.length != 0)
-			{
-				$("#muserpw3n2").css("display","none");
-			}
-			if(muserpw.length != 0 && muserpw2.length != 0 && muserpw3.length != 0)
-			{
-				var fm = document.getElementById('infoform');
-				fm.submit();				
-			}
-			
+ 			if(muserpw2 != muserpw3)
+ 			{
+ 				alert("새 비밀번호가 일치하지않습니다.")
+ 				return;
+ 			}
+			var fm = document.getElementById('infoform');
+			fm.submit();				
 		}
 	</script>
 </body>
