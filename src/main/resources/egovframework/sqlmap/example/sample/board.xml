@@ -688,5 +688,28 @@
        	</isNotEmpty>
 		
 	</select>
+	
+	<update id="updatePlusCashAmount" parameterClass="egovMap">
+		<![CDATA[
+			update item 
+			set amount = amount+#amount#
+			where type = #type# and midx = #midx#
+		]]>
+	</update>
     
+    <select id="selectTodayPaymentMoney" resultClass="int">
+		<![CDATA[
+			select ifnull(sum(price),0)
+			from payment_log 
+			where midx = #midx# and year = #year# and month = #month# and day = #day# and iscash = 1
+		]]>
+    </select>
+    
+    <select id="selectMemberInfo" resultClass="egovMap">
+		<![CDATA[
+			select *
+			from member 
+			where midx = #midx# 
+		]]>
+    </select>
 </sqlMap>

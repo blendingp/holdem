@@ -1,10 +1,16 @@
 package egovframework.example.sample.user;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
@@ -17,6 +23,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.simple.JSONObject;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +32,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import egovframework.example.sample.service.impl.SampleDAO;
+import egovframework.example.sample.web.model.ProductModel;
 import egovframework.rte.psl.dataaccess.util.EgovMap;
 import egovframework.rte.ptl.mvc.tags.ui.pagination.PaginationInfo;
 
@@ -181,7 +192,39 @@ public class UserController {
 	
 	@RequestMapping(value = "/shop.do")
 	public String shop(HttpServletRequest request, ModelMap model) throws Exception {
+		ClassPathResource resource = new ClassPathResource("json/product.json");
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			Path path = Paths.get(resource.getURI());
+			String content = Files.readString(path);
+			List<ProductModel> pmList = mapper.readValue(content , new TypeReference<ArrayList<ProductModel>>() {});
+			model.addAttribute("pmList", pmList);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
 		return "user/shop";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="/checkCashLimit.do")
+	public String checkCashLimit(HttpServletRequest request){
+		HttpSession session = request.getSession();
+		int money = Integer.parseInt(""+request.getParameter("m"));
+		System.out.println( "money : " + money);
+		int midx = Integer.parseInt(""+session.getAttribute("midx"));
+		Calendar cal = Calendar.getInstance();
+		EgovMap in = new EgovMap();
+		in.put("midx", midx);
+		in.put("year", cal.get(Calendar.YEAR));
+		in.put("month", cal.get(Calendar.MONTH) + 1);
+		in.put("day", cal.get(Calendar.DAY_OF_MONTH));
+		int totMoney = (int)sampleDAO.select("selectTodayPaymentMoney" , in);
+		if(totMoney+money > 500000)
+		{
+			return "fail";
+		}
+		return "success";
 	}
 	
 	@RequestMapping(value = "/myinfo.do")

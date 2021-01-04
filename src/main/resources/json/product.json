@@ -34,6 +34,24 @@
     "ItemImage": "cashicon4",
     "DetailImage": "cashicon4",
     "GoodsImage": "IconMonkey"
+  },  
+  {
+    "Product": "Gem4",
+    "Title": "보석 5500",
+    "Description": "5500개 충전",
+    "Price": 55000,
+    "ItemImage": "cashicon5",
+    "DetailImage": "cashicon5",
+    "GoodsImage": "IconMonkey"
+  },
+  {
+    "Product": "Gem5",
+    "Title": "보석 9900",
+    "Description": "9900개 충전",
+    "Price": 99000,
+    "ItemImage": "cashicon6",
+    "DetailImage": "cashicon6",
+    "GoodsImage": "IconMonkey"
   },
   {
     "Product": "chiprefill500",

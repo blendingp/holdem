@@ -44,33 +44,24 @@
 						<div class="shopbox">
 							<div class="snotice">보석은 구매 즉시 적용됩니다.</div>
 							<div class="itemwrap">
-								<div class="itembox">
-									<div class="iconwrap">
-										<img src="/holdem/webflow/images/5fe997cb6dd2c7939c57ec84_quality.png" loading="lazy" alt="" class="image-7">
-									</div>
-									<div class="itemname">보석 11</div>
-									<div class="cashbox">
-										<div class="div-block-18">
-											<img src="/holdem/webflow/images/coin_icon-2.png" alt="" class="cashicon2">
-											<div class="cash">1,100</div>
-										</div>
-										<a href="javascript:danalCard('11' , '100')" class="bbtn w-button">구매하기</a>
-									</div>
-								</div>
-								<div class="itembox">
-									<div class="iconwrap">
-										<img src="/holdem/webflow/images/5fe997cb6dd2c7939c57ec84_quality.png" loading="lazy" alt="" class="image-7">
-									</div>
-									<div class="itemname">보석 55</div>
-									<div class="cashbox">
-										<div class="div-block-18">
-											<img src="/holdem/webflow/images/coin_icon-2.png" alt="" class="cashicon2">
-											<div class="cash">5,500</div>
-										</div>
-										<a href="javascript:danalCard('55' , '5500')" class="bbtn w-button">구매하기</a>
-									</div>
-								</div>
-								<div class="itembox">
+								<c:forEach var="item" items="${pmList}">
+									<c:if test="${fn:contains(item.product , 'Gem')}">
+										<div class="itembox">
+											<div class="iconwrap">
+												<img src="/holdem/webflow/images/5fe997cb6dd2c7939c57ec84_quality.png" loading="lazy" alt="" class="image-7">
+											</div>
+											<div class="itemname">${item.title}</div>
+											<div class="cashbox">
+												<div class="div-block-18">
+													<img src="/holdem/webflow/images/coin_icon-2.png" alt="" class="cashicon2">
+													<div class="cash">${item.price}</div>
+												</div>
+												<a href="javascript:danalCard('${item.product}' , '${item.title}' , '${item.price}')" class="bbtn w-button">구매하기</a>
+											</div>
+										</div>									
+									</c:if>
+								</c:forEach>
+								<!-- <div class="itembox">
 									<div class="iconwrap">
 										<img src="/holdem/webflow/images/5fe997cb6dd2c7939c57ec84_quality.png" loading="lazy" alt="" class="image-7">
 									</div>
@@ -78,22 +69,9 @@
 									<div class="cashbox">
 										<div class="div-block-18">
 											<img src="/holdem/webflow/images/coin_icon-2.png" alt="" class="cashicon2">
-											<div class="cash">11,000</div>
+											<div class="cash">1,100</div>
 										</div>
-										<a href="javascript:danalCard('110' , '11000')" class="bbtn w-button">구매하기</a>
-									</div>
-								</div>
-								<div class="itembox">
-									<div class="iconwrap">
-										<img src="/holdem/webflow/images/5fe997cb6dd2c7939c57ec84_quality.png" loading="lazy" alt="" class="image-7">
-									</div>
-									<div class="itemname">보석 220</div>
-									<div class="cashbox">
-										<div class="div-block-18">
-											<img src="/holdem/webflow/images/coin_icon-2.png" alt="" class="cashicon2">
-											<div class="cash">22,000</div>
-										</div>
-										<a href="javascript:danalCard('220' , '22000')" class="bbtn w-button">구매하기</a>
+										<a href="javascript:danalCard('110' , '100')" class="bbtn w-button">구매하기</a>
 									</div>
 								</div>
 								<div class="itembox">
@@ -104,24 +82,63 @@
 									<div class="cashbox">
 										<div class="div-block-18">
 											<img src="/holdem/webflow/images/coin_icon-2.png" alt="" class="cashicon2">
-											<div class="cash">55,000</div>
+											<div class="cash">5,500</div>
 										</div>
-										<a href="javascript:danalCard('550' , '55000')" class="bbtn w-button">구매하기</a>
+										<a href="javascript:danalCard('550' , '5500')" class="bbtn w-button">구매하기</a>
 									</div>
 								</div>
 								<div class="itembox">
 									<div class="iconwrap">
 										<img src="/holdem/webflow/images/5fe997cb6dd2c7939c57ec84_quality.png" loading="lazy" alt="" class="image-7">
 									</div>
-									<div class="itemname">보석 990</div>
+									<div class="itemname">보석 1,100</div>
+									<div class="cashbox">
+										<div class="div-block-18">
+											<img src="/holdem/webflow/images/coin_icon-2.png" alt="" class="cashicon2">
+											<div class="cash">11,000</div>
+										</div>
+										<a href="javascript:danalCard('1100' , '11000')" class="bbtn w-button">구매하기</a>
+									</div>
+								</div>
+								<div class="itembox">
+									<div class="iconwrap">
+										<img src="/holdem/webflow/images/5fe997cb6dd2c7939c57ec84_quality.png" loading="lazy" alt="" class="image-7">
+									</div>
+									<div class="itemname">보석 2,200</div>
+									<div class="cashbox">
+										<div class="div-block-18">
+											<img src="/holdem/webflow/images/coin_icon-2.png" alt="" class="cashicon2">
+											<div class="cash">22,000</div>
+										</div>
+										<a href="javascript:danalCard('2200' , '22000')" class="bbtn w-button">구매하기</a>
+									</div>
+								</div>
+								<div class="itembox">
+									<div class="iconwrap">
+										<img src="/holdem/webflow/images/5fe997cb6dd2c7939c57ec84_quality.png" loading="lazy" alt="" class="image-7">
+									</div>
+									<div class="itemname">보석 5,500</div>
+									<div class="cashbox">
+										<div class="div-block-18">
+											<img src="/holdem/webflow/images/coin_icon-2.png" alt="" class="cashicon2">
+											<div class="cash">55,000</div>
+										</div>
+										<a href="javascript:danalCard('5500' , '55000')" class="bbtn w-button">구매하기</a>
+									</div>
+								</div>
+								<div class="itembox">
+									<div class="iconwrap">
+										<img src="/holdem/webflow/images/5fe997cb6dd2c7939c57ec84_quality.png" loading="lazy" alt="" class="image-7">
+									</div>
+									<div class="itemname">보석 9,900</div>
 									<div class="cashbox">
 										<div class="div-block-18">
 											<img src="/holdem/webflow/images/coin_icon-2.png" alt="" class="cashicon2">
 											<div class="cash">99,000</div>
 										</div>
-										<a href="javascript:danalCard('990' , '99000')" class="bbtn w-button">구매하기</a>
+										<a href="javascript:danalCard('9900' , '99000')" class="bbtn w-button">구매하기</a>
 									</div>
-								</div>
+								</div> -->
 							</div>
 						</div>
 						<a href="/holdem/user/main.do" class="deletebtn-7 a w-inline-block">
@@ -134,14 +151,28 @@
 		<jsp:include page="../frame/userBottom.jsp"></jsp:include>
 	</div>
 	<script>
-		function danalCard(cash , money){
-		    //var pop_title = "DANAL" ;
-		    var idx = "${midx}";
-		    if(idx == null || idx == '')
-		    {
-		    	location.href="/holdem/user/main.do?re=2";
-		    }
-		    window.open("/holdem/danal/order.do?cash="+cash+"&money="+money , "DANAL" , "toolbar=yes,scrollbars=yes,resizable=yes,width=700,height=500") ;
+		function danalCard(code , prdtNm , money){
+			console.log('danalCard');
+			$.ajax({
+				type:'post',
+				url:'/holdem/user/checkCashLimit.do?m='+money,
+				success:function(data){
+					if(data == 'success')
+					{
+			 		    var idx = "${midx}";
+					    if(idx == null || idx == '')
+					    {
+					    	location.href="/holdem/user/main.do?re=2";
+					    }
+					    window.open("/holdem/danal/order.do?code="+code+"&prdtNm="+prdtNm+"&money="+money , "DANAL" , "toolbar=yes,scrollbars=yes,resizable=yes,width=700,height=500") ; 
+					}
+					else
+					{
+						alert("<월 충전한도 초과>\n관계 법령에 의거하여 월 충전 한도 금액(50만원)을 초과하여 충전할 수 없습니다.");
+						return;
+					}
+				}
+			})
 		}
 	</script>
 </body>

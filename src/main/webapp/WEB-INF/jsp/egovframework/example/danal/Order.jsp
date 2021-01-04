@@ -53,6 +53,7 @@
 <%@ include file="/inc/function.jsp"%>
 <body onload="javascript:init_orderid();">
 	<form name="form">
+		<input type="hidden" name="code" value="${code}"/>
 		<div class="paymentPop">
 			<div class="titArea">
 				<a href="#" class="logo"><img src="/holdem/img/logo2.gif" width="75"
@@ -81,7 +82,7 @@
 							<dt>
 								* 상품명
 								<dd>
-									<input type="text" class="it1" value="보석 ${cash}개" name="itemname" id="item"/>
+									<input type="text" class="it1" value="${prdtNm}개" name="itemname" id="item"/>
 								</dd>
 							</dt>
 						</dl>

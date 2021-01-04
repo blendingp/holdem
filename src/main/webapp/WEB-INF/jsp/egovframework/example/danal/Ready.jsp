@@ -22,7 +22,10 @@
 	 *  RETURNURL 	: CPCGI페이지의 Full URL을 넣어주세요
 	 *  CANCELURL 	: BackURL페이지의 Full URL을 넣어주세요
 	 ******************************************************/
-	String RETURNURL = request.getScheme() + "://" + request.getServerName() +":" + request.getServerPort()+"/holdem/danal/cpcgi.do";
+	 System.out.println("M ::: " + session.getAttribute("money"));
+	 System.out.println("C ::: " + session.getAttribute("code"));
+	 System.out.println("midx ::: " + session.getAttribute("midx"));
+	String RETURNURL = request.getScheme() + "://" + request.getServerName() +":" + request.getServerPort()+"/holdem/danal/cpcgi.do?m="+session.getAttribute("money")+"&c="+session.getAttribute("code")+"&midx="+session.getAttribute("midx");
 	String CANCELURL = request.getScheme() + "://" + request.getServerName() +":" + request.getServerPort()+"/holdem/danal/cancel.do";
 
 	/**************************************************

@@ -17,11 +17,11 @@
 <%
 	String RES_STR = toDecrypt((String) request.getParameter("RETURNPARAMS"));
 	Map retMap = str2data(RES_STR);
-	System.out.println("TEST AMOUNT : " + TEST_AMOUNT);
-	System.out.println("retMapT : " + retMap);
 	String returnCode = (String) retMap.get("RETURNCODE");
 	String returnMsg = (String) retMap.get("RETURNMSG");
-
+	System.out.println("m : " + (String)request.getParameter("m"));
+	System.out.println("c : " + (String)request.getParameter("c"));
+	System.out.println("idx : " + (String)request.getParameter("midx"));
 	//*****  신용카드 인증결과 확인 *****************
 	if (returnCode == null || !"0000".equals(returnCode)) {
 		// returnCode가 없거나 또는 그 결과가 성공이 아니라면 실패 처리
@@ -37,7 +37,7 @@
 	 * 결제 정보
 	 **************************************************/
 	REQ_DATA.put("TID", (String) retMap.get("TID"));
-	REQ_DATA.put("AMOUNT", TEST_AMOUNT); // 최초 결제요청(AUTH)시에 보냈던 금액과 동일한 금액을 전송
+	REQ_DATA.put("AMOUNT", (String)request.getParameter("m")); // 최초 결제요청(AUTH)시에 보냈던 금액과 동일한 금액을 전송
 
 	/**************************************************
 	 * 기본 정보
@@ -55,6 +55,9 @@
 <form name="form" ACTION="/holdem/danal/success.do" METHOD="POST">
 	<input TYPE="HIDDEN" NAME="RETURNCODE" VALUE="<%=RES_DATA.get("RETURNCODE")%>">
 	<input TYPE="HIDDEN" NAME="RETURNMSG" VALUE="<%=RES_DATA.get("RETURNMSG")%>">
+	<input TYPE="HIDDEN" NAME="CODE" VALUE="<%=(String)request.getParameter("c")%>">
+	<input TYPE="HIDDEN" NAME="MONEY" VALUE="<%=(String)request.getParameter("m")%>">
+	<input TYPE="HIDDEN" NAME="MIDX" VALUE="<%=(String)request.getParameter("midx")%>">
 </form>
 <script Language="JavaScript">
 	document.form.submit();

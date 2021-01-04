@@ -30,8 +30,10 @@
 	/******************************************************
 	 *  CPID, CRYPTOKEY 		: 다날에서 제공해 드린 CPID, 암/복호화 pwd
 	 ******************************************************/
-	public String CPID = "9810030929"; // 실서비스를 위해서는 반드시 교체필요.
-	private String CRYPTOKEY = "20ad459ab1ad2f6e541929d50d24765abb05850094a9629041bebb726814625d";// 암호화Key. 실서비스를 위해서는 반드시 교체필요.
+	//public String CPID = "9810030929"; // TEST��.
+	public String CPID = "0010006161"; // REAL
+	//private String CRYPTOKEY = "20ad459ab1ad2f6e541929d50d24765abb05850094a9629041bebb726814625d";// TESt.
+	private String CRYPTOKEY = "d7144d80be412e0380ee428606a71ad18a7e9490435a9152387f068fe0a11ef0";// REAL.
 	private String IVKEY = "d7d02c92cb930b661f107cb92690fc83"; // IV 고정값.
 
 	public String TEST_AMOUNT = "0";
