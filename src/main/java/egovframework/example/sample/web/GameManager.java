@@ -479,7 +479,7 @@ public class GameManager {
 		if(GameMode.compareTo("THEEND")==0){
 			int checkTime = 1;
 			if(isShowdownGame() == true)
-				checkTime = 7;
+				checkTime = 3;
 			if(  checkCmdTime(checkTime)  ){
 				try {
 					System.out.println("결과 계산========================================================");
@@ -493,7 +493,7 @@ public class GameManager {
 		}
 		SocketHandler.debugi=27;
 		if(GameMode.compareTo("showResult")==0){
-			if( checkCmdTime(6) ){
+			if( checkCmdTime(5) ){
 				try {				
 					changeGameMode("대기");
 					checkOutUser();
@@ -511,7 +511,7 @@ public class GameManager {
 		SocketHandler.debugi=28;
 		if(GameMode.compareTo("대기")==0){
 			LeaveReserveUser();
-			if (isPlayable() && checkCmdTime(6) ){
+			if (isPlayable() && checkCmdTime(9) ){
 				setWorkTime();
 				lastcmdtime =( new Date()).getTime();
 				changeGameMode("checkstart");
