@@ -231,6 +231,13 @@ public class Room {
 		gameManager.sendRoom(myobj);
 	}
 	
+	public void notifyLeaveSpareUser(int uidx) {
+		JSONObject myobj = new JSONObject();
+		myobj.put("cmd", "RoomSpareLeaveOk");
+		myobj.put("uidx", uidx);
+		gameManager.sendRoom(myobj);
+	}
+
 	public void notifyLeaveUser(int seat) {
 		JSONObject myobj = new JSONObject();
 		myobj.put("cmd", "RoomLeaveOk");
@@ -371,7 +378,7 @@ public class Room {
 		{
 			if( gameManager.spareuserlist.get(nCount).uidx == u.uidx)
 			{					
-				notifyLeaveUser(u.seat);
+				notifyLeaveSpareUser(u.uidx);
 				gameManager.spareuserlist.remove(nCount);
 				spareCount();
 				System.out.println("<<spare Room . leave >> :"+ u.nickname+" "+(new Date()).toLocaleString() );
@@ -545,6 +552,7 @@ public class Room {
 
 	public void LeaveReserve(User user)
 	{		
+		//게임없는 사람 (관전자)
 		if( gameManager.IsJoinGame(user.seat) == false)
 		{
 			System.out.println("LeaveReserve first====================================");
@@ -553,6 +561,7 @@ public class Room {
 			return ;
 		}
 
+		//게임에 있는 사람
 		for( int nCount = 0; nCount < gameManager.userlist.size(); ++nCount )
 		{						
 			if(gameManager.userlist.get(nCount).uidx == user.uidx)

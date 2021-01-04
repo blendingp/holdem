@@ -519,10 +519,11 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 				Room r = roommanager.find(roomidx);
 				boolean state = Boolean.parseBoolean(""+obj.get("state"));
 				if( r != null) {
+					//예약
 					if(state == true) {
 						r.LeaveReserve(user);					
 					}
-					else {
+					else {//예약취소
 						r.gameManager.leaveuserlist.remove(user);
 						r.BraodCastLeaveReserve(user, state);
 					}
