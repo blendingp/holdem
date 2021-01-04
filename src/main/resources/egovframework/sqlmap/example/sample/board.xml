@@ -352,7 +352,7 @@
 			where 1=1 	
         ]]>
         	<isNotEqual property="uKind" compareValue="all">
-        		<isEqual property="uKind" compareValue="normal">and  mi.ai = 0 or mi.ai is null</isEqual>
+        		<isEqual property="uKind" compareValue="normal">and  (mi.ai = 0 or mi.ai is null)</isEqual>
         		<isEqual property="uKind" compareValue="ai">and  mi.ai = 1</isEqual>
         	</isNotEqual>
         	<isNotEmpty property="search">
@@ -375,7 +375,7 @@
 			where 1=1 		
         ]]>
         	<isNotEqual property="uKind" compareValue="all">
-        		<isEqual property="uKind" compareValue="normal">and mi.ai = 0 or mi.ai is null</isEqual>
+        		<isEqual property="uKind" compareValue="normal">and (mi.ai = 0 or mi.ai is null)</isEqual>
         		<isEqual property="uKind" compareValue="ai">and mi.ai = 1</isEqual>
         	</isNotEqual>
         	<isNotEmpty property="search">

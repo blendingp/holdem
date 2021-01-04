@@ -58,7 +58,7 @@
 									<div class="jtxt">비밀번호</div>
 								</div>
 								<div class="jnwrap">
-									<input type="password" class="jinput w-input" maxlength="256" name="muserpw" placeholder="비밀번호를 입력해주세요 (8~15자리 영문,숫자,특수문자 조합)" id="muserpw" >
+									<input type="password" class="jinput w-input" maxlength="256" name="muserpw" placeholder="비밀번호(8~15자리 영문,숫자,특수문자(~!@#$%^&*) 조합)" id="muserpw" >
 								</div>
 								<div class="jnotice" id="muserpwch" style="display:none;">비밀번호를 입력해주세요.</div>
 							</div>
@@ -169,6 +169,9 @@
 			var muserpw = document.getElementById("muserpw").value;
 			var nickname = document.getElementById("nickname").value;
 			$("#museridch , #muserpwch , #nicknamech").css('display' , 'none');
+			var pattern1 = /[0-9]/; // 숫자 
+			var pattern2 = /[a-zA-Z]/; // 문자 
+			var pattern3 = /[~!@#$%^&*]/;
 			if(muserid.length == 0)
 			{
 				$("#museridch").css("display","flex");
@@ -187,6 +190,16 @@
 				alert("아이디 중복확인이 필요합니다.");
 				return;
 			}
+			if(muserpw.length < 8 || muserpw.length > 15)
+			{
+				alert("비밀번호는 8~15자리로 입력해주세요.");
+				return;
+			}
+ 			if(!pattern1.test(muserpw) || !pattern2.test(muserpw) || !pattern3.test(muserpw))
+			{
+				alert("비밀번호는 영문 , 숫자 , 특수문자(~!@#$%^&*)를 포함해서 작성해야합니다.");
+				return;
+			} 
 			if(!nickChk)
 			{
 				alert("닉네임 중복확인이 필요합니다.");

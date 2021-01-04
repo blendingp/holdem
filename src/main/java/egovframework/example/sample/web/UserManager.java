@@ -671,8 +671,6 @@ public class UserManager {
 		cobj.put("cmd", "userinfo");							
 		cobj.put("info", find(session).MakeUserInfo());
 		
-		System.out.println("GetUserInfo:"+find(session).point );
-
 		JSONObject jackpot = new JSONObject();
 		jackpot.put("cmd", "jackpot");							
 		jackpot.put("amount", JackpotManager.GetJackpotAmount());

@@ -29,5 +29,9 @@
 			</div>
 			<div class="text-block-2">대표: 김은경   <br>사업자등록번호: 550-14-01461 <br>대표번호: 070-8624-7772 <%--010-5883-1587--%> <br>소재지: 경기도 광주시 회안대로 621-3, 603호(장지동)  <br><span class="text-span-4">ⓒ 2020 WINGAME. All rights reserved.</span></div>
 		</div>
+		<div>
+			<div class="b_menuwrap" style="margin-top:25px;"></div>
+			<div class="text-block-2">제명: vvingame(윈게임)   <br>상호: 윈게임 <br>이용등급: 청소년이용불가 <br>등급 분류 번호: DG-OM-20-00310  <br>제작년월일: 2020년 12월 1일 <br>게임제작업자 등록번호: 제2020-03호</div>
+		</div>
 	</div>
 </div>
