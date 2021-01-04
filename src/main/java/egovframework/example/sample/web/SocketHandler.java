@@ -544,7 +544,8 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			}break;
 			case "live":
 			{				
-        		User user = usermanager.find(session);        		        		
+        		User user = usermanager.find(session);
+        		System.out.println("recv live========:"+user.seat);
         		if(user != null )
         			user.live = true;
 			}break;

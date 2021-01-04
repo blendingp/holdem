@@ -398,7 +398,28 @@ public class GameManager {
 			return true;
 		return false;
 	}
+	boolean isShowdownGame() {
+		//다이빼고, 모두 올인이거나 , 맥스가 한명이라도 있으면 쇼다운 게임임
 
+		int diegame=0;
+		for(User u : userlist) 
+			if(u.die == true ) diegame++;
+		if( userlist.size()-1 == diegame)
+			return false;//기권승리 판
+		
+		int allincheck=0;
+		for(User u : userlist) 
+		{
+			if( u.die == true ) continue;
+			if( u.betmoney >= room.maxmoney)
+				return true;
+			if( room.UsedItem.equals("balance") == true && u.balance > 0)allincheck++;
+			if( room.UsedItem.equals("point") == true && u.point > 0)allincheck++;
+		}
+		if( allincheck == 1)
+			return true;
+		return false;
+	}
 	void checkStartGame() throws NoSuchAlgorithmException{
 		SocketHandler.debugi=21;
 		if(GameMode.compareTo("checkstart")==0 ){
@@ -456,18 +477,23 @@ public class GameManager {
 		}
 		SocketHandler.debugi=26;
 		if(GameMode.compareTo("THEEND")==0){
-			setWorkTime();
-			try {
-				showResult();				
-			}catch(Exception e) {
-				System.out.println("error log: showResult 계산시 에러 발생================"+e.toString() );
+			int checkTime = 1;
+			if(isShowdownGame() == true)
+				checkTime = 7;
+			if(  checkCmdTime(checkTime)  ){
+				try {
+					System.out.println("결과 계산========================================================");
+					showResult();
+					setWorkTime();
+				}catch(Exception e) {
+					System.out.println("error log: showResult 계산시 에러 발생================"+e.toString() );
+				}
+				changeGameMode("showResult");
 			}
-			
-			changeGameMode("showResult");
 		}
 		SocketHandler.debugi=27;
 		if(GameMode.compareTo("showResult")==0){
-			if( checkCmdTime(5) ){
+			if( checkCmdTime(6) ){
 				try {				
 					changeGameMode("대기");
 					checkOutUser();
@@ -843,7 +869,7 @@ public class GameManager {
 		whosturn = getDealerSeatOffset(1);
 		obj.put("cmd","sbBet");
 //		obj.put("whosturn", whosturn );
-		obj.put("whosturn", "-1" );
+		obj.put("whosturn", -1 );
 		obj.put("prebetmoney", preTotalBetmoney );
 		obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
 		sendRoom(obj);
@@ -855,7 +881,7 @@ public class GameManager {
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","bbBet");
 //		obj.put("whosturn", whosturn );
-		obj.put("whosturn", "-1" );
+		obj.put("whosturn", -1 );
 		obj.put("prebetmoney", preTotalBetmoney );
 		obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
 		sendRoom(obj);
@@ -1437,7 +1463,8 @@ public class GameManager {
 		timer = -1;//타임아웃되는거 방지.
 
 		JSONObject obj = new JSONObject();
-		changeGameMode("THEEND");				
+		changeGameMode("THEEND");
+		setWorkTime();
 		obj.put("cmd","THEEND");
 		SocketHandler.insertLog(getGameId(), getGameIdentifier(), "gameEnd", -1, totalmoney, -1, "게임 끝" , -1, -1);
 		sendRoom(obj);
