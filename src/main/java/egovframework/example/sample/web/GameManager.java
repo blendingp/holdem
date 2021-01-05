@@ -533,10 +533,13 @@ public class GameManager {
 		//유저리스트에 자리가 남았으면 , 스페어에서 유저리스틀 보냄.
 		//그래도 남은 스페어가 있으면 그냥 두면 됨,
 		ArrayList<User> rmspare=new ArrayList<User>();
+		int sparecount = 0;
 		for(User u : spareuserlist )
 		{
-			if( u.sparefix == true)
+			if( u.sparefix == true) {
+				sparecount++;
 				continue;
+			}
 			int seat = GetEmptySeat();
 			if( seat < 0 )
 				break;
@@ -549,6 +552,13 @@ public class GameManager {
 			
 		}
 		spareuserlist.removeAll(rmspare);
+		//유저리스트가 한명도 없고, 스페어만 남아 있다면 방삭제상황이라 스페어들에게 방 퇴장 패킷 보내줌
+		if( userlist.size() <= 0 && spareuserlist.size() > 0 ) {
+			for(User u : spareuserlist )
+			{
+				room.notifyLeaveSpareUser(u.uidx);
+			}
+		}
 	}
 
 	void LeaveReserveUser()
