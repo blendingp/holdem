@@ -188,7 +188,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         
         JSONParser p = new JSONParser();
         JSONObject obj = (JSONObject)p.parse(msg);
-//        System.out.println("cmd:"+msg);
+        System.out.println("cmd:"+msg);
         User ltu = usermanager.find(session);  
         if(ltu != null) 
         {

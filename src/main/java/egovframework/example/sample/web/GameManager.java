@@ -710,14 +710,14 @@ public class GameManager {
 			{
 				for(User u : userlist){		
 //					if( u.seat == whosturn )
-	//					System.out.println("seat:"+u.seat +" whosturn:"+whosturn+" u.betmoney:"+u.betmoney+" maxmoney:"+room.maxmoney +" checkvalue:"+(checkAllpassState(u)==true) );
+//						System.out.println("seat:"+u.seat +" whosturn:"+whosturn+" u.betmoney:"+u.betmoney+" maxmoney:"+room.maxmoney +" checkvalue:"+(checkAllpassState(u)==true) );
 					
 					if( u.seat == whosturn && u.die != true &&
 						(
 							( //올인이거나
 									(room.UsedItem.equals("point")   == true && u.point<= 0) ||
 									(room.UsedItem.equals("balance") == true && u.balance<= 0) 
-							) &&
+							) ||
 							u.betmoney  >= room.maxmoney  //맥스 베팅상태이거나
 							|| checkAllpassState(u) == true //자기 빼고 모두 패스 이면서 자기가 제일 많이 배팅한 상황.
 						)
