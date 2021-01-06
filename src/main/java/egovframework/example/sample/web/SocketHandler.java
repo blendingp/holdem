@@ -470,6 +470,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			}break;
 			case "signup":
 			{
+				System.out.println("existgoogle");
 				if( (""+obj.get("social")).isEmpty() == true )
 				{
 					usermanager.SignUp(session, ""+obj.get("id"), ""+obj.get("pass"));
@@ -478,6 +479,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			}break;		
 			case "existgoogle":
 			{
+				System.out.println("existgoogle");
 				if( (""+obj.get("social")).isEmpty() == false )
 				{
 					usermanager.GoogleLogin(session, ""+obj.get("social"));
@@ -485,6 +487,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			}break;
 			case "googlesign":
 			{
+				System.out.println("googlesign");
 				usermanager.SignUp(session, ""+obj.get("social"));
 			}break;
 			case "setnickname":
