@@ -219,8 +219,8 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         	{        	
         		EgovMap in = new EgovMap();
         		String ver =""+ obj.get("version");
-        		if( ver.compareTo("20210106a") != 0 ) {
-        			System.out.println(Calendar.getInstance().getTime().toLocaleString() +"잘못된 버젼 로그인 userid:"+ obj.get("userid") );
+        		if( ver.compareTo("20210106b") != 0 ) {
+        			System.out.println(Calendar.getInstance().getTime().toLocaleString() +"잘못된 버젼 로그인 userid:"+ obj.get("userid") +" lver:"+ ver);
         		}
         		in.put("muserid", obj.get("userid"));
         		in.put("muserpw", obj.get("userpw"));

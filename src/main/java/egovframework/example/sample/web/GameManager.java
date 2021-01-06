@@ -763,6 +763,7 @@ public class GameManager {
 		obj.put("gameid", gameId);
 		obj.put("smoney",  totalmoney );
 		obj.put("maxmoney", room.maxmoney);
+		obj.put("ante", room.defaultmoney);
 		obj.put("roompeople", userlist.size() );
 		obj.put("dealer", getDealerSeat() );
 		obj.put("smallblind", getDealerSeatOffset(1) );
