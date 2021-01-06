@@ -295,6 +295,19 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 
 					break;
 				}
+				if( roommanager.findFromUseridx((int)ed.get("midx") ) != null) {
+					cobj.put("code", 2);
+
+					ObjectMapper mapper = new ObjectMapper();
+
+					try {
+						session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
+					break;
+				}
 
         		session.getAttributes().put("useridx", ed.get("midx"));
         		User user = new User(Integer.parseInt(""+ed.get("midx")), session);

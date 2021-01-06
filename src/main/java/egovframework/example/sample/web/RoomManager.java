@@ -319,6 +319,18 @@ public class RoomManager {
 		}
 	}
 
+	User findFromUseridx(int midx) {
+		for( Room r : roomList){
+			for(User u:r.gameManager.userlist)
+				if(u.uidx == midx)
+					return u;
+			for(User u:r.gameManager.watchinguserlist)
+				if(u.uidx == midx)
+					return u;
+		}
+		return null;
+	}
+	
 	void checkTimerGame(){
 		ArrayList<Room> removeList=new ArrayList<Room>();
 		for( Room r : roomList){

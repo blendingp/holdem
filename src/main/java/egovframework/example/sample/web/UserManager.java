@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 
 import javax.json.JsonObject;
@@ -707,6 +708,7 @@ public class UserManager {
 
 	public void GetUserAuth(WebSocketSession session)
 	{
+		if(find(session) == null) return;
 		boolean result = find(session).GetAuth();
 		JSONObject cobj = new JSONObject();
 		cobj.put("cmd", "authresult");							
@@ -830,11 +832,70 @@ public class UserManager {
 		itemin.put("point", 5000000000L);		
 		SocketHandler.sk.sampleDAO.insert("InsertItem", itemin);		
 		
-        User user = new User(Integer.parseInt(""+ed.get("midx")), session);        		
-        		
-        connect(session, user);
+                		
+        if(duplicateLoginCheck(session, Integer.parseInt(""+ed.get("midx"))) == true)
+        {
+        	User user = new User(Integer.parseInt(""+ed.get("midx")), session);	
+        	connect(session, user);
+        }
 	}
 
+	
+	
+	public boolean duplicateLoginCheck(WebSocketSession session, int midx)
+	{
+		
+		if( findFromUseridx(midx) != null)				
+		{
+			try {
+				User tu = findFromUseridx(midx);
+		  		long ctime = (new Date()).getTime(); 
+		  		if( tu.lastcmdtime != -1 && tu.lastcmdtime + 60*1000 < ctime ) {
+			    	synchronized(SocketHandler.sk.disconnectlist) {
+			    		if( SocketHandler.sk.disconnectlist.contains( tu.session) != true) {
+			    			SocketHandler.sk.disconnectlist.add( tu.session );
+			    		}
+			    	}
+		  		}
+		  		SocketHandler.sk.disconnect();
+		  		tu.session.close();
+			}catch(Exception e) {
+				System.out.println("중복접속 강제 종료 처리중 에러");
+			}
+
+			JSONObject cobj = new JSONObject();
+			cobj.put("cmd", "loginfail");	
+			cobj.put("code", 2);
+
+			ObjectMapper mapper = new ObjectMapper();
+
+			try {
+				session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+			return false;
+		}
+		if( SocketHandler.sk.roommanager.findFromUseridx(midx) != null) {
+			JSONObject cobj = new JSONObject();
+			cobj.put("cmd", "loginfail");	
+			cobj.put("code", 2);
+			ObjectMapper mapper = new ObjectMapper();
+			try {
+				session.sendMessage(new TextMessage(mapper.writeValueAsString(cobj)));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return false;
+		}
+
+		return true;
+
+	}
+	
+	
+	
 	public void SignUp(WebSocketSession session, String social)
 	{
 		EgovMap in = new EgovMap();
@@ -872,6 +933,7 @@ public class UserManager {
 		
 		if( ed == null )
 		{
+			System.out.println("exist Social is null");
 			JSONObject cobj = new JSONObject();
 			cobj.put("cmd", "gsingin");							
 			cobj.put("result", false);
@@ -888,11 +950,16 @@ public class UserManager {
 		}
 		else
 		{
+			System.out.println("exist Social is midx");
 			session.getAttributes().put("useridx", ed.get("midx"));			
 		
-			User user = new User(Integer.parseInt(""+ed.get("midx")), session);      			
-					
-			connect(session, user);
+			      			
+			if(duplicateLoginCheck(session, Integer.parseInt(""+ed.get("midx"))) == true)
+			{
+				System.out.println("aaaaaaaa");
+				User user = new User(Integer.parseInt(""+ed.get("midx")), session);
+				connect(session, user);
+			}
 		}		
 	}
 
