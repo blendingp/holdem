@@ -218,6 +218,10 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         	case "connect":
         	{        	
         		EgovMap in = new EgovMap();
+        		String ver =""+ obj.get("version");
+        		if( ver.compareTo("20210106a") != 0 ) {
+        			System.out.println(Calendar.getInstance().getTime().toLocaleString() +"잘못된 버젼 로그인 userid:"+ obj.get("userid") );
+        		}
         		in.put("muserid", obj.get("userid"));
         		in.put("muserpw", obj.get("userpw"));
 				//System.out.println("login id:"+obj.get("userid")+" pw:"+obj.get("userpw"));
