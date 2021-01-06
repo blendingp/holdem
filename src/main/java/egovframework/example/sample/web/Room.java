@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
@@ -338,7 +339,9 @@ public class Room {
 		if(gameManager.userlist.contains(u) == false 
 			&& gameManager.watchinguserlist.contains(u) == false
 			&& gameManager.spareuserlist.contains(u) == false
-			&& gameManager.leaveuserlist.contains(u) == false)
+			&& gameManager.leaveuserlist.contains(u) == false
+			&& gameManager.containsCheck(u) == false
+			)
 		{
 			u.seat = gameManager.GetEmptySeat();		
 			gameManager.SetSeat(u.seat);
@@ -354,7 +357,7 @@ public class Room {
 				{
 					gameManager.userlist.add( u );		
 				}						
-				gameManager.setWorkTime( );//새로 한명 들어올때마다 대기 시간을 증가시켜서 여러명이 들어올 여지를 둔다.			
+				// gameManager.setWorkTime( );//새로 한명 들어올때마다 대기 시간을 증가시켜서 여러명이 들어올 여지를 둔다.			
 			}
 			else
 			{
@@ -366,6 +369,7 @@ public class Room {
 		}
 
 		notifyJoinUser(u);
+		System.out.println("<<join room >> u:"+u.uidx +" roomnum:"+ridx  +"");
 
 		return true;
 				
@@ -426,7 +430,7 @@ public class Room {
 		}
 
 		u.clear();
-		System.out.println("<< Room . leave >> :"+ u.nickname);
+		System.out.println(Calendar.getInstance().getTime().toLocaleString()+" << Room . leave >> :"+ u.nickname  );
 	}
 
 	public void unliveLeave() {		
@@ -435,7 +439,6 @@ public class Room {
 		for( int nCount = 0; nCount < gameManager.watchinguserlist.size(); nCount++ )
 		{
 			User u = gameManager.watchinguserlist.get(nCount);
-			System.out.println("u:"+ u.live);
 			if( u.live == false )
 			{
 				notifyLeaveUserNetError(u.seat);
@@ -451,14 +454,13 @@ public class Room {
 		for( int nCount = 0; nCount < gameManager.userlist.size(); nCount++ )
 		{
 			User u = gameManager.userlist.get(nCount);
-			System.out.println("u:"+ u.live);
 			if( u.live == false )
 			{
-				System.out.println("=================NetError====================");
 				notifyLeaveUserNetError(u.seat);
 				gameManager.EmptySeat(u.seat);
 				rmuserlist.add(u);
 				u.clear();
+				System.out.println(Calendar.getInstance().getTime().toLocaleString()+ " =================NetError================= uidx:"+u.uidx );
 			}			
 		}
 		gameManager.userlist.removeAll(rmuserlist);
@@ -622,6 +624,7 @@ public class Room {
 		int c=0;
 		for(User u : gameManager.spareuserlist)
 		{
+			if( u.sparefix == true ) continue;
 			c++;
 			if(u.uidx == tu.uidx)
 				break;

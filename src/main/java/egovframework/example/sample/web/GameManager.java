@@ -381,7 +381,7 @@ public class GameManager {
 	
 	
 	void changeGameMode(String mode){
-		System.out.println(GameMode+" => "+mode);
+		System.out.println(Calendar.getInstance().getTime().toLocaleString()+" "+GameMode+" => "+mode +" ridx:"+room.ridx );
 		if( mode.compareTo("대기") == 0 ) {
 			JSONObject obj=new JSONObject();
 			obj.put("cmd", "changemode");
@@ -482,11 +482,11 @@ public class GameManager {
 				checkTime = 3;
 			if(  checkCmdTime(checkTime)  ){
 				try {
-					System.out.println("결과 계산========================================================");
+					System.out.println(Calendar.getInstance().getTime().toLocaleString()+" 결과 계산========================================================");
 					showResult();
 					setWorkTime();
 				}catch(Exception e) {
-					System.out.println("error log: showResult 계산시 에러 발생================"+e.toString() );
+					System.out.println(Calendar.getInstance().getTime().toLocaleString()+ " error log: showResult 계산시 에러 발생================"+e.toString() );
 				}
 				changeGameMode("showResult");
 			}
@@ -504,14 +504,14 @@ public class GameManager {
 					//room.spareCount();
 					setWorkTime(); 
 				}catch(Exception e) {
-					System.out.println("error log: showResult check 에러 발생================"+e.toString() );
+					System.out.println(Calendar.getInstance().getTime().toLocaleString()+" error log: showResult check 에러 발생================"+e.toString() );
 				}
 			}
 		}
 		SocketHandler.debugi=28;
 		if(GameMode.compareTo("대기")==0){
 			LeaveReserveUser();
-			if (isPlayable() && checkCmdTime(9) ){
+			if (isPlayable() && checkCmdTime(6) ){
 				setWorkTime();
 				lastcmdtime =( new Date()).getTime();
 				changeGameMode("checkstart");
@@ -560,13 +560,26 @@ public class GameManager {
 			}
 		}
 	}
+	boolean containsCheck(User user)
+	{
+		boolean rt = false;
+		for(User u : userlist )
+			if( u.uidx == user.uidx) rt=true;; 
+		for(User u : watchinguserlist)
+			if( u.uidx == user.uidx) rt=true; 
+		for(User u : spareuserlist )
+			if( u.uidx == user.uidx) rt=true;
+		if( rt)
+			System.out.println(Calendar.getInstance().getTime().toLocaleString()+" ERROR containsCheck 여기에 걸리면 로긴중복체크가 안된다는건데??? ");
+		return rt;
+	}
 
 	void LeaveReserveUser()
 	{		
 		while( leaveuserlist.size() > 0 )
 		{
 			User user = leaveuserlist.get(0);
-			System.out.println("LeaveReserve second====================================");
+			System.out.println(Calendar.getInstance().getTime().toLocaleString()+" LeaveReserve second====================================");
 			//room.notifyLeaveUser(user.seat);
 			room.leave(user);
 		}
@@ -580,8 +593,9 @@ public class GameManager {
 		ArrayList<User> resvlist=new ArrayList<User>();
 		for(User u : userlist) 
 		{
-			if(u.sparefix == true)//이값이 셋팅되어 있으면 유저가 관전자 이동으로 예약한상태임
+			if(u.sparefix == true)//이값이 셋팅되어 있으면 유저가 관전자 이동으로 예약한상태임 // 이 기능은 일단 클라에서 구현 안하고 있음.
 			{
+				System.out.println(Calendar.getInstance().getTime().toLocaleString()+" 이 문자가 보이면 일단 오작동 중임. 게임중에 관전으로 이동하는건 구현 안했으므로. >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 				resvlist.add(u);
 			}
 			if( room.UsedItem.equals("balance") == true){
@@ -709,7 +723,7 @@ public class GameManager {
 				for(User u : userlist){					
 					if(u.seat == whosturn ){						
 						timer = SocketHandler.second;
-						System.out.println("here 2 useat:"+u.seat +" "+Calendar.getInstance().toString() );
+						System.out.println(Calendar.getInstance().getTime().toLocaleString()+" here 2 useat:"+u.seat +" uidx:"+u.uidx );
 						timeout(u);	
 						break;									
 					}
@@ -734,7 +748,7 @@ public class GameManager {
 					)
 					{
 						timer = SocketHandler.second;
-						System.out.println("autopass useat:"+u.seat );
+						System.out.println(Calendar.getInstance().getTime().toLocaleString()+" autopass useat:"+u.seat );
 						bet(u, 8);
 						break;
 					}
@@ -1087,8 +1101,12 @@ public class GameManager {
 	}
 
 	public void bet(User u, int betkind){		
+		if( GameMode.compareTo("THEEND") ==0  || GameMode.compareTo("showResult") ==0  ||GameMode.compareTo("대기") ==0){
+			System.out.println(Calendar.getInstance().getTime().toLocaleString()+" 잘못된 베팅 uidx:"+u.uidx +" ridx:"+room.ridx );
+			return;
+		}
 		lastcmdtime =( new Date()).getTime();
-		System.out.println("user:"+u.uidx +" seat:"+u.seat+" betkind:"+betkind );
+		System.out.println(Calendar.getInstance().getTime().toLocaleString()+" user:"+u.uidx +" seat:"+u.seat+" betkind:"+betkind +" usernumroom:"+u.roomnum +"== roomnum:"+room.ridx  );
 		
 		if( whosturn != u.seat ){
 			System.out.println(whosturn+" 잘못된 유저의 BET 차례 "+u.seat);
@@ -2208,6 +2226,7 @@ public class GameManager {
 	
 	public void InsertSpareUser(User user)
 	{
+		user.sparefix = true;
 		spareuserlist.add(user);
 		ArrayList<Integer> cardlist = new ArrayList<>();
 		if( card1 != null )
@@ -2242,7 +2261,7 @@ public class GameManager {
 				user.session.sendMessage(new TextMessage(obj.toJSONString()));
 			}			
 		} catch (IOException e) {
-			System.out.println("InsertSpareUser error:"+e.getMessage());
+			System.out.println(Calendar.getInstance().getTime().toLocaleString()+ " InsertSpareUser error:"+e.getMessage());
 		}
 	}
 	public void InsertWatchingUser(User user)
@@ -2281,7 +2300,7 @@ public class GameManager {
 				user.session.sendMessage(new TextMessage(obj.toJSONString()));
 			}			
 		} catch (IOException e) {
-			System.out.println("InsertWatchingUser error:"+e.getMessage());
+			System.out.println(Calendar.getInstance().getTime().toLocaleString()+" InsertWatchingUser error:"+e.getMessage());
 		}
 	}
 	private JSONObject MakeWinCard(int lv, ArrayList<Integer> cards) {
@@ -2302,7 +2321,7 @@ public class GameManager {
 				return user;				
 			}
 		}
-		
+		System.out.println(Calendar.getInstance().getTime().toLocaleString()+" SearchUserBySeat null?? seat:"+seat);
 		return null;		
 	}
 

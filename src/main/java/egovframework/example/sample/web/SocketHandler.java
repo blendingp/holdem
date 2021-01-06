@@ -3,6 +3,7 @@ package egovframework.example.sample.web;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -188,7 +189,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         
         JSONParser p = new JSONParser();
         JSONObject obj = (JSONObject)p.parse(msg);
-        System.out.println("cmd:"+msg);
+        System.out.println(Calendar.getInstance().getTime().toLocaleString()+" cmd:"+msg );
         User ltu = usermanager.find(session);  
         if(ltu != null) 
         {
@@ -502,7 +503,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 				int roomidx = user.roomnum;
 				Room r = roommanager.find(roomidx);
 				r.toReserveOnly(user);
-				System.out.println("관전으로 변경");
+				System.out.println(Calendar.getInstance().getTime().toLocaleString()+" 관전으로 변경");
 			}break;
 			case "reservejoin"://참가 예약으로 변경
 			{
@@ -510,7 +511,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 				int roomidx = user.roomnum;
 				Room r = roommanager.find(roomidx);
 				r.toReserveJoin(user);
-				System.out.println("참여예약으로 변경");
+				System.out.println(Calendar.getInstance().getTime().toLocaleString()+" 참여예약으로 변경");
 			}break;
 			case "reserveleave"://나가기 예약
 			{
@@ -546,7 +547,6 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
 			case "live":
 			{				
         		User user = usermanager.find(session);
-        		System.out.println("recv live========:"+user.seat);
         		if(user != null )
         			user.live = true;
 			}break;
