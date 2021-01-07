@@ -118,6 +118,7 @@ public class Room {
 		myobj.put("smallblind", gameManager.getDealerSeatOffset(1) );
 		myobj.put("bigblind", gameManager.getDealerSeatOffset(2));
 		myobj.put("spareCount", gameManager.spareuserlist.size() );
+		myobj.put("gamemode", gameManager.GameMode);
 		
 		if( isPrivate() == true )
 		{
