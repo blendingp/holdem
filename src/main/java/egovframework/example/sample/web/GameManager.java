@@ -454,7 +454,7 @@ public class GameManager {
 		if(GameMode.compareTo("sbBet")==0)
 		{
 			// 2를 나중에 시스템 수치로 변경
-			if( checkCmdTime(userlist.size()*2) ){
+			if( checkCmdTime(userlist.size() + 1 ) ){
 				changeGameMode("sbBeted");
 				sbBet();
 			}
