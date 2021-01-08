@@ -393,6 +393,7 @@ public class Room {
 			}		
 		}
 		
+		
 		for( int nCount = 0; nCount < gameManager.watchinguserlist.size(); nCount++ )
 		{			
 			if( gameManager.watchinguserlist.get(nCount).uidx == u.uidx)
@@ -402,13 +403,14 @@ public class Room {
 				gameManager.watchinguserlist.remove(nCount);
 				u.clear();
 				System.out.println("<<관전자 Room . leave >> :"+ u.nickname+" "+(new Date()).toLocaleString() );
+				gameManager.spareToUserlist();//대기자나 유저가 나가고 나면 스페어유저를 다시 유저리스트로 올릴수 있는지 체크해야함.
 				return;
 			}			
 		}
 		
 		if( gameManager.GameMode.compareTo("대기") != 0 )
 		{
-			System.out.println("대기중에 나가기 시도함. "+u.uidx );
+			System.out.println("게임중에 나가기 시도함. "+u.uidx );
 			return;
 		}
 
@@ -431,7 +433,8 @@ public class Room {
 				break;
 			}			
 		}
-
+		
+		gameManager.spareToUserlist();//대기자나 유저가 나가고 나면 스페어유저를 다시 유저리스트로 올릴수 있는지 체크해야함.
 		u.clear();
 		System.out.println(Calendar.getInstance().getTime().toLocaleString()+" << Room . leave >> :"+ u.nickname  );
 	}

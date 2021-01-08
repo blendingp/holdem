@@ -547,9 +547,11 @@ public class GameManager {
 			userlist.add(u);
 			u.live = true;
 		}
-
 		watchinguserlist.clear();
-		
+		spareToUserlist();
+	}
+	void spareToUserlist() 
+	{
 		//유저리스트에 자리가 남았으면 , 스페어에서 유저리스틀 보냄.
 		//그래도 남은 스페어가 있으면 그냥 두면 됨,
 		ArrayList<User> rmspare=new ArrayList<User>();
@@ -569,9 +571,19 @@ public class GameManager {
 			userlist.add(u);
 			u.live = true;
 			room.notifyJoinUser(u);
-			
 		}
 		spareuserlist.removeAll(rmspare);
+		for(User u : spareuserlist )
+		{
+			if( u.sparefix == true)
+				continue;
+			JSONObject obj = new JSONObject();
+			obj.put("cmd","reserveJoinOk");
+			obj.put("count", room.reserveCount(u) );
+			u.sendMe(obj);//대기순번 갱신
+		}
+		room.spareCount();
+		
 		//유저리스트가 한명도 없고, 스페어만 남아 있다면 방삭제상황이라 스페어들에게 방 퇴장 패킷 보내줌
 		if( userlist.size() <= 0 && spareuserlist.size() > 0 ) {
 			for(User u : spareuserlist )
