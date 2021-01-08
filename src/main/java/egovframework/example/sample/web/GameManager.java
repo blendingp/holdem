@@ -522,19 +522,19 @@ public class GameManager {
 			}
 		}
 		SocketHandler.debugi=29;
-		if(GameMode.compareTo("showBetPanNext")==0 && checkCmdTime(1) )	{
+		if(GameMode.compareTo("showBetPanNext")==0 && checkCmdTime(0) )	{
 			gu++;//2구
 			showThreeCard();
 		}
-		if(GameMode.compareTo("THEFLOPNext")==0 && checkCmdTime(1)){			
+		if(GameMode.compareTo("THEFLOPNext")==0 && checkCmdTime(0)){			
 			gu++;//3구
 			TheTurn();
 		}
-		if(GameMode.compareTo("THETURNNext")==0 && checkCmdTime(1)){
+		if(GameMode.compareTo("THETURNNext")==0 && checkCmdTime(0)){
 			gu++;//4구
 			TheRiver();
 		}
-		if(GameMode.compareTo("THERIVERNext")==0 && checkCmdTime(1)){
+		if(GameMode.compareTo("THERIVERNext")==0 && checkCmdTime(0)){
 			TheEnd();
 		}		
 	}
