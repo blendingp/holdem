@@ -866,6 +866,15 @@ public class GameManager {
 			}
 
 		}
+		
+		for(int k =0; k < spareuserlist.size(); k++){
+			obj.put("cmd", "giveTwoCard");
+			obj.put("seat" , spareuserlist.get(k).seat);
+			obj.put("card1", 0 );
+			obj.put("card2", 0 );
+			obj.put("wr", "-1");
+			spareuserlist.get(k).sendMe(obj);	
+		}		
 	}
 
 	public int getWhoTurn(){
