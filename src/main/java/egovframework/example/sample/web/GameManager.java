@@ -422,6 +422,10 @@ public class GameManager {
 	}
 	void checkStartGame() throws NoSuchAlgorithmException{
 		SocketHandler.debugi=21;
+		if(GameMode.compareTo("대기")==0 ){
+			 if(isPlayable() == false )
+				 setWorkTime();
+		}
 		if(GameMode.compareTo("checkstart")==0 ){
 			 if(isPlayable() )
 			 {
