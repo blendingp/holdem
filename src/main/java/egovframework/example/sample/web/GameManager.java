@@ -750,7 +750,7 @@ public class GameManager {
 				}
 			}
 			SocketHandler.debugi=83;
-			if(totalcnt >1 && timer !=-1 && SocketHandler.second - timer > 2 )// 자동 패스 해줄 상황, 올인, 맥스 ,쇼다운시 해당 유저 대신 패스 
+			if(room.isPrivate() == false && totalcnt >1 && timer !=-1 && SocketHandler.second - timer > 2 )// 자동 패스 해줄 상황, 올인, 맥스 ,쇼다운시 해당 유저 대신 패스 
 			{
 				for(User u : userlist){		
 //					if( u.seat == whosturn )
