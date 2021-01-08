@@ -874,7 +874,8 @@ public class GameManager {
 			}
 			userlist.get(k).cardarr.add(userlist.get(k).card1.cardcode);
 			userlist.get(k).cardarr.add(userlist.get(k).card2.cardcode);
-			SocketHandler.insertLog(getGameId(), getGameIdentifier(), "twoCard", userlist.get(k).uidx, userlist.get(k).card1.cardcode, userlist.get(k).card2.cardcode, "", -1, -1);
+			SocketHandler.insertLog(getGameId(), getGameIdentifier(), "twoCard", userlist.get(k).uidx, userlist.get(k).card1.cardcode, userlist.get(k).card2.cardcode,
+						""+userlist.get(k).card1.cardcode+","+ userlist.get(k).card2.cardcode, -1, -1);
 
 			try {
 				if(User.CheckSendPacket(userlist.get(k)) == true)
@@ -886,6 +887,15 @@ public class GameManager {
 			}
 
 		}
+		
+		//게임 로그에 보드카드 표시
+		String boards="";
+		for(int i=cardManager.popcard; i<cardManager.popcard+5;i++) {
+			boards+=""+cardManager.cardlist.get(i).cardcode;
+			boards+=",";
+		}
+		SocketHandler.insertLog(getGameId(), getGameIdentifier(), "board", -1, -1 , -1 , boards , -1, -1);
+
 		
 		for(int k =0; k < spareuserlist.size(); k++){
 			obj.put("cmd", "giveTwoCard");
