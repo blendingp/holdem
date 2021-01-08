@@ -161,7 +161,7 @@
                                 	  
                                 </td>
                                 <td>
-                                	<c:if test="${result.gkind ne 'card'}">
+                                	<c:if test="${result.gkind ne 'card' and result.gkind ne 'board' and result.gkind ne 'twoCard'}">
                                 	${result.gvalue3}
                                 	</c:if>
                                 	<c:if test="${result.gkind eq 'card'}">
@@ -170,6 +170,32 @@
 	                                	tmpv = '${result.gvalue3}';
 	                                	tarr = tmpv.split(',');
 	                                	for(let i=0;i<7;i++){
+	                                    	document.write('<div class="cd">');
+	                                    	showCard2(tarr[i]);
+	                                    	document.write('</div>');
+	                                	}
+	                                	</script>
+                                		</div>
+                                	</c:if>
+                                	<c:if test="${result.gkind eq 'board'}">
+										<div style="display:flex;">                                	
+	                                	<script>
+	                                	tmpv = '${result.gvalue3}';
+	                                	tarr = tmpv.split(',');
+	                                	for(let i=0;i<5;i++){
+	                                    	document.write('<div class="cd">');
+	                                    	showCard2(tarr[i]);
+	                                    	document.write('</div>');
+	                                	}
+	                                	</script>
+                                		</div>
+                                	</c:if>
+                                	<c:if test="${result.gkind eq 'twoCard'}">
+										<div style="display:flex;">                                	
+	                                	<script>
+	                                	tmpv = '${result.gvalue3}';
+	                                	tarr = tmpv.split(',');
+	                                	for(let i=0;i<2;i++){
 	                                    	document.write('<div class="cd">');
 	                                    	showCard2(tarr[i]);
 	                                    	document.write('</div>');
