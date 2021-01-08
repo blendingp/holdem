@@ -454,7 +454,7 @@ public class GameManager {
 		if(GameMode.compareTo("sbBet")==0)
 		{
 			// 2를 나중에 시스템 수치로 변경
-			if( checkCmdTime(userlist.size()*2) ){
+			if( checkCmdTime(userlist.size() + 1 ) ){
 				changeGameMode("sbBeted");
 				sbBet();
 			}
@@ -517,6 +517,22 @@ public class GameManager {
 				changeGameMode("checkstart");
 			}
 		}
+		SocketHandler.debugi=29;
+		if(GameMode.compareTo("showBetPanNext")==0 && checkCmdTime(1) )	{
+			gu++;//2구
+			showThreeCard();
+		}
+		if(GameMode.compareTo("THEFLOPNext")==0 && checkCmdTime(1)){			
+			gu++;//3구
+			TheTurn();
+		}
+		if(GameMode.compareTo("THETURNNext")==0 && checkCmdTime(1)){
+			gu++;//4구
+			TheRiver();
+		}
+		if(GameMode.compareTo("THERIVERNext")==0 && checkCmdTime(1)){
+			TheEnd();
+		}		
 	}
 	
 	//watching을 유저로 옮기고, spare도 user로 옮김 
@@ -866,6 +882,15 @@ public class GameManager {
 			}
 
 		}
+		
+		for(int k =0; k < spareuserlist.size(); k++){
+			obj.put("cmd", "giveTwoCard");
+			obj.put("seat" , spareuserlist.get(k).seat);
+			obj.put("card1", 0 );
+			obj.put("card2", 0 );
+			obj.put("wr", "-1");
+			spareuserlist.get(k).sendMe(obj);	
+		}		
 	}
 
 	public int getWhoTurn(){
@@ -1330,6 +1355,24 @@ public class GameManager {
 				}
 			}
 			
+			if(GameMode.compareTo("showBetPan")==0) {
+				setWorkTime();
+				changeGameMode("showBetPanNext");
+			}
+			if(GameMode.compareTo("THEFLOP")==0){
+				setWorkTime();
+				changeGameMode("THEFLOPNext");
+			}
+			if(GameMode.compareTo("THETURN")==0){
+				setWorkTime();
+				changeGameMode("THETURNNext");
+			}
+			if(GameMode.compareTo("THERIVER")==0){
+				setWorkTime();
+				changeGameMode("THERIVERNext");
+			}
+			
+/*			
 			if(GameMode.compareTo("showBetPan")==0)	{
 				gu++;//2구
 				showThreeCard();
@@ -1344,7 +1387,7 @@ public class GameManager {
 			}
 			else if(GameMode.compareTo("THERIVER")==0){
 				TheEnd();
-			}
+			}*/
 			return;
 		}else
 		{
