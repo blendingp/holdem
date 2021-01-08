@@ -941,6 +941,7 @@ public class GameManager {
 		}
 		obj.put("whosturn", whosturn );
 		obj.put("prebetmoney", preTotalBetmoney );
+		obj.put("now", System.currentTimeMillis());
 		obj.put("myBetMoney", SearchUserBySeat(whosturn).betmoney );
 		
 		timer = SocketHandler.second;		
@@ -1257,6 +1258,7 @@ public class GameManager {
 		obj.put("callmoney", "" + (preTotalBetmoney - u.betmoney) );
 		obj.put("prebetmoney", preTotalBetmoney );
 		obj.put("myBetMoney", u.betmoney );
+		obj.put("now", System.currentTimeMillis());
 		long amount = 0;		
 		
 		if( room.UsedItem.equals("balance") == true){		
@@ -1397,7 +1399,7 @@ public class GameManager {
 	}
 	
 	public void showThreeCard(){	
-		timer = SocketHandler.second+2;
+		timer = SocketHandler.second + 4;
 		whosturn=getDealerSeat();
 		nextTurn();//딜러 다음 할 차례
 		turncnt=0;		
@@ -1422,6 +1424,7 @@ public class GameManager {
 		obj.put("cmd","THEFLOP");
 		obj.put("cardlist", cardlist);
 		obj.put("whosturn", whosturn );	
+		obj.put("now", System.currentTimeMillis() + 2000);
 		obj.put("betend", isBetEnd);
 		SocketHandler.insertLog(getGameId(), getGameIdentifier(), "THEFLOP", -1, card1.cardcode, card2.cardcode, "", card3.cardcode, -1);
 		for(int k =0; k<userlist.size(); k++){
@@ -1433,7 +1436,7 @@ public class GameManager {
 	}
 
 	public void TheTurn(){
-		timer = SocketHandler.second;
+		timer = SocketHandler.second + 2;
 		turncnt = 0;
 		//timer=-1;
 		whosturn=getDealerSeat();		
@@ -1453,6 +1456,7 @@ public class GameManager {
 		obj.put("cmd","THETURN");
 		obj.put("cardlist", cardlist);
 		obj.put("whosturn",whosturn );
+		obj.put("now", System.currentTimeMillis() + 2000);
 		obj.put("betend", isBetEnd);
 		SocketHandler.insertLog(getGameId(), getGameIdentifier(), "THETURN", -1, card4.cardcode, -1, "", -1, -1);
 		for(int k =0; k<userlist.size(); k++){
@@ -1462,7 +1466,7 @@ public class GameManager {
 	}
 
 	public void TheRiver(){
-		timer = SocketHandler.second;
+		timer = SocketHandler.second + 2;
 		turncnt = 0;
 		whosturn=getDealerSeat();
 		nextTurn();
@@ -1479,6 +1483,7 @@ public class GameManager {
 		obj.put("cmd","THERIVER");
 		obj.put("cardlist", cardlist);
 		obj.put("whosturn",whosturn );
+		obj.put("now", System.currentTimeMillis() + 2000);
 		obj.put("betend", isBetEnd);
 		SocketHandler.insertLog(getGameId(), getGameIdentifier(), "THERIVER", -1, card5.cardcode, -1, "", -1, -1);
 		for(int k =0; k<userlist.size(); k++){
