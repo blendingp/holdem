@@ -143,6 +143,7 @@ public class Room {
 			item.put("nickname", "" + user.nickname);
 			item.put("profile", user.todayprofile);
 			item.put("iswatching", false);
+			item.put("isreserve", gameManager.IsReserve(user) );
 			j.add(item);
 		}
 
@@ -203,6 +204,7 @@ public class Room {
 			item.put("nickname", "" + user.nickname);
 			item.put("profile", user.todayprofile);
 			item.put("iswatching", false);
+			item.put("isreserve", gameManager.IsReserve(user) );
 			j.add(item);
 		}
 
@@ -575,7 +577,7 @@ public class Room {
 			if(gameManager.userlist.get(nCount).uidx == user.uidx)
 			{											
 				gameManager.leaveuserlist.add(gameManager.userlist.get(nCount));								
-				BraodCastLeaveReserve(user, true);				
+				BraodCastLeaveReserve(user, true);
 			}
 		}		
 	}

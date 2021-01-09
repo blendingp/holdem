@@ -2400,6 +2400,18 @@ public class GameManager {
 		return null;		
 	}
 
+	public boolean IsReserve(User u)
+	{
+		for( User user : leaveuserlist )
+		{	
+			if( user.uidx == u.uidx )
+			{
+				return true;				
+			}
+		}
+
+		return false;
+	}
 	public boolean IsJoinGame(int seat)
 	{
 		for( User user : userlist )

@@ -46,7 +46,7 @@ public class JackpotManager {
     }
 
     public static boolean Update() {
-        _tick += 500;
+        _tick +=10;
 
         if (_tick >= 60000 && isChanged == true) {
             EgovMap in = new EgovMap();
