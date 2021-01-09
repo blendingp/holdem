@@ -189,7 +189,8 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         
         JSONParser p = new JSONParser();
         JSONObject obj = (JSONObject)p.parse(msg);
-        System.out.println(Calendar.getInstance().getTime().toLocaleString()+" cmd:"+msg );
+        if( obj.containsValue("getgoldroomlist") != true)
+        	System.out.println(Calendar.getInstance().getTime().toLocaleString()+" cmd:"+msg );
         User ltu = usermanager.find(session);  
         if(ltu != null) 
         {

@@ -591,6 +591,40 @@ public class GameManager {
 				room.notifyLeaveSpareUser(u.uidx);
 			}
 		}
+	}	
+	void spareTowatchinglist() 
+	{
+		//유저리스트에 자리가 남았으면 , 스페어에서 유저리스틀 보냄.
+		//그래도 남은 스페어가 있으면 그냥 두면 됨,
+		ArrayList<User> rmspare=new ArrayList<User>();
+		int sparecount = 0;
+		for(User u : spareuserlist )
+		{
+			if( u.sparefix == true) {
+				sparecount++;
+				continue;
+			}
+			int seat = GetEmptySeat();
+			if( seat < 0 )
+				break;
+			rmspare.add(u);
+			u.seat = seat;
+			SetSeat(u.seat);
+			InsertWatchingUser(u);
+			u.live = true;
+			room.notifyJoinUser(u);
+		}
+		spareuserlist.removeAll(rmspare);
+		for(User u : spareuserlist )
+		{
+			if( u.sparefix == true)
+				continue;
+			JSONObject obj = new JSONObject();
+			obj.put("cmd","reserveJoinOk");
+			obj.put("count", room.reserveCount(u) );
+			u.sendMe(obj);//대기순번 갱신
+		}
+		room.spareCount();
 	}
 	boolean containsCheck(User user)
 	{
