@@ -611,13 +611,18 @@ public class Room {
 	}
 	public void toReserveOnly(User u)
 	{
-		//게임중이라면 예약 가능
-		//게임중이 아니거나 , 게임중에 대기하는중이라면 바로 관전으로 이동
 		u.sparefix = true;
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","reserveOnlyOk");
 		u.sendMe(obj);
-		System.out.println("게임중 관전 예약");
+		gameManager.spareuserlist.remove(u);
+		gameManager.spareuserlist.add(u);
+		//룸안의 나머지 스페어들에게 순위 바뀜 보냄
+		for(User user : gameManager.spareuserlist) {
+			if( user.uidx != u.uidx && user.sparefix == false ) {
+				toReserveJoin(user);
+			}
+		}
 	}
 	public void toReserveJoin(User u)
 	{
