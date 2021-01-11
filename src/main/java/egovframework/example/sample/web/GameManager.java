@@ -1200,7 +1200,7 @@ public class GameManager {
 			return;
 		}
 		//쇼다운으로 인해 패스만 가능한 상황에서 다른 베팅 들어온 경우 처리
-		if( u.seat == whosturn && u.die != true &&
+		if(betkind != 8 && u.seat == whosturn && u.die != true &&
 				(
 					( //올인이거나
 							(room.UsedItem.equals("point")   == true && u.point<= 0) ||
