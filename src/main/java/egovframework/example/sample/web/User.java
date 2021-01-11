@@ -787,7 +787,7 @@ public class User {
 		chipamount += (oversafechip > 0) ? oversafechip : 0;
 
 		if (overgold > 0) {
-			this.balance = memberInfo.limit_gold;
+			this.balance = memberInfo.limit_gold;			
 			ApplyBalanace("balance");
 		}
 
@@ -882,31 +882,27 @@ public class User {
 
 	public boolean InsertItem(Item item) {
 		if (item.Type.equals("point") == true) {
-			if (this.point + item.Amount > memberInfo.limit_point) {
-				return false;
-			}
-
 			this.point += item.Amount;
+			CheckOver();
 
 			EgovMap in = new EgovMap();
 			in.put("midx", this.uidx);
 			in.put("amount", this.point);
 			in.put("type", "point");
 
-			int rt = SocketHandler.sk.sampleDAO.update("updateItemAmont", in);
+			int rt = SocketHandler.sk.sampleDAO.update("updateItemAmont", in);						
 		} else if (item.Type.equals("balance") == true) {
-			if (this.balance + item.Amount > memberInfo.limit_gold) {
-				return false;
-			}
-
 			this.balance += item.Amount;
+			CheckOver();
+
+			System.out.println("balance : "+ this.balance);
 
 			EgovMap in = new EgovMap();
 			in.put("midx", this.uidx);
 			in.put("amount", this.balance);
 			in.put("type", "balance");
 
-			int rt = SocketHandler.sk.sampleDAO.update("updateItemAmont", in);
+			int rt = SocketHandler.sk.sampleDAO.update("updateItemAmont", in);			
 		} else if (item.Type.equals("cash") == true) {
 			this.cash += item.Amount;
 
