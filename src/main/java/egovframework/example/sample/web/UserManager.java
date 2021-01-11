@@ -639,8 +639,13 @@ public class UserManager {
 		JSONObject cobj = new JSONObject();
 		cobj.put("cmd", "getinboxreward");
 		cobj.put("uid", uid);
+		ArrayList inboxlist = InBox.GetUserInbox(find(session).uidx, 1);
 		if( inbox != null)
 		{
+			if( inboxlist.size() > 0 )
+			{
+				cobj.put("lastinbox", inboxlist.get(inboxlist.size() - 1));
+			}			
 			cobj.put("reward", inbox.ItemList);			
 			cobj.put("avatalist", find(session).avatalist);
 		}					

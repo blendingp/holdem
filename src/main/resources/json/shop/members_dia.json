@@ -12,7 +12,7 @@
         "limit_point":1500000000000000,
         "limit_safe_point":1500000000000000,
         "limit_gold":60000000,
-        "limit_safe_gold":20000000,
+        "limit_safe_gold":10000000,
         "commission":0.048,
         "chiprefill": 200000000000,
         "avata": 2,
