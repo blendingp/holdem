@@ -351,28 +351,28 @@ public class User {
 			}
 				break;
 			case "chiprefill500":
-				if (this.cash >= 10) 
+				if (this.cash >= 30) 
 				{
 					item = product;
-					this.cash -= 10;
+					this.cash -= 30;
 					in.put("amount", this.cash);
 					in.put("type", "cash");
 				}
 				break;
 			case "chiprefill1000":
-				if (this.cash >= 18) 
+				if (this.cash >= 54) 
 				{
 					item = product;
-					this.cash -= 18;
+					this.cash -= 54;
 					in.put("amount", this.cash);
 					in.put("type", "cash");
 				}
 				break;
 			case "chiprefill2000":
-				if (this.cash >= 35) 
+				if (this.cash >= 105) 
 				{
 					item = product;
-					this.cash -= 35;
+					this.cash -= 105;
 					in.put("amount", this.cash);
 					in.put("type", "cash");
 				}
