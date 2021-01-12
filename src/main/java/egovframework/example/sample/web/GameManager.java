@@ -831,6 +831,7 @@ public class GameManager {
 		obj.put("maxmoney", room.maxmoney);
 		obj.put("ante", room.defaultmoney);
 		obj.put("roompeople", userlist.size() );
+		obj.put("now", System.currentTimeMillis());
 		obj.put("dealer", getDealerSeat() );
 		obj.put("smallblind", getDealerSeatOffset(1) );
 		obj.put("bigblind", getDealerSeatOffset(2));
@@ -2310,6 +2311,7 @@ public class GameManager {
 		JSONArray j = new JSONArray();
 		for(int i=0; i<userlist.size(); i++){
 			JSONObject item = new JSONObject();
+			userlist.get(i).CheckOver();
 			item.put("seat", userlist.get(i).seat);			
 			item.put("card1", userlist.get(i).card1.cardcode);
 			item.put("card2", userlist.get(i).card2.cardcode);

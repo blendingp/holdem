@@ -806,6 +806,21 @@ public class User {
 			ApplyBalanace("safe_point");
 		}
 
+		ArrayList<InBox> list = InBox.GetUserInbox(uidx, 1);		
+		int totalcount = 0;
+		for( InBox inbox : list)
+		{
+			if( inbox.Type == 4 )
+			{
+				totalcount++;
+			}
+		}
+
+		if( totalcount >= 10 )
+		{
+			return ;
+		}
+
 		ObjectMapper mapper = new ObjectMapper();
 
 		if (goldamount > 0) {
