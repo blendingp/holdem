@@ -2328,17 +2328,14 @@ public class GameManager {
 		
 		JSONArray j = new JSONArray();
 		for(int i=0; i<userlist.size(); i++){
-			JSONObject item = new JSONObject();
-			userlist.get(i).CheckOver();
+			JSONObject item = new JSONObject();			
 			item.put("seat", userlist.get(i).seat);			
 			item.put("card1", userlist.get(i).card1.cardcode);
 			item.put("card2", userlist.get(i).card2.cardcode);
-			if( room.UsedItem.equals("balance") == true){
-				item.put("balance", userlist.get(i).balance);
+			if( room.UsedItem.equals("balance") == true){				
 				item.put("amount", userlist.get(i).balance - userlist.get(i).prevamount);
 			}
-			else if( room.UsedItem.equals("point") == true){
-				item.put("balance", userlist.get(i).point);
+			else if( room.UsedItem.equals("point") == true){				
 				item.put("amount", userlist.get(i).point - userlist.get(i).prevamount);
 			}									
 			item.put("bankamount", userlist.get(i).bankamount);
@@ -2347,6 +2344,14 @@ public class GameManager {
 			item.put("profile", userlist.get(i).todayprofile);
 			j.add(item);
 			userlist.get(i).die = false;
+			userlist.get(i).CheckOver();
+
+			if( room.UsedItem.equals("balance") == true){
+				item.put("balance", userlist.get(i).balance);				
+			}
+			else if( room.UsedItem.equals("point") == true){
+				item.put("balance", userlist.get(i).point);				
+			}	
 		}
 		obj.put("cardlist", j);
 		sendRoom(obj);
