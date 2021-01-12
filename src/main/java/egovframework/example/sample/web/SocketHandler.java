@@ -220,7 +220,7 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
         	{        	
         		EgovMap in = new EgovMap();
         		String ver =""+ obj.get("version");
-        		if( ver.compareTo("20210108b") != 0 ) {
+        		if( ver.compareTo("20210112a") != 0 ) {
         			System.out.println(Calendar.getInstance().getTime().toLocaleString() +"잘못된 버젼 로그인 userid:"+ obj.get("userid") +" lver:"+ ver);
         		}
         		in.put("muserid", obj.get("userid"));

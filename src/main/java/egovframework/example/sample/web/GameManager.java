@@ -1188,7 +1188,7 @@ public class GameManager {
 		}
 	}
 
-	public void bet(User u, int betkind){		
+	public void bet(User u, int betkind){
 		if( GameMode.compareTo("THEEND") ==0  || GameMode.compareTo("showResult") ==0  ||GameMode.compareTo("대기") ==0){
 			System.out.println(Calendar.getInstance().getTime().toLocaleString()+" 잘못된 베팅 uidx:"+u.uidx +" ridx:"+room.ridx );
 			return;
@@ -1200,6 +1200,24 @@ public class GameManager {
 			System.out.println(whosturn+" 잘못된 유저의 BET 차례 "+u.seat);
 			return;
 		}
+		//쇼다운으로 인해 패스만 가능한 상황에서 다른 베팅 들어온 경우 처리
+		if(betkind != 8 && u.seat == whosturn && u.die != true &&
+				(
+					( //올인이거나
+							(room.UsedItem.equals("point")   == true && u.point<= 0) ||
+							(room.UsedItem.equals("balance") == true && u.balance<= 0) 
+					) ||
+					u.betmoney  >= room.maxmoney  //맥스 베팅상태이거나
+					|| checkAllpassState(u) == true //자기 빼고 모두 패스 이면서 자기가 제일 많이 배팅한 상황.
+				)
+			)
+		{
+			if( room.isPrivate() == false) {
+				System.out.println(Calendar.getInstance().getTime().toLocaleString()+" "+ u.uidx+ " 쇼다운 패스상황 에서 다른 벳이 와서 강제 교체 seat:"+u.seat +" betkind:"+ betkind  );
+				betkind = 8;
+			}
+		}
+		
 
 		if(betkind==0)
 		{ 
