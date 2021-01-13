@@ -177,7 +177,7 @@
 
 <html>
 <head>
-    <title>WinGame</title>
+    <title>vvingame</title>
 </head>
 <body>
  	<center>
