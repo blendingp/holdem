@@ -626,6 +626,16 @@ public class Room {
 	}
 	public void toReserveJoin(User u)
 	{
+		boolean find= false;
+		for(User user : gameManager.spareuserlist) {
+			if( user.uidx == u.uidx )
+				find=true;
+		}
+		if(find == false)
+			return;
+		//대기 순서 젤 뒤로 변경.
+		gameManager.spareuserlist.remove(u);
+		gameManager.spareuserlist.add(u);
 		u.sparefix = false;
 		JSONObject obj = new JSONObject();
 		obj.put("cmd","reserveJoinOk");
