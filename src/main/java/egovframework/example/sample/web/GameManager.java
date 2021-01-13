@@ -1357,6 +1357,11 @@ public class GameManager {
 		}		
 				
 		boolean isBetEnd = isGuBetEnd();
+		if( isBetEnd == true )
+		{
+			prev = 0;
+			prebetmoney = 0;
+		}
 		obj.put("totalmoney", totalmoney );
 		obj.put("prev", prev);
 		obj.put("callmoney", "" + (preTotalBetmoney - u.betmoney) );
