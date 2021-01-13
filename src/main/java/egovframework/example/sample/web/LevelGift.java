@@ -74,6 +74,11 @@ public class LevelGift {
                     }                    
                 }
             }
+
+            if( inbox.ItemList.size() <= 0 )
+            {
+                return ;
+            }
                         
             inbox.Expire = System.currentTimeMillis() + 172800000;
 
