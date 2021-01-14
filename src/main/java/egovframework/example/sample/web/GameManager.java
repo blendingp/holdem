@@ -913,8 +913,13 @@ public class GameManager {
 			{
 				if( winseat == userlist.get(k).seat)
 					obj.put("wr", "1");
-				else
-					obj.put("wr", "2");
+				else {
+					if( SearchUserBySeat(winseat).isAI == true ) {
+						obj.put("wr", "3");// 3이면 동료 AI가 이긴 다는 뜻.
+						obj.put("ws", ""+winseat);// 동료 ai 자리 번호
+					}else
+						obj.put("wr", "2");
+				}
 			}else
 			{
 				obj.put("wr", "-1");

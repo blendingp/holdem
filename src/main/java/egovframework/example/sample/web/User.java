@@ -1053,26 +1053,29 @@ public class User {
 	public String ReNickName(String name)
 	{
 		long amount = 0;
-		for( Item consum : consumableItem )
-		{		
-			if( consum.Type.equals("nickname") == true )
-			{
-				amount = consum.Amount;
+		if(isAI == false) {
+			for( Item consum : consumableItem )
+			{		
+				if( consum.Type.equals("nickname") == true )
+				{
+					amount = consum.Amount;
+				}
 			}
-		}
-
-		if( amount <= 0 )
-		{
-			return _info.nickname;
-		}
-
-		for( Item consum : consumableItem )
-		{		
-			if( consum.Type.equals("nickname") == true )
+	
+			if( amount <= 0 )
 			{
-				consum.Amount = amount - 1;
+				return _info.nickname;
 			}
-		}
+	
+			for( Item consum : consumableItem )
+			{		
+				if( consum.Type.equals("nickname") == true )
+				{
+					consum.Amount = amount - 1;
+				}
+			}
+		}else
+			amount = 1;
 
 		_info.nickname = name;
 		nickname = name;
