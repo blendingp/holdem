@@ -69,7 +69,7 @@
 					<div class="down_btnwrap">
 						<div class="wingamewrap">
 							<img src="/holdem/webflow/images/game_logo.png" loading="lazy" alt="" class="game_logo">
-							<div class="wingameholdem"> VVINGAME<br> <span class="text-span">윈게임</span>
+							<div class="wingameholdem"> WINGAME<br> <span class="text-span">윈게임</span>
 							</div>
 						</div>
 						<div class="div-block-13">
@@ -122,7 +122,7 @@
 							</a>
 						</div>
 						<div class="div-block-17"></div>
-						<div class="logincontent">VVINGAME 회원이 아니신가요?</div>
+						<div class="logincontent">WINGAME 회원이 아니신가요?</div>
 						<a href="/holdem/user/verification.do" class="loginjoinbtn w-button">회원가입</a>
 						<a href="#" onclick="$('#loginpop').css('display','none');" class="link-block-20 w-inline-block">
 							<img src="/holdem/webflow/images/pngwing.com-4.png" loading="lazy" alt="" class="image-6">

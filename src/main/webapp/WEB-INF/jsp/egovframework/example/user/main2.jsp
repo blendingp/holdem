@@ -77,7 +77,7 @@
 						<div class="wingamewrap">
 							<img src="/holdem/webflow/images/game_logo.png" loading="lazy" alt="" class="game_logo">
 							<div class="wingameholdem">
-								VVINGAME<br>
+								WINGAME<br>
 								<span class="text-span">윈게임</span>
 							</div>
 						</div>

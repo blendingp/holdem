@@ -92,7 +92,7 @@
 								</div>
 								<div class="infotxt">${item2.birthdate}</div>
 							</div>
-							<div class="notice">※ 회원님의 소중한 개인정보는 VVINGAME 개인정보처리방침에 따라 안전하게 관리되고 있습니다.</div>
+							<div class="notice">※ 회원님의 소중한 개인정보는 WINGAME 개인정보처리방침에 따라 안전하게 관리되고 있습니다.</div>
 						</div>
 						<a href="#" onclick="javascript:updateMyinfo()" class="deletebtn-7 a w-inline-block">
 							<div class="deletebtntext">변경하기</div>

@@ -2,7 +2,7 @@
 <%@ page import="java.util.*" %>
 <!DOCTYPE html>
 <meta charset="utf-8">
-<title>vvingame</title>
+<title>wingame</title>
 <meta content="width=device-width, initial-scale=1" name="viewport">
 <meta content="Webflow" name="generator">
 <link href="/holdem/webflow/css/normalize.css?v=<%=(new Date()).getTime()%>" rel="stylesheet" type="text/css">
