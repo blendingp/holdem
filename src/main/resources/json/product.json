@@ -1,8 +1,8 @@
 [
   {
     "Product": "Gem0",
-    "Title": "보석 110",
-    "Description": "보석 110개 충전",
+    "Title": "보석 11",
+    "Description": "보석 11개 충전",
     "Price": 1100,
     "ItemImage": "cashicon1",
     "DetailImage": "cashicon1",
@@ -10,8 +10,8 @@
   },
   {
     "Product": "Gem1",
-    "Title": "보석 550",
-    "Description": "보석 550개 충전",
+    "Title": "보석 55",
+    "Description": "보석 55개 충전",
     "Price": 5500,
     "ItemImage": "cashicon2",
     "DetailImage": "cashicon2",
@@ -19,8 +19,8 @@
   },
   {
     "Product": "Gem2",
-    "Title": "보석 1100",
-    "Description": "보석 1100개 충전",
+    "Title": "보석 110",
+    "Description": "보석 110개 충전",
     "Price": 11000,
     "ItemImage": "cashicon3",
     "DetailImage": "cashicon3",
@@ -28,8 +28,8 @@
   },
   {
     "Product": "Gem3",
-    "Title": "보석 2200",
-    "Description": "2200개 충전",
+    "Title": "보석 220",
+    "Description": "220개 충전",
     "Price": 22000,
     "ItemImage": "cashicon4",
     "DetailImage": "cashicon4",
@@ -37,8 +37,8 @@
   },  
   {
     "Product": "Gem4",
-    "Title": "보석 5500",
-    "Description": "5500개 충전",
+    "Title": "보석 550",
+    "Description": "550개 충전",
     "Price": 55000,
     "ItemImage": "cashicon5",
     "DetailImage": "cashicon5",
@@ -46,8 +46,8 @@
   },
   {
     "Product": "Gem5",
-    "Title": "보석 9900",
-    "Description": "9900개 충전",
+    "Title": "보석 990",
+    "Description": "990개 충전",
     "Price": 99000,
     "ItemImage": "cashicon6",
     "DetailImage": "cashicon6",
