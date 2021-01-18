@@ -704,6 +704,9 @@ public class UserManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
+		find(session)._info.firstcheck = 1;
+		find(session).UpdateMemberInfo();
 	}
 
 	public void SetUserAvata(WebSocketSession session, String avata) {

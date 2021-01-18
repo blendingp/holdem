@@ -12,5 +12,6 @@ public class MembersInfo {
     public long bank_gold = 300000;
     public float commission = 0.06f;    
     public float gold_cashback = 0.002f;
-    public long expire = 0;            
+    public long expire = 0;  
+    public int firstcheck = 0;          
 }

@@ -100,9 +100,17 @@ public class Attendance {
                     for( int nCount = 0; nCount < item.reward.size(); ++nCount )
                     {
                         AttendanceReward reward = item.reward.get(nCount);
-                        Item rewarditem = new Item();
+                        Item rewarditem = new Item();                        
                         rewarditem.Amount = reward.amount;
                         rewarditem.Type = reward.type;
+                        if( reward.type.equals("balance") == true)
+                        {
+                            rewarditem.Amount = (int)(Math.random() * 200) + 100;
+                            if( Math.random() >= 0.999 )
+                            {
+                                rewarditem.Amount += (int)(Math.random() * 200);
+                            }
+                        }
                         
                         inbox.ItemList.add(rewarditem);
                     }                    

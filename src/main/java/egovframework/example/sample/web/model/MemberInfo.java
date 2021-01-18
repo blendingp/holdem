@@ -12,6 +12,7 @@ public class MemberInfo {
     public String ban = "";
     public long limit = 5000000000000l;
     public int ai=0;
+    public int firstcheck = 0;
 
     public void RecordBan(int type, long expire) {
         BanModel ban = new BanModel();

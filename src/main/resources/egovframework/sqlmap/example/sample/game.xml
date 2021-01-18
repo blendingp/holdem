@@ -302,7 +302,7 @@
 
 	<select id="GetMemberInfo" resultClass="EgovMap">
         <![CDATA[
-            SELECT midx, `exp`, lastlevel, nickname, avata, ban, `limit` , ai FROM member_info
+            SELECT midx, `exp`, lastlevel, nickname, avata, ban, `limit`, ai, firstcheck FROM member_info
             WHERE midx=#midx#
         ]]>
 	</select>
@@ -312,7 +312,7 @@
             INSERT INTO member_info
 					( midx, `exp`, lastlevel, nickname, avata, ban, `limit` )
 				VALUES ( #midx#, #exp#, #lastlevel#, #nickname#, #avata#, #ban#, #limit# )
-				ON DUPLICATE KEY UPDATE `exp`=#exp#, lastlevel=#lastlevel#, nickname=#nickname#, avata=#avata#, ban=#ban#, `limit`=#limit#
+				ON DUPLICATE KEY UPDATE `exp`=#exp#, lastlevel=#lastlevel#, nickname=#nickname#, avata=#avata#, ban=#ban#, `limit`=#limit#, firstcheck=#firstcheck#
         ]]>
 	</update>
 
@@ -378,7 +378,7 @@
 				INSERT INTO item
 					( midx, type, amount )
 				VALUES 
-				( #midx#, 'balance', 500 ),
+				( #midx#, 'balance', 1000 ),
 				( #midx#, 'cash', 0 ),
 				( #midx#, 'budget', 0 ),
 				( #midx#, 'point', #point# ),

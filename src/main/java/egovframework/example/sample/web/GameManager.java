@@ -674,7 +674,7 @@ public class GameManager {
 				if( u.balance <= 0 && u.todayprofile.goldrefillcount > 0)
 				{
 					u.todayprofile.goldrefillcount = 0;
-					u.balance = 500;
+					u.balance = 1000;
 					u.ApplyBalanace("balance");
 					ProfileManager.UpdateTodayProfileNoExpire(u.todayprofile);
 					JSONObject goldrefill = new JSONObject();
