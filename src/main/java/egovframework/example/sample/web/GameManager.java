@@ -486,7 +486,7 @@ public class GameManager {
 				checkTime = 3;
 			if(  checkCmdTime(checkTime)  ){
 				try {
-					System.out.println(Calendar.getInstance().getTime().toLocaleString()+" 결과 계산========================================================");
+					System.out.println(Calendar.getInstance().getTime().toLocaleString()+" 결과 계산===================================================id:"+getGameId()+" identifier:"+ getGameIdentifier());
 					showResult();
 					setWorkTime();
 				}catch(Exception e) {
