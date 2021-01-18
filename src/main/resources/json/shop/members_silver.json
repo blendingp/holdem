@@ -4,7 +4,7 @@
     "payitem":[
         {
             "Type":"point",
-            "Amount":4000000000000
+            "Amount":400000000000
         }
     ],
     "effect":{

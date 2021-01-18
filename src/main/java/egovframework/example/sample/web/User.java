@@ -351,28 +351,28 @@ public class User {
 			}
 				break;
 			case "chiprefill500":
-				if (this.cash >= 30) 
+				if (this.cash >= 100) 
 				{
 					item = product;
-					this.cash -= 30;
+					this.cash -= 100;
 					in.put("amount", this.cash);
 					in.put("type", "cash");
 				}
 				break;
 			case "chiprefill1000":
-				if (this.cash >= 54) 
+				if (this.cash >= 200) 
 				{
 					item = product;
-					this.cash -= 54;
+					this.cash -= 200;
 					in.put("amount", this.cash);
 					in.put("type", "cash");
 				}
 				break;
 			case "chiprefill2000":
-				if (this.cash >= 105) 
+				if (this.cash >= 400) 
 				{
 					item = product;
-					this.cash -= 105;
+					this.cash -= 400;
 					in.put("amount", this.cash);
 					in.put("type", "cash");
 				}
@@ -1194,14 +1194,42 @@ public class User {
 		{
 			return ;
 		}
-
+		
 		try {
 			ObjectMapper mapper = new ObjectMapper();
+			System.out.println(mapper.writeValueAsString(obj));
 			session.sendMessage(new TextMessage(mapper.writeValueAsString(obj)));
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
 			System.out.println("sendMe Error:"+obj.toJSONString() );
+		}
+	}
+
+	public void NotifyFriend(int roomnum)
+	{
+		ArrayList<FriendModel> requestlist = Friend.GetRequestFriendList(this, 1);
+		ArrayList<FriendModel> friendlist = Friend.GetFriendList(this);		
+		
+		JSONObject cobj = new JSONObject();
+		cobj.put("cmd", "makeprivateroom");
+		cobj.put("name", this.nickname);
+		cobj.put("roomnum", roomnum);	
+				
+		for(int nCount = 0; nCount < requestlist.size(); ++nCount)
+		{			
+			if( SocketHandler.sk.usermanager.findFromUseridx(requestlist.get(nCount).Midx) != null )
+			{
+				SocketHandler.sk.usermanager.findFromUseridx(requestlist.get(nCount).Midx).sendMe(cobj);
+			}			
+		}
+
+		for(int nCount = 0; nCount < friendlist.size(); ++nCount)
+		{						
+			if( SocketHandler.sk.usermanager.findFromUseridx(friendlist.get(nCount).Midx) != null )
+			{
+				SocketHandler.sk.usermanager.findFromUseridx(friendlist.get(nCount).Midx).sendMe(cobj);
+			}					
 		}
 	}
 }

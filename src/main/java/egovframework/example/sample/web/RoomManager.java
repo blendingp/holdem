@@ -263,6 +263,11 @@ public class RoomManager {
 		
 		room.join(user, roomcount);
 		roomList.add(room);
+		if( room.isPrivate() == true) 
+		{
+			user.NotifyFriend(room.ridx);			
+		}
+
 		return true;
 	}
 
