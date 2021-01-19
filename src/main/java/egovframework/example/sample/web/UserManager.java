@@ -556,7 +556,7 @@ public class UserManager {
 	{	
 		JSONObject cobj = new JSONObject();
 		cobj.put("cmd", "checkattandance");		
-		cobj.put("prev", find(session).attendance.Count);
+		cobj.put("prev", find(session).attendance.GetCount());
 		cobj.put("count", find(session).attendance.CheckAttendance());
 			
 		ClassPathResource resource = new ClassPathResource("json/attendance.json");

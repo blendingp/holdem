@@ -55,6 +55,26 @@ public class Attendance {
         this.Get = get;
     }
 
+    public int GetCount()
+    {
+        if( this.Get.isEmpty() == true )
+        {
+            this.NextTick = 0;
+            this.Count = 0;
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        String yearmonth = String.format("%d-%d", now.getYear(), now.getMonthValue());
+
+        if( this.Get.equals(yearmonth) == false)
+        {
+            this.NextTick = 0;
+            this.Count = 0;
+        }
+
+        return this.Count;
+    }
+
     public int CheckAttendance()
     {
         if( this.Get.isEmpty() == true )
