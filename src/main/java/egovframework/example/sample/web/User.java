@@ -1216,21 +1216,28 @@ public class User {
 		cobj.put("name", this.nickname);
 		cobj.put("roomnum", roomnum);	
 				
-		for(int nCount = 0; nCount < requestlist.size(); ++nCount)
-		{			
-			if( SocketHandler.sk.usermanager.findFromUseridx(requestlist.get(nCount).Midx) != null )
-			{
-				SocketHandler.sk.usermanager.findFromUseridx(requestlist.get(nCount).Midx).sendMe(cobj);
-			}			
+		if( requestlist.isEmpty() == false )
+		{
+			for(int nCount = 0; nCount < requestlist.size(); ++nCount)
+			{					
+				if( SocketHandler.sk.usermanager.findFromUseridx(requestlist.get(nCount).Midx) != null )
+				{				
+					SocketHandler.sk.usermanager.findFromUseridx(requestlist.get(nCount).Midx).sendMe(cobj);
+				}			
+			}
+	
 		}
 
-		for(int nCount = 0; nCount < friendlist.size(); ++nCount)
-		{						
-			if( SocketHandler.sk.usermanager.findFromUseridx(friendlist.get(nCount).Midx) != null )
-			{
-				SocketHandler.sk.usermanager.findFromUseridx(friendlist.get(nCount).Midx).sendMe(cobj);
-			}					
-		}
+		if( friendlist.isEmpty() == false )
+		{
+			for(int nCount = 0; nCount < friendlist.size(); ++nCount)
+			{						
+				if( SocketHandler.sk.usermanager.findFromUseridx(friendlist.get(nCount).Friendidx) != null )
+				{				
+					SocketHandler.sk.usermanager.findFromUseridx(friendlist.get(nCount).Friendidx).sendMe(cobj);
+				}					
+			}
+		}		
 	}
 }
 
