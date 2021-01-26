@@ -23,6 +23,20 @@
         ]]>
 	</select>
 	
+	<select id="selectSpecipicAiList" resultClass="EgovMap">
+        <![CDATA[
+			select m.midx , m.muserid , mi.nickname  , m.socail, mi.ai  , ifnull(i.amount,0) balance  , ifnull(ii.amount,0) point
+				, ifnull(iii.amount ,0) cash
+			from member m
+			left join member_info mi on mi.midx = m.midx 
+			left join item i on i.midx = m.midx and i.type = 'balance' 
+			left join item ii on ii.midx = m.midx and ii.type = 'point'
+			left join item iii on iii.midx = m.midx and iii.type = 'cash'
+			where 1=1 and  mi.ai = 1 and m.muserid like concat ('%' ,'tegroup' , '%')
+			order by m.midx 
+			limit 50 
+		]]>
+	</select>
 	<update id="updateMemberInfoAiSet" parameterClass="EgovMap">
         <![CDATA[
         	update member_info 

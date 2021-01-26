@@ -145,5 +145,14 @@ public class AiController {
 		}
 	}
 	
+	@RequestMapping("/aiManager.do")
+	public String aiManager() {
+		return "admin/aiManager";
+	}
+	@RequestMapping("/specificAiSetMoney.do")
+	public String specificAiiSetMoney(ModelMap model) {
+		model.addAttribute("list", sampleDAO.list("selectSpecipicAiList"));
+		return "admin/specificAiSetMoney";
+	}
 }
 

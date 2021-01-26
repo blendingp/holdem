@@ -48,7 +48,9 @@
 					<ul class="nav nav-second-level">
 						<li><a href="/holdem/admin/aiSetting.do"><i class="fa fa-gears fa-fw"></i> 유저 AI설정</a></li>
 						<li><a href="/holdem/admin/aiUserCreate.do"><i class="fa fa-male fa-fw"></i> AI유저 생성</a></li>
+						<li><a href="/holdem/admin/specificAiSetMoney.do"><i class="fa fa-money fa-fw"></i> 특정 AI 골드 설정</a></li>
 						<li><a href="/holdem/admin/aiSetMoney.do"><i class="fa fa-money fa-fw"></i> 전체 AI 골드/칩 설정</a></li>
+						<li><a href="/holdem/admin/aiManager.do"><i class="fa fa-sun-o fa-fw"></i> AI 관리기능</a></li>
 					</ul>
 				</li>
 				<li><a href="/holdem/admin/user.do"><i class="fa fa-user fa-fw"></i> 유저목록관리</a></li>
