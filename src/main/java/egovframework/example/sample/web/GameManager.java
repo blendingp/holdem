@@ -214,7 +214,20 @@ public class GameManager {
 		card4 = null;
 		card5 = null;
 		
-		SocketHandler.insertLog(getGameId(), getGameIdentifier(),"gamestart", -1, -1, -1, "게임시작", -1, -1);
+		try {
+		int tot=0,totu=0;
+		String totNick="";
+		for(User u : userlist) {
+			if( totNick.length() > 0 )totNick+=",";
+			totNick+=u.nickname;
+			if(u.isAI == false)
+				totu++;
+			tot++;
+		}
+		SocketHandler.insertLog(getGameId(), getGameIdentifier(),"gamestart", -1, totu, tot , totNick , -1, -1);
+		}catch(Exception e) {
+			System.out.println("gamestart 로그 기록중 에러:"+e.toString() );
+		}
 		whosturn = 0;
 		turncnt = 0;
 		totalmoney = 0;

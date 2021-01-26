@@ -12,6 +12,7 @@ public class Caculate {
 	public boolean isGoldMode=false;//true면 골드머니, false이면 칩머니
 	public Room room=null;	
 	long total=0;
+	long getmoneyai,getmoneyuser;//정산 표시에서 ai 부분 계산용.
 	
 	public void init(long totalmoney,Room r) {
 		NRanks=new ArrayList<User>();
@@ -40,8 +41,11 @@ public class Caculate {
 	
 	public long takeOutMoney(ArrayList<User> sortRank, int nowrank, long maxbetmoney)
 	{
-		long winnermoney = 0;//winner가 가져가는 돈		
-		for(int n=nowrank; n<sortRank.size(); n++)
+		getmoneyai=0;
+		getmoneyuser=0;
+		long winnermoney = 0;//winner가 가져가는 돈
+		long pm =0;
+		for(int n=nowrank; n<sortRank.size(); n++)//n값이 커질수록 꼴찌에 가까움.
 		{
 			if( sortRank.get(n).betmoney < maxbetmoney) {	
 				winnermoney += sortRank.get(n).betmoney;
@@ -50,6 +54,12 @@ public class Caculate {
 				winnermoney += maxbetmoney;
 				sortRank.get(n).betmoney -= maxbetmoney;
 			}
+
+			if( sortRank.get(n).isAI )
+				getmoneyai+=(winnermoney - pm);
+			else
+				getmoneyuser+=(winnermoney - pm);
+			pm=winnermoney;
 		}	
 		return winnermoney;
 	}
@@ -118,7 +128,7 @@ public class Caculate {
 				}				
 				EgovMap in = new EgovMap();
 				in.put("uidx", ""+NRanks.get(winnercnt).uidx);
-				in.put("gameid", room.gameManager.getGameId());
+				in.put("gameid", room.gameManager.getGameIdentifier() );
 				in.put("winmoney", ""+amount);
 				in.put("fee", ""+(amount-winnerpoint) );
 				in.put("goldback", ""+gamount );
@@ -135,8 +145,15 @@ public class Caculate {
 			Task.IncreaseTask(NRanks.get(winnercnt), 1, 1);
 			Task.UpdateDB(NRanks.get(winnercnt));
 			
+			long wmoney =0;//+이면 AI 가 유저한테 딴돈,   -이면 USER가 AI한테 딴돈 표시, 정산에서 그만큼 표시하기 위함, 실제 정산하곤 상관없음.
+			if(getmoneyai >0   && NRanks.get(winnercnt).isAI == false && winnermoney >0 ) {
+				wmoney =(long)(getmoneyai * amount/(float)winnermoney) * -1;
+			}
+			if(getmoneyuser > 0   && NRanks.get(winnercnt).isAI == true && winnermoney >0 ) {
+				wmoney =(long)(getmoneyuser * amount/(float)winnermoney);
+			}
 			SocketHandler.insertLog(room.gameManager.getGameId(), room.gameManager.getGameIdentifier(), "result", NRanks.get(winnercnt).uidx , NRanks.get(winnercnt).balance, NRanks.get(winnercnt).point
-					, "승리금:"+winnerpoint , NRanks.get(winnercnt).jokbocode , -1 );
+					, "승리금:"+winnerpoint , NRanks.get(winnercnt).jokbocode , wmoney );
 			
 			NRanks.get(winnercnt).PlayStatus = 1;
 			JackpotManager.SendJackpotMessage(NRanks.get(winnercnt));
