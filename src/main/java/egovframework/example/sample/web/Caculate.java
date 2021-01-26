@@ -67,6 +67,7 @@ public class Caculate {
 	public void giveWinMoney(int Rank, long winnermoney, int allincount,long betmoney2)
 	{
 		int tempwin=0;
+		long aifee= 0;
 		for(int winnercnt=0; winnercnt<NRanks.size(); winnercnt++)
 		{
 			long amount = (long)(winnermoney * NRanks.get(winnercnt).betmoney2 / NRanksTotalmoney);
@@ -133,6 +134,7 @@ public class Caculate {
 				in.put("fee", ""+(amount-winnerpoint) );
 				in.put("goldback", ""+gamount );
 				SocketHandler.sk.sampleDAO.insert("insertCommission", in);
+				aifee = (amount-winnerpoint);
 			}
 			else // 칩
 			{
@@ -152,8 +154,11 @@ public class Caculate {
 			if(getmoneyuser > 0   && NRanks.get(winnercnt).isAI == true && winnermoney >0 ) {
 				wmoney =(long)(getmoneyuser * amount/(float)winnermoney);
 			}
+			if(NRanks.get(winnercnt).isAI == false) {
+				aifee = 0;
+			}
 			SocketHandler.insertLog(room.gameManager.getGameId(), room.gameManager.getGameIdentifier(), "result", NRanks.get(winnercnt).uidx , NRanks.get(winnercnt).balance, NRanks.get(winnercnt).point
-					, "승리금:"+winnerpoint , NRanks.get(winnercnt).jokbocode , wmoney );
+					, "승리금:"+winnerpoint , aifee , wmoney );
 			
 			NRanks.get(winnercnt).PlayStatus = 1;
 			JackpotManager.SendJackpotMessage(NRanks.get(winnercnt));
