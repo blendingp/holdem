@@ -96,6 +96,7 @@ public class AdminController {
 	public String gamelog(HttpServletRequest request, ModelMap model) throws Exception {
 		String uKind = request.getParameter("uKind");
 		String nick = request.getParameter("nick");
+		String pping = request.getParameter("pping");
 		String num = request.getParameter("num");
 		String startD = request.getParameter("startD");
 		String endD = request.getParameter("endD");
@@ -117,6 +118,7 @@ public class AdminController {
 		in.put("num", num);
 		in.put("startD", startD);
 		in.put("endD", endD);
+		in.put("pping", pping);
 		List<?> list = (List<?>) sampleDAO.list("GameNumberPaging", in);
 		model.addAttribute("resultList", list);
 		EgovMap count = (EgovMap) sampleDAO.select("GameNumberTotal",in);
@@ -128,6 +130,7 @@ public class AdminController {
 		model.addAttribute("num", num);		
 		model.addAttribute("startD", startD);		
 		model.addAttribute("endD", endD);		
+		model.addAttribute("pping", pping);		
 		return "admin/gamelog";
 	}
 

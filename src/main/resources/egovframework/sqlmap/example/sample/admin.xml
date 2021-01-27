@@ -33,6 +33,9 @@
 			<isNotEmpty property = "num">
 				and gvalue2 = #num#  
 			</isNotEmpty>
+			<isNotEmpty property = "pping">
+				and gvalue4 = #pping#  
+			</isNotEmpty>
 			<isNotEmpty property = "nick">
 				and gvalue3 like concat ('%' , #nick# , '%')
 			</isNotEmpty>  
@@ -55,6 +58,9 @@
 			</isEqual>
 			<isNotEmpty property = "num">
 				and gvalue2 = #num#  
+			</isNotEmpty>
+			<isNotEmpty property = "pping">
+				and gvalue4 = #pping#  
 			</isNotEmpty>
 			<isNotEmpty property = "nick">
 				and gvalue3 like concat ('%' , #nick# , '%')
