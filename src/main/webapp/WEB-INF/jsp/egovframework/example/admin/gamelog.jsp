@@ -88,7 +88,7 @@
 												
 												<td>
 													<button type="button"
-														onClick="location.href='/holdem/admin/gameDetailLogp.do?gameIdentifier=${result.gameIdentifier}&gameId=${result.gameid}'"
+														onClick="location.href='/holdem/admin/gameDetailLogp.do?gameIdentifier=${result.gameIdentifier}'"
 														class="btn btn-primary btn-sm">보기</button>
 												</td>
 												<td>${result.gdate}</td>

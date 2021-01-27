@@ -98,7 +98,7 @@
 												<td>
 													${item.gameid} &nbsp;&nbsp;
 													<button type="button"
-														onClick="location.href='/holdem/admin/gameDetailLogp.do?gameid=${item.gameid}'"
+														onClick="location.href='/holdem/admin/gameDetailLogp.do?gameIdentifier=${item.gameid}'"
 														class="btn btn-primary btn-sm">보기</button>
 												</td>
 												<td><fmt:formatNumber value="${item.winmoney}" pattern="#,###"/></td>

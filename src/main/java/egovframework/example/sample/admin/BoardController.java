@@ -782,6 +782,12 @@ public class BoardController {
 		model.addAttribute("sumFee", (long)sampleDAO.select("selectGoldFeeSum" , in));
 		model.addAttribute("sumFeeAll", (long)sampleDAO.select("selectGoldFeeSumAll" , in));
 		model.addAttribute("sumGold", (long)sampleDAO.select("selectGoldBackSum" , in));
+		model.addAttribute("aiFeeMile", sampleDAO.select("selectAiFeeAndAiMile" , in));
+		// value5에는 유저가 ai 딴돈(-) , AI가 user에게 딴돈(+) 넣어둠
+		in.put("pm", "+"); 
+		model.addAttribute("AiGetMoeny", (long)sampleDAO.select("selectUserOrAiGetMoney" , in));
+		in.put("pm", "-");
+		model.addAttribute("UserGetMoeny", (long)sampleDAO.select("selectUserOrAiGetMoney" , in));
 		model.addAttribute("pi", paginationInfo);
 		model.addAttribute("search", search);
 		model.addAttribute("startD", startD);

@@ -652,6 +652,60 @@
        		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
        	</isNotEmpty>		
 	</select>
+	<select id="selectAiFeeAndAiMile" resultClass="egovMap">
+		<![CDATA[
+		select 
+			ifnull(sum(g.gvalue4),0) aiFee,
+			(select ifnull(sum(goldback),0) 
+				from goldfeelog g 
+				left join member_info m on g.uidx = m.midx 
+				where m.ai = 1 and gameid = gf.gameid) aiMile
+		from goldfeelog gf
+		left join gamelog g on g.gameIdentifier = gf.gameid and g.gkind = 'result'
+		left join member m on gf.uidx = m.midx
+		left join member_info mi on gf.uidx = mi.midx
+		]]>
+		<isNotEmpty property = "year">
+			and year(gf.gdate) = #year#
+		</isNotEmpty>
+		<isNotEmpty property = "month">
+			and month(gf.gdate) = #month#
+		</isNotEmpty>
+		<isNotEmpty property = "startD">
+			and gf.gdate between #startD# and #endD#
+		</isNotEmpty>
+		<isNotEmpty property="search">
+       		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
+       	</isNotEmpty>		
+	</select>
+
+	<select id="selectUserOrAiGetMoney" resultClass="long">
+		<![CDATA[
+		select	ifnull(sum(g.gvalue5),0) getMoney 
+		from goldfeelog gf
+		left join gamelog g on g.gameIdentifier = gf.gameid and g.gkind = 'result'
+		left join member m on gf.uidx = m.midx
+		left join member_info mi on gf.uidx = mi.midx
+		]]>
+		<isNotEmpty property = "year">
+			and year(gf.gdate) = #year#
+		</isNotEmpty>
+		<isNotEmpty property = "month">
+			and month(gf.gdate) = #month#
+		</isNotEmpty>
+		<isNotEmpty property = "startD">
+			and gf.gdate between #startD# and #endD#
+		</isNotEmpty>
+		<isNotEmpty property="search">
+       		and (m.muserid like concat('%' ,#search# ,'%') or mi.nickname like concat('%' ,#search# ,'%'))  
+       	</isNotEmpty>
+       	<isEqual property="pm" compareValue="-">
+       		<![CDATA[ and g.gvalue5 < 0 ]]> 
+       	</isEqual>		
+       	<isEqual property="pm" compareValue="+">
+       		<![CDATA[ and g.gvalue5 > 0 ]]> 
+       	</isEqual>		
+	</select>
 
 	<select id="selectGoldBackSum" resultClass="long">
 		<![CDATA[

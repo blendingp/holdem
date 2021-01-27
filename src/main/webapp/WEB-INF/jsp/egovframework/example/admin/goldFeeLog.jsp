@@ -37,6 +37,42 @@
 									<div class="row">
 										<div class="col-lg-2">
 											<div class="form-group">
+												<label>승리 시 발생 수수료</label>
+												<pre style="padding:7.5px"><fmt:formatNumber value="${sumFee}" pattern="#,###"/></pre>
+											</div>
+										</div>
+										<div class="col-lg-2">
+											<div class="form-group">
+												<label>승리 시 발생 마일리지</label>
+												<pre style="padding:7.5px"><fmt:formatNumber value="${sumFee-sumGold}" pattern="#,###"/></pre>
+											</div>
+										</div>
+										<div class="col-lg-2">
+											<div class="form-group">
+												<label>AI가 유저에게 딴 돈</label>
+												<pre style="padding:7.5px"><fmt:formatNumber value="${AiGetMoeny}" pattern="#,###"/></pre>
+											</div>
+										</div>
+										<div class="col-lg-2">
+											<div class="form-group">
+												<label>AI가 획득한 적립금(마일리지)</label>
+												<pre style="padding:7.5px"><fmt:formatNumber value="${aiFeeMile.aiMile}" pattern="#,###"/></pre>
+											</div>
+										</div>
+										<div class="col-lg-2">
+											<div class="form-group">
+												<label>AI가 승리 시 낸 수수료</label>
+												<pre style="padding:7.5px"><fmt:formatNumber value="${aiFeeMile.aiFee}" pattern="#,###"/></pre>
+											</div>
+										</div>
+										<div class="col-lg-2">
+											<div class="form-group">
+												<label>유저가 AI한테 딴 돈</label>
+												<pre style="padding:7.5px"><fmt:formatNumber value="${-UserGetMoeny}" pattern="#,###"/></pre>
+											</div>
+										</div>
+										<%-- <div class="col-lg-2">
+											<div class="form-group">
 												<label>일별 총 수수료(적립금제외)</label>
 												<pre style="padding:7.5px"><fmt:formatNumber value="${sumFee}" pattern="#,###"/>(<fmt:formatNumber value="${sumFee-sumGold}" pattern="#,###"/>)</pre>
 											</div>
@@ -46,7 +82,21 @@
 												<label>전체 총 수수료</label>
 												<pre style="padding:7.5px"><fmt:formatNumber value="${sumFeeAll}" pattern="#,###"/></pre>
 											</div>
-										</div>										
+										</div> --%>										
+									</div>
+									<div class="row">
+										<div class="col-lg-8">
+											<div class="form-group">
+												<label>순수익 계산식</label>
+												<pre>승리 시 발생 수수료 - 승리 시 발생 마일리지 + AI가 유저에게 딴 돈 + AI가 획득한 적립금(마일리지) - AI가 승리 시 낸 수수료 - 유저가 AI한테 딴 돈</pre> 
+											</div>
+										</div>
+										<div class="col-lg-2">
+											<div class="form-group input-group">
+												<label>순수익금</label>
+												<pre><fmt:formatNumber value="${sumFee - (sumFee-sumGold) + AiGetMoney + aiFeeMile.aiMile - aiFeeMile.aiFee -(-UserGetMoney)}" pattern="#,###"/></pre>
+											</div>
+										</div>
 									</div>
 									<div class="row">
 										<div class="col-lg-4">
@@ -70,7 +120,6 @@
 												</div>
 											</div>
 										</div>
-									
 									</div>
 								</form>
 								<table class="table table-hover">
@@ -95,7 +144,7 @@
 												<td>
 													${item.gameid} &nbsp;&nbsp;
 													<button type="button"
-														onClick="location.href='/holdem/admin/gameDetailLogp.do?gameid=${item.gameid}'"
+														onClick="location.href='/holdem/admin/gameDetailLogp.do?gameIdentifier=${item.gameid}'"
 														class="btn btn-primary btn-sm">보기</button>
 												</td>
 												<td><fmt:formatNumber value="${item.winmoney}" pattern="#,###"/></td>
