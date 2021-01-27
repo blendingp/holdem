@@ -162,7 +162,8 @@
                                 </td>
                                 <td>
                                 	<c:if test="${result.gkind ne 'card' and result.gkind ne 'board' and result.gkind ne 'twoCard'}">
-                                	${result.gvalue3}
+	                                	<c:if test="${result.gkind eq 'gamestart' }">게임시작</c:if>
+	                                	<c:if test="${result.gkind ne 'gamestart' }">${result.gvalue3}</c:if>
                                 	</c:if>
                                 	<c:if test="${result.gkind eq 'card'}">
 										<div style="display:flex;">                                	

@@ -94,6 +94,12 @@ public class AdminController {
 	
 	@RequestMapping(value = "/gamelogp.do")
 	public String gamelog(HttpServletRequest request, ModelMap model) throws Exception {
+		String uKind = request.getParameter("uKind");
+		String nick = request.getParameter("nick");
+		String num = request.getParameter("num");
+		String startD = request.getParameter("startD");
+		String endD = request.getParameter("endD");
+		if(uKind == null || uKind.equals("")) uKind = "all";
 		PaginationInfo paginationInfo = new PaginationInfo();
 		if (request.getParameter("pageIndex") == null) {
 			paginationInfo.setCurrentPageNo(1);
@@ -102,17 +108,26 @@ public class AdminController {
 		}
 		paginationInfo.setRecordCountPerPage(50);
 		paginationInfo.setPageSize(7);
-
 		//인자생성
 		EgovMap in = new EgovMap();
 		in.put("firstindex", "" + paginationInfo.getFirstRecordIndex());
 		in.put("recordperpage", "" + paginationInfo.getRecordCountPerPage());
+		in.put("uKind", uKind);
+		in.put("nick", nick);
+		in.put("num", num);
+		in.put("startD", startD);
+		in.put("endD", endD);
 		List<?> list = (List<?>) sampleDAO.list("GameNumberPaging", in);
 		model.addAttribute("resultList", list);
-		EgovMap count = (EgovMap) sampleDAO.select("GameNumberTotal");
+		EgovMap count = (EgovMap) sampleDAO.select("GameNumberTotal",in);
 		String total = "" + count.get("num");
 		paginationInfo.setTotalRecordCount(Integer.parseInt(total));
 		model.addAttribute("paginationInfo", paginationInfo);		
+		model.addAttribute("uKind", uKind);		
+		model.addAttribute("nick", nick);		
+		model.addAttribute("num", num);		
+		model.addAttribute("startD", startD);		
+		model.addAttribute("endD", endD);		
 		return "admin/gamelog";
 	}
 

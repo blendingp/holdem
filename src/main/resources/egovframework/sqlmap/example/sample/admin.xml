@@ -26,6 +26,20 @@
                 *
             FROM gamelog
             Where gkind = "gamestart"
+        ]]>
+        	<isEqual property = "uKind" compareValue="user">
+				and gvalue2 - gvalue1 = 0  
+			</isEqual>
+			<isNotEmpty property = "num">
+				and gvalue2 = #num#  
+			</isNotEmpty>
+			<isNotEmpty property = "nick">
+				and gvalue3 like concat ('%' , #nick# , '%')
+			</isNotEmpty>  
+			<isNotEmpty property = "startD">
+				and gdate between #startD# and #endD#
+			</isNotEmpty>                
+        <![CDATA[
             order by gidx desc
             limit $firstindex$, $recordperpage$
         ]]>
@@ -36,6 +50,18 @@
             FROM gamelog
             Where gkind = "gamestart"
         ]]>
+        	<isEqual property = "uKind" compareValue="user">
+				and gvalue2 - gvalue1 = 0  
+			</isEqual>
+			<isNotEmpty property = "num">
+				and gvalue2 = #num#  
+			</isNotEmpty>
+			<isNotEmpty property = "nick">
+				and gvalue3 like concat ('%' , #nick# , '%')
+			</isNotEmpty>  
+			<isNotEmpty property = "startD">
+				and gdate between #startD# and #endD#
+			</isNotEmpty>                
     </select>
 
 	<select id="GameNumberDetailPaging" resultClass="EgovMap">

@@ -31,6 +31,44 @@
 				<div class="col-lg-12">
 					<div class="panel panel-default">
 						<div class="panel-body">
+							<form action="/holdem/admin/gamelogp.do" name="listForm" id="listForm">
+								<input type="hidden" name="pageIndex" value="1" />
+								<div class="row">
+									<div class="col-lg-2">
+										<div class="form-group">
+											<label>게임한 유저, AI</label>
+											<select class="form-control" name="uKind">
+												<option value="all"<c:if test="${uKind == 'all'}">selected="selected"</c:if>>전체</option>
+												<option value="user"<c:if test="${uKind == 'user'}">selected="selected"</c:if>>유저만</option>
+											</select>
+										</div>
+									</div>
+									<div class="col-lg-2">
+										<div class="form-group">
+											<label>특정 유저 검색(닉네임)</label>
+											<input placeholder="닉네임" class="form-control" name="nick" id="nick" value="${nick}">
+										</div>
+									</div>
+									<div class="col-lg-2">
+										<div class="form-group">
+											<label>게임 인원 검색</label>
+											<input placeholder="숫자만 입력" onkeyup="SetNum(this)" class="form-control" name="num" id="num" value="${num}">
+										</div>
+									</div>
+									<div class="col-lg-5">
+										<div class="form-group">
+											<label>기간검색</label>
+											<div style="display:flex">
+												<input type="datetime-local" class="form-control" name="startD" value="${startD}" id="startD"/>
+												&nbsp;~&nbsp;
+												<input type="datetime-local" class="form-control" name="endD" value="${endD}" id="endD"/>
+												&nbsp;&nbsp;&nbsp;
+												<button type="button" onclick="search()" class="btn btn-outline btn-default">검색</button>
+											</div> 
+										</div>
+									</div>
+								</div>
+							</form>
 							<div class="table-responsive">
 								<table class="table">
 									<thead>
@@ -72,12 +110,30 @@
 			</div>
 		</div>
 	</div>
-
-	<form action="/holdem/admin/gamelogp.do" name="listForm" id="listForm">
-		<input type="hidden" name="pageIndex" value="1" />
-	</form>
-
 	<jsp:include page="../frame/adminbottom.jsp" flush="true" />
-
+	<script>
+	function SetNum(obj){
+		val=obj.value;
+		re=/[^0-9]/gi;
+		obj.value=val.replace(re,"");
+	}		
+	function search(){
+		var startD = $("#startD").val();
+		var endD = $("#endD").val();
+		if(startD != '' && endD == '' ){
+			alert("조회종료기간을 선택해주세요");
+			return;
+		}
+		if(endD != '' && startD == '' ){
+			alert("조회시작기간을 선택해주세요");
+			return;
+		}
+		if(endD < startD){
+			alert("조회종료기간이 종료시작기간보다 작을 수 없습니다.");
+			return;
+		}
+		$("#listForm").submit();
+	}
+	</script>
 </body>
 </html>
