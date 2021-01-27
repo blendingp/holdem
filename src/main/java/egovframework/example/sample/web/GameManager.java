@@ -224,7 +224,7 @@ public class GameManager {
 				totu++;
 			tot++;
 		}
-		SocketHandler.insertLog(getGameId(), getGameIdentifier(),"gamestart", -1, totu, tot , totNick , -1, -1);
+		SocketHandler.insertLog(getGameId(), getGameIdentifier(),"gamestart", -1, totu, tot , totNick , room.defaultmoney , -1);
 		}catch(Exception e) {
 			System.out.println("gamestart 로그 기록중 에러:"+e.toString() );
 		}
