@@ -79,8 +79,6 @@
 								<table class="table">
 									<thead>
 										<tr>
-											<th>#</th>
-											<th>번호</th>											
 											<th>고유번호</th>											
 											<th>삥머니</th>											
 											<th>참여자 닉네임</th>											
@@ -92,8 +90,6 @@
 									<tbody>
 										<c:forEach var="result" items="${resultList }">
 											<tr>
-												<td>${result.gidx}</td>
-												<td>${result.gameid}</td>
 												<td>${result.gameIdentifier}</td>
 												<td>${result.gvalue4}</td>
 												<td>${result.gvalue3}</td>
