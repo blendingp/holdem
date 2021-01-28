@@ -73,14 +73,15 @@
 							</div>
 						</div>
 						<div class="div-block-13">
-							<a href="/holdemMM.zip" class="googleplay_btn w-inline-block" download>
+							<!-- <a href="/holdemMM.zip" class="googleplay_btn w-inline-block" download> -->
+							<a href="https://play.google.com/store/apps/details?id=com.wingame.holdem" class="googleplay_btn w-inline-block">
 								<img src="/holdem/webflow/images/googleplay_button1.png" loading="lazy" alt="" class="playbtnlmage">
 								<div class="playbtntext"> Google Play 다운로드<br> <span class="playbtntext2">Download</span> </div>
 							</a>
-							<!-- <a href="/holdem.zip" class="googleplay_btn w-inline-block" download>
+							<a href="/holdem.zip" class="googleplay_btn w-inline-block" download>
 								<img src="/holdem/webflow/images/pc_button2.png" loading="lazy" alt="" class="playbtnlmage-2">
 								<div class="playbtntext">PC 다운로드<br><span class="playbtntext2">Download</span></div> 
-							</a> -->
+							</a>
 						</div>
 						<%-- <div>
 							<a href="/holdemM.zip" class="googleplay_btn w-inline-block" download>
