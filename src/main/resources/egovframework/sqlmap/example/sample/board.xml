@@ -660,10 +660,10 @@
 				from goldfeelog g 
 				left join member_info m on g.uidx = m.midx 
 				where m.ai = 1 and gameid = gf.gameid) aiMile
-		from goldfeelog gf
-		left join gamelog g on g.gameIdentifier = gf.gameid and g.gkind = 'result'
+		from  gamelog g  , goldfeelog gf
 		left join member m on gf.uidx = m.midx
 		left join member_info mi on gf.uidx = mi.midx
+		where g.gkind ='result' and g.gameIdentifier = gf.gameid  
 		]]>
 		<isNotEmpty property = "year">
 			and year(gf.gdate) = #year#
@@ -686,6 +686,7 @@
 		left join gamelog g on g.gameIdentifier = gf.gameid and g.gkind = 'result'
 		left join member m on gf.uidx = m.midx
 		left join member_info mi on gf.uidx = mi.midx
+		where 1=1
 		]]>
 		<isNotEmpty property = "year">
 			and year(gf.gdate) = #year#
