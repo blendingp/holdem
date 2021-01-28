@@ -656,10 +656,7 @@
 		<![CDATA[
 		select 
 			ifnull(sum(g.gvalue4),0) aiFee,
-			(select ifnull(sum(goldback),0) 
-				from goldfeelog g 
-				left join member_info m on g.uidx = m.midx 
-				where m.ai = 1 and gameid = gf.gameid) aiMile
+			sum(case when ai = 1 then goldback else 0 end) aiMile
 		from  gamelog g  , goldfeelog gf
 		left join member m on gf.uidx = m.midx
 		left join member_info mi on gf.uidx = mi.midx
