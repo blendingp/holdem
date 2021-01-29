@@ -605,15 +605,10 @@ public class SocketHandler extends TextWebSocketHandler implements InitializingB
                         	sect=0;
                         }
                    		disconnect();			// 강종 유저 처리
-                   		debugi=1;
                         cmdProcess(); 			// 클라로 부터 받은 메세지 처리
-                        debugi=2;
                         roommanager.checkStartGame();
-                        debugi=3;
 						roommanager.checkTimerGame();
-						debugi=4;
 						roommanager.checkErrorGamingRoom();
-						debugi=5;
 						JackpotManager.Update();
                     } catch (InterruptedException e) {
                         System.out.println( "socketThread \n"+e.getMessage() +" i:"+debugi);
