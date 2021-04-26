@@ -175,7 +175,7 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.5</version>
+			<version>2.7</version>
 		</dependency>
 		<!-- 다날 페이카드(신용카드) 결제용  -->
 		<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
